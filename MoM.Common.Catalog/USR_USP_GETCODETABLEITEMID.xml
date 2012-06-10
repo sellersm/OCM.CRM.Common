@@ -1,0 +1,83 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="9be5015e-2ecd-4526-9411-00b092425d7b"
+	Name="USR_USP_GETCODETABLEITEMID"
+	Description="This is used to retrieve the guid of a particular code table entry stored in USR_CODETABLEMANAGER"
+	Author="Cary Mayeda"
+	SPName="USR_USP_GETCODETABLEITEMID"
+	GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+Remarks:    This is used to mitigate the issue with code table descriptions being changed, and having to use the descriptions in the code behind.
+	
+			This stored procedure is called in the function CRMHelper.GetCodeTableVars to retreive a guid for a particular VBCONSTANT stored in USR_CODETABLEMANAGER					
+			It throws an exception if @VBCONSTANT is not found or if it is found and the STATUS is not acceptable.
+
+			The parameter @DESCRIPTIONMODIFIEDVALID is used to specify an exception should be thrown or not if the description has been changed in the code table.
+				True allows the currently stored code table id to be returned if the status is 'valid' or 'description modified in code table'.
+				False throws an exception for any status other than valid.
+				
+History:
+Date            Modified By     Comments
+21-Apr-2012     CMayeda         Initial Version
+23-Apr-2012     Cmayeda         Changed SUSPECTOK parm to DESCRIPTIONMODIFIEDVALID
+-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure USR_USP_GETCODETABLEITEMID (
+	@VBCONSTANT as nvarchar(100),	-- Contant value used in the vb code behind.  This is the unique key that points to a specific code table entry in a specific code table
+	@DESCRIPTIONMODIFIEDVALID as bit,				-- Specifies if modified descriptions are treated as valid.  See Remarks above.
+	@CODETABLEITEMID uniqueidentifier = null output		-- Code table entry guid that matches the VBCONSTANT key.
+)
+as
+begin
+	-- Validate Parms
+	if @VBCONSTANT is null 
+		raiserror 1000000 'VBCONSTANT cannot be null';
+
+	if @DESCRIPTIONMODIFIEDVALID is null 
+		raiserror 1000000 'SUSPECTOK cannot be null';		
+		
+		
+	declare @statusCode tinyint = null;		-- The STATUS enum value stored for the row specified in VBCONSTANT. Used to determine if the row is valid.
+	declare @status nvarchar(100) = null;	-- The STATUS translation stored for the row specified in VBCONSTANT.  Used in exceptions thrown.
+	declare @errormsg nvarchar (255) = null;  
+	
+	-- Set what a valid status is based on the parameter @DESCRIPTIONMODIFIEDVALID
+    declare @ValidStatus tinyint = null;
+    if @DESCRIPTIONMODIFIEDVALID = 0
+		set @ValidStatus = 0
+	else
+		set @ValidStatus = 1;
+	    
+		
+	-- Get the code table item id 
+	select @CODETABLEITEMID = CODETABLEITEMID,
+		   @statusCode = STATUSCODE,
+		   @status = STATUS
+	  from dbo.USR_CODETABLEMANAGER
+	 where VBCONSTANT = @VBCONSTANT
+	
+	
+	 -- If @VBCONSTANT not found throw exception
+	 if @CODETABLEITEMID is null 		
+	    begin
+			set @errormsg = 'VBCONSTANT - "' + @VBCONSTANT + '" was not found in USR_CODETABLEMANAGER'
+			raiserror 1000000 @errormsg;
+		end
+	
+	 -- If @VBCONSTANT is found but the status is not a valid status based on @DESCRIPTIONMODIFIEDVALID
+	 if @statusCode > @ValidStatus		
+	    begin
+			set @errormsg = 'VBCONSTANT - "' + @VBCONSTANT + '" is not valid. Status Code = "' + @status + '"'
+			raiserror 1000000 @errormsg
+		end
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
