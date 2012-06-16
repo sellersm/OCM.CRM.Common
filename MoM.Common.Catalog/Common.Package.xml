@@ -6,6 +6,15 @@
     Description="Mission of Mercy specs used in Mom.Common class"
     Author="Cary Mayeda"
     >
+<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	15-May-2012		CMayeda			Initial Version
+	16-Jun-2012     CMayeda			Added MoM.Common.Catalog.USR_USP_ADDVALUETOCODETABLE.xml
+-->
+
 
 	<!-- Note:  the order of the items listed here is important.  For example, you won't be able to load a data form that references 
 	a table that hasn't been loaded, etc.  In general, the following order is recommended:
@@ -52,6 +61,7 @@
 	<common:DependencyList>
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CodeTableManager.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETCODETABLEITEMID.xml" />
-    </common:DependencyList>
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_ADDVALUETOCODETABLE.xml" />
+	</common:DependencyList>
 
 </PackageSpec>
