@@ -18,11 +18,6 @@
 	12-Jul-2012		CMayeda			Moved to Common catalog
 	-->
 
-	<common:DependencyList>
-		<common:Dependency CatalogAssembly="" CatalogItem="UFN_IDSETREADER_GETRESULTS"/>
-		<common:Dependency CatalogAssembly="" CatalogItem="USP_RAISE_ERROR" />
-	</common:DependencyList>
-
 	
 	<CreateProcedureSQL>
 		<![CDATA[
