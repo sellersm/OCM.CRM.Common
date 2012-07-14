@@ -1,20 +1,11 @@
 <PackageSpec 
     xmlns="bb_appfx_package"
     xmlns:common="bb_appfx_commontypes"
-    ID="0afa5709-40bf-4f62-85da-a0b3ee0b0891"
-    Name="Common Package"
-    Description="Mission of Mercy specs used in Mom.Common class"
-    Author="Cary Mayeda"
+    ID="b1fa8aec-a93c-4be9-832d-d8e6fd53e8cc"
+    Name="Versions Package"
+    Description="REPLACE_WITH_DESCRIPTION"
+    Author="$author$"
     >
-<!-- 
-	Remarks:    
-
-	History:
-	Date            Modified By     Comments
-	15-May-2012		CMayeda			Initial Version
-	16-Jun-2012     CMayeda			Added MoM.Common.Catalog.USR_USP_ADDVALUETOCODETABLE.xml
--->
-
 
 	<!-- Note:  the order of the items listed here is important.  For example, you won't be able to load a data form that references 
 	a table that hasn't been loaded, etc.  In general, the following order is recommended:
@@ -59,10 +50,7 @@
 	-->
 	
 	<common:DependencyList>
-		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CodeTableManager.Table.xml" />
-		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETCODETABLEITEMID.xml" />
-		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_ADDVALUETOCODETABLE.xml" />
-		<common:Dependency CatalogAssembly="MMoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETIDSETCOUNT.xml" />
-	</common:DependencyList>
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Package Versions.Page.xml" />
+    </common:DependencyList>
 
 </PackageSpec>
