@@ -2,9 +2,9 @@
     xmlns="bb_appfx_package"
     xmlns:common="bb_appfx_commontypes"
     ID="b1fa8aec-a93c-4be9-832d-d8e6fd53e8cc"
-    Name="Common Package Versions Package"
-    Description="REPLACE_WITH_DESCRIPTION"
-    Author="$author$"
+    Name="Common - Package Versions Package"
+    Description="Used to display versions of the packages that have been loaded"
+    Author="Cary Mayeda"
     >
 
 	<!-- Note:  the order of the items listed here is important.  For example, you won't be able to load a data form that references 
