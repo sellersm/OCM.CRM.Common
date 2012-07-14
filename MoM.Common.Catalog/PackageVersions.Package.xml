@@ -50,7 +50,9 @@
 	-->
 	
 	<common:DependencyList>
-        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Package Versions.Page.xml" />
-    </common:DependencyList>
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.PackageVersions.Page.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.PackageVersionsPage.Task.xml" />
+
+	</common:DependencyList>
 
 </PackageSpec>

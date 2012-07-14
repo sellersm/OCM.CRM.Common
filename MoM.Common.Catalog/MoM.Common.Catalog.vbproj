@@ -136,7 +136,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Package Versions.Page.xml" />
+    <EmbeddedResource Include="PackageVersions.Page.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PackageVersions.Package.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PackageVersionsPage.Task.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
