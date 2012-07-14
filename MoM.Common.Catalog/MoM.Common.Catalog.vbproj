@@ -139,7 +139,9 @@
     <EmbeddedResource Include="PackageVersions.Page.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PackageVersions.Package.xml" />
+    <EmbeddedResource Include="PackageVersions.Package.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PackageVersionsPage.Task.xml" />

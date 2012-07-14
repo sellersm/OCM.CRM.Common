@@ -2,7 +2,7 @@
     xmlns="bb_appfx_package"
     xmlns:common="bb_appfx_commontypes"
     ID="b1fa8aec-a93c-4be9-832d-d8e6fd53e8cc"
-    Name="Versions Package"
+    Name="Common Package Versions Package"
     Description="REPLACE_WITH_DESCRIPTION"
     Author="$author$"
     >
