@@ -62,7 +62,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CodeTableManager.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETCODETABLEITEMID.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_ADDVALUETOCODETABLE.xml" />
-		<common:Dependency CatalogAssembly="MMoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETIDSETCOUNT.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETIDSETCOUNT.xml" />
 	</common:DependencyList>
 
 </PackageSpec>
