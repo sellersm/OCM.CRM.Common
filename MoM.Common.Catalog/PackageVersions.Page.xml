@@ -3,10 +3,17 @@
     xmlns:common="bb_appfx_commontypes"
     ID="bdfe2149-c4a5-44bc-8d98-f4fec9990aaa"
     Name="Package Versions Page"
-    Description="REPLACE_WITH_DESCRIPTION"
-    Author="BETHESDA\cmayeda"
-    ContextRecordType="REPLACE_WITH_RECORDTYPE"	
-    >
+    Description="This is used to display the versions of packages, ui model assemblies, and html files that have been loaded"
+    Author="Cary Mayeda" >
+
+	<!-- 
+	Remarks:    This doesn't actually pull version numbers from the assemblies. Automated Build Studio replaces #VersionNumber# in 
+				specific data lists, ui model vb classes, and html files that are displayed on this page.
+
+	History:
+	Date            Modified By     Comments
+	17-Jul-2012		CMayeda			Initial Version
+	-->
 
 	<!-- Note:  A page can optionally have a view form associated with it as the "Expression form".  While implemented as a view data form,
 	this form has no UI in this context, and is simply used as a way of loading additional information associated with the page.  The fields
@@ -23,18 +30,46 @@
 
 			<!-- define the sections for this tab -->
 			<Sections>
-				<Section ID="04b97e89-086d-4ab4-9b45-0403160c961f" Caption="Child">
-					<DataList ID="c1199cc6-5a8e-4ed1-a060-365db9b7e294"> <!-- Child Quota -->
+				<Section ID="397F5EF7-4FEF-4D63-9DCE-64F55FAD6AD4" Caption="Child">
+					<DataList ID="b72a2008-44a0-4808-8447-5071e5d75f9d">  <!-- Child Customizations -->
 						<RenderStyle>
-							<StandardView/>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="4EDF4107-0595-452B-8EE0-D42C538B7374" HideCaption="True" > 
+					<DataList ID="1b1f40a0-9ed3-4a41-8f5b-a8f1e6ece585">  <!-- Child Extension Batch -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="04b97e89-086d-4ab4-9b45-0403160c961f" HideCaption="True" >
+					<DataList ID="c1199cc6-5a8e-4ed1-a060-365db9b7e294">  <!-- Child Quota -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
 						</RenderStyle>
 					</DataList>
 
 				</Section>
-				<Section ID="53C5E982-8F98-4D11-BE9E-1817760F26CB" >  <!-- Sponsorship Opportunity Eligibility -->
-					<DataList ID="3db0165b-41c6-400c-b8aa-fd2f99a4dfaa">
+				<Section ID="53C5E982-8F98-4D11-BE9E-1817760F26CB" HideCaption="True" >  
+					<DataList ID="3db0165b-41c6-400c-b8aa-fd2f99a4dfaa">  <!-- Child Eligibility Check -->
 						<RenderStyle>
-							<StandardView/>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="F3A1A5F5-5FE2-4541-AAC6-06E3827DA50C" HideCaption="True" >
+					<DataList ID="5e770cd1-b0db-4b08-b365-9047a3973a35">  <!-- Child Bio -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="5A0E4CF7-2BC2-4B3B-9488-BE6681DFB459" HideCaption="True" >
+					<DataList ID="0cb2f31d-c5f5-4b5c-ae4e-ac5bd8e6842f">  <!-- Child Utilites -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
 						</RenderStyle>
 					</DataList>
 				</Section>
@@ -43,11 +78,7 @@
 		<Tab ID="6791DE1A-96D9-4D23-801F-E5F80BD59081" Caption="UIModel Assemblies">
 			<Sections>
 				<Section ID="86D038FC-6CD1-42F9-AD4B-2B17ABB461D2" Caption="Child">
-					<DataList ID="c1199cc6-5a8e-4ed1-a060-365db9b7e294">
-						<RenderStyle>
-							<StandardView/>
-						</RenderStyle>
-					</DataList>
+					<DataForm ID="238619d4-7f2b-4441-a7d1-36908e9e5300" ShowBorder="false" />					
 				</Section>
 			</Sections>
 		</Tab>
