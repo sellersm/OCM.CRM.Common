@@ -37,6 +37,13 @@
 						</RenderStyle>
 					</DataList>
 				</Section>
+				<Section ID="DA5CF9DC-DA58-4522-892B-EE9D4B139FFF" HideCaption="True">
+					<DataList ID="80e7ed94-7b28-4cb3-8c86-04f0fdc133c2">	<!-- Child Customizations Pages and Tasks -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
 				<Section ID="4EDF4107-0595-452B-8EE0-D42C538B7374" HideCaption="True" > 
 					<DataList ID="1b1f40a0-9ed3-4a41-8f5b-a8f1e6ece585">  <!-- Child Extension Batch -->
 						<RenderStyle>

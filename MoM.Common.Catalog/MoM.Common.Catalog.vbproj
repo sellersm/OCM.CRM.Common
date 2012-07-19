@@ -136,7 +136,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PackageVersions.Page.xml" />
+    <EmbeddedResource Include="PackageVersions.Page.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PackageVersions.Package.xml">
