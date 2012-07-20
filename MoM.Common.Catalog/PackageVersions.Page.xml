@@ -80,7 +80,22 @@
 						</RenderStyle>
 					</DataList>
 				</Section>
-			</Sections>
+				<Section ID="0C7AE4EC-5408-4DA1-B351-E02F55BD99B5" Caption="Child Project">
+					<DataList ID="4c5b2122-1013-4b9b-b898-7992f10edeee">	<!-- Child Project -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="2587278B-9F02-4B2A-800C-8E0E687BABBC" Caption="Country">
+					<DataList ID="50599970-0299-422b-a3d9-df1c4708bdf3">	<!-- Country -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+			</Sections>			
+
 		</Tab>
 		<Tab ID="6791DE1A-96D9-4D23-801F-E5F80BD59081" Caption="UIModel Assemblies">
 			<Sections>
