@@ -1,0 +1,11 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="05f825b8-09da-418a-988f-abd7eb4f721a" 
+	Name="Interaction Extension Letter Type"
+	Description="Letter type of an interaction (one child, two children, multiple children)"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONLETTERTYPECODE"
+	Category="Interaction Extension"
+	SortMethod="UserDefined"
+/>

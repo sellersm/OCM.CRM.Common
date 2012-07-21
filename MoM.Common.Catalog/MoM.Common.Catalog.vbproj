@@ -148,6 +148,17 @@
   <ItemGroup>
     <EmbeddedResource Include="PackageVersionsPage.Task.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtension.Table.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtensionSponsorship.Table.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtension.LetterType.TableCode.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

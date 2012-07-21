@@ -1,0 +1,21 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="0afd52bf-bb49-493d-a962-02b16e770fe6"
+	Name="Interaction Extension"
+	Description="Additional fields for Interactions"
+	Author="Cary Mayeda"
+	Tablename="USR_INTERACTIONEXTENSION"	
+	PrimaryKeyAsForeignKeyTablename="INTERACTION"
+	>
+
+	<!-- define fields on the table -->
+	<Fields>
+		<CodeTableField Name="LETTERTYPECODEID" Description="Type of letter (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
+		<BooleanField Name="EFTBROCHURE" Description="Whether or not to include an EFT Brochure"/>
+		<ForeignKeyField Name="DEPARTEDCHILDID" Description ="ID of the departed child" Cardinality="OneToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="SetToNull" />
+				
+	</Fields>
+
+	
+</TableSpec>
