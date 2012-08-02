@@ -50,12 +50,10 @@
     <OptionCompare>Binary</OptionCompare>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accessibility">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Blackbaud.AppFx, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Blackbaud.AppFx.Constituent.UIModel, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.Constituent.UIModel.dll</HintPath>
