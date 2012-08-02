@@ -1,0 +1,96 @@
+<QueryViewSpec 
+    xmlns:c="bb_appfx_commontypes"
+    ID="86d6039b-a0b4-4bd5-9094-af94c6cf87c1"
+    Name="Interaction Extension"
+    Description="Provides support for querying on Interaction Extension information."
+    Author="BETHESDA\cmayeda"
+    PrimaryKeyField="ID"
+    RecordType="Interaction Extension"
+    IsRoot="true"
+    c:SecurityUIFolder="Interaction Extension"
+    xmlns="bb_appfx_queryview"
+    >
+    <ViewImplementation ViewName="USR_V_QUERY_USR_INTERACTIONEXTENSION">
+        <ViewSQL>
+<![CDATA[
+select
+    USR_INTERACTIONEXTENSION.ID,
+    (select USR_INTERACTIONEXTENSIONLETTERTYPECODE.DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONLETTERTYPECODE where USR_INTERACTIONEXTENSIONLETTERTYPECODE.ID = USR_INTERACTIONEXTENSION.[LETTERTYPECODEID]) as LETTERTYPECODEID_TRANSLATION,
+    (select USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE.DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE.ID = USR_INTERACTIONEXTENSION.[LETTERCHILDVERSIONCODEID]) as LETTERCHILDVERSIONCODEID_TRANSLATION,
+    (select USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE.DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE where USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE.ID = USR_INTERACTIONEXTENSION.[FULFILLMENTSTATUSCODEID]) as FULFILLMENTSTATUSCODEID_TRANSLATION,
+    USR_INTERACTIONEXTENSION.[RESENDCODE],
+    USR_INTERACTIONEXTENSION.[EFTBROCHURE],
+    USR_INTERACTIONEXTENSION.[DEPARTEDCHILDID],
+    USR_INTERACTIONEXTENSION.[UNAVILABLECHILDID],
+    USR_INTERACTIONEXTENSION.[DOUBLESPONSOREDCHILDID],
+    USR_INTERACTIONEXTENSION.[TRANSFERCHILDID],
+    USR_INTERACTIONEXTENSION.[PREVIOUSCHILDPROJECTID],
+    USR_INTERACTIONEXTENSION.[PREVIOUSBIRTHDATE],
+    USR_INTERACTIONEXTENSION.[PREVIOUSNAME],
+	ADDEDBY.APPLICATIONNAME as [ADDEDBY_APPLICATION],
+	ADDEDBY.USERNAME as [ADDEDBY_USERNAME],
+	CHANGEDBY.APPLICATIONNAME as [CHANGEDBY_APPLICATION],
+	CHANGEDBY.USERNAME as [CHANGEDBY_USERNAME],
+	USR_INTERACTIONEXTENSION.DATEADDED,
+	USR_INTERACTIONEXTENSION.DATECHANGED,
+	USR_INTERACTIONEXTENSION.TSLONG
+from 
+    dbo.USR_INTERACTIONEXTENSION
+    left join dbo.CHANGEAGENT as [ADDEDBY] on [ADDEDBY].ID = USR_INTERACTIONEXTENSION.ADDEDBYID
+    left join dbo.CHANGEAGENT as [CHANGEDBY] on [CHANGEDBY].ID = USR_INTERACTIONEXTENSION.CHANGEDBYID
+]]>
+</ViewSQL>
+    </ViewImplementation>
+    <Output>
+        <OutputFields>
+            <OutputField Name="ID" Caption="System record ID" Category="System Fields" DataType="Guid" />
+            <OutputField Name="LETTERTYPECODEID_TRANSLATION" Caption="Lettertype">
+                <LookupInfo>
+                    <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE" IncludeInactive="true" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="LETTERCHILDVERSIONCODEID_TRANSLATION" Caption="Letterchildversion">
+                <LookupInfo>
+                    <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" IncludeInactive="true" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="FULFILLMENTSTATUSCODEID_TRANSLATION" Caption="Fulfillmentstatus">
+                <LookupInfo>
+                    <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" IncludeInactive="true" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="RESENDCODE" Caption="Resend" DataType="TinyInt" />
+            <OutputField Name="EFTBROCHURE" Caption="Eftbrochure" DataType="Boolean" />
+            <OutputField Name="DEPARTEDCHILDID" Caption="Departedchild" DataType="Guid" />
+            <OutputField Name="UNAVILABLECHILDID" Caption="Unavilablechild" DataType="Guid" />
+            <OutputField Name="DOUBLESPONSOREDCHILDID" Caption="Doublesponsoredchild" DataType="Guid" />
+            <OutputField Name="TRANSFERCHILDID" Caption="Transferchild" DataType="Guid" />
+            <OutputField Name="PREVIOUSCHILDPROJECTID" Caption="Previouschildproject" DataType="Guid" />
+            <OutputField Name="PREVIOUSBIRTHDATE" Caption="Previousbirthdate" DataType="Date" />
+            <OutputField Name="PREVIOUSNAME" Caption="Previousname" />
+            <OutputField Name="ADDEDBY_APPLICATION" Caption="Added by application" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="37e3e458-af0d-4dbc-8a18-a93885521a42" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="ADDEDBY_USERNAME" Caption="Added by user name" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="cea15e1c-e455-41be-9ecf-6b5453fa96a4" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="CHANGEDBY_APPLICATION" Caption="Changed by application" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="37e3e458-af0d-4dbc-8a18-a93885521a42" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="CHANGEDBY_USERNAME" Caption="Changed by user name" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="cea15e1c-e455-41be-9ecf-6b5453fa96a4" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="DATEADDED" Caption="Date added" Category="System Fields" DataType="Date" />
+            <OutputField Name="DATECHANGED" Caption="Date changed" Category="System Fields" DataType="Date" />
+            <OutputField Name="TSLONG" Caption="Timestamp value" IsHidden="true" Category="System Fields" DataType="Long" />
+        </OutputFields>
+    </Output>
+</QueryViewSpec>

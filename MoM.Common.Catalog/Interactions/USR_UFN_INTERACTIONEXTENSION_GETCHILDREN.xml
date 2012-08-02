@@ -1,0 +1,35 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="bb5628f6-013d-45ce-ba48-d958b62b6dbc"
+	Name="USR_UFN_INTERACTIONEXTENSION_GETCHILDREN"
+	Description="REPLACE_WITH_DESCRIPTION"
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_INTERACTIONEXTENSION_GETCHILDREN"
+	>
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN (
+	@INTERACTIONID uniqueidentifier = null
+)
+returns table
+as 
+return
+(
+	select	int_extchild.ID,
+			int_extchild.SPONSORSHIPOPPORTUNITYCHILDID,
+			so.LOOKUPID as CHILDLOOKUPID,
+			so_child.NAME as CHILDNAME
+			
+	  from	dbo.USR_INTERACTIONEXTENSIONCHILDREN int_extchild
+ left join	dbo.SPONSORSHIPOPPORTUNITY so on so.ID = int_extchild.SPONSORSHIPOPPORTUNITYCHILDID
+ left join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on so_child.ID = int_extchild.SPONSORSHIPOPPORTUNITYCHILDID
+ 
+	 where	int_extchild.INTERACTIONID = @INTERACTIONID
+)
+
+		]]>
+	</CreateFunctionSQL>
+	<CreateChildCollectionFunction RootElementName="CHILDREN" BaseTableName="USR_INTERACTIONEXTENSIONCHILDREN" ParentIDColumn="INTERACTIONID"/>
+</SQLFunctionSpec>

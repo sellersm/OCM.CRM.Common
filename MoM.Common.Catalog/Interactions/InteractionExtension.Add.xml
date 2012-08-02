@@ -1,0 +1,152 @@
+<AddDataFormTemplateSpec 
+    xmlns:c="bb_appfx_commontypes"
+    ID="25aa26c5-d2fe-401c-b33d-a6382d932e44"
+    Name="Interaction Extension Add Form 2"
+    Description="Used for adding a new Interaction Extension"
+    Author="Cary Mayeda"
+    RecordType="Interaction Extension"
+    DataFormInstanceID="19cc7e46-2646-4a12-b196-bd840b4f9d9a"
+    c:SecurityUIFolder="Interaction Extension"
+    xmlns="bb_appfx_adddataformtemplate"
+    >
+    <SPDataForm>
+        <SaveImplementation SPName="USP_DATAFORMTEMPLATE_ADD_INTERACTION_EXTENSION2">
+            <c:CreateProcedureSQL>
+<![CDATA[
+create procedure dbo.USP_DATAFORMTEMPLATE_ADD_INTERACTION_EXTENSION2
+(
+    @ID uniqueidentifier = null output,
+	@INTERACTIONID uniqueidentifier,
+    @CHANGEAGENTID uniqueidentifier = null,
+    @LETTERTYPECODEID uniqueidentifier = null,
+    @LETTERCHILDVERSIONCODEID uniqueidentifier = null,
+    @FULFILLMENTSTATUSCODEID uniqueidentifier = null,
+    @RESENDCODE tinyint = 0,
+    @EFTBROCHURE bit = 0,
+    @DEPARTEDCHILDID uniqueidentifier = null,
+    @UNAVILABLECHILDID uniqueidentifier = null,
+    @DOUBLESPONSOREDCHILDID uniqueidentifier = null,
+    @TRANSFERCHILDID uniqueidentifier = null,
+    @PREVIOUSCHILDPROJECTID uniqueidentifier = null,
+    @PREVIOUSBIRTHDATE datetime = null,
+    @PREVIOUSNAME nvarchar(150) = '',
+	@CHILDREN xml = null
+
+)
+as
+
+set nocount on;
+
+set @ID = @INTERACTIONID
+
+if @CHANGEAGENTID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+declare @CURRENTDATE datetime
+set @CURRENTDATE = getdate()
+
+begin try
+	-- handle inserting the data
+	insert into dbo.USR_INTERACTIONEXTENSION
+		(ID, LETTERTYPECODEID, LETTERCHILDVERSIONCODEID, FULFILLMENTSTATUSCODEID, RESENDCODE, EFTBROCHURE, DEPARTEDCHILDID, UNAVILABLECHILDID, DOUBLESPONSOREDCHILDID, TRANSFERCHILDID, PREVIOUSCHILDPROJECTID, PREVIOUSBIRTHDATE, PREVIOUSNAME, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+    values
+		(@ID, @LETTERTYPECODEID, @LETTERCHILDVERSIONCODEID, @FULFILLMENTSTATUSCODEID, @RESENDCODE, @EFTBROCHURE, @DEPARTEDCHILDID, @UNAVILABLECHILDID, @DOUBLESPONSOREDCHILDID, @TRANSFERCHILDID, @PREVIOUSCHILDPROJECTID, @PREVIOUSBIRTHDATE, @PREVIOUSNAME, @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE)
+		
+	exec dbo.USR_USP_INTERACTIONEXTENSION_GETCHILDREN_ADDFROMXML @ID, @CHILDREN, @CHANGEAGENTID, @CURRENTDATE
+
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+return 0				
+
+]]>
+</c:CreateProcedureSQL>
+            <c:ExpectedDBExceptions>
+                <c:Constraints>
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_LETTERTYPECODEID" Field="LETTERTYPECODEID" Type="ForeignKey" />
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_LETTERCHILDVERSIONCODEID" Field="LETTERCHILDVERSIONCODEID" Type="ForeignKey" />
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_FULFILLMENTSTATUSCODEID" Field="FULFILLMENTSTATUSCODEID" Type="ForeignKey" />
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_DEPARTEDCHILDID" Field="DEPARTEDCHILDID" Type="ForeignKey" />
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_UNAVILABLECHILDID" Field="UNAVILABLECHILDID" Type="ForeignKey" />
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_DOUBLESPONSOREDCHILDID" Field="DOUBLESPONSOREDCHILDID" Type="ForeignKey" />
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_TRANSFERCHILDID" Field="TRANSFERCHILDID" Type="ForeignKey" />
+                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_PREVIOUSCHILDPROJECTID" Field="PREVIOUSCHILDPROJECTID" Type="ForeignKey" />
+                </c:Constraints>
+            </c:ExpectedDBExceptions>
+        </SaveImplementation>
+    </SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+	<Context ContextRecordType="INTERACTION" RecordIDParameter="INTERACTIONID" />
+
+	<c:FormMetaData FixedDialog="true">
+        <c:FormFields>
+            <c:FormField FieldID="LETTERTYPECODEID" DataType="Guid" Caption="Letter type">
+                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
+            </c:FormField>
+            <c:FormField FieldID="LETTERCHILDVERSIONCODEID" DataType="Guid" Caption="Letter child version">
+                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
+            </c:FormField>
+            <c:FormField FieldID="FULFILLMENTSTATUSCODEID" DataType="Guid" Caption="Fulfillment status">
+                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+            </c:FormField>
+            <c:FormField FieldID="RESENDCODE" DataType="TinyInt" Caption="Resend?" DefaultValueText="0">
+                <c:ValueList>
+                    <c:Items>
+                        <c:Item>
+                            <c:Value>0</c:Value>
+                            <c:Label>No</c:Label>
+                        </c:Item>
+                        <c:Item>
+                            <c:Value>1</c:Value>
+                            <c:Label>Yes</c:Label>
+                        </c:Item>
+                    </c:Items>
+                </c:ValueList>
+            </c:FormField>
+            <c:FormField FieldID="EFTBROCHURE" DataType="Boolean" Caption="EFT brochure" />
+			<c:FormField FieldID="DEPARTEDCHILDID" DataType="Guid" Caption="Departed child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
+			<c:FormField FieldID="UNAVILABLECHILDID" DataType="Guid" Caption="Unavilable child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
+            <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
+            <c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transfer child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
+            <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
+            <c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
+            <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name" Multiline="true" />
+			<c:FormField FieldID="CHILDREN" Caption="Children">
+				<c:Collection>
+					<c:Fields>
+						<c:FormField FieldID="ID" DataType="Guid" Hidden="true" />
+						<c:FormField FieldID="CHILDLOOKUPID" Caption="Child ID" DataType="String" />
+						<c:FormField FieldID="SPONSORSHIPOPPORTUNITYCHILDID" Caption="Child Name" DataType="Guid" Hidden="false">
+							<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+						</c:FormField>
+					</c:Fields>
+				</c:Collection>
+			</c:FormField>
+
+		</c:FormFields>
+        <c:FormUIComponent />
+
+        <c:WebUIComponent>
+            <c:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.InteractionExtensionAddFormUIModel" />
+            <c:WebUI>
+                <c:ExternalResource Url="browser/htmlforms/custom/InteractionExtension.AddForm.html" />
+            </c:WebUI>
+        </c:WebUIComponent>
+    </c:FormMetaData>
+	
+	<c:DataFormExtension DataFormInstanceID="723AD883-F995-4C40-AFED-6A7914B536E3" RenderStyle="Tab" TabCaption="Additional Info" />
+
+</AddDataFormTemplateSpec>

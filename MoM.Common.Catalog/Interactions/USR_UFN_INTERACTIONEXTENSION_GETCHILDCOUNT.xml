@@ -1,0 +1,27 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="64e50f10-131c-4120-903c-09ed48bad143"
+	Name="USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT"
+	Description="REPLACE_WITH_DESCRIPTION"
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT"
+	>
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT(
+	@interactionID uniqueidentifier = null
+)
+returns int
+with execute as caller
+as begin
+	declare @childCount int = 0
+	select @childCount = count(SPONSORSHIPOPPORTUNITYCHILDID) from dbo.USR_INTERACTIONEXTENSIONCHILDREN where INTERACTIONID=@interactionID
+	
+	return @childCount
+end
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

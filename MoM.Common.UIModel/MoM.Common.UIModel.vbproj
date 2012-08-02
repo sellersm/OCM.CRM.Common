@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8A94FD32-4AAF-4FC8-96AC-F91624A6AF0D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MoM.Common.UIModel</RootNamespace>
+    <AssemblyName>MoM.Common.UIModel</AssemblyName>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OptionInfer>On</OptionInfer>
+    <OptionStrict>Off</OptionStrict>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+    <CodeAnalysisRuleSet>UIModel.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\SDK\DLLReferences\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+    <CodeAnalysisRuleSet>UIModel.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx, Version=1.0.363.1205, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx.Constituent.UIModel, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.Constituent.UIModel.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx.Server, Version=1.0.443.759, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx.UIModeling.Core, Version=1.0.363.1205, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx.XmlTypes, Version=1.0.443.759, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx.XmlTypes.XmlSerializers, Version=1.0.443.759, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MoM.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\References\MoM\MoM.Common.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Blackbaud.AppFx.UIModeling.Core" />
+    <Import Include="Blackbaud.AppFx" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.ComponentModel" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Interactions\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
+      <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Interactions\InteractionExtensionAddFormUIModel.CodeGen.vb">
+      <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Interactions\InteractionExtensionAddFormUIModel.vb" />
+    <Compile Include="Interactions\InteractionExtensionFields.vb" />
+    <Compile Include="Interactions\InteractionExtensionHelper.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="htmlforms\mom.common\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UIModel.ruleset" />
+    <None Include="postbuild.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\MoM.Common.Catalog\Interactions\InteractionExtension.Add.xml">
+      <Link>LinkedSpecs\InteractionExtension.Add.xml</Link>
+    </None>
+    <Content Include="Interactions\InteractionExtension.AddForm.html" />
+    <Content Include="Interactions\InteractionExtensionAddFormUIModel.xml">
+      <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rem xcopy MoM.Common.UIModel.* ..\Blackbaud.AppFx.Server\Deploy\bin\ /y
+rem $(ProjectDir)postbuild.bat</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

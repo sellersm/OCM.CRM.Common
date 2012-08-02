@@ -1,0 +1,17 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="9ED273CF-E5A6-49CE-980B-7B8DF36D2925"
+	Name="Interaction Child List"
+	Description="Used to allow multiple children to be associated with an interaction."
+	Author="Cary Mayeda"
+	Tablename="USR_INTERACTIONEXTENSIONCHILDREN" 
+	>
+
+	<!-- define fields on the table -->
+	<Fields>
+		<ForeignKeyField Name="INTERACTIONID" Description="Interaction ID" ForeignTable="INTERACTION" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" Cardinality="ManyToOne" OnDelete="CascadeDelete"/>
+		<ForeignKeyField Name="SPONSORSHIPOPPORTUNITYCHILDID" Description="Child that the sponsor action refers to" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="SetToNull" />
+	</Fields>
+
+</TableSpec>

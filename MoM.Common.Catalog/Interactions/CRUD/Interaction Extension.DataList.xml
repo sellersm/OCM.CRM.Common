@@ -1,0 +1,57 @@
+<DataListSpec 
+    xmlns:c="bb_appfx_commontypes"
+    ID="a0aeba7c-0ce6-4ebc-97e8-83768921552f"
+    Name="Interaction Extension List"
+    Description="Returns all Interaction Extension records."
+    Author="BETHESDA\cmayeda"
+    c:SecurityUIFolder="Interaction Extension"
+    xmlns="bb_appfx_datalist"
+    >
+    <SPDataList SPName="USP_DATALIST_INTERACTION_EXTENSION">
+        <c:CreateProcedureSQL>
+<![CDATA[
+create procedure dbo.USP_DATALIST_INTERACTION_EXTENSION
+as
+	set nocount on;
+
+	select 
+        USR_INTERACTIONEXTENSION.[ID],
+        USR_INTERACTIONEXTENSIONLETTERTYPECODE.DESCRIPTION,
+        USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE.DESCRIPTION,
+        USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE.DESCRIPTION,
+        USR_INTERACTIONEXTENSION.[RESENDCODE],
+        USR_INTERACTIONEXTENSION.[EFTBROCHURE],
+        USR_INTERACTIONEXTENSION.[DEPARTEDCHILDID],
+        USR_INTERACTIONEXTENSION.[UNAVILABLECHILDID],
+        USR_INTERACTIONEXTENSION.[DOUBLESPONSOREDCHILDID],
+        USR_INTERACTIONEXTENSION.[TRANSFERCHILDID],
+        USR_INTERACTIONEXTENSION.[PREVIOUSCHILDPROJECTID],
+        USR_INTERACTIONEXTENSION.[PREVIOUSBIRTHDATE],
+        USR_INTERACTIONEXTENSION.[PREVIOUSNAME]
+	from 
+        dbo.USR_INTERACTIONEXTENSION
+        left outer join dbo.USR_INTERACTIONEXTENSIONLETTERTYPECODE on USR_INTERACTIONEXTENSION.[LETTERTYPECODEID] = USR_INTERACTIONEXTENSIONLETTERTYPECODE.ID
+        left outer join dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE on USR_INTERACTIONEXTENSION.[LETTERCHILDVERSIONCODEID] = USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE.ID
+        left outer join dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE on USR_INTERACTIONEXTENSION.[FULFILLMENTSTATUSCODEID] = USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE.ID
+
+]]>
+</c:CreateProcedureSQL>
+    </SPDataList>
+    <Output>
+        <OutputFields>
+            <OutputField FieldID="ID" Caption="ID" IsHidden="true" DataType="Guid" />
+            <OutputField FieldID="LETTERTYPECODEID" Caption="Lettertype" DataType="Guid" />
+            <OutputField FieldID="LETTERCHILDVERSIONCODEID" Caption="Letterchildversion" DataType="Guid" />
+            <OutputField FieldID="FULFILLMENTSTATUSCODEID" Caption="Fulfillmentstatus" DataType="Guid" />
+            <OutputField FieldID="RESENDCODE" Caption="Resend" DataType="TinyInt" />
+            <OutputField FieldID="EFTBROCHURE" Caption="Eftbrochure" DataType="Boolean" DisplayBooleanAsCheck="true" />
+            <OutputField FieldID="DEPARTEDCHILDID" Caption="Departedchild" DataType="Guid" />
+            <OutputField FieldID="UNAVILABLECHILDID" Caption="Unavilablechild" DataType="Guid" />
+            <OutputField FieldID="DOUBLESPONSOREDCHILDID" Caption="Doublesponsoredchild" DataType="Guid" />
+            <OutputField FieldID="TRANSFERCHILDID" Caption="Transferchild" DataType="Guid" />
+            <OutputField FieldID="PREVIOUSCHILDPROJECTID" Caption="Previouschildproject" DataType="Guid" />
+            <OutputField FieldID="PREVIOUSBIRTHDATE" Caption="Previousbirthdate" DataType="Date" />
+            <OutputField FieldID="PREVIOUSNAME" Caption="Previousname" DataType="String" />
+        </OutputFields>
+    </Output>
+</DataListSpec>

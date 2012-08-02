@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
+    <Folder Include="Interactions\CRUD\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeTableManager.Table.xml">
@@ -152,12 +153,41 @@
     <EmbeddedResource Include="Interactions\InteractionExtension.Table.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtensionSponsorship.Table.xml">
+    <EmbeddedResource Include="Interactions\InteractionExtensionChildren.Table.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtension.LetterType.TableCode.xml" />
+    <EmbeddedResource Include="Interactions\InteractionExtension.LetterType.TableCode.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtension.Query.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtensionChildren.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtension.ConstituentInteractionList.DataList.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtension.LetterChildVersion.CodeTable.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtension.FulfillmentStatus.CodeTable.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interactions\InteractionExtension.Edit.xml" />
+    <EmbeddedResource Include="Interactions\InteractionExtension.Add.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

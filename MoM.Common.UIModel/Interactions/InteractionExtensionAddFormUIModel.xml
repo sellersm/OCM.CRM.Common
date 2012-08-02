@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>InteractionExtension.Add.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>InteractionExtensionAddFormUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>InteractionExtension.AddForm.html</HtmlFile>
+    <HtmlFolder>Interactions\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

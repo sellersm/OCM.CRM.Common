@@ -1,21 +1,37 @@
-﻿<TableSpec 
+﻿<TableSpec
 	xmlns="bb_appfx_table"
-	xmlns:common="bb_appfx_commontypes" 
+	xmlns:common="bb_appfx_commontypes"
 	ID="0afd52bf-bb49-493d-a962-02b16e770fe6"
 	Name="Interaction Extension"
 	Description="Additional fields for Interactions"
 	Author="Cary Mayeda"
-	Tablename="USR_INTERACTIONEXTENSION"	
+	Tablename="USR_INTERACTIONEXTENSION"
 	PrimaryKeyAsForeignKeyTablename="INTERACTION"
-	>
+	WarnOnMissingIndexes="false"
+>
 
 	<!-- define fields on the table -->
 	<Fields>
 		<CodeTableField Name="LETTERTYPECODEID" Description="Type of letter (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
+		<CodeTableField Name="LETTERCHILDVERSIONCODEID" Description="The version of the letter based on the number of children (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
+		<CodeTableField Name="FULFILLMENTSTATUSCODEID" Description="Fulfillment Status (Pending, Ready, Complete)" CodeTable="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+		<EnumField Name="RESENDCODE" DefaultValue="0" Description="Is this a 're-sending' of the letter">
+			<EnumValues>
+				<EnumValue ID="0" Translation="No"/>
+				<EnumValue ID="1" Translation="Yes"/>
+			</EnumValues>
+		</EnumField>
+
 		<BooleanField Name="EFTBROCHURE" Description="Whether or not to include an EFT Brochure"/>
-		<ForeignKeyField Name="DEPARTEDCHILDID" Description ="ID of the departed child" Cardinality="OneToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="SetToNull" />
-				
+		<ForeignKeyField Name="DEPARTEDCHILDID" Description ="ID of the departed child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="UNAVILABLECHILDID" Description ="ID of the unavailable child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="DOUBLESPONSOREDCHILDID" Description ="ID of the child that was already sponsored by another person" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="TRANSFERCHILDID" Description ="ID of the transfer child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="PREVIOUSCHILDPROJECTID" Description="Used for the Child Project Transfer Letter" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+
+		<DateField Name="PREVIOUSBIRTHDATE" Description="Used for the Child Bithdate Change Notification letter"/>
+		<TextField Name="PREVIOUSNAME" Description="Used for the Child Name Change Notification letter" Length="150"/>
+
 	</Fields>
 
-	
 </TableSpec>

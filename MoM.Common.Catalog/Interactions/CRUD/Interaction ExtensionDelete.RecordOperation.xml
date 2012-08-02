@@ -1,0 +1,36 @@
+<RecordOperationSpec 
+    xmlns:c="bb_appfx_commontypes"
+    ID="47228a8d-856f-47e2-80ef-0f9f7552f950"
+    Name="Interaction Extension Delete"
+    Description="Used to delete the given Interaction Extension"
+    Author="BETHESDA\cmayeda"
+    RecordType="Interaction Extension"
+    OperationType="Delete"
+    c:SecurityUIFolder="Interaction Extension"
+    xmlns="bb_appfx_recordoperation"
+    >
+    <SPRecord>
+        <SPOperationImplementation SPName="USP_INTERACTION_EXTENSION_DELETE">
+            <c:CreateProcedureSQL>
+<![CDATA[
+create procedure dbo.USP_INTERACTION_EXTENSION_DELETE
+(
+	@ID uniqueidentifier,
+	@CHANGEAGENTID uniqueidentifier
+)
+as begin
+	--check deletion rules, if any
+
+	-- use the system generated delete routine to allow proper recording of the deleting agent
+	exec USP_USR_INTERACTIONEXTENSION_DELETEBYID_WITHCHANGEAGENTID @ID, @CHANGEAGENTID
+	return 0;
+	
+end
+]]>
+</c:CreateProcedureSQL>
+        </SPOperationImplementation>
+    </SPRecord>
+    <Prompt>
+        <StandardPrompt Text="Are you sure you want to delete this Interaction Extension" />
+    </Prompt>
+</RecordOperationSpec>

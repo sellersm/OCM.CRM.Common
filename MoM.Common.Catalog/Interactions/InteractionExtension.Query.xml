@@ -1,0 +1,57 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="f793706b-284b-4edb-94a5-d9d47bd50e42"
+	Name="Interaction Extension Query"
+	Description="REPLACE_WITH_DESCRIPTION"
+	Author="Cary Mayeda"
+	IsRoot="false"
+	PrimaryKeyField="ID"
+	RecordType="Interaction"
+	common:SecurityUIFolder="REPLACE_WITH_SECURITY_UI_FOLDER"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_INTERACTIONEXTENSION">
+		<ViewSQL>
+			<![CDATA[
+	select	int_ext.ID,
+			(select DESCRIPTION from USR_INTERACTIONEXTENSIONLETTERTYPECODE where ID = int_ext.LETTERTYPECODEID) as LETTERTYPECODE,
+			int_ext.EFTBROCHURE,
+			int_ext.DEPARTEDCHILDID,
+			so.LOOKUPID as DEPARTEDCHILDLOOKUPID,
+			so_child.NAME as DEPARTEDCHILDNAME
+	  from	dbo.USR_INTERACTIONEXTENSION	int_ext
+ left join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
+				int_ext.DEPARTEDCHILDID = so_child.ID				
+ left join	dbo.SPONSORSHIPOPPORTUNITY so on
+				int_ext.DEPARTEDCHILDID = so.ID
+		
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="ID" Caption="Interaction record" Category="System Fields" DataType="Guid" IsHidden="true" />
+			<OutputField Name="DEPARTEDCHILDID" Caption="Departed Child record" Category="Departed Child Record" DataType="Guid" />
+			<OutputField Name="LETTERTYPECODE" Caption="Letter Type" Category="Fields" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="EFTBROCHURE" Caption="Include EFT Brochure" Category="Fields" DataType="Boolean" />
+			<OutputField Name="DEPARTEDCHILDLOOKUPID" Caption="Departed Child ID" Category="Fields" DataType="String" />
+			<OutputField Name="DEPARTEDCHILDNAME" Caption="Departed Child Name" Category="Fields" DataType="String" />
+
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddToParentView Field="ID" ParentView="V_QUERY_INTERACTION" ParentViewRelatedField="ID" PathAlias="Interaction Extension"/>
+		<AddToParentView Field="ID" ParentView="V_QUERY_INTERACTIONALL" ParentViewRelatedField="ID" PathAlias="Interaction Extension"/>
+	</RelationshipOperations>
+
+</QueryViewSpec>
+

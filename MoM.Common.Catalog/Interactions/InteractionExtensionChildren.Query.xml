@@ -1,0 +1,51 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="9bb27c19-dbf2-4fa1-a726-c7aabbfc8b3d"
+	Name="InteractionExtensionSponsorship Query"
+	Description="REPLACE_WITH_DESCRIPTION"
+	Author="BETHESDA\cmayeda"
+	IsRoot="false"
+	PrimaryKeyField="ID"
+	RecordType="REPLACE_WITH_RECORD_TYPE"
+	common:SecurityUIFolder="REPLACE_WITH_SECURITY_UI_FOLDER"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_INTERACTIONEXTENSIONCHILDREN">
+		<ViewSQL>
+			<![CDATA[
+	select	int_children.ID,
+			int_children.INTERACTIONID,
+			int_children.SPONSORSHIPOPPORTUNITYCHILDID,
+			so.LOOKUPID as CHILDID,
+			so_child.NAME as CHILDNAME
+	  from	dbo.USR_INTERACTIONEXTENSIONCHILDREN	int_children
+ left join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
+				int_children.SPONSORSHIPOPPORTUNITYCHILDID = so_child.ID				
+ left join	dbo.SPONSORSHIPOPPORTUNITY so on
+				int_children.SPONSORSHIPOPPORTUNITYCHILDID = so.ID
+			
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="ID" Caption="Interaction Extension Children System Record" Category="System Fields" DataType="Guid" IsHidden="true"/>
+			<OutputField Name="INTERACTIONID" Caption="Interaction System Record" Category="System Fields" DataType="Guid"  IsHidden="true"/>
+			<OutputField Name="SPONSORSHIPOPPORTUNITYCHILDID" Caption="Child System Record"  Category="Sponsorship Opportunity Child Record" DataType="Guid" />
+			<OutputField Name="CHILDID" Caption="Child ID" Category="Fields" DataType="String" />
+			<OutputField Name="CHILDNAME" Caption="Child Name" Category="Fields" DataType="String" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddToParentView Field="INTERACTIONID" ParentView="V_QUERY_INTERACTION" ParentViewRelatedField="ID" PathAlias="Children"/>
+		<AddToParentView Field="INTERACTIONID" ParentView="V_QUERY_INTERACTIONALL" ParentViewRelatedField="ID" PathAlias="Children"/>
+		<AddRelatedView Field ="SPONSORSHIPOPPORTUNITYCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Sponsorship Opportunity" />
+	</RelationshipOperations>
+
+</QueryViewSpec>
+
