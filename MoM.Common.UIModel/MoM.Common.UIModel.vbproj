@@ -53,28 +53,28 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Blackbaud.AppFx, Version=1.0.363.1205, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Blackbaud.AppFx, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Blackbaud.AppFx.Constituent.UIModel, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.Constituent.UIModel.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Blackbaud.AppFx.Server, Version=1.0.443.759, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Blackbaud.AppFx.Server, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.Server.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Blackbaud.AppFx.UIModeling.Core, Version=1.0.363.1205, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Blackbaud.AppFx.UIModeling.Core, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.UIModeling.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Blackbaud.AppFx.XmlTypes, Version=1.0.443.759, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Blackbaud.AppFx.XmlTypes, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.XmlTypes.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Blackbaud.AppFx.XmlTypes.XmlSerializers, Version=1.0.443.759, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Blackbaud.AppFx.XmlTypes.XmlSerializers, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.XmlTypes.XmlSerializers.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MoM.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
