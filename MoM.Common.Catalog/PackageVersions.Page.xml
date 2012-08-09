@@ -22,6 +22,20 @@
 		<!-- Catalog Assemblies Packages-->
 		<Tab ID="28ce9f39-ab32-4aa0-93f7-c5a005cc34a4" Caption="Catalog Packages">
 			<Sections>
+				<Section ID="E67196FD-8463-49AC-BA8A-1E68341C357B" Caption="Common">
+					<DataList ID="5378e0fb-50de-4ed1-8931-2f9df35b2fbf"> <!-- Common -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="059D321B-A37C-42A4-93C9-345E4DD51676" Caption="Sponsorship">
+					<DataList ID="cc5cc4c8-6190-4127-a952-557c0eddc2ac">	<!-- Sponsorship -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
 				<Section ID="397F5EF7-4FEF-4D63-9DCE-64F55FAD6AD4" Caption="Child">
 					<DataList ID="b72a2008-44a0-4808-8447-5071e5d75f9d">	<!-- Child Customizations -->
 						<RenderStyle>
@@ -72,13 +86,6 @@
 						</RenderStyle>
 					</DataList>
 				</Section>
-				<Section ID="059D321B-A37C-42A4-93C9-345E4DD51676" Caption="Sponsorship">
-					<DataList ID="cc5cc4c8-6190-4127-a952-557c0eddc2ac">	<!-- Sponsorship -->
-						<RenderStyle>
-							<StandardView AutoSize="true" />
-						</RenderStyle>
-					</DataList>
-				</Section>
 				<Section ID="0C7AE4EC-5408-4DA1-B351-E02F55BD99B5" Caption="Child Project">
 					<DataList ID="4c5b2122-1013-4b9b-b898-7992f10edeee">	<!-- Child Project -->
 						<RenderStyle>
@@ -107,6 +114,20 @@
 		<!-- UI Model Assemblies and HTML tab -->
 		<Tab ID="6791DE1A-96D9-4D23-801F-E5F80BD59081" Caption="UIModel Assemblies">
 			<Sections>
+				<Section ID="14C8C544-7F03-41FB-8625-85FB6B3F0C09" Caption="Common">
+					<DataForm ID="555C9B42-9D55-498A-8F31-FDECCB9D0CFE" ShowBorder="false" />
+					<SectionContext>
+						<common:Expression>=Globals.CurrentAppUserID</common:Expression>
+					</SectionContext>
+				</Section>
+
+				
+				<Section ID="B162E10C-36A6-47D9-B4FF-5EBB8C0E4FF6" Caption="Sponsorship">
+					<DataForm ID="6277e024-cccd-4b4e-ba53-4fed4b2133e9" ShowBorder="false" />
+					<SectionContext>
+						<common:Expression>=Globals.CurrentAppUserID</common:Expression>
+					</SectionContext>
+				</Section>
 				<Section ID="5403A529-D806-4B6E-9AC2-D0DCE603690A" Caption="Child">
 					<DataForm ID="238619d4-7f2b-4441-a7d1-36908e9e5300" ShowBorder="false" />
 					<SectionContext>

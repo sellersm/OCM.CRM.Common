@@ -111,7 +111,7 @@
 		
 		<!-- Package Versions -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Common.PackageVersion.DataList.xml" />
-		<common:Dependency CatalogAssembly="MoM.Sponsorship.ChildProject.Catalog.dll" CatalogItem="MoM.Sponsorship.ChildProject.Catalog.ChildProject.UIModelVersion.View.xml"/>
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Common.UIModelVersion.View.xml"/>
 
 	</common:DependencyList>
 

@@ -34,7 +34,7 @@ end
 	<!-- define the output fields in the list -->
 	<Output>
 		<OutputFields>
-			<OutputField FieldID="version" Caption="Child Project Package" DataType="String" />
+			<OutputField FieldID="version" Caption="Common Package" DataType="String" />
 		</OutputFields>
 	</Output>
 
