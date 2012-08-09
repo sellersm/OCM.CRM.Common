@@ -149,92 +149,92 @@
     <EmbeddedResource Include="PackageVersionsPage.Task.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\InteractionExtension.Table.xml" />
+    <EmbeddedResource Include="Interaction\Tables\InteractionExtension.Table.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\InteractionExtensionChildren.Table.xml">
+    <EmbeddedResource Include="Interaction\Tables\InteractionExtensionChildren.Table.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\Code Tables\InteractionExtension.LetterType.CodeTable.xml">
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.LetterType.CodeTable.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtension.Query.xml">
+    <EmbeddedResource Include="Interaction\InteractionExtension.Query.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtensionChildren.Query.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtensionChildren.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
+    <EmbeddedResource Include="Interaction\USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtension.ConstituentInteractionList.DataList.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.ConstituentInteractionList.DataList.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
+    <EmbeddedResource Include="Interaction\USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\Code Tables\InteractionExtension.LetterChildVersion.CodeTable.xml" />
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.LetterChildVersion.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\Code Tables\InteractionExtension.FulfillmentStatus.CodeTable.xml" />
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.FulfillmentStatus.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtension.Edit.xml">
+    <EmbeddedResource Include="Interaction\InteractionExtension.Edit.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Interactions\InteractionExtension.Add.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.Add.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelField.CodeTable.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelField.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Table.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Table.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\USR_USP_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_GETFIELDSTATUS.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\USR_USP_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_GETFIELDSTATUS.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.View.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.View.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.FieldList.DataList.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.FieldList.DataList.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.Add.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.Add.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.Edit.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.Edit.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Query.xml" />
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Delete.RecordOperation.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Query.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Delete.RecordOperation.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.Page.xml" />
+    <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelFieldManager.Config.Page.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\Code Tables\InteractionExtension.DepartureReason.CodeTable.xml" />
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.DepartureReason.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtension.Alter.Page.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.Alter.Page.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\Code Tables\InteractionExtension.HoldReason.CodeTable.xml" />
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.HoldReason.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\Code Tables\InteractionExtension.FieldMemoSent.CodeTable.xml" />
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.FieldMemoSent.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\Tables\Code Tables\InteractionExtension.UnusableItem.CodeTable.xml" />
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.UnusableItem.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interactions\InteractionExtensionSponsorshipInteractionList.DataList.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtensionSponsorshipInteractionList.DataList.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Common.PackageVersion.DataList.xml" />

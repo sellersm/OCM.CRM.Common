@@ -4,7 +4,7 @@
   <ClassName>InteractionExtensionEditFormUIModel</ClassName>
   <HtmlInfo GenerateHtml="true">
     <HtmlFile>InteractionExtension.EditForm.html</HtmlFile>
-    <HtmlFolder>Interactions\</HtmlFolder>
+    <HtmlFolder>Interaction\</HtmlFolder>
   </HtmlInfo>
   <GenerateFromDatabase>true</GenerateFromDatabase>
 </UIModelWizardMetadata>

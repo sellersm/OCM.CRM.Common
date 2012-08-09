@@ -109,26 +109,26 @@
       <DependentUpon>CommonUIModelVersionUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="CommonUIModelVersionUIModel.vb" />
-    <Compile Include="Interactions\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
+    <Compile Include="Interaction\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
     </Compile>
-    <Compile Include="Interactions\InteractionExtensionAddFormUIModel.CodeGen.vb">
+    <Compile Include="Interaction\InteractionExtensionAddFormUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
     </Compile>
-    <Compile Include="Interactions\InteractionExtensionAddFormUIModel.vb" />
-    <Compile Include="Interactions\InteractionExtensionEditFormCHILDRENUIModel.CodeGen.vb">
+    <Compile Include="Interaction\InteractionExtensionAddFormUIModel.vb" />
+    <Compile Include="Interaction\InteractionExtensionEditFormCHILDRENUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionEditFormUIModel.vb</DependentUpon>
     </Compile>
-    <Compile Include="Interactions\InteractionExtensionEditFormUIModel.CodeGen.vb">
+    <Compile Include="Interaction\InteractionExtensionEditFormUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionEditFormUIModel.vb</DependentUpon>
     </Compile>
-    <Compile Include="Interactions\InteractionExtensionEditFormUIModel.vb" />
-    <Compile Include="Interactions\InteractionExtensionFields.vb" />
-    <Compile Include="Interactions\InteractionExtensionHelper.vb" />
+    <Compile Include="Interaction\InteractionExtensionEditFormUIModel.vb" />
+    <Compile Include="Interaction\InteractionExtensionFields.vb" />
+    <Compile Include="Interaction\InteractionExtensionHelper.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="htmlforms\mom.common\" />
+    <Folder Include="htmlforms\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="UIModel.ruleset" />
@@ -142,18 +142,19 @@
     <Content Include="CommonUIModelVersionUIModel.xml">
       <DependentUpon>CommonUIModelVersionUIModel.vb</DependentUpon>
     </Content>
-    <None Include="..\MoM.Common.Catalog\Interactions\InteractionExtension.Edit.xml">
+    <None Include="..\MoM.Common.Catalog\Interaction\InteractionExtension.Edit.xml">
       <Link>LinkedSpecs\InteractionExtension.Edit.xml</Link>
     </None>
-    <Content Include="Interactions\InteractionExtension.EditForm.html" />
-    <Content Include="Interactions\InteractionExtensionEditFormUIModel.xml">
+    <Content Include="Interaction\InteractionExtension.EditForm.html" />
+    <Content Include="Interaction\InteractionExtensionEditFormUIModel.xml">
       <DependentUpon>InteractionExtensionEditFormUIModel.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
-    <None Include="..\MoM.Common.Catalog\Interactions\InteractionExtension.Add.xml">
+    <None Include="..\MoM.Common.Catalog\Interaction\InteractionExtension.Add.xml">
       <Link>LinkedSpecs\InteractionExtension.Add.xml</Link>
     </None>
-    <Content Include="Interactions\InteractionExtension.AddForm.html" />
-    <Content Include="Interactions\InteractionExtensionAddFormUIModel.xml">
+    <Content Include="Interaction\InteractionExtension.AddForm.html" />
+    <Content Include="Interaction\InteractionExtensionAddFormUIModel.xml">
       <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
     </Content>
   </ItemGroup>
