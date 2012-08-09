@@ -12,9 +12,9 @@ Option Infer On
 ' </auto-generated>
 '------------------------------------------------------------------------------
 ''' <summary>
-''' Represents the UI model for the 'InteractionExtensionAddFormCHILDREN' data form
+''' Represents the UI model for the 'InteractionExtensionEditFormCHILDREN' data form
 ''' </summary>
-Partial Public Class [InteractionExtensionAddFormCHILDRENUIModel]
+Partial Public Class [InteractionExtensionEditFormCHILDRENUIModel]
 	Inherits Global.Blackbaud.AppFx.UIModeling.Core.UIModel
 
 #Region "Extensibility methods"
@@ -41,7 +41,6 @@ Partial Public Class [InteractionExtensionAddFormCHILDRENUIModel]
         '
         _id.Name = "ID"
         _id.Caption = "ID"
-        _id.Visible = False
         Me.Fields.Add(_id)
         '
         '_childlookupid

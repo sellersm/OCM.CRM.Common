@@ -1,0 +1,20 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="15748a32-90a6-48c9-9e1a-3217a24c55ef" 
+	Name="Interaction Extension Field Memo Unusable Item Code Table"
+	Description="Field Memo Unusable Item"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"
+	Category="Interaction Extension"
+	SortMethod="UserDefined"	
+/>
+
+<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	07-Aug-2012		CMayeda			Initial Version
+
+-->

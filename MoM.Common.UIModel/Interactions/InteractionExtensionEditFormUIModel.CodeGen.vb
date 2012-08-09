@@ -12,10 +12,10 @@ Option Infer On
 ' </auto-generated>
 '------------------------------------------------------------------------------
 ''' <summary>
-''' Represents the UI model for the 'Interaction Extension Add Form' data form
+''' Represents the UI model for the 'Interaction Extension Edit Form' data form
 ''' </summary>
-<Global.Blackbaud.AppFx.UIModeling.Core.DataFormUIModelMetadata(Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add, "25aa26c5-d2fe-401c-b33d-a6382d932e44", "19cc7e46-2646-4a12-b196-bd840b4f9d9a", "Interaction Extension", "INTERACTION")> _
-Partial Public Class [InteractionExtensionAddFormUIModel]
+<Global.Blackbaud.AppFx.UIModeling.Core.DataFormUIModelMetadata(Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Edit, "55904df7-4e42-4792-ae34-5dcf5aa3db47", "4843ed1c-5488-4fca-ad99-5d9e72ad2908", "Constituent Interaction")> _
+Partial Public Class [InteractionExtensionEditFormUIModel]
 	Inherits Global.Blackbaud.AppFx.UIModeling.Core.DataFormUIModel
 
 #Region "Enums"
@@ -52,11 +52,11 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     Private WithEvents _fulfillmentstatuscodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _eftbrochurecode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of EFTBROCHURECODES))
     Private WithEvents _resendcode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of RESENDCODES))
-    Private WithEvents _unavailablechildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
-    Private WithEvents _transferchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
-    Private WithEvents _departedchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Private WithEvents _unavailablechildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Private WithEvents _transferchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Private WithEvents _departedchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
     Private WithEvents _departurereasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-    Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
     Private WithEvents _previouschildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
     Private WithEvents _previousbirthdate As Global.Blackbaud.AppFx.UIModeling.Core.DateField
     Private WithEvents _previousname As Global.Blackbaud.AppFx.UIModeling.Core.StringField
@@ -64,7 +64,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     Private WithEvents _fieldmemosentcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _holdreasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _unusablecodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-    Private WithEvents _children As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionAddFormCHILDRENUIModel)
+    Private WithEvents _children As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionEditFormCHILDRENUIModel)
 
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
     Public Sub New()
@@ -75,11 +75,11 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _fulfillmentstatuscodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _eftbrochurecode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of EFTBROCHURECODES))
         _resendcode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of RESENDCODES))
-        _unavailablechildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
-        _transferchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
-        _departedchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        _unavailablechildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+        _transferchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+        _departedchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         _departurereasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-        _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         _previouschildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         _previousbirthdate = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
         _previousname = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
@@ -87,16 +87,15 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _fieldmemosentcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _holdreasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _unusablecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-        _children = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionAddFormCHILDRENUIModel)
+        _children = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionEditFormCHILDRENUIModel)
 
-        MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add
-        MyBase.DataFormTemplateId = New Guid("25aa26c5-d2fe-401c-b33d-a6382d932e44")
-        MyBase.DataFormInstanceId = New Guid("19cc7e46-2646-4a12-b196-bd840b4f9d9a")
-        MyBase.RecordType = "Interaction Extension"
-        MyBase.ContextRecordType = "INTERACTION"
+        MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Edit
+        MyBase.DataFormTemplateId = New Guid("55904df7-4e42-4792-ae34-5dcf5aa3db47")
+        MyBase.DataFormInstanceId = New Guid("4843ed1c-5488-4fca-ad99-5d9e72ad2908")
+        MyBase.RecordType = "Constituent Interaction"
         MyBase.FixedDialog = True
         MyBase.ExtensionTabCaption = "Additional Info"
-        MyBase.UserInterfaceUrl = "browser/htmlforms/Interactions/InteractionExtension.AddForm.html"
+        MyBase.UserInterfaceUrl = "browser/htmlforms/Interactions/InteractionExtension.EditForm.html"
 
         '
         '_lettertypecodeid
@@ -126,7 +125,6 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _eftbrochurecode.Caption = "EFT brochure"
         _eftbrochurecode.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of EFTBROCHURECODES)) With {.Value = EFTBROCHURECODES.[No], .Translation = "No"})
         _eftbrochurecode.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of EFTBROCHURECODES)) With {.Value = EFTBROCHURECODES.[Yes], .Translation = "Yes"})
-        _eftbrochurecode.Value = EFTBROCHURECODES.[No]
         Me.Fields.Add(_eftbrochurecode)
         '
         '_resendcode
@@ -135,28 +133,24 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _resendcode.Caption = "Resend?"
         _resendcode.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of RESENDCODES)) With {.Value = RESENDCODES.[No], .Translation = "No"})
         _resendcode.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of RESENDCODES)) With {.Value = RESENDCODES.[Yes], .Translation = "Yes"})
-        _resendcode.Value = RESENDCODES.[No]
         Me.Fields.Add(_resendcode)
         '
         '_unavailablechildid
         '
         _unavailablechildid.Name = "UNAVAILABLECHILDID"
         _unavailablechildid.Caption = "Unavailable child"
-        _unavailablechildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_unavailablechildid)
         '
         '_transferchildid
         '
         _transferchildid.Name = "TRANSFERCHILDID"
         _transferchildid.Caption = "Transfer child"
-        _transferchildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_transferchildid)
         '
         '_departedchildid
         '
         _departedchildid.Name = "DEPARTEDCHILDID"
         _departedchildid.Caption = "Departed child"
-        _departedchildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_departedchildid)
         '
         '_departurereasoncodeid
@@ -170,7 +164,6 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         '
         _doublesponsoredchildid.Name = "DOUBLESPONSOREDCHILDID"
         _doublesponsoredchildid.Caption = "Double sponsored child"
-        _doublesponsoredchildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_doublesponsoredchildid)
         '
         '_previouschildprojectid
@@ -289,7 +282,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Unavailable child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [UNAVAILABLECHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Public ReadOnly Property [UNAVAILABLECHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         Get
             Return _unavailablechildid
         End Get
@@ -300,7 +293,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Transfer child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [TRANSFERCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Public ReadOnly Property [TRANSFERCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         Get
             Return _transferchildid
         End Get
@@ -311,7 +304,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Departed child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [DEPARTEDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Public ReadOnly Property [DEPARTEDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         Get
             Return _departedchildid
         End Get
@@ -333,7 +326,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Double sponsored child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [DOUBLESPONSOREDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Public ReadOnly Property [DOUBLESPONSOREDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         Get
             Return _doublesponsoredchildid
         End Get
@@ -421,7 +414,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Children")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [CHILDREN]() As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionAddFormCHILDRENUIModel)
+    Public ReadOnly Property [CHILDREN]() As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionEditFormCHILDRENUIModel)
         Get
             Return _children
         End Get

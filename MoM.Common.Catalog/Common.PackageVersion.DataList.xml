@@ -1,0 +1,41 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="5378e0fb-50de-4ed1-8931-2f9df35b2fbf" 
+	Name="Common Package Version Data List"
+	Description="Used to display the version of the package deployment."
+	Author="Cary Mayeda"
+	common:SecurityUIFolder="Misson of Mercy Common" >
+
+	<!-- 
+	Remarks:    This is used to view the package version that has been loaded.  #VersionNumber# is modifed automatically on the build machine to match the build version number.
+
+	History:
+	Date            Modified By     Comments
+	07-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_COMMONPACKAGEVERSION">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+			
+create procedure dbo.USR_USP_DATALIST_COMMONPACKAGEVERSION
+as
+begin
+	select 'Version #VersionNumber#' as version
+end
+
+]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<OutputField FieldID="version" Caption="Child Project Package" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</DataListSpec>

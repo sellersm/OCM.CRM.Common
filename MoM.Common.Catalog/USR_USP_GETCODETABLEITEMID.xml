@@ -34,47 +34,56 @@ create procedure USR_USP_GETCODETABLEITEMID (
 )
 as
 begin
-	-- Validate Parms
-	if @VBCONSTANT is null 
-		raiserror 1000000 'VBCONSTANT cannot be null';
+	begin try
+		-- Validate Parms
+		if @VBCONSTANT is null 
+			raiserror 1000000 'VBCONSTANT cannot be null';
 
-	if @DESCRIPTIONMODIFIEDVALID is null 
-		raiserror 1000000 'SUSPECTOK cannot be null';		
+		if @DESCRIPTIONMODIFIEDVALID is null 
+			raiserror 1000000 'SUSPECTOK cannot be null';								
 		
-		
-	declare @statusCode tinyint = null;		-- The STATUS enum value stored for the row specified in VBCONSTANT. Used to determine if the row is valid.
-	declare @status nvarchar(100) = null;	-- The STATUS translation stored for the row specified in VBCONSTANT.  Used in exceptions thrown.
-	declare @errormsg nvarchar (255) = null;  
+		declare @statusCode tinyint = null;		-- The STATUS enum value stored for the row specified in VBCONSTANT. Used to determine if the row is valid.
+		declare @status nvarchar(100) = null;	-- The STATUS translation stored for the row specified in VBCONSTANT.  Used in exceptions thrown.
+		declare @errormsg nvarchar (255) = null;  
 	
-	-- Set what a valid status is based on the parameter @DESCRIPTIONMODIFIEDVALID
-    declare @ValidStatus tinyint = null;
-    if @DESCRIPTIONMODIFIEDVALID = 0
-		set @ValidStatus = 0
-	else
-		set @ValidStatus = 1;
+		-- Set what a valid status is based on the parameter @DESCRIPTIONMODIFIEDVALID
+		declare @ValidStatus tinyint = null;
+		if @DESCRIPTIONMODIFIEDVALID = 0
+			set @ValidStatus = 0
+		else
+			set @ValidStatus = 1;
 	    
 		
-	-- Get the code table item id 
-	select @CODETABLEITEMID = CODETABLEITEMID,
-		   @statusCode = STATUSCODE,
-		   @status = STATUS
-	  from dbo.USR_CODETABLEMANAGER
-	 where VBCONSTANT = @VBCONSTANT
+		-- Get the code table item id 
+		select @CODETABLEITEMID = CODETABLEITEMID,
+			   @statusCode = STATUSCODE,
+			   @status = STATUS
+		  from dbo.USR_CODETABLEMANAGER
+		 where VBCONSTANT = @VBCONSTANT
 	
 	
-	 -- If @VBCONSTANT not found throw exception
-	 if @CODETABLEITEMID is null 		
-	    begin
+		-- If @VBCONSTANT not found throw exception
+		if @CODETABLEITEMID is null 		
+		begin
 			set @errormsg = 'VBCONSTANT - "' + @VBCONSTANT + '" was not found in USR_CODETABLEMANAGER'
 			raiserror 1000000 @errormsg;
 		end
 	
-	 -- If @VBCONSTANT is found but the status is not a valid status based on @DESCRIPTIONMODIFIEDVALID
-	 if @statusCode > @ValidStatus		
-	    begin
+		-- If @VBCONSTANT is found but the status is not a valid status based on @DESCRIPTIONMODIFIEDVALID
+		if @statusCode > @ValidStatus		
+		begin
 			set @errormsg = 'VBCONSTANT - "' + @VBCONSTANT + '" is not valid. Status Code = "' + @status + '"'
 			raiserror 1000000 @errormsg
 		end
+		
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+	
+	return 0
+	
 end
 
 		]]>

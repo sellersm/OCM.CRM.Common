@@ -1,0 +1,224 @@
+﻿<PageDefinitionSpec
+    xmlns="bb_appfx_pagedefinition"
+    xmlns:common="bb_appfx_commontypes"
+    ID="08c4e33e-7e84-4b69-ac0d-662e15ce6c99"
+    Name="Interaction Extension Alter Page"
+    Description="This is used to add the Sponsorship Interactions tab to the Constituent Interactions page"
+    Author="Cary Mayeda"
+    ContextRecordType="Constituent" >
+
+	<!-- 
+	Remarks:		This adds the "Sponsorship Interaction View" tab to the Constituent Interactions Page 
+					and the "Interactions" tab on the Sponsorship Page.
+
+	History:
+	Date            Modified By     Comments
+	05-Aug-2012		CMayeda			Initial Version
+	-->
+	
+	<!-- define how the page header should appear -->
+	<PageHeader Caption="ALTER PAGE - ONLY USED TO ALTER THE CONSTITUENT INTERACTION PAGE" ImageKey="" />
+
+	<AlterExistingPages>
+		<AlterPages>
+			<!-- Constituent Interactions Page -->
+			<AlterPage PageID="ede4cf10-a84d-4434-87ef-ae143c78eaaf">								
+				<AlterTabs>					
+					<AddTab Sequence ="2">
+						<Tab Caption="Sponsorship Interaction View" ID="5845ac81-ad78-403b-8a0a-02ca56ecaedb">
+							<Sections>
+								<Section ID="72278A59-4E13-4624-BEB2-1E5B7FDE9CD6" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
+									<DataList ID="a39f10f7-e1fe-4642-bdbd-75ed78713664">
+										<RenderStyle>
+											<StandardView>
+												<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
+											</StandardView>
+										</RenderStyle>
+									</DataList>
+									<Actions>
+										<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+											<ActionGroup>
+												<Actions>
+													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+														<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+													</Action>
+													<Action ID="C07FB730-E2C2-4D10-A332-EA37DD80D42D" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="OWNER" CaptionResourceKey="$$owner">
+														<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>OWNERID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+										<Action ID="CB044C21-7937-4233-8AB4-495E3E7D4121" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+											<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
+												<ActionContext>
+													<PageContextID />
+												</ActionContext>
+												<PostActionEvent>
+													<RefreshPage/>
+												</PostActionEvent>
+											</ShowAddDataForm>
+											<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+										</Action>
+										<Action ID="59FD424A-AA3A-4223-B051-B48F9C8C1742" Caption="Edit" ImageKey="RES:Edit" CaptionResourceKey="$$edit">
+											<ActionGroup>
+												<Actions>
+													<Action ID="47E80D73-B90E-4A89-AC4D-2F3F8A97D8CF" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
+														<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+															<PostActionEvent>
+																<RefreshPage/>
+															</PostActionEvent>
+														</ShowDataForm>
+														<HelpKey>CRMEditConstInteractions.html</HelpKey>
+													</Action>
+													<Action ID="FF7335AA-84F5-4166-984A-71CF253ABFDB" Caption="Responses" ImageKey="RES:Edit" CaptionResourceKey="$$responses">
+														<ShowDataForm DataFormID="ddb74740-0698-46cd-bb8e-77605fcdf7de" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+															<PostActionEvent>
+																<RefreshPage/>
+															</PostActionEvent>
+														</ShowDataForm>
+														<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+										<Action ID="FF7967AE-09A7-4F53-85DB-DE61423EF03C" Caption="Delete" ImageKey="RES:Delete" CaptionResourceKey="$$delete">
+											<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+												<ActionContext>
+													<SectionField>ID</SectionField>
+												</ActionContext>
+												<PostActionEvent>
+													<RefreshPage/>
+												</PostActionEvent>
+											</ExecuteRecordOperation>
+											<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+										</Action>
+									</Actions>
+									<HelpKey>CRMInteractions.html</HelpKey>
+								</Section>
+							</Sections>
+						</Tab>
+					</AddTab>
+				</AlterTabs>
+			</AlterPage>
+
+			<!-- Sponsorships Page -->
+			<AlterPage PageID="428f040a-eb45-4171-8c52-a030b9992d65">
+				<AlterTabs>
+					<AddTab Sequence ="4">
+						<Tab Caption="Interactions" ID="258b1df4-8642-4346-9422-de4863beb09b">
+							<Sections>
+								<Section ID="bbc5c9e6-f293-401b-953f-0d8e92287b0a" Caption="Interactions">
+									<DataList ID="c85d7d77-6f03-41e3-8ecf-399a87d1179e">
+										<RenderStyle>
+											<StandardView>
+												<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
+											</StandardView>
+										</RenderStyle>
+									</DataList>
+									<SectionContext>
+										<PageContextID xmlns="bb_appfx_commontypes" />
+									</SectionContext>
+									<Actions>
+										<Action ID="CE05B32D-D8BD-44C6-B882-0387C9A0DDBE" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+											<ActionGroup>
+												<Actions>
+													<Action ID="06FFD9F6-8E73-4BCE-89F0-6968EE4138B6" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+														<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+													</Action>
+													<Action ID="AB91A994-CCE1-48F7-9C24-0416F978A8D7" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="OWNER" CaptionResourceKey="$$owner">
+														<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>OWNERID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+										<Action ID="54D4A309-BCDF-47C8-84FE-5FB0D9EBAC99" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+											<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
+												<ActionContext>
+													<PageContextID />
+												</ActionContext>
+												<PostActionEvent>
+													<RefreshPage/>
+												</PostActionEvent>
+											</ShowAddDataForm>
+											<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+										</Action>
+										<Action ID="83224E5D-A0FB-41AD-B2AA-275A6022F328" Caption="Edit" ImageKey="RES:Edit" CaptionResourceKey="$$edit">
+											<ActionGroup>
+												<Actions>
+													<Action ID="5D695065-BD64-4B73-A94A-7FF1D837BA43" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
+														<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+															<PostActionEvent>
+																<RefreshPage/>
+															</PostActionEvent>
+														</ShowDataForm>
+														<HelpKey>CRMEditConstInteractions.html</HelpKey>
+													</Action>
+													<Action ID="E2FF4D5E-AC08-4A93-B145-33F6F78CB15E" Caption="Responses" ImageKey="RES:Edit" CaptionResourceKey="$$responses">
+														<ShowDataForm DataFormID="ddb74740-0698-46cd-bb8e-77605fcdf7de" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+															<PostActionEvent>
+																<RefreshPage/>
+															</PostActionEvent>
+														</ShowDataForm>
+														<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+										<Action ID="B4FC9EAA-D70F-4DD9-9CA3-1C09BAFC53A0" Caption="Delete" ImageKey="RES:Delete" CaptionResourceKey="$$delete">
+											<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+												<ActionContext>
+													<SectionField>ID</SectionField>
+												</ActionContext>
+												<PostActionEvent>
+													<RefreshPage/>
+												</PostActionEvent>
+											</ExecuteRecordOperation>
+											<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+										</Action>
+									</Actions>
+									<HelpKey>CRMInteractions.html</HelpKey>
+								</Section>
+							</Sections>
+						</Tab>
+					</AddTab>
+				</AlterTabs>
+			</AlterPage>
+
+		</AlterPages>
+	</AlterExistingPages>
+	<!-- define the tabs for the page - note that if only one tab is present, then that tab's sections are promoted to the page level (ie., the tab
+	itself isn't shown -->
+
+</PageDefinitionSpec>

@@ -41,7 +41,7 @@ Public Class CRMHelper
     '''                                 Changed crmDBConnection to expect an open sqlconnection, management of the connection is the reponsiblity of the caller
     '''</history>
     Public Shared Function GetCodeTableItemID(ByRef crmDBConnection As SqlConnection, ByVal vbConstant As String, ByVal descriptionModifiedValid As Boolean, ByVal errorMessage As String) As String
-        Const storedProcedureName = "USR_USP_GETCODETABLEITEMID"
+        Const storedProcedureName = "dbo.USR_USP_GETCODETABLEITEMID"
 
         ' Validate crmDBConnection - sqlconnection passed in
         If crmDBConnection Is Nothing Then

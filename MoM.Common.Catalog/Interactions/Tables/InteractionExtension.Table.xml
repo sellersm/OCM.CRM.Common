@@ -1,0 +1,95 @@
+﻿<TableSpec
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes"
+	ID="0afd52bf-bb49-493d-a962-02b16e770fe6"
+	Name="Interaction Extension"
+	Description="Extension of the Interaction table"
+	Author="Cary Mayeda"
+	Tablename="USR_INTERACTIONEXTENSION"
+	PrimaryKeyAsForeignKeyTablename="INTERACTION"
+	WarnOnMissingIndexes="false" >
+
+	<!-- 
+	Remarks:    This is used to extend the interaction table for sponsorship and child related items.
+				Actions tha require specific children are stored here (departed child, transfer child, ...)
+				All other children are stored in USR_INTERACTIONEXTENSIONCHILDREN.
+				
+				** The triggers are used to update the Expected Date based on date the field memo was sent. It currently adds 30 days all the time.  This needs to be reviewed and most likely changed.  **
+
+	History:
+	Date            Modified By     Comments
+	27-Jul-2012		CMayeda			Initial Version
+
+-->
+
+
+	<!-- define fields on the table -->
+	<Fields>
+		<!-- Sponsor Interaction Extension Fields -->
+		<CodeTableField Name="LETTERTYPECODEID" Description="Type of letter (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
+		<CodeTableField Name="CHILDCOUNTLETTERVERSIONCODEID" Description="The version of the letter based on the number of children (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
+		<CodeTableField Name="FULFILLMENTSTATUSCODEID" Description="Fulfillment Status (Pending, Ready, Complete)" CodeTable="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+		<EnumField Name="EFTBROCHURECODE" DefaultValue="0" Description="Whether or not to include an EFT Brochure" >
+			<EnumValues>
+				<EnumValue ID="0" Translation="No"/>
+				<EnumValue ID="1" Translation="Yes"/>
+			</EnumValues>
+		</EnumField>
+		<EnumField Name="RESENDCODE" DefaultValue="0" Description="Is this a 're-sending' of the letter">
+			<EnumValues>
+				<EnumValue ID="0" Translation="No"/>
+				<EnumValue ID="1" Translation="Yes"/>
+			</EnumValues>
+		</EnumField>
+		<ForeignKeyField Name="UNAVAILABLECHILDID" Description ="ID of the unavailable child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="TRANSFERCHILDID" Description ="ID of the transfer child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="DEPARTEDCHILDID" Description ="ID of the departed child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<CodeTableField Name="DEPARTUREREASONCODEID" Description="Reason for the departure" CodeTable="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE"/>
+		<ForeignKeyField Name="DOUBLESPONSOREDCHILDID" Description ="ID of the child that was already sponsored by another person" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="PREVIOUSCHILDPROJECTID" Description="Used for the Child Project Transfer Letter" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+		<DateField Name="PREVIOUSBIRTHDATE" Description="Used for the Child Bithdate Change Notification letter"/>
+		<TextField Name="PREVIOUSNAME" Description="Used for the Child Name Change Notification letter" Length="150"/>
+
+		<!-- Child Field Memo Interaction Extension Fields -->
+		<DateField Name="FIELDMEMODATESENT" Description="The date the field memo was sent" />
+		<CodeTableField Name="FIELDMEMOSENTCODEID" Description="Field Memo Sent" CodeTable="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE"/>
+		<CodeTableField Name="HOLDREASONCODEID" Description="Field Memo - Reason for hold" CodeTable="USR_INTERACTIONEXTENSIONHOLDREASONCODE"/>
+		<CodeTableField Name="UNUSABLECODEID" Description="Field Memo - Unusable item" CodeTable="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"/>
+
+	</Fields>
+	<Triggers>
+		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+			<CreateTriggerSQL>
+				<![CDATA[
+
+create trigger TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
+as begin
+	update	INTERACTION
+	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT)
+	  from	INTERACTION, inserted
+	 where	exists (select ID from inserted where inserted.FIELDMEMODATESENT is not null)
+end
+
+				]]>				
+			</CreateTriggerSQL>			
+		</Trigger>
+		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+			<CreateTriggerSQL>
+				<![CDATA[
+
+create trigger TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
+as begin
+	if update(FIELDMEMODATESENT)
+		update	INTERACTION
+		   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT)
+		  from	INTERACTION, inserted
+		 where	exists (select ID from inserted where inserted.FIELDMEMODATESENT is not null)
+end
+				
+				]]>
+			</CreateTriggerSQL>
+		</Trigger>
+	</Triggers>
+
+
+</TableSpec>

@@ -1,8 +1,8 @@
 ﻿<DataListSpec 
 	xmlns="bb_appfx_datalist"
 	xmlns:common="bb_appfx_commontypes" 
-	ID="a39f10f7-e1fe-4642-bdbd-75ed78713664" 
-	Name="Interaction Extension Data List"
+	ID="c85d7d77-6f03-41e3-8ecf-399a87d1179e" 
+	Name="Interaction Extension Sponsorship Data List"
 	Description="Used to display sponsoship related information for an interaction." 
 	Author="Cary Mayeda"
 	common:SecurityUIFolder="Interaction Extension" >
@@ -10,18 +10,26 @@
 	<!-- 
 	Remarks:    Currently displays all interactions (not just sponsorship related).
 				It displays the Interaction Extension fields
+				This is simliar to the "Interaction Extension Data List", but this filters for a specific child as well as constituent
+				It utilitizes the Sponsorhsip ID to get the constituent and child.
 
 	History:
 	Date            Modified By     Comments
 	01-Aug-2012		CMayeda			Initial Version
 	-->
-	
+
 	<!-- define the SP that returns the data for the datalist -->
-	<SPDataList SPName="USP_DATALIST_INTERACTIONEXTENSION_CONSTITUENTLIST">
+	<SPDataList SPName="USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST">
 		<common:CreateProcedureSQL>
 			<![CDATA[
-create procedure dbo.USP_DATALIST_INTERACTIONEXTENSION_CONSTITUENTLIST(@CONSTITUENTID uniqueidentifier)
+create procedure dbo.USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST (@SPONSORSHIPID uniqueidentifier) --(@CONSTITUENTIDCHILDID nvarchar(73))
 as
+	declare @constituentID uniqueidentifier = null
+	declare @sponosrshipOpportunityChildID uniqueidentifier = null
+		
+	select @constituentID = CONSTITUENTID from dbo.SPONSORSHIP where ID = @SPONSORSHIPID
+	select @sponosrshipOpportunityChildID = SPONSORSHIPOPPORTUNITYID from dbo.SPONSORSHIP where ID = @SPONSORSHIPID
+	
 	set nocount on;
 
 with interactionChildren (ROWNUMBER, INTERACTIONID, SPONSORSHIPOPPORTUNITYCHILDID, LOOKUPID, NAME)
@@ -110,9 +118,12 @@ interactionChildCounts as
  left join	interactionChildCounts int_childcount on
 				int_childcount.INTERACTIONID = INTERACTION.ID	
 				
-	 where	INTERACTION.CONSTITUENTID = @CONSTITUENTID
+	 where	INTERACTION.CONSTITUENTID = @constituentID
 	   and	INTERACTION.ISINTERACTION = 1  			 
-
+       and  (exists (select SPONSORSHIPOPPORTUNITYCHILDID  from interactionChildren where SPONSORSHIPOPPORTUNITYCHILDID = @sponosrshipOpportunityChildID and INTERACTIONID = INTERACTION.ID)
+			or int_ext.TRANSFERCHILDID = @sponosrshipOpportunityChildID
+			or int_ext.DEPARTEDCHILDID = @sponosrshipOpportunityChildID
+			or int_ext.UNAVAILABLECHILDID = @sponosrshipOpportunityChildID)
 
 
 			]]>
@@ -120,7 +131,7 @@ interactionChildCounts as
 	</SPDataList>
 
 	<!-- describe the context ID parameter for the SP (if applicable)-->
-	<Context ContextRecordType="CONSTITUENT" RecordIDParameter="CONSTITUENTID"/>	
+	<Context ContextRecordType="SPONSORSHIP" RecordIDParameter="SPONSORSHIPID"/>	
 
 	<!-- describe any parameters (other than the context ID) defined on the SP
 	<Parameters>

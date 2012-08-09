@@ -1,36 +1,49 @@
 <EditDataFormTemplateSpec 
     xmlns:c="bb_appfx_commontypes"
-    ID="276a7de5-55b2-495f-b6c8-ba13f9967289"
+    ID="55904df7-4e42-4792-ae34-5dcf5aa3db47"
     Name="Interaction Extension Edit Form"
     Description="Used for editing the given Interaction Extension"
     Author="Cary Mayeda"
     RecordType="Constituent Interaction"
-    DataFormInstanceID="8a45eb34-36e6-489d-aa5e-9af0402eb055"
+    DataFormInstanceID="4843ed1c-5488-4fca-ad99-5d9e72ad2908"
     c:SecurityUIFolder="Interaction Extension"
     OwnerIDMapperID="00000000-0000-0000-0000-000000000000"
-    xmlns="bb_appfx_editdataformtemplate"
-    >
+    xmlns="bb_appfx_editdataformtemplate" >
+	
+	<!-- 
+	Remarks:    This extends the out of the box "Interaction Edit Form 4"
+				The UI Model Helper utilizes the Interaction Extension UI Model Field Manager to allow meta data to manage the state of the fields on the form based on the Interaction Subcategory (which is a unique key)
+				It was required to make the record type "Constituent Interaction" and not "Interaction Extension" to extend the edit form.
+	History:
+	Date            Modified By     Comments
+	07-Aug-2012		CMayeda			Initial Version
+	-->
     <SPDataForm>
-        <LoadImplementation SPName="USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTION_EXTENSION">
+        <LoadImplementation SPName="USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
             <c:CreateProcedureSQL>
 <![CDATA[
-create procedure dbo.USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTION_EXTENSION
+create procedure dbo.USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
 (
     @ID uniqueidentifier,
     @DATALOADED bit = 0 output,
     @TSLONG bigint = 0 output,
     @LETTERTYPECODEID uniqueidentifier = null output,
-    @LETTERCHILDVERSIONCODEID uniqueidentifier = null output,
+    @CHILDCOUNTLETTERVERSIONCODEID uniqueidentifier = null output,
     @FULFILLMENTSTATUSCODEID uniqueidentifier = null output,
+    @EFTBROCHURECODE tinyint = null output,
     @RESENDCODE tinyint = null output,
-    @EFTBROCHURE bit = null output,
-    @DEPARTEDCHILDID uniqueidentifier = null output,
-    @UNAVILABLECHILDID uniqueidentifier = null output,
-    @DOUBLESPONSOREDCHILDID uniqueidentifier = null output,
+    @UNAVAILABLECHILDID uniqueidentifier = null output,
     @TRANSFERCHILDID uniqueidentifier = null output,
+    @DEPARTEDCHILDID uniqueidentifier = null output,
+    @DEPARTUREREASONCODEID uniqueidentifier = null output,
+    @DOUBLESPONSOREDCHILDID uniqueidentifier = null output,
     @PREVIOUSCHILDPROJECTID uniqueidentifier = null output,
     @PREVIOUSBIRTHDATE datetime = null output,
     @PREVIOUSNAME nvarchar(150) = null output,
+    @FIELDMEMODATESENT datetime = null output,
+    @FIELDMEMOSENTCODEID uniqueidentifier = null output,
+    @HOLDREASONCODEID uniqueidentifier = null output,
+    @UNUSABLECODEID uniqueidentifier = null output,
 	@CHILDREN xml = null output
 )
 as
@@ -49,18 +62,23 @@ as
 		@DATALOADED = 1,
 		@TSLONG = TSLONG,
         @LETTERTYPECODEID = LETTERTYPECODEID, 
-        @LETTERCHILDVERSIONCODEID = LETTERCHILDVERSIONCODEID, 
+        @CHILDCOUNTLETTERVERSIONCODEID = CHILDCOUNTLETTERVERSIONCODEID, 
         @FULFILLMENTSTATUSCODEID = FULFILLMENTSTATUSCODEID, 
+        @EFTBROCHURECODE = EFTBROCHURECODE, 
         @RESENDCODE = RESENDCODE, 
-        @EFTBROCHURE = EFTBROCHURE, 
-        @DEPARTEDCHILDID = DEPARTEDCHILDID, 
-        @UNAVILABLECHILDID = UNAVILABLECHILDID, 
-        @DOUBLESPONSOREDCHILDID = DOUBLESPONSOREDCHILDID, 
+        @UNAVAILABLECHILDID = UNAVAILABLECHILDID, 
         @TRANSFERCHILDID = TRANSFERCHILDID, 
+        @DEPARTEDCHILDID = DEPARTEDCHILDID, 
+        @DEPARTUREREASONCODEID = DEPARTUREREASONCODEID, 
+        @DOUBLESPONSOREDCHILDID = DOUBLESPONSOREDCHILDID, 
         @PREVIOUSCHILDPROJECTID = PREVIOUSCHILDPROJECTID, 
         @PREVIOUSBIRTHDATE = PREVIOUSBIRTHDATE, 
-        @PREVIOUSNAME = PREVIOUSNAME,
-		@CHILDREN = dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN_TOITEMLISTXML(@ID)
+        @PREVIOUSNAME = PREVIOUSNAME, 
+        @FIELDMEMODATESENT = FIELDMEMODATESENT, 
+        @FIELDMEMOSENTCODEID = FIELDMEMOSENTCODEID, 
+        @HOLDREASONCODEID = HOLDREASONCODEID, 
+        @UNUSABLECODEID = UNUSABLECODEID,
+		@CHILDREN= dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN_TOITEMLISTXML(@ID)
 	from dbo.USR_INTERACTIONEXTENSION
 	where ID = @ID
 
@@ -68,58 +86,65 @@ as
 ]]>
 </c:CreateProcedureSQL>
         </LoadImplementation>
-        <SaveImplementation SPName="USP_DATAFORMTEMPLATE_EDIT_INTERACTION_EXTENSION">
+        <SaveImplementation SPName="USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION">
             <c:CreateProcedureSQL>
 <![CDATA[
-create procedure dbo.USP_DATAFORMTEMPLATE_EDIT_INTERACTION_EXTENSION
+create procedure dbo.USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
 (
 	@ID uniqueidentifier,
 	@CHANGEAGENTID uniqueidentifier = null,
     @LETTERTYPECODEID uniqueidentifier,
-    @LETTERCHILDVERSIONCODEID uniqueidentifier,
+    @CHILDCOUNTLETTERVERSIONCODEID uniqueidentifier,
     @FULFILLMENTSTATUSCODEID uniqueidentifier,
+    @EFTBROCHURECODE tinyint,
     @RESENDCODE tinyint,
-    @EFTBROCHURE bit,
-    @DEPARTEDCHILDID uniqueidentifier,
-    @UNAVILABLECHILDID uniqueidentifier,
-    @DOUBLESPONSOREDCHILDID uniqueidentifier,
+    @UNAVAILABLECHILDID uniqueidentifier,
     @TRANSFERCHILDID uniqueidentifier,
+    @DEPARTEDCHILDID uniqueidentifier,
+    @DEPARTUREREASONCODEID uniqueidentifier,
+    @DOUBLESPONSOREDCHILDID uniqueidentifier,
     @PREVIOUSCHILDPROJECTID uniqueidentifier,
     @PREVIOUSBIRTHDATE datetime,
     @PREVIOUSNAME nvarchar(150),
+    @FIELDMEMODATESENT datetime,
+    @FIELDMEMOSENTCODEID uniqueidentifier,
+    @HOLDREASONCODEID uniqueidentifier,
+    @UNUSABLECODEID uniqueidentifier,
 	@CHILDREN xml
 )
 as
 
 	set nocount on;
 
-	if @changeAgentID is null  
-		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
-
-	declare @currentDate datetime
-	set @currentDate= getdate()						
-	
+	if @CHANGEAGENTID is null  
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+						
 	begin try
 		-- handle updating the data
 		update dbo.USR_INTERACTIONEXTENSION set
             LETTERTYPECODEID = @LETTERTYPECODEID,
-            LETTERCHILDVERSIONCODEID = @LETTERCHILDVERSIONCODEID,
+            CHILDCOUNTLETTERVERSIONCODEID = @CHILDCOUNTLETTERVERSIONCODEID,
             FULFILLMENTSTATUSCODEID = @FULFILLMENTSTATUSCODEID,
+            EFTBROCHURECODE = @EFTBROCHURECODE,
             RESENDCODE = @RESENDCODE,
-            EFTBROCHURE = @EFTBROCHURE,
-            DEPARTEDCHILDID = @DEPARTEDCHILDID,
-            UNAVILABLECHILDID = @UNAVILABLECHILDID,
-            DOUBLESPONSOREDCHILDID = @DOUBLESPONSOREDCHILDID,
+            UNAVAILABLECHILDID = @UNAVAILABLECHILDID,
             TRANSFERCHILDID = @TRANSFERCHILDID,
+            DEPARTEDCHILDID = @DEPARTEDCHILDID,
+            DEPARTUREREASONCODEID = @DEPARTUREREASONCODEID,
+            DOUBLESPONSOREDCHILDID = @DOUBLESPONSOREDCHILDID,
             PREVIOUSCHILDPROJECTID = @PREVIOUSCHILDPROJECTID,
             PREVIOUSBIRTHDATE = @PREVIOUSBIRTHDATE,
             PREVIOUSNAME = @PREVIOUSNAME,
+            FIELDMEMODATESENT = @FIELDMEMODATESENT,
+            FIELDMEMOSENTCODEID = @FIELDMEMOSENTCODEID,
+            HOLDREASONCODEID = @HOLDREASONCODEID,
+            UNUSABLECODEID = @UNUSABLECODEID,
 
-			CHANGEDBYID = @changeAgentID,
-			DATECHANGED = @currentDate
+			CHANGEDBYID = @CHANGEAGENTID,
+			DATECHANGED = getdate()
 		where ID = @ID
 		
-		exec dbo.USR_USP_INTERACTIONEXTENSION_GETCHILDREN_UPDATEFROMXML @ID, @CHILDREN, @changeAgentID, @currentDate
+		exec dbo.USR_USP_INTERACTIONEXTENSION_GETCHILDREN_UPDATEFROMXML @ID, @CHILDREN, @CHANGEAGENTID
 		
 	end try
 	begin catch
@@ -132,30 +157,46 @@ return 0;
 </c:CreateProcedureSQL>
             <c:ExpectedDBExceptions>
                 <c:Constraints>
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_LETTERTYPECODEID" Field="LETTERTYPECODEID" Type="ForeignKey" />
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_LETTERCHILDVERSIONCODEID" Field="LETTERCHILDVERSIONCODEID" Type="ForeignKey" />
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_FULFILLMENTSTATUSCODEID" Field="FULFILLMENTSTATUSCODEID" Type="ForeignKey" />
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_DEPARTEDCHILDID" Field="DEPARTEDCHILDID" Type="ForeignKey" />
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_UNAVILABLECHILDID" Field="UNAVILABLECHILDID" Type="ForeignKey" />
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_DOUBLESPONSOREDCHILDID" Field="DOUBLESPONSOREDCHILDID" Type="ForeignKey" />
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_TRANSFERCHILDID" Field="TRANSFERCHILDID" Type="ForeignKey" />
-                    <c:Constraint Name="FK_USR_INTERACTIONEXTENSION_PREVIOUSCHILDPROJECTID" Field="PREVIOUSCHILDPROJECTID" Type="ForeignKey" />
-                </c:Constraints>
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_LETTERTYPECODEID" Field="LETTERTYPECODEID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_CHILDCOUNTLETTERVERSIONCODEID" Field="CHILDCOUNTLETTERVERSIONCODEID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_FULFILLMENTSTATUSCODEID" Field="FULFILLMENTSTATUSCODEID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_UNAVAILABLECHILDID" Field="UNAVAILABLECHILDID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_TRANSFERCHILDID" Field="TRANSFERCHILDID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_DEPARTEDCHILDID" Field="DEPARTEDCHILDID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_DEPARTUREREASONCODEID" Field="DEPARTUREREASONCODEID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_DOUBLESPONSOREDCHILDID" Field="DOUBLESPONSOREDCHILDID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_PREVIOUSCHILDPROJECTID" Field="PREVIOUSCHILDPROJECTID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_FIELDMEMOSENTCODEID" Field="FIELDMEMOSENTCODEID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_HOLDREASONCODEID" Field="HOLDREASONCODEID" Type="ForeignKey" />
+					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_UNUSABLECODEID" Field="UNUSABLECODEID" Type="ForeignKey" />
+				</c:Constraints>
             </c:ExpectedDBExceptions>
-        </SaveImplementation>		
+        </SaveImplementation>
     </SPDataForm>
-
-	
-	<c:FormMetaData FixedDialog="true">
+    <c:FormMetaData FixedDialog="true">
         <c:FormFields>
             <c:FormField FieldID="LETTERTYPECODEID" DataType="Guid" Caption="Letter type">
                 <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
             </c:FormField>
-            <c:FormField FieldID="LETTERCHILDVERSIONCODEID" DataType="Guid" Caption="Letter child version">
+            <c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODEID" DataType="Guid" Caption="Child count letter version">
                 <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
             </c:FormField>
             <c:FormField FieldID="FULFILLMENTSTATUSCODEID" DataType="Guid" Caption="Fulfillment status">
                 <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+            </c:FormField>
+            <c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="EFT brochure" DefaultValueText="0">
+                <c:ValueList>
+                    <c:Items>
+                        <c:Item>
+                            <c:Value>0</c:Value>
+                            <c:Label>No</c:Label>
+                        </c:Item>
+                        <c:Item>
+                            <c:Value>1</c:Value>
+                            <c:Label>Yes</c:Label>
+                        </c:Item>
+                    </c:Items>
+                </c:ValueList>
             </c:FormField>
             <c:FormField FieldID="RESENDCODE" DataType="TinyInt" Caption="Resend?" DefaultValueText="0">
                 <c:ValueList>
@@ -171,15 +212,27 @@ return 0;
                     </c:Items>
                 </c:ValueList>
             </c:FormField>
-            <c:FormField FieldID="EFTBROCHURE" DataType="Boolean" Caption="EFT brochure" />
+            <c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailable child" />
+            <c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transfer child" />
             <c:FormField FieldID="DEPARTEDCHILDID" DataType="Guid" Caption="Departed child" />
-            <c:FormField FieldID="UNAVILABLECHILDID" DataType="Guid" Caption="Unavilable child" />
+            <c:FormField FieldID="DEPARTUREREASONCODEID" DataType="Guid" Caption="Departure reason">
+                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE" />
+            </c:FormField>
             <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child" />
-            <c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transferchild" />
             <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
             <c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
-            <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name" Multiline="true" />
-			<c:FormField FieldID="CHILDREN" Caption="Children" >
+            <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name" />
+			<c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Field memo date sent" />
+			<c:FormField FieldID="FIELDMEMOSENTCODEID" DataType="Guid" Caption="Field memo sent">
+                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
+            </c:FormField>
+            <c:FormField FieldID="HOLDREASONCODEID" DataType="Guid" Caption="Hold reason">
+                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONHOLDREASONCODE" />
+            </c:FormField>
+            <c:FormField FieldID="UNUSABLECODEID" DataType="Guid" Caption="Unusable item">
+                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+            </c:FormField>
+			<c:FormField FieldID="CHILDREN" Caption="Children">
 				<c:Collection>
 					<c:Fields>
 						<c:FormField FieldID="ID" DataType="Guid" Hidden="true" />
@@ -190,10 +243,18 @@ return 0;
 					</c:Fields>
 				</c:Collection>
 			</c:FormField>
-        </c:FormFields>
+
+		</c:FormFields>
         <c:FormUIComponent />
+
+        <c:WebUIComponent>
+            <c:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.InteractionExtensionEditFormUIModel" />
+            <c:WebUI>
+                <c:ExternalResource Url="browser/htmlforms/custom/InteractionExtension.EditForm.html" />
+            </c:WebUI>
+        </c:WebUIComponent>
     </c:FormMetaData>
 
 	<c:DataFormExtension DataFormInstanceID="ab3b9569-4c7c-4646-a793-347856753b60" RenderStyle="Tab" TabCaption="Additional Info" />
-	
+
 </EditDataFormTemplateSpec>

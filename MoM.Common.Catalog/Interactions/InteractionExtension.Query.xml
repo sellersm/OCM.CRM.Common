@@ -3,47 +3,152 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="f793706b-284b-4edb-94a5-d9d47bd50e42"
 	Name="Interaction Extension Query"
-	Description="REPLACE_WITH_DESCRIPTION"
+	Description="Used to query the Interaction Extension fields"
 	Author="Cary Mayeda"
 	IsRoot="false"
 	PrimaryKeyField="ID"
-	RecordType="Interaction"
-	common:SecurityUIFolder="REPLACE_WITH_SECURITY_UI_FOLDER"
+	RecordType="Interaction Extension"
+	common:SecurityUIFolder="Interaction Extension"
 	>
+	<!-- 
+	Remarks:    This is linked to the OOB Interaction query
+				Note: this displays the project id with the child's lookup id.  To query the actual child id, use the related query view
 
+	History:
+	Date            Modified By     Comments
+	07-Aug-2012		CMayeda			Initial Version
+	-->
+	
 	<!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_INTERACTIONEXTENSION">
 		<ViewSQL>
 			<![CDATA[
-	select	int_ext.ID,
-			(select DESCRIPTION from USR_INTERACTIONEXTENSIONLETTERTYPECODE where ID = int_ext.LETTERTYPECODEID) as LETTERTYPECODE,
-			int_ext.EFTBROCHURE,
-			int_ext.DEPARTEDCHILDID,
-			so.LOOKUPID as DEPARTEDCHILDLOOKUPID,
-			so_child.NAME as DEPARTEDCHILDNAME
-	  from	dbo.USR_INTERACTIONEXTENSION	int_ext
- left join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
-				int_ext.DEPARTEDCHILDID = so_child.ID				
- left join	dbo.SPONSORSHIPOPPORTUNITY so on
-				int_ext.DEPARTEDCHILDID = so.ID
-		
+	select	ID,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where ID = CHILDCOUNTLETTERVERSIONCODEID) as CHILDCOUNTLETTERVERSIONCODE, 
+			(select DESCRIPTION from USR_INTERACTIONEXTENSIONLETTERTYPECODE where ID = LETTERTYPECODEID) as LETTERTYPECODE,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE where ID = FULFILLMENTSTATUSCODEID) as FULFILLMENTSTATUSCODE, 
+
+			dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT (ID) as NUMBEROFCHILDREN,
+			
+			DEPARTEDCHILDID,
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (DEPARTEDCHILDID, 1) as DEPARTEDCHILDLOOKUPID,
+			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = DEPARTEDCHILDID) as DEPARTEDCHILDNAME,
+            (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE where ID = DEPARTUREREASONCODEID) as DEPARTUREREASONCODE, 
+
+		    TRANSFERCHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (TRANSFERCHILDID, 1) as TRANSFERCHILDLOOKUPID,
+			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = TRANSFERCHILDID) as TRANSFERCHILDNAME,
+
+			UNAVAILABLECHILDID
+			UNAVAILABLECHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (UNAVAILABLECHILDID, 1) as UNAVAILABLECHILDLOOKUPID,
+			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = UNAVAILABLECHILDID) as UNAVAILABLECHILDNAME,
+
+			DOUBLESPONSOREDCHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (DOUBLESPONSOREDCHILDID, 1) as DOUBLESPONSOREDCHILDLOOKUPID,
+			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = DOUBLESPONSOREDCHILDID) as DOUBLESPONSOREDCHILDNAME,
+			
+			PREVIOUSCHILDPROJECTID, 
+			PREVIOUSBIRTHDATE, 
+			PREVIOUSNAME, 
+			EFTBROCHURE,
+			RESEND,
+			FIELDMEMODATESENT,  
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = FIELDMEMOSENTCODEID) as FIELDMEMOSENTCODE,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = HOLDREASONCODEID) as HOLDREASONCODE ,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = UNUSABLECODEID) as UNUSABLECODE 
+
+	from	dbo.USR_INTERACTIONEXTENSION 
+
 			]]>
-		</ViewSQL>
+		</ViewSQL> 
 	</ViewImplementation>
 
 	<!-- describe each field in the view output -->
 	<Output>
 		<OutputFields>
 			<OutputField Name="ID" Caption="Interaction record" Category="System Fields" DataType="Guid" IsHidden="true" />
-			<OutputField Name="DEPARTEDCHILDID" Caption="Departed Child record" Category="Departed Child Record" DataType="Guid" />
-			<OutputField Name="LETTERTYPECODE" Caption="Letter Type" Category="Fields" DataType="String">
+			<OutputField Name="CHILDCOUNTLETTERVERSIONCODE" Caption="Child Count Letter Version" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="NUMBEROFCHILDREN" Caption="Number of Children" DataType="SmallInt" />
+			<OutputField Name="LETTERTYPECODE" Caption="Letter Type" DataType="String">
 				<LookupInfo>
 					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE"/>
 				</LookupInfo>
 			</OutputField>
-			<OutputField Name="EFTBROCHURE" Caption="Include EFT Brochure" Category="Fields" DataType="Boolean" />
-			<OutputField Name="DEPARTEDCHILDLOOKUPID" Caption="Departed Child ID" Category="Fields" DataType="String" />
-			<OutputField Name="DEPARTEDCHILDNAME" Caption="Departed Child Name" Category="Fields" DataType="String" />
+			<OutputField Name="FULFILLMENTSTATUSCODE" Caption="Fulfillment Status" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+				</LookupInfo>
+			</OutputField>
+			
+			<OutputField Name="DEPARTEDCHILDID" Caption="Departed Child record" Category="System Fields" DataType="Guid" IsHidden="true" />  
+			<OutputField Name="DEPARTEDCHILDLOOKUPID" Caption="Departed Child ID" DataType="String" />
+			<OutputField Name="DEPARTEDCHILDNAME" Caption="Departed Child Name" DataType="String" />
+			<OutputField Name="DEPARTUREREASONCODE" Caption="Departure Reason" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+				</LookupInfo>
+			</OutputField>
+
+			<OutputField Name="TRANSFERCHILDID" Caption="Transfer Child record" Category="System Fields" DataType="Guid" IsHidden="true" />
+			<OutputField Name="TRANSFERCHILDLOOKUPID" Caption="Transfer Child ID" DataType="String" />
+			<OutputField Name="TRANSFERCHILDNAME" Caption="Transfer Child Name" DataType="String" />
+
+			
+			<OutputField Name="UNAVAILABLECHILDID" Caption="Unavailable Child record" Category="System Fields" DataType="Guid" IsHidden="true" />
+			<OutputField Name="UNAVAILABLECHILDLOOKUPID" Caption="Unavailable Child ID" DataType="String" />
+			<OutputField Name="UNAVAILABLECHILDNAME" Caption="Unavailable Child Name" DataType="String" />
+
+			<OutputField Name="DOUBLESPONSOREDCHILDID" Caption="Double Sponsored Child record" Category="System Fields" DataType="Guid" IsHidden="true" />
+			<OutputField Name="DOUBLESPONSOREDCHILDLOOKUPID" Caption="Double Sponsored Child ID" DataType="String" />
+			<OutputField Name="DOUBLESPONSOREDCHILDNAME" Caption="Double Sponsored Child Name" DataType="String" />
+
+			<OutputField Name="PREVIOUSCHILDPROJECTID" Caption="Previous Child Project ID" DataType="String" />
+			<OutputField Name="PREVIOUSBIRTHDATE" Caption="Previous Child Birthdate" DataType="Date" />
+			<OutputField Name="PREVIOUSNAME" Caption="Previous Child Name" DataType="String" />
+			<OutputField Name="EFTBROCHURE" Caption="Include EFT Brochure" DataType="String" >
+				<LookupInfo>
+					<TranslationList>
+						<common:Options>
+							<common:TranslationListOption Value="No" />
+							<common:TranslationListOption Value="Yes" />
+						</common:Options>
+					</TranslationList>
+				</LookupInfo>
+			</OutputField>
+
+			<OutputField Name="RESEND" Caption="Resend?" DataType="String" >
+				<LookupInfo>
+					<TranslationList>
+						<common:Options>
+							<common:TranslationListOption Value="No" />
+							<common:TranslationListOption Value="Yes" />
+						</common:Options>
+					</TranslationList>
+				</LookupInfo>
+			</OutputField>
+
+			<OutputField Name="FIELDMEMODATESENT" Caption="Field Memo Date Sent" Category="Field Memo" DataType="Date" />
+			<OutputField Name="FIELDMEMOSENTCODE" Caption="Field Memo Sent" Category="Field Memo" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="HOLDREASONCODE" Caption="Hold Reason" Category="Field Memo" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONHOLDREASONCODE" />
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="UNUSABLECODE" Caption="Unusable" Category="Field Memo" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+				</LookupInfo>
+			</OutputField>
+
 
 		</OutputFields>
 	</Output>
@@ -51,6 +156,10 @@
 	<RelationshipOperations>
 		<AddToParentView Field="ID" ParentView="V_QUERY_INTERACTION" ParentViewRelatedField="ID" PathAlias="Interaction Extension"/>
 		<AddToParentView Field="ID" ParentView="V_QUERY_INTERACTIONALL" ParentViewRelatedField="ID" PathAlias="Interaction Extension"/>
+		<AddRelatedView Field ="DEPARTEDCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Departed Child" />
+		<AddRelatedView Field ="TRANSFERCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Transfer Child" />
+		<AddRelatedView Field ="UNAVAILABLECHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Unavailable Child" />
+		<AddRelatedView Field ="DOUBLESPONSOREDCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Double Sponsored Child" />
 	</RelationshipOperations>
 
 </QueryViewSpec>

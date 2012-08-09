@@ -58,11 +58,61 @@
 		TaskSpec	
 	-->
 	
+	
 	<common:DependencyList>
+	    <!-- Codetables -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.DepartureReason.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.FieldMemoSent.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.FulfillmentStatus.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.HoldReason.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.LetterChildVersion.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.LetterType.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UnusableItem.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.InteractionExtension.UIModelField.CodeTable.xml" />
+		
+		 <!-- Tables -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CodeTableManager.Table.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Table.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Table.xml" />		
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Table.xml" />
+		
+		<!-- SQL sprocs and functions -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETCODETABLEITEMID.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_ADDVALUETOCODETABLE.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETIDSETCOUNT.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_GETFIELDSTATUS.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
+		
+		<!-- Record Operations -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Delete.RecordOperation.xml" />
+		
+		<!-- Data Lists -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.FieldList.DataList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ConstituentInteractionList.DataList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionSponsorshipInteractionList.DataList.xml" />
+	
+		<!-- Data Forms -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.Edit.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.View.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Edit.xml" />
+		
+		<!-- Queries -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Query.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Query.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Query.xml" />
+		
+		<!-- Pages -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.Page.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Alter.Page.xml" />
+		
+		
+		<!-- Package Versions -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Common.PackageVersion.DataList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Sponsorship.ChildProject.Catalog.dll" CatalogItem="MoM.Sponsorship.ChildProject.Catalog.ChildProject.UIModelVersion.View.xml"/>
+
 	</common:DependencyList>
 
 </PackageSpec>
