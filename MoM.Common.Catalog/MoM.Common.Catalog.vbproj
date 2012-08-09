@@ -234,7 +234,7 @@
     <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.UnusableItem.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\InteractionExtensionSponsorshipInteractionList.DataList.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.SponsorshipInteractionList.DataList.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Common.PackageVersion.DataList.xml" />
