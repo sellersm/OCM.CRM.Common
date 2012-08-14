@@ -128,13 +128,13 @@
     <!-- Global Changes -->
     <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
     <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttributesNonCodeTables.SimpleList.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Interaction.Delete.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Interaction.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Add.CodeTableBased.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Add.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Change.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Delete.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChanges.Interaction.Delete.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChanges.Interaction.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChanges.InteractionAttribute.Add.CodeTableBased.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChanges.InteractionAttribute.Add.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChanges.InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChanges.InteractionAttribute.Change.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChanges.InteractionAttribute.Delete.GlobalChange.xml" />
 
     <!-- Pages -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.Page.xml" />
