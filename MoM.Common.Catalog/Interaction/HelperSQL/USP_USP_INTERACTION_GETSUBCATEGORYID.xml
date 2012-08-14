@@ -1,0 +1,60 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="a915ae98-28dd-41ba-bf1d-b59ab1ae38a8"
+	Name="USP_USP_INTERACTION_GETSUBCATEGORYID"
+	Description="Find the subcategoryid based on the category and subcategory names"
+	Author="Cary Mayeda"
+	SPName="USP_USP_INTERACTION_GETSUBCATEGORYID"
+	GrantServiceRolePermission="true" >
+
+	<!-- 
+	Remarks:    This is used to find the subcategoryid based on the combination of Category Name and Subcategory Name.
+				It is case insensitive.
+				@raiseErrorIfNotFound controls whether an error is raised if the Category / Subcategory cannot be found.
+
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USP_USP_INTERACTION_GETSUBCATEGORYID (
+	@subcategoryID uniqueidentifier output,			-- The subcategory id found
+	@categoryName nvarchar(100) = '',				-- Category Name to search for (case insensitive)
+	@subcategoryName nvarchar(100) = '',			-- Subcategory Name to search for (case insensitive)
+	@raiseErrorIfNotFound bit = 1					-- When this is set to 1 an error is raised if the category / subcategory cannot be found
+													-- If this is 0, then a null subcategoryid is passed back through the output parm
+)
+as
+begin
+	declare @errorMsg nvarchar(255) = ''
+	set @errorMsg = 'Couldn''t find Category=' + @categoryName + ', Subcategory=' + @subcategoryName
+	
+	begin try
+		set @subcategoryID = null
+	
+		select	@subcategoryID = subcat.ID	
+		  from	dbo.INTERACTIONSUBCATEGORY subcat
+	inner join	dbo.INTERACTIONCATEGORY cat on subcat.INTERACTIONCATEGORYID = cat.ID
+
+		 where	lower (subcat.NAME) = lower (@subcategoryName)
+		   and	lower (cat.NAME) = lower (@categoryName)
+
+		if 	@subcategoryID is null and @raiseErrorIfNotFound = 1
+			RAISERROR 1000000 @errorMsg
+
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

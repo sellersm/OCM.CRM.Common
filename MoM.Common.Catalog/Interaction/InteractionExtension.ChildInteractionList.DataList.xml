@@ -1,0 +1,122 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="e4e47479-83ce-46fc-9aee-d8f65afab31f" 
+	Name="Child Interaction Data List"
+	Description="Used to display child interactions."
+	Author="Cary Mayeda"
+	common:SecurityUIFolder="Interaction Extension" >
+
+	<!-- 
+	Remarks:    Currently displays interactions that are in the categories: Child Field Memo and Child Letters
+				It displays the Interaction Extension fields
+
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USP_DATALIST_INTERACTIONEXTENSION_CHILDLIST">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+			
+create procedure dbo.USP_DATALIST_INTERACTIONEXTENSION_CHILDLIST (
+	@SPONSORSHIPOPPORTUNITYCHILDID uniqueidentifier
+)
+as begin
+	set nocount on;
+	
+	declare @interactionCategoryName_ChildFieldMemo nvarchar(100) = 'Child Field Memo'
+	declare @interactionCategoryID_ChildFieldMemo uniqueidentifier = null
+	declare @interactionCategoryChildFieldMemoIDError nvarchar(255) = 'Could not find the interaction category - ' + @interactionCategoryName_ChildFieldMemo
+	
+	declare @interactionCategoryName_ChildLetter nvarchar(100) = 'Child Letters'
+	declare @interactionCategoryID_ChildLetter uniqueidentifier = null
+	declare @interactionCategoryChildLetterIDError nvarchar(255) = 'Could not find the interaction category - ' + @interactionCategoryName_ChildLetter
+
+	begin try
+		select @interactionCategoryID_ChildFieldMemo = ID from dbo.INTERACTIONCATEGORY where lower (NAME) = lower (@interactionCategoryName_ChildFieldMemo)	
+		if @interactionCategoryID_ChildFieldMemo is null 
+			RAISERROR 1000000 @interactionCategoryChildFieldMemoIDError
+	
+		select @interactionCategoryID_ChildLetter = ID from dbo.INTERACTIONCATEGORY where lower (NAME) = lower (@interactionCategoryName_ChildLetter)	
+		if @interactionCategoryID_ChildLetter is null 
+			RAISERROR 1000000 @interactionCategoryChildLetterIDError
+		
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+	
+	select	INTERACTION.ID,
+			INTERACTION.EXPECTEDDATE,
+			(select DESCRIPTION from dbo.INTERACTIONTYPECODE  where ID = INTERACTION.INTERACTIONTYPECODEID) as CONTACTMETHOD,
+			cat.NAME as INTERACTIONSUBCATEGORY,			
+			subcat.NAME as INTERACTIONSUBCATEGORY,	
+			INTERACTION.STATUS,
+			INTERACTION.FUNDRAISERID as OWNERID,
+			fr_const.Name as OWNERNAME,
+			FIELDMEMODATESENT,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = int_ext.FIELDMEMOSENTCODEID) as FIELDMEMOSENT,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = int_ext.HOLDREASONCODEID) as HOLDREASON,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = int_ext.UNUSABLECODEID) as UNUSABLE,
+			'b525985b-be02-4f02-a9b8-c110411cf936' as VIEWFORMID
+ 	  from	dbo.INTERACTION 
+	  join	dbo.USR_INTERACTIONEXTENSION int_ext on
+				int_ext.ID = INTERACTION.ID				
+inner join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
+				INTERACTION.CONSTITUENTID = so_child.CONSTITUENTID
+
+ left join	dbo.CONSTITUENT fr_const on
+				fr_const.ID = INTERACTION.FUNDRAISERID
+ left join	dbo.INTERACTIONSUBCATEGORY subcat on
+				subcat.ID = INTERACTION.INTERACTIONSUBCATEGORYID
+ left join	dbo.INTERACTIONCATEGORY cat on 
+				subcat.INTERACTIONCATEGORYID = cat.ID
+ 				
+	 where	so_child.ID = @SPONSORSHIPOPPORTUNITYCHILDID
+	   and	INTERACTION.ISINTERACTION = 1  			 
+	   and	cat.ID in (@interactionCategoryID_ChildFieldMemo, @interactionCategoryID_ChildLetter)
+   
+   	return 0
+end
+
+			]]>
+			</common:CreateProcedureSQL>
+		</SPDataList>
+
+		<!-- describe the context ID parameter for the SP (if applicable)-->
+		<Context ContextRecordType="Sponsorship opportunity" RecordIDParameter="SPONSORSHIPOPPORTUNITYCHILDID"/>
+
+		<!-- describe any parameters (other than the context ID) defined on the SP
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>-->
+
+		<!-- define the output fields in the list -->
+		<Output>
+			<OutputFields>
+				<OutputField FieldID="ID" Caption="ID" DataType="Guid" IsHidden="true" />
+				<OutputField FieldID="EXPECTEDDATE" Caption="Expected date" DataType="Date" />
+				<OutputField FieldID="CONTACTMETHOD" Caption="Contact method" DataType="String" />
+				<OutputField FieldID="INTERACTIONCATEGORY" Caption="Category" DataType="String" />
+				<OutputField FieldID="INTERACTIONSUBCATEGORY" Caption="Subcategory" DataType="String" />
+				<OutputField FieldID="STATUS" Caption="Status" DataType="String" />
+				<OutputField FieldID="OWNERID" Caption="Owner system record id" DataType="Guid" IsHidden="true"/>
+				<OutputField FieldID="OWNERNAME" Caption="Owner" DataType="String" />
+				<OutputField FieldID="FIELDMEMODATESENT" Caption="Date sent" DataType="Date" />
+				<OutputField FieldID="FIELDMEMOSENT" Caption="Field memo sent" DataType="String" />
+				<OutputField FieldID="HOLDREASON" Caption="Hold reason" DataType="String" />
+				<OutputField FieldID="UNUSABLE" Caption="Unusable" DataType="String" />
+
+				<OutputField FieldID="VIEWFORMID" Caption="View Form ID" DataType="Guid" IsHidden="true"/>
+			</OutputFields>
+		</Output>
+
+</DataListSpec>

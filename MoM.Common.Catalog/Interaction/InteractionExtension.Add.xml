@@ -13,6 +13,12 @@
 	Remarks:    This extends the out of the box "Interaction Add Form 2"
 				The UI Model Helper utilizes the Interaction Extension UI Model Field Manager to allow meta data to manage the state of the fields on the form based on the Interaction Subcategory (which is a unique key)
 
+				Note: 	Extensions need to created separately for both the original form and the wrapped form.
+						Therefore any changes here need to be made in InteractionExtension.CCHVerificationFailed.Add.xml
+							ID="5b88948a-2c52-42b0-96e3-0d698f6a8acf" 
+							Name="Interaction Extension for CCH Verification Failed"
+						Both forms use the same uimodel class and html form.
+						
 	History:
 	Date            Modified By     Comments
 	07-Aug-2012		CMayeda			Initial Version

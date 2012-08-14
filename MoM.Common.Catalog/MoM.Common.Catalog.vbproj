@@ -173,7 +173,7 @@
     <EmbeddedResource Include="Interaction\USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\InteractionExtension.ConstituentInteractionList.DataList.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.SponsorInteractionList.DataList.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
@@ -188,7 +188,9 @@
     <EmbeddedResource Include="Interaction\InteractionExtension.Edit.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Interaction\InteractionExtension.Add.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.Add.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\UIModelFieldManager\InteractionExtension.UIModelField.CodeTable.xml" />
@@ -241,6 +243,52 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Common.UIModelVersion.View.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADD_PENDING.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USP_USP_INTERACTION_GETSUBCATEGORYID.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="USR_USP_GETCODETABLEITEMID_DYNAMIC.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADD.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_SETDEPARTEDCHILD.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_SETUNAVAILABLECHILD.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_SETDOUBLESPONSOREDCHILD.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADDCHILD.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_FIELDMEMO_ADD.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\InteractionExtension.ChildInteraction.Page.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\InteractionExtension.ChildInteractionList.DataList.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\InteractionExtension.CCHVerificationFailed.Add.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

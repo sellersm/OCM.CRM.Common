@@ -1,0 +1,57 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="839a91df-282b-4aee-9ad2-e9c15e491622"
+	Name="USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED"
+	Description="Used to add a sponsor type of interaction with a status of completed"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED" 
+	GrantServiceRolePermission="true" >
+	
+	<!-- 
+	Remarks:    This wraps the oob Blackbaud sproc USP_DATAFORMTEMPLATE_ADD_INTERACTION and inserts a row in the USR_INTERACTIONEXTENSION table by calling USR_USP_INTERACTION_SPONSOR_ADD
+				This was created to make it easier to add a completed interaction.
+				This takes descriptions in for the code table values and looks them up (case insensitive). If any of the lookups fail, it raises an error				
+				No other validation is handled other than the standard check for @changeAgentID. This relies on the oob Blackbaud sproc in terms of validation.
+				
+				Note: The subcategoryid lookup uses both @categoryName and @subcategoryName
+	History:
+	Date            Modified By     Comments
+	11-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED (
+	@id uniqueidentifier output,						-- This returns the ID of the interaction created
+	@constituentID uniqueidentifier = null,				-- The Constituent ID to create the interaction for
+	@summary nvarchar(100) = '',						-- The summary / objective of the interaction
+	@categoryName nvarchar(100) = '',					-- Name of the interaction category (not the guid)
+	@subcategoryName nvarchar(100) = '',				-- Name of the interaction subcategory (not the guid)
+	@expectedDate datetime = null,						-- Expected Date of the interaction
+	@actualDate datetime = null,						-- Actual Date - required for completed interactions
+	@owner uniqueidentifier = null,						-- Owner / Fundraiser assigned to the interaction 
+	@contactMethodDesc nvarchar(100) = '',				-- Email, Event, Mail, Phone, Task
+	@comment nvarchar(max) = '',						-- Comment
+	@changeAgentID uniqueidentifier = null				-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	-- Constants
+	-- Note: only @statusCodePending is used.  Just thought it would be nice to see all the possible values.
+	declare @statusCode_Planned tinyint = 0
+	declare @statusCode_Pending tinyint = 1
+	declare @statusCode_Completed tinyint = 2
+	declare @statusCode_Unsuccessful tinyint = 3
+	declare @statusCode_Cancelled tinyint = 4
+	declare @statusCode_Declined tinyint = 5
+
+	exec USR_USP_INTERACTION_SPONSOR_ADD @id, @constituentID, @summary, @categoryName, @subcategoryName, @expectedDate, @actualDate, @owner, @contactMethodDesc, @statusCode_Completed, @comment, @changeAgentID 
+
+	return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

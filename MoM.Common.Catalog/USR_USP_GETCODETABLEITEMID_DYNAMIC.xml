@@ -1,0 +1,54 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="ba637e91-1ca0-4903-a4c2-b9e4e8b242ec"
+	Name="USR_USP_GETCODETABLEITEMID_DYNAMIC"
+	Description="REPLACE_WITH_DESCRIPTION"
+	Author="BETHESDA\cmayeda"
+	SPName="USR_USP_GETCODETABLEITEMID_DYNAMIC"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC (
+	@codeTableID uniqueidentifier output,
+	@codeTableDesc nvarchar(100) = '',
+	@codeTableName nvarchar(100) = '',
+	@raiseErrorIfNotFound bit = 1,
+	@errorMessage nvarchar(255) = ''
+)
+as
+begin
+	declare @notFoundErrorMsg nvarchar(255) = ''
+	if @errorMessage <> ''
+		set @notFoundErrorMsg = @errorMessage 
+	else
+		set @notFoundErrorMsg = 'Couldn''t find description="' + @codeTableDesc + '" from code table ' + @codeTableName
+
+	set @codeTableID = null
+		
+	declare @sqlSelect nvarchar(max)
+	declare @sqlSelectParms nvarchar(500)
+	
+	set @sqlSelect = 'select @idOutput = ID from ' + @codeTableName + ' where lower (description) = lower (@codeTableDesc)'
+	set @sqlSelectParms = '@idOutput uniqueidentifier output, @codeTableDesc nvarchar(100)'
+
+	begin try
+		exec sp_executesql @sqlSelect, @sqlSelectParms, @idOutput = @codeTableID output, @codeTableDesc = @codeTableDesc
+		
+		if 	@codeTableID is null and @raiseErrorIfNotFound = 1
+			RAISERROR 1000000 @notFoundErrorMsg
+			
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

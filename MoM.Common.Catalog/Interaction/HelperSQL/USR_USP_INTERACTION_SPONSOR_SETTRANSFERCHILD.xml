@@ -1,0 +1,48 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="1cf41824-3d42-48e7-9eaf-51483a34947a"
+	Name="USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD"
+	Description="Used to set the TRANSFERCHILDID on a sponsor type of interaction extension"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD"
+	GrantServiceRolePermission="true" >
+	
+	<!-- 
+	Remarks:    This is used to set the TRANSFERCHILDID on an existing interaction extension.
+				Use USR_USP_INTERACTION_SPONSOR_ADD_PENDING, USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED, or USR_USP_INTERACTION_SPONSOR_ADD first to create the row in 
+
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD (
+	@interactionID uniqueidentifier = null,							-- Interaction ID of the interaction to add the departed child to
+	@sponsorshipOpportunityChildID uniqueidentifier = null,			-- Transfer child ID
+	@changeAgentID uniqueidentifier = null							-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+
+	-- Get ChangeAgent if none was passed into the sproc
+  	if @changeAgentID is null  
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+
+	update	dbo.USR_INTERACTIONEXTENSION
+	   set	TRANSFERCHILDID = @sponsorshipOpportunityChildID,
+			CHANGEDBYID = @changeAgentID,
+			DATECHANGED = @currentDate
+	 where	ID = @interactionID
+
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

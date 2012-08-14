@@ -1,0 +1,82 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="7cc69c0a-93be-4a7c-a5ae-eeb5d8f1219a"
+	Name="USR_USP_INTERACTION_SPONSOR_ADDCHILD"
+	Description="Used to add a child to a sponsor interaction extension"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_ADDCHILD" 
+	GrantServiceRolePermission="true" >
+	
+	<!-- 
+	Remarks:    This adds the child to the list of children associated with the interaction passed in @interactionID
+				It also updates the CHILDCOUNTLETTERVERSIONCODEID based on the current number of children associated with the interaction
+				This assumes that the row in USR_INTERACTIONEXTENSION exists. It does not create it if it doesn't.
+
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD (
+	@interactionID uniqueidentifier = null,							-- Interaction ID to add the child to.
+	@sponsorshipOpportunityChildID uniqueidentifier = null,			-- Child ID of the child to add
+	@changeAgentID uniqueidentifier = null							-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	-- Constants
+	declare @raiseErrorIfNotFoundTrue bit = 1
+
+	declare @childCountLetterVersion_OneChildLetter uniqueidentifier = null
+	declare @childCountLetterVersion_TwoChildrenLetter uniqueidentifier = null
+	declare @childCountLetterVersion_MultipleChildrenLetter uniqueidentifier = null
+
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+
+	begin try
+		-- Get letter code table ids
+		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @childCountLetterVersion_OneChildLetter output, 'One Child Letter',  'dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE', @raiseErrorIfNotFoundTrue, 'Could not add child to interaction, because the id for the "One Child Letter" could not be found.'
+		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @childCountLetterVersion_TwoChildrenLetter output, 'Two Children Letter',  'dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE', @raiseErrorIfNotFoundTrue, 'Could not add child to interaction, because the id for the "Two Children Letter" could not be found.'
+		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @childCountLetterVersion_MultipleChildrenLetter output, 'Multiple Children Letter',  'dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE', @raiseErrorIfNotFoundTrue, 'Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.'
+
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+		-- Add the child
+		insert	dbo.USR_INTERACTIONEXTENSIONCHILDREN
+			(INTERACTIONID, SPONSORSHIPOPPORTUNITYCHILDID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+			select	@interactionID, @sponsorshipOpportunityChildID, @changeAgentID, @changeAgentID, @currentDate, @currentDate
+			 where	not exists (select INTERACTIONID from dbo.USR_INTERACTIONEXTENSIONCHILDREN where INTERACTIONID = @interactionID and SPONSORSHIPOPPORTUNITYCHILDID = @sponsorshipOpportunityChildID)
+	 
+		-- Update the letter version based on the number of children on this interaction
+		declare @numberOfChildren as smallint = 0
+		set @numberOfChildren = dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT (@interactionID)
+	
+		if @numberOfChildren > 0 
+			update	dbo.USR_INTERACTIONEXTENSION
+			   set	CHILDCOUNTLETTERVERSIONCODEID = case @numberOfChildren
+														when 1 then @childCountLetterVersion_OneChildLetter
+														when 2 then @childCountLetterVersion_TwoChildrenLetter
+														else @childCountLetterVersion_MultipleChildrenLetter
+													end 
+			 where	ID = @interactionID	
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

@@ -1,0 +1,98 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="ccb09ae2-3e55-4186-a9db-417fb80d2a19"
+	Name="USR_USP_INTERACTION_SPONSOR_ADD"
+	Description="Used to add a sponsor type of interaction"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_ADD" 
+	GrantServiceRolePermission="true" >
+
+	<!-- 
+	Remarks:    This wraps the oob Blackbaud sproc USP_DATAFORMTEMPLATE_ADD_INTERACTION and inserts a row in the USR_INTERACTIONEXTENSION table
+				This takes descriptions in for the code table values and looks them up (case insensitive). If any of the lookups fail, it raises an error				
+				No other validation is handled other than the standard check for @changeAgentID. This relies on the oob Blackbaud sproc in terms of validation.
+				This is used by USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED and USR_USP_INTERACTION_SPONSOR_ADD_PENDING. It's easier to call one of those if the interaction being added is completed or pending.
+				
+				Note: The subcategoryid lookup uses both @categoryName and @subcategoryName
+	History:
+	Date            Modified By     Comments
+	11-Aug-2012		CMayeda			Initial Version
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADD (
+	@id uniqueidentifier output,						-- This returns the ID of the interaction created
+	@constituentID uniqueidentifier = null,				-- The Constituent ID to create the interaction for
+	@summary nvarchar(100) = '',						-- The summary / objective of the interaction
+	@categoryName nvarchar(100) = '',					-- Name of the interaction category (not the guid)
+	@subcategoryName nvarchar(100) = '',				-- Name of the interaction subcategory (not the guid)
+	@expectedDate date = null,							-- Expected Date of the interaction
+	@actualDate date = null,							-- Actual Date - required for completed interactions
+	@owner uniqueidentifier = null,						-- Owner / Fundraiser assigned to the interaction 
+	@contactMethodDesc nvarchar(100) = '',				-- Email, Event, Mail, Phone, Task
+	@statusCode tinyint = null,							-- 0 - Planned, 1 - Pending, 2 - Completed, 3 - Unsuccessful, 4 - Cancelled, 5 - Declined
+	@comment nvarchar(max) = '',						-- Comment
+	@changeAgentID uniqueidentifier = null				-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	-- Constants
+	declare @eftBrochureCodeNo tinyint = 0
+	declare @resendCodeNo tinyint = 0
+
+	declare @raiseErrorIfNotFound_True bit = 1
+	
+	
+	-- Vars used for code/guid values
+	declare @subcategoryID uniqueidentifier = null
+	declare @contactMethodID uniqueidentifier = null
+	
+	declare @contactMethodError nvarchar(255) = ' Could not find the contact method = "' + @contactMethodDesc + '"'
+	
+	set @id = null
+	
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+		
+	begin try
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+		-- Try to lookup ids
+		exec dbo.USP_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName, @subcategoryName, @raiseErrorIfNotFound_True
+		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @contactMethodID output, @contactMethodDesc,  'dbo.INTERACTIONTYPECODE', @raiseErrorIfNotFound_True, @contactMethodError
+		
+		-- Use Blackbaud's add sproc - the null parm is @actualdate.  This is requried if the statuscode is set to Completed
+		exec USP_DATAFORMTEMPLATE_ADD_INTERACTION @id output, @changeAgentID, @constituentID,  @expectedDate, @actualDate,  @owner, @contactMethodID, @summary, @statusCode, @comment
+
+		if @id is null
+			RAISERROR 1000000 'No ID was returned when creating the interaction'
+		else
+		begin
+			-- Blackbaud's basic add sproc does not include the subcategoryid, so we need to do that manually
+			update	dbo.INTERACTION
+			   set	INTERACTIONSUBCATEGORYID = @subcategoryID
+			 where  ID = @id			 
+			 
+			-- create extension row
+			insert dbo.USR_INTERACTIONEXTENSION 
+				(ID, EFTBROCHURECODE, RESENDCODE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+				values (@id, @eftBrochureCodeNo, @resendCodeNo, @changeAgentID, @changeAgentID, @currentDate, @currentDate)
+		end
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+
+end
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

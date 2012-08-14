@@ -3,7 +3,7 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="a39f10f7-e1fe-4642-bdbd-75ed78713664" 
 	Name="Interaction Extension Data List"
-	Description="Used to display sponsoship related information for an interaction." 
+	Description="Used to display sponsorship related interactions (and extension data) for a constituent." 
 	Author="Cary Mayeda"
 	common:SecurityUIFolder="Interaction Extension" >
 
@@ -17,10 +17,10 @@
 	-->
 	
 	<!-- define the SP that returns the data for the datalist -->
-	<SPDataList SPName="USP_DATALIST_INTERACTIONEXTENSION_CONSTITUENTLIST">
+	<SPDataList SPName="USP_DATALIST_INTERACTIONEXTENSION_SPONSORLIST">
 		<common:CreateProcedureSQL>
 			<![CDATA[
-create procedure dbo.USP_DATALIST_INTERACTIONEXTENSION_CONSTITUENTLIST(@CONSTITUENTID uniqueidentifier)
+create procedure dbo.USP_DATALIST_INTERACTIONEXTENSION_SPONSORLIST(@CONSTITUENTID uniqueidentifier)
 as
 	set nocount on;
 
