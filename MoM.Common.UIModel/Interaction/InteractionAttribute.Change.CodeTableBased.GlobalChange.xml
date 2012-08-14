@@ -1,0 +1,416 @@
+﻿<GlobalChangeSpec 
+	xmlns="bb_appfx_globalchange"  
+	xmlns:common="bb_appfx_commontypes"
+	ID="3f40db91-6f23-4848-8b5f-b2cb9bffcd21"
+	Name="Interaction Attribute Code Table Based Global Change"
+	Description="Interaction Attribute Code Table Based Global Change"
+	Author="Bill Elfstrom"
+	DisplayName="Change Interaction Attributes Code Table Based"
+	GlobalChangeFolder="Interaction\Attribute"
+	SPName="USR_USP_INTERACTIONATTRIBUTECODETABLEGLOBALCHANGE"
+>
+
+<!-- 
+ 
+  History:
+    Date            Modified By     Comments
+    07-June-2012    BElfstrom       Created
+    
+  Comments:
+    This procedure deletes interaction atrtributes that are of data type code table.
+    The fist selection is set to be a code table and a code table value.
+    The next 3 selections may be a Start or End date or a comment
+    
+    Attribute tables use the Interaction ID or ID value (depending on the
+    attribute type) as the primary key to identify
+    which interaction an attribute is attached to.  The attribute records are spread 
+    across various attribute tables.  Each attribute has its own table and unique table name
+    in the format ATTRIBUTExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx where x is the
+    GUID of the attribute category with the dashes removed.
+    
+    This procedure builds the attribute table name using input from the user.
+    
+    Note: Attributes categories that are designated as "allow only one per record" use the
+    ID field to link to the parent Interaction.  Categories that allow more than one attribute
+    per record use the INTERACTIONID as the field to link to the parent Interaction record.
+    
+    The name of the code table value field must be obtained from the Attribute Category table.  
+-->
+
+  <CreateProcedureSQL>
+    <![CDATA[
+create procedure dbo.USR_USP_INTERACTIONATTRIBUTECODETABLEGLOBALCHANGE
+(
+	@CHANGEAGENTID uniqueidentifier = null,
+	@ASOF as datetime = null,
+	@NUMBERADDED int = 0 output,
+	@NUMBEREDITED int = 0 output,
+	@NUMBERDELETED int = 0 output,
+  
+  @IDSETREGISTERID uniqueidentifier = null,
+	@ATTRIBUTECATEGORYID uniqueidentifier = null,
+  @VALUEATTRIBUTEPROCESS nvarchar(1) = null,
+  @SPACE1 nvarchar(1),
+  
+  @COMMENTATTRIBUTEPROCESS nvarchar = null,
+  @COMMENTTOREPLACE nvarchar(255) = null,
+  @NEWCOMMENT nvarchar(255) = null,
+  @SPACE2 nvarchar(1),
+  
+  @STARTDATEATTRIBUTEPROCESS nvarchar = null,
+  @STARTDATETOREPLACE nvarchar(255) = null,
+  @NEWSTARTDATE nvarchar(255) = null,
+  @SPACE3 nvarchar(1),
+  
+  @ENDDATEATTRIBUTEPROCESS nvarchar = null,
+  @ENDDATETOREPLACE nvarchar(255) = null,
+  @NEWENDDATE nvarchar(255) = null,
+  @SPACE4 nvarchar(1),
+  
+  @CODETABLEVALUETOREPLACE uniqueidentifier,
+  @NEWCODETABLEVALUE uniqueidentifier
+)
+
+as		
+	set nocount off;
+  
+	declare @CURRENTDATE datetime
+  declare @ATTRIBUTE_TABLE_NAME as nvarchar(41)
+  declare @SQL as nvarchar(3000) = null
+  declare @SQL_SET as nvarchar(3000) = null
+  declare @UPDATE_COUNT as int = 0
+  declare @UPDATE_COUNT_STRING as nvarchar(3000)
+  declare @VALUECOLUMNNAME nvarchar(128) = null
+  declare @ONLYALLOWONEPERRECORD bit = null
+  declare @TRUE bit = 1
+  declare @REPLACE_SPECIFIC_VALUE tinyint = 1
+  declare @REPLACE_ALL tinyint = 2
+  declare @SET_ALL_TO_BLANK tinyint = 3
+  declare @REPLACE_IF_BLANK tinyint = 4
+    
+	set @CURRENTDATE = getdate();
+	set @NUMBERADDED = 0;
+	set @NUMBEREDITED = 0;
+	set @NUMBERDELETED = 0; 
+
+  begin try
+
+  if @CHANGEAGENTID is null
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+
+  if @IDSETREGISTERID is null
+	  raiserror ('IDSETREGISTERID is required',13,1);	
+
+  set @ATTRIBUTE_TABLE_NAME = 'ATTRIBUTE' + replace(cast(@ATTRIBUTECATEGORYID as varchar(36)),'-','')
+  
+  select @VALUECOLUMNNAME = VALUECOLUMNNAME, @ONLYALLOWONEPERRECORD = ONLYALLOWONEPERRECORD 
+  from ATTRIBUTECATEGORY where ID = @ATTRIBUTECATEGORYID
+  
+  if @ONLYALLOWONEPERRECORD is null
+  raiserror 50001 'An error occurred.  ONLYALLOWONEPERRECORD is not set.'
+
+   /* VALUE field - cannot be null */
+    if not @VALUEATTRIBUTEPROCESS is null
+    begin
+      if @VALUEATTRIBUTEPROCESS = @REPLACE_SPECIFIC_VALUE
+        begin
+        
+        if @CODETABLEVALUETOREPLACE is null
+          raiserror 50001 'The value field cannot be blank.'
+        
+        if @NEWCODETABLEVALUE is null
+          raiserror 50001 'The new value field cannot be blank.'
+        
+        set @SQL_SET = COALESCE(@SQL_SET,'') + @VALUECOLUMNNAME + ' = case when ' +  @VALUECOLUMNNAME  +' = ' + '''' + 
+        convert(varchar(38),@CODETABLEVALUETOREPLACE) + '''' +
+        ' then ' + '''' + convert(varchar(38),@NEWCODETABLEVALUE) + '''' + ' else ' + @VALUECOLUMNNAME + ' end, '
+        set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + @VALUECOLUMNNAME + ' = ' + '''' + 
+        convert(varchar(38),@CODETABLEVALUETOREPLACE) + '''' + ' or '
+      end
+
+      if @VALUEATTRIBUTEPROCESS = @REPLACE_ALL          
+        begin
+        set @SQL_SET = COALESCE(@SQL_SET,'') + @VALUECOLUMNNAME + ' = ' + '''' + convert(varchar(38),@NEWCODETABLEVALUE) + '''' + ', '
+        set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + @VALUECOLUMNNAME + ' = ' + @VALUECOLUMNNAME + ' or '
+        end
+     end
+    
+    
+  /* COMMENT field  */
+    if not @COMMENTATTRIBUTEPROCESS is null
+    begin
+       if @COMMENTATTRIBUTEPROCESS =   @REPLACE_SPECIFIC_VALUE
+           begin
+           set @SQL_SET = COALESCE(@SQL_SET,'') + 'COMMENT = case when COMMENT = ' + '''' + @COMMENTTOREPLACE + '''' + 
+            ' then ' + '''' + @NEWCOMMENT + '''' + ' else COMMENT end, '      
+           set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COMMENT = ' + '''' + @COMMENTTOREPLACE + '''' + ' or '
+           end
+           
+       if @COMMENTATTRIBUTEPROCESS = @REPLACE_ALL   
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'COMMENT = ' + '''' +  @NEWCOMMENT + '''' + ', '
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COMMENT = COMMENT or '
+          end
+          
+      if @COMMENTATTRIBUTEPROCESS = @SET_ALL_TO_BLANK
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'COMMENT = ' + '''' +  '''' + ', '
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COMMENT = COMMENT or '
+          end
+          
+       if @COMMENTATTRIBUTEPROCESS = @REPLACE_IF_BLANK
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'COMMENT = case when COMMENT = ' + '''' + '''' + 
+          ' then ' +  '''' + @NEWCOMMENT + '''' + ' else COMMENT end, '             
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COMMENT = ' + '''' + '''' + ' or '
+          end
+    end 
+
+    /* START DATE field  */
+    if not @STARTDATEATTRIBUTEPROCESS is null
+    begin
+  
+        if @STARTDATEATTRIBUTEPROCESS = @REPLACE_SPECIFIC_VALUE
+          begin
+          if @NEWSTARTDATE is not null
+            set @SQL_SET = COALESCE(@SQL_SET,'') + 'STARTDATE = case when STARTDATE = ' + '''' + @STARTDATETOREPLACE + '''' +
+            ' then ' + '''' + @NEWSTARTDATE + '''' + ' else STARTDATE end, ' 
+          else
+            set @SQL_SET = COALESCE(@SQL_SET,'') + 'STARTDATE = case when STARTDATE = ' + '''' + @STARTDATETOREPLACE + '''' +
+            ' then null else STARTDATE end, ' 
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'STARTDATE = ' + '''' + @STARTDATETOREPLACE + '''' + ' or '
+          end
+          
+       if @STARTDATEATTRIBUTEPROCESS = @REPLACE_ALL     
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'STARTDATE = ' + '''' +  @NEWSTARTDATE + '''' + ', '
+          -- Must use colesce because value may be null
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COALESCE(STARTDATE,' + '''' + '''' + ') = COALESCE(STARTDATE,' + '''' + '''' + ')' + ' or '
+          end
+          
+      if @STARTDATEATTRIBUTEPROCESS = @SET_ALL_TO_BLANK
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'STARTDATE = null, '
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COALESCE(STARTDATE,' + '''' + '''' + ') = COALESCE(STARTDATE,' + '''' + '''' + ')' + ' or '
+          end
+
+       if @STARTDATEATTRIBUTEPROCESS = @REPLACE_IF_BLANK
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'STARTDATE = case when STARTDATE is null then ' 
+          + '''' +  @NEWSTARTDATE + '''' + ' else STARTDATE end, '    
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'STARTDATE is null ' + ' or '
+          end
+          
+  end 
+
+    /* END DATE field  */
+    if not @ENDDATEATTRIBUTEPROCESS is null
+    begin
+  
+       if @ENDDATEATTRIBUTEPROCESS = @REPLACE_SPECIFIC_VALUE
+          begin
+          if @NEWENDDATE is not null
+            set @SQL_SET = COALESCE(@SQL_SET,'') + 'ENDDATE = case when ENDDATE = ' + '''' + @ENDDATETOREPLACE + '''' +
+            ' then ' + '''' + @NEWENDDATE + '''' + ' else ENDDATE end, '      
+          else
+            set @SQL_SET = COALESCE(@SQL_SET,'') + 'ENDDATE = case when ENDDATE = ' + '''' + @ENDDATETOREPLACE + '''' +
+            ' then null else ENDDATE end, '      
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'ENDDATE = ' + '''' + @ENDDATETOREPLACE + '''' + ' or '      
+          end
+          
+       if @ENDDATEATTRIBUTEPROCESS = @REPLACE_ALL
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'ENDDATE = ' + '''' +  @NEWENDDATE + '''' + ', '
+          -- Must use colesce because value may be null
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COALESCE(ENDDATE,' + '''' + '''' + ') = COALESCE(ENDDATE,' + '''' + '''' + ')' + ' or '
+          end
+          
+       if @ENDDATEATTRIBUTEPROCESS = @SET_ALL_TO_BLANK    
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'ENDDATE = null, '
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'COALESCE(ENDDATE,' + '''' + '''' + ') = COALESCE(ENDDATE,' + '''' + '''' + ')' + ' or '
+          end
+          
+       if @ENDDATEATTRIBUTEPROCESS = @REPLACE_IF_BLANK
+          begin
+          set @SQL_SET = COALESCE(@SQL_SET,'') + 'ENDDATE = case when ENDDATE is null then ' 
+          + '''' +  @NEWENDDATE + '''' + ' else ENDDATE end, '   
+          set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'ENDDATE is null ' + ' or '
+          end
+
+    end
+
+    set @UPDATE_COUNT_STRING = '@NUMBER_OF_RECORDS_UPDATED = case when ' + 
+    left(@UPDATE_COUNT_STRING, len(@UPDATE_COUNT_STRING)-3) + 
+    ' then @NUMBER_OF_RECORDS_UPDATED + 1 else @NUMBER_OF_RECORDS_UPDATED end'
+ 
+ 
+  /* Build the full SQL string and execute.  Some tables use ID as the link to attributes, some use INTERACTIONID. */    
+  if @ONLYALLOWONEPERRECORD = 0
+    set @SQL = 'update atn set ' + 
+    @SQL_SET + @UPDATE_COUNT_STRING + ' from ' + @ATTRIBUTE_TABLE_NAME + ' as atn' +
+    ' join UFN_IDSETREADER_GETRESULTS(' + '''' + convert(varchar(38),@IDSETREGISTERID) + '''' + 
+    ') as selection on atn.INTERACTIONID = selection.ID; '
+  else
+    if @ONLYALLOWONEPERRECORD = @TRUE
+    set @SQL = 'update atn set ' + 
+    @SQL_SET + @UPDATE_COUNT_STRING + ' from ' + @ATTRIBUTE_TABLE_NAME + ' as atn' +
+    ' join UFN_IDSETREADER_GETRESULTS(' + '''' + convert(varchar(38),@IDSETREGISTERID) + '''' + 
+    ') as selection on atn.ID = selection.ID; '
+
+
+  exec sp_executesql
+  @stmt = @SQL,
+  @params = N'@NUMBER_OF_RECORDS_UPDATED as int OUTPUT',
+  @NUMBER_OF_RECORDS_UPDATED = @NUMBEREDITED OUTPUT;
+  
+  end try
+	
+	begin catch
+
+    -- Raise an error with the details of the exception
+    declare @ErrMsg nvarchar(4000), @ErrSeverity int
+    select @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY()
+    raiserror(@ErrMsg, @ErrSeverity, 1)
+    
+		return 1;
+	end catch 
+
+		]]>
+
+</CreateProcedureSQL>
+
+<ParametersFormMetaData>
+
+<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
+<FormMetaData xmlns="bb_appfx_commontypes">
+  <FormFields>
+    <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+      <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+        <FormFieldOverrides>
+          <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+        </FormFieldOverrides>
+      </SearchList>
+    </FormField>
+    <FormField FieldID="ATTRIBUTECATEGORYID" DataType="Guid" Required="true" Caption="Category" CaptionResourceKey="$$category">
+      <SimpleDataList SimpleDataListID="3bedd3ed-03f8-45cd-8735-08ea77d5db07">
+        <Params>
+          <Param ID="RECORDTYPE">
+            <Value>Interaction</Value>
+          </Param>
+        </Params>
+      </SimpleDataList>
+    </FormField>
+    <FormField FieldID="SPACE1" Hidden="true"/>
+    <FormField FieldID="VALUEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Value change do you want to make" DefaultValueText="0" CaptionResourceKey="$$status">
+      <ValueList>
+        <Items>
+          <Item>
+            <Value>1</Value>
+            <Label>Replace specific Value with new Value</Label>
+          </Item>
+          <Item>
+            <Value>2</Value>
+            <Label>Replace Value for all interactions in query</Label>
+          </Item>
+        </Items>
+      </ValueList>
+    </FormField>
+    <FormField FieldID="CODETABLEVALUETOREPLACE" DataType="Guid" Caption="Value to replace" CaptionResourceKey="$$value">
+      <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
+        <Params>
+          <Param ID="ATTRIBUTECATEGORYID">
+            <Value>Fields!ATTRIBUTECATEGORYID</Value>
+          </Param>
+        </Params>
+      </SimpleDataList>
+    </FormField>
+    <FormField FieldID="NEWCODETABLEVALUE" DataType="Guid" Caption="New Value" CaptionResourceKey="$$value">
+      <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
+        <Params>
+          <Param ID="ATTRIBUTECATEGORYID">
+            <Value>Fields!ATTRIBUTECATEGORYID</Value>
+          </Param>
+        </Params>
+      </SimpleDataList>
+    </FormField>
+    <FormField FieldID="SPACE2" Hidden="true"/>
+    <FormField FieldID="COMMENTATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Comment change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
+      <ValueList>
+        <Items>
+          <Item>
+            <Value>1</Value>
+            <Label>Replace Comment with new Comment or blank</Label>
+          </Item>
+          <Item>
+            <Value>2</Value>
+            <Label>Replace Comment for all interactions in query</Label>
+          </Item>
+          <Item>
+            <Value>3</Value>
+            <Label>Replace Comment with blank for attributes in query</Label>
+          </Item>
+          <Item>
+            <Value>4</Value>
+            <Label>Replace blank Comments with new Comment for all attributes in query</Label>
+          </Item>
+        </Items>
+      </ValueList>
+    </FormField>
+    <FormField FieldID="COMMENTTOREPLACE" Caption="Comment to replace" CaptionResourceKey="$$attribute" />
+    <FormField FieldID="NEWCOMMENT" Caption="New Comment" CaptionResourceKey="$$attribute" />
+    <FormField FieldID="SPACE3" Hidden="true"/>
+    <FormField FieldID="STARTDATEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Start Date change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
+      <ValueList>
+        <Items>
+          <Item>
+            <Value>1</Value>
+            <Label>Replace Start Date with new Start Date or blank</Label>
+          </Item>
+          <Item>
+            <Value>2</Value>
+            <Label>Replace Start Date for all interactions in query</Label>
+          </Item>
+          <Item>
+            <Value>3</Value>
+            <Label>Replace Start Date with blank for all interactions in query</Label>
+          </Item>
+          <Item>
+            <Value>4</Value>
+            <Label>Replace blank Start Date with new Start Date for all interactions in query</Label>
+          </Item>
+        </Items>
+      </ValueList>
+    </FormField>
+    <FormField FieldID="STARTDATETOREPLACE" Caption="Start Date to replace" DataType="Date"  CaptionResourceKey="$$attribute" />
+    <FormField FieldID="NEWSTARTDATE" Caption="New Start Date" DataType="Date" CaptionResourceKey="$$attribute" />
+    <FormField FieldID="SPACE4" Hidden="true"/>
+    <FormField FieldID="ENDDATEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What End Date change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
+      <ValueList>
+        <Items>
+          <Item>
+            <Value>1</Value>
+            <Label>Replace End Date with new End Date or blank</Label>
+          </Item>
+          <Item>
+            <Value>2</Value>
+            <Label>Replace End Date for all interactions in query</Label>
+          </Item>
+          <Item>
+            <Value>3</Value>
+            <Label>Replace End Date with blank for all interactions in query</Label>
+          </Item>
+          <Item>
+            <Value>4</Value>
+            <Label>Replace blank End Date with new End Date for all interactions in query</Label>
+          </Item>
+        </Items>
+      </ValueList>
+    </FormField>
+    <FormField FieldID="ENDDATETOREPLACE" Caption="End Date to replace" DataType="Date" CaptionResourceKey="$$attribute" />
+    <FormField FieldID="NEWENDDATE" Caption="New End Date" DataType="Date" CaptionResourceKey="$$attribute" />
+  </FormFields>
+</FormMetaData>
+</ParametersFormMetaData>
+</GlobalChangeSpec>
