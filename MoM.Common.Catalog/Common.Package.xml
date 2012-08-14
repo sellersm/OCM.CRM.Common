@@ -96,9 +96,12 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_GETFIELDSTATUS.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
-		
 
-		<!-- Record Operations -->
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.USR_UFN_CONVERTTEXTTOBOOLEAN.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.USR_UFN_GETATTRIBUTEIDFIELDNAME.xml" />
+
+
+    <!-- Record Operations -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Delete.RecordOperation.xml" />
 		
 		
@@ -120,9 +123,19 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Query.xml" />
-		
-		
-		<!-- Pages -->
+
+    <!-- Global Changes -->
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttributesNonCodeTables.SimpleList.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Interaction.Delete.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Interaction.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Add.CodeTableBased.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Add.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Change.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.InteractionAttribute.Delete.GlobalChange.xml" />
+
+    <!-- Pages -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.Page.xml" />
 		<!-- common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Alter.Page.xml" /-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ChildInteraction.Page.xml" />
@@ -131,6 +144,6 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Common.PackageVersion.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Common.UIModelVersion.View.xml"/>
 
-	</common:DependencyList>
+  </common:DependencyList>
 
 </PackageSpec>

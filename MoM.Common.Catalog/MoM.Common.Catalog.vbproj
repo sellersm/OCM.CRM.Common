@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
+    <Folder Include="Interaction\GlobalChanges\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeTableManager.Table.xml">
