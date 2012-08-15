@@ -92,7 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
-    <Folder Include="Interaction\GlobalChanges\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeTableManager.Table.xml">
@@ -292,6 +291,23 @@
     <EmbeddedResource Include="Interaction\InteractionExtension.CCHVerificationFailed.Add.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.Delete.GlobalChange.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.GlobalChange.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Add.CodeTableBased.GlobalChange.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Add.GlobalChange.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Change.GlobalChange.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Delete.GlobalChange.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttributesNonCodeTables.SimpleList.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="USR_UFN_CONVERTTEXTTOBOOLEAN.xml" />
+    <EmbeddedResource Include="USR_UFN_GETATTRIBUTEIDFIELDNAME.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
