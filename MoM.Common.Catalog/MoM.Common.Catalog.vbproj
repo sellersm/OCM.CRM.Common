@@ -258,7 +258,9 @@
     <EmbeddedResource Include="USR_USP_GETCODETABLEITEMID_DYNAMIC.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADD.xml" />
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADD.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED.xml" />
