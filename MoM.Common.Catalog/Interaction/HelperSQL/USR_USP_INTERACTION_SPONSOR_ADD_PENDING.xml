@@ -28,7 +28,7 @@ create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADD_PENDING (
 	@summary nvarchar(100) = '',						-- The summary / objective of the interaction
 	@categoryName nvarchar(100) = '',					-- Name of the interaction category (not the guid)
 	@subcategoryName nvarchar(100) = '',				-- Name of the interaction subcategory (not the guid)
-	@expectedDate datetime = null,						-- Expected Date of the interaction
+	@expectedDate date = null,							-- Expected Date of the interaction
 	@owner uniqueidentifier = null,						-- Owner / Fundraiser assigned to the interaction 
 	@contactMethodDesc nvarchar(100) = '',				-- Email, Event, Mail, Phone, Task
 	@comment nvarchar(max) = '',						-- Comment
