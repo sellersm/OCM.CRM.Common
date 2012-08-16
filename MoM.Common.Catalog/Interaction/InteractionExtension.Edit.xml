@@ -17,12 +17,13 @@
 	History:
 	Date            Modified By     Comments
 	07-Aug-2012		CMayeda			Initial Version
+	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
 	-->
     <SPDataForm>
-        <LoadImplementation SPName="USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
+        <LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
             <c:CreateProcedureSQL>
 <![CDATA[
-create procedure dbo.USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
 (
     @ID uniqueidentifier,
     @DATALOADED bit = 0 output,
@@ -86,10 +87,10 @@ as
 ]]>
 </c:CreateProcedureSQL>
         </LoadImplementation>
-        <SaveImplementation SPName="USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION">
+        <SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION">
             <c:CreateProcedureSQL>
 <![CDATA[
-create procedure dbo.USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
 (
 	@ID uniqueidentifier,
 	@CHANGEAGENTID uniqueidentifier = null,
@@ -112,7 +113,7 @@ create procedure dbo.USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
     @UNUSABLECODEID uniqueidentifier,
 	@CHILDREN xml
 )
-as
+as begin
 
 	set nocount on;
 
@@ -152,7 +153,8 @@ as
 		return 1
 	end catch
 
-return 0;
+	return 0;
+end
 ]]>
 </c:CreateProcedureSQL>
             <c:ExpectedDBExceptions>

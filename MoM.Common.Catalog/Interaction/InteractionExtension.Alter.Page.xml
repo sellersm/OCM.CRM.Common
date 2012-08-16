@@ -14,6 +14,7 @@
 	History:
 	Date            Modified By     Comments
 	05-Aug-2012		CMayeda			Initial Version
+	15-Aug-2012		CMayeda			Change context for the Interaction Add action to "= Page.Fields!CONSTITUENTID"
 	-->
 	
 	<!-- define how the page header should appear -->
@@ -160,10 +161,10 @@
 										<Action ID="54D4A309-BCDF-47C8-84FE-5FB0D9EBAC99" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
 											<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
 												<ActionContext>
-													<PageContextID />
+													<Expression>= Page.Fields!CONSTITUENTID</Expression>
 												</ActionContext>
 												<PostActionEvent>
-													<RefreshPage/>
+													<RefreshPage />
 												</PostActionEvent>
 											</ShowAddDataForm>
 											<HelpKey>CRMAddInteractionsScreen.html</HelpKey>

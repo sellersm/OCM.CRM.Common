@@ -16,14 +16,18 @@
 	History:
 	Date            Modified By     Comments
 	01-Aug-2012		CMayeda			Initial Version
+	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
 	-->
 
 	<!-- define the SP that returns the data for the datalist -->
-	<SPDataList SPName="USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST">
+	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST">
 		<common:CreateProcedureSQL>
 			<![CDATA[
-create procedure dbo.USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST (@SPONSORSHIPID uniqueidentifier) --(@CONSTITUENTIDCHILDID nvarchar(73))
-as
+create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST (
+	@SPONSORSHIPID uniqueidentifier 
+)
+
+as begin
 	declare @constituentID uniqueidentifier = null
 	declare @sponosrshipOpportunityChildID uniqueidentifier = null
 		
@@ -32,25 +36,25 @@ as
 	
 	set nocount on;
 
-with interactionChildren (ROWNUMBER, INTERACTIONID, SPONSORSHIPOPPORTUNITYCHILDID, LOOKUPID, NAME)
-as
-(	
-	select	ROW_NUMBER() over (partition by InteractionID order by so.LOOKUPID) as ROWNUMBER,
-			INTERACTIONID,
-			SPONSORSHIPOPPORTUNITYCHILDID,
-			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (so.ID, 1) as LOOKUPID,
-			so_child.NAME
-	  from	dbo.INTERACTION
-inner join	dbo.USR_INTERACTIONEXTENSIONCHILDREN ie_children on
-				ie_children.INTERACTIONID = INTERACTION.ID
-inner join	dbo.SPONSORSHIPOPPORTUNITY so on 
-				ie_children.SPONSORSHIPOPPORTUNITYCHILDID = so.ID 
-inner join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on 
-				ie_children.SPONSORSHIPOPPORTUNITYCHILDID = so_child.ID 
-where INTERACTION.CONSTITUENTID = @CONSTITUENTID
-),
-interactionChildCounts as
-(select INTERACTIONID, COUNT(SPONSORSHIPOPPORTUNITYCHILDID) as CHILDCOUNT from interactionChildren group by INTERACTIONID)
+	with interactionChildren (ROWNUMBER, INTERACTIONID, SPONSORSHIPOPPORTUNITYCHILDID, LOOKUPID, NAME)
+	as
+	(	
+		select	ROW_NUMBER() over (partition by InteractionID order by so.LOOKUPID) as ROWNUMBER,
+				INTERACTIONID,
+				SPONSORSHIPOPPORTUNITYCHILDID,
+				dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (so.ID, 1) as LOOKUPID,
+				so_child.NAME
+		  from	dbo.INTERACTION
+	inner join	dbo.USR_INTERACTIONEXTENSIONCHILDREN ie_children on
+					ie_children.INTERACTIONID = INTERACTION.ID
+	inner join	dbo.SPONSORSHIPOPPORTUNITY so on 
+					ie_children.SPONSORSHIPOPPORTUNITYCHILDID = so.ID 
+	inner join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on 
+					ie_children.SPONSORSHIPOPPORTUNITYCHILDID = so_child.ID 
+	where INTERACTION.CONSTITUENTID = @CONSTITUENTID
+	),
+	interactionChildCounts as
+	(select INTERACTIONID, COUNT(SPONSORSHIPOPPORTUNITYCHILDID) as CHILDCOUNT from interactionChildren group by INTERACTIONID)
 
 	select	INTERACTION.ID,
 			INTERACTION.EXPECTEDDATE,
@@ -125,7 +129,7 @@ interactionChildCounts as
 			or int_ext.DEPARTEDCHILDID = @sponosrshipOpportunityChildID
 			or int_ext.UNAVAILABLECHILDID = @sponosrshipOpportunityChildID)
 
-
+end
 			]]>
 		</common:CreateProcedureSQL>
 	</SPDataList>

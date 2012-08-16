@@ -14,14 +14,15 @@
 	History:
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
+	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix	
 	-->
 
 	<!-- define the SP that returns the data for the datalist -->
-	<SPDataList SPName="USP_DATALIST_INTERACTIONEXTENSION_CHILDLIST">
+	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_CHILDLIST">
 		<common:CreateProcedureSQL>
 			<![CDATA[
 			
-create procedure dbo.USP_DATALIST_INTERACTIONEXTENSION_CHILDLIST (
+create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_CHILDLIST (
 	@SPONSORSHIPOPPORTUNITYCHILDID uniqueidentifier
 )
 as begin
