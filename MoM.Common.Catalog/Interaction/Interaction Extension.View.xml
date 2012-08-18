@@ -34,6 +34,7 @@ create procedure dbo.USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
     @FIELDMEMOSENTCODE nvarchar(100) = null output,
     @HOLDREASONCODE nvarchar(100) = null output,
     @UNUSABLECODE nvarchar(100) = null output
+	--@CHILDREN xml = null output
 )
 as
 	set nocount on;
@@ -62,19 +63,20 @@ as
            @FIELDMEMOSENTCODE = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = FIELDMEMOSENTCODEID), 
            @HOLDREASONCODE = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = HOLDREASONCODEID), 
            @UNUSABLECODE = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = UNUSABLECODEID)
+--		   @CHILDREN = dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN_TOITEMLISTXML(@ID)
 	from dbo.USR_INTERACTIONEXTENSION
 	where ID = @ID
-	
+		
 	return 0;
 ]]>
 </c:CreateProcedureSQL>
     </SPDataForm>
     <c:FormMetaData FixedDialog="true">
         <c:FormFields>
-            <c:FormField FieldID="LETTERTYPECODE" MaxLength="100" Caption="Lettertype" />
-            <c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODE" MaxLength="100" Caption="Childcountletterversion" />
-            <c:FormField FieldID="FULFILLMENTSTATUSCODE" MaxLength="100" Caption="Fulfillmentstatus" />
-            <c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="Eftbrochure" DefaultValueText="0">
+            <c:FormField FieldID="LETTERTYPECODE" MaxLength="100" Caption="Letter type" />
+            <c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODE" MaxLength="100" Caption="Child count letter version" />
+            <c:FormField FieldID="FULFILLMENTSTATUSCODE" MaxLength="100" Caption="Fulfillment status" />
+            <c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="EFT brochure" DefaultValueText="0">
                 <c:ValueList>
                     <c:Items>
                         <c:Item>
@@ -88,7 +90,7 @@ as
                     </c:Items>
                 </c:ValueList>
             </c:FormField>
-            <c:FormField FieldID="RESENDCODE" DataType="TinyInt" Caption="Resend" DefaultValueText="0">
+            <c:FormField FieldID="RESENDCODE" DataType="TinyInt" Caption="Resend?" DefaultValueText="0">
                 <c:ValueList>
                     <c:Items>
                         <c:Item>
@@ -102,19 +104,32 @@ as
                     </c:Items>
                 </c:ValueList>
             </c:FormField>
-            <c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailablechild" />
-            <c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transferchild" />
-            <c:FormField FieldID="DEPARTEDCHILDID" DataType="Guid" Caption="Departedchild" />
-            <c:FormField FieldID="DEPARTUREREASONCODE" MaxLength="100" Caption="Departurereason" />
-            <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Doublesponsoredchild" />
-            <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previouschildproject" />
-            <c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previousbirthdate" />
-            <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previousname" Multiline="true" />
-            <c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Fieldmemodatesent" />
-            <c:FormField FieldID="FIELDMEMOSENTCODE" MaxLength="100" Caption="Fieldmemosent" />
-            <c:FormField FieldID="HOLDREASONCODE" MaxLength="100" Caption="Holdreason" />
-            <c:FormField FieldID="UNUSABLECODE" MaxLength="100" Caption="Unusable" />
-        </c:FormFields>
+            <c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailable child" />
+            <c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transfer child" />
+            <c:FormField FieldID="DEPARTEDCHILDID" DataType="Guid" Caption="Departed child" />
+            <c:FormField FieldID="DEPARTUREREASONCODE" MaxLength="100" Caption="Departure reason" />
+            <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Doubles ponsored child" />
+            <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
+            <c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
+            <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name" Multiline="true" />
+            <c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Field memo date sent" />
+            <c:FormField FieldID="FIELDMEMOSENTCODE" MaxLength="100" Caption="Field memo sent" />
+            <c:FormField FieldID="HOLDREASONCODE" MaxLength="100" Caption="Hold reason" />
+            <c:FormField FieldID="UNUSABLECODE" MaxLength="100" Caption="Unusable item" />
+			<!-- <c:FormField FieldID="CHILDREN" Caption="Children">
+				<c:Collection>
+					<c:Fields>
+						<c:FormField FieldID="ID" DataType="Guid" Hidden="true" />
+						<c:FormField FieldID="CHILDLOOKUPID" Caption="Child ID" DataType="String" />
+						<c:FormField FieldID="SPONSORSHIPOPPORTUNITYCHILDID" Caption="Child Name" DataType="Guid" Hidden="true">
+							<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+						</c:FormField>
+					</c:Fields>
+				</c:Collection>
+			</c:FormField>
+			-->
+
+		</c:FormFields>
         <c:FormUIComponent />
     </c:FormMetaData>
 </ViewDataFormTemplateSpec>

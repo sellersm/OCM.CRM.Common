@@ -7,7 +7,9 @@
 	Author="Cary Mayeda"
 	Tablename="USR_INTERACTIONEXTENSION"
 	PrimaryKeyAsForeignKeyTablename="INTERACTION"
-	WarnOnMissingIndexes="false" >
+	WarnOnMissingIndexes="false" 
+	CustomIdentifier="true" >
+
 
 	<!-- 
 	Remarks:    This is used to extend the interaction table for sponsorship and child related items.

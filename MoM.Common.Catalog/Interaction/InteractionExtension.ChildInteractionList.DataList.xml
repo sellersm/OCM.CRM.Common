@@ -28,7 +28,7 @@ create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_CHILDLIST (
 as begin
 	set nocount on;
 	
-	declare @interactionCategoryName_ChildFieldMemo nvarchar(100) = 'Child Field Memo'
+	/* declare @interactionCategoryName_ChildFieldMemo nvarchar(100) = 'Child Field Memo'
 	declare @interactionCategoryID_ChildFieldMemo uniqueidentifier = null
 	declare @interactionCategoryChildFieldMemoIDError nvarchar(255) = 'Could not find the interaction category - ' + @interactionCategoryName_ChildFieldMemo
 	
@@ -50,7 +50,7 @@ as begin
 	    exec dbo.USP_RAISE_ERROR
 		return 1	
 	end catch
-	
+	*/
 	select	INTERACTION.ID,
 			INTERACTION.EXPECTEDDATE,
 			(select DESCRIPTION from dbo.INTERACTIONTYPECODE  where ID = INTERACTION.INTERACTIONTYPECODEID) as CONTACTMETHOD,
@@ -79,8 +79,9 @@ inner join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
  				
 	 where	so_child.ID = @SPONSORSHIPOPPORTUNITYCHILDID
 	   and	INTERACTION.ISINTERACTION = 1  			 
-	   and	cat.ID in (@interactionCategoryID_ChildFieldMemo, @interactionCategoryID_ChildLetter)
-   
+--	   and	cat.ID in (@interactionCategoryID_ChildFieldMemo, @interactionCategoryID_ChildLetter)
+   	   and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('child') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
+
    	return 0
 end
 

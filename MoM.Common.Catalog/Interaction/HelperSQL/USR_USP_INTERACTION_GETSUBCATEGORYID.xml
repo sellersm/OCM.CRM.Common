@@ -2,10 +2,10 @@
 	xmlns="bb_appfx_sqlstoredprocedure"
 	xmlns:common="bb_appfx_commontypes" 
 	ID="a915ae98-28dd-41ba-bf1d-b59ab1ae38a8"
-	Name="USP_USP_INTERACTION_GETSUBCATEGORYID"
+	Name="USR_USP_INTERACTION_GETSUBCATEGORYID"
 	Description="Find the subcategoryid based on the category and subcategory names"
 	Author="Cary Mayeda"
-	SPName="USP_USP_INTERACTION_GETSUBCATEGORYID"
+	SPName="USR_USP_INTERACTION_GETSUBCATEGORYID"
 	GrantServiceRolePermission="true" >
 
 	<!-- 
@@ -20,7 +20,7 @@
 	
 	<CreateProcedureSQL>
 		<![CDATA[
-create procedure dbo.USP_USP_INTERACTION_GETSUBCATEGORYID (
+create procedure dbo.USR_USP_INTERACTION_GETSUBCATEGORYID (
 	@subcategoryID uniqueidentifier output,			-- The subcategory id found
 	@categoryName nvarchar(100) = '',				-- Category Name to search for (case insensitive)
 	@subcategoryName nvarchar(100) = '',			-- Subcategory Name to search for (case insensitive)

@@ -2,8 +2,8 @@
 	xmlns="bb_appfx_datalist"
 	xmlns:common="bb_appfx_commontypes" 
 	ID="a39f10f7-e1fe-4642-bdbd-75ed78713664" 
-	Name="Interaction Extension Data List"
-	Description="Used to display sponsorship related interactions (and extension data) for a constituent." 
+	Name="Interaction Extension Sponsor Data List"
+	Description="Used to display sponsorship related interactions for a sponsor / constituent." 
 	Author="Cary Mayeda"
 	common:SecurityUIFolder="Interaction Extension" >
 
@@ -48,75 +48,73 @@ as begin
 	interactionChildCounts as
 	(select INTERACTIONID, COUNT(SPONSORSHIPOPPORTUNITYCHILDID) as CHILDCOUNT from interactionChildren group by INTERACTIONID)
 
-		select	INTERACTION.ID,
-				INTERACTION.EXPECTEDDATE,
-				(select DESCRIPTION from dbo.INTERACTIONTYPECODE  where ID = INTERACTION.INTERACTIONTYPECODEID) as CONTACTMETHOD,
-				cat.NAME as INTERACTIONSUBCATEGORY,			
-				subcat.NAME as INTERACTIONSUBCATEGORY,	
-				INTERACTION.STATUS,
-				INTERACTION.FUNDRAISERID as OWNERID,
-				fr_const.Name as OWNERNAME,
-				(select DESCRIPTION from USR_INTERACTIONEXTENSIONLETTERTYPECODE ltc where ID = int_ext.LETTERTYPECODEID) as LETTERTYPE,
-				(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where ID = int_ext.CHILDCOUNTLETTERVERSIONCODEID) as CHILDCOUNTLETTERVERSION,
-				int_ext.EFTBROCHURE,
-				int_childcount.CHILDCOUNT,
-				case 
-					when int_childcount.CHILDCOUNT in (1,2)  then
-						(select SPONSORSHIPOPPORTUNITYCHILDID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
-					else null
-				end as SPONSORSHIPOPPORTUNITYCHILDID1,
-				case 
-					when int_childcount.CHILDCOUNT in (1,2)  then
-						(select LOOKUPID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
-					else ''	
-				end as CHILDLOOKUPID1,
-				case 
-					when int_childcount.CHILDCOUNT in (1,2)  then
-						(select NAME from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
-					else ''	
-				end as CHILDNAME1,
+	select	INTERACTION.ID,
+			INTERACTION.EXPECTEDDATE,
+			(select DESCRIPTION from dbo.INTERACTIONTYPECODE  where ID = INTERACTION.INTERACTIONTYPECODEID) as CONTACTMETHOD,
+			cat.NAME as INTERACTIONSUBCATEGORY,			
+			subcat.NAME as INTERACTIONSUBCATEGORY,	
+			INTERACTION.STATUS,
+			INTERACTION.FUNDRAISERID as OWNERID,
+			fr_const.Name as OWNERNAME,
+			(select DESCRIPTION from USR_INTERACTIONEXTENSIONLETTERTYPECODE ltc where ID = int_ext.LETTERTYPECODEID) as LETTERTYPE,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where ID = int_ext.CHILDCOUNTLETTERVERSIONCODEID) as CHILDCOUNTLETTERVERSION,
+			int_ext.EFTBROCHURE,
+			int_childcount.CHILDCOUNT,
+			case 
+				when int_childcount.CHILDCOUNT in (1,2)  then
+					(select SPONSORSHIPOPPORTUNITYCHILDID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
+				else null
+			end as SPONSORSHIPOPPORTUNITYCHILDID1,
+			case 
+				when int_childcount.CHILDCOUNT in (1,2)  then
+					(select LOOKUPID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
+				else ''	
+			end as CHILDLOOKUPID1,
+			case 
+				when int_childcount.CHILDCOUNT in (1,2)  then
+					(select NAME from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
+				else ''	
+			end as CHILDNAME1,
 
-				case 
-					when int_childcount.CHILDCOUNT = 2 then
-						(select SPONSORSHIPOPPORTUNITYCHILDID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
-					else null
-				end as SPONSORSHIPOPPORTUNITYCHILDID2,
-				case 
-					when int_childcount.CHILDCOUNT = 2 then
-						(select LOOKUPID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
-					else ''	
-				end as CHILDLOOKUPID2,
-				case 
-					when int_childcount.CHILDCOUNT = 2 then
-						(select NAME from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
-					else ''	
-				end as CHILDNAME2,
+			case 
+				when int_childcount.CHILDCOUNT = 2 then
+					(select SPONSORSHIPOPPORTUNITYCHILDID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
+				else null
+			end as SPONSORSHIPOPPORTUNITYCHILDID2,
+			case 
+				when int_childcount.CHILDCOUNT = 2 then
+					(select LOOKUPID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
+				else ''	
+			end as CHILDLOOKUPID2,
+			case 
+				when int_childcount.CHILDCOUNT = 2 then
+					(select NAME from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
+				else ''	
+			end as CHILDNAME2,
 			
-				int_ext.TRANSFERCHILDID, 
-				dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.TRANSFERCHILDID, 1) as TRANSFERCHILDLOOKUPID,
-				int_ext.DEPARTEDCHILDID, 
-				dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.DEPARTEDCHILDID, 1) as DEPARTEDCHILDLOOKUPID,			
-				int_ext.UNAVAILABLECHILDID, 
-				dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.UNAVAILABLECHILDID, 1) as UNAVAILABLECHILDLOOKUPID,			
-				'b525985b-be02-4f02-a9b8-c110411cf936' as VIEWFORMID
+			int_ext.TRANSFERCHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.TRANSFERCHILDID, 1) as TRANSFERCHILDLOOKUPID,
+			int_ext.DEPARTEDCHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.DEPARTEDCHILDID, 1) as DEPARTEDCHILDLOOKUPID,			
+			int_ext.UNAVAILABLECHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.UNAVAILABLECHILDID, 1) as UNAVAILABLECHILDLOOKUPID,			
+			'b525985b-be02-4f02-a9b8-c110411cf936' as VIEWFORMID
     		
- 		  from	dbo.INTERACTION 
-		  join	dbo.USR_INTERACTIONEXTENSION int_ext on
-					int_ext.ID = INTERACTION.ID				
-	 left join	dbo.CONSTITUENT fr_const on
-					fr_const.ID = INTERACTION.FUNDRAISERID
-	 left join	dbo.INTERACTIONSUBCATEGORY subcat on
-					subcat.ID = INTERACTION.INTERACTIONSUBCATEGORYID
-	 left join	dbo.INTERACTIONCATEGORY cat on 
-					subcat.INTERACTIONCATEGORYID = cat.ID
-	-- left join	dbo.SPONSORSHIPOPPORTUNITY so_departedchild on
-	--				int_ext.DEPARTEDCHILDID = so_departedchild.ID
-	 left join	interactionChildCounts int_childcount on
-					int_childcount.INTERACTIONID = INTERACTION.ID	
+ 		 from	dbo.INTERACTION 
+	left join	dbo.USR_INTERACTIONEXTENSION int_ext on
+				int_ext.ID = INTERACTION.ID				
+	left join	dbo.CONSTITUENT fr_const on
+				fr_const.ID = INTERACTION.FUNDRAISERID
+	left join	dbo.INTERACTIONSUBCATEGORY subcat on
+				subcat.ID = INTERACTION.INTERACTIONSUBCATEGORYID
+	left join	dbo.INTERACTIONCATEGORY cat on 
+				subcat.INTERACTIONCATEGORYID = cat.ID
+	left join	interactionChildCounts int_childcount on
+				int_childcount.INTERACTIONID = INTERACTION.ID	
 				
-		 where	INTERACTION.CONSTITUENTID = @CONSTITUENTID
-		   and	INTERACTION.ISINTERACTION = 1  			 
-
+		where	INTERACTION.CONSTITUENTID = @CONSTITUENTID
+		  and	INTERACTION.ISINTERACTION = 1  			 
+		  and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('sponsor') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
 end
 
 			]]>

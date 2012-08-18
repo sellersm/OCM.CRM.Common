@@ -63,7 +63,7 @@ begin
 			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
 	
 		-- Try to lookup ids
-		exec dbo.USP_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName, @subcategoryName, @raiseErrorIfNotFound_True
+		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName, @subcategoryName, @raiseErrorIfNotFound_True
 		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @contactMethodID output, @contactMethodDesc, 'dbo.INTERACTIONTYPECODE', @raiseErrorIfNotFound_True, @contactMethodError
 		
 		-- Use Blackbaud's add sproc - the null parm is @actualdate.  This is requried if the statuscode is set to Completed

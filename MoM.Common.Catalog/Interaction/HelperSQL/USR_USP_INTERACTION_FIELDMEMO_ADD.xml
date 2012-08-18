@@ -85,7 +85,7 @@ begin
 	set @currentDate = getdate()	
 	
 	begin try
-		exec dbo.USP_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName_FieldMemo, @subcategoryName, @raiseErrorIfNotFound_True
+		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName_FieldMemo, @subcategoryName, @raiseErrorIfNotFound_True
 		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @contactMethodID output, @contactMethodDesc,  'dbo.INTERACTIONTYPECODE', @raiseErrorIfNotFound_True, @contactMethodError
 		
 		if @fieldmemoSentDesc <> ''

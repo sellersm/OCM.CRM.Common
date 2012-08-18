@@ -252,7 +252,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\HelperSQL\USP_USP_INTERACTION_GETSUBCATEGORYID.xml" />
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_GETSUBCATEGORYID.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="USR_USP_GETCODETABLEITEMID_DYNAMIC.xml" />
@@ -315,6 +315,11 @@
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_CHILD_CANCELCOMPLETEALLPENDING.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTION_GETCATEGORYGROUP.xml" />
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTION_GETSUBCATEGORYGROUP.xml" />
+    <Content Include="Interaction\Interaction Extension.View.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
