@@ -45,7 +45,7 @@ begin
 	declare @statusCode_Cancelled tinyint = 4
 	declare @statusCode_Declined tinyint = 5
 
-	exec USR_USP_INTERACTION_SPONSOR_ADD @id, @constituentID, @summary, @categoryName, @subcategoryName, @expectedDate, null, @owner, @contactMethodDesc, @statusCode_Pending, @comment, @changeAgentID 
+	exec USR_USP_INTERACTION_SPONSOR_ADD @id output, @constituentID, @summary, @categoryName, @subcategoryName, @expectedDate, null, @owner, @contactMethodDesc, @statusCode_Pending, @comment, @changeAgentID 
 
 	return 0
 
