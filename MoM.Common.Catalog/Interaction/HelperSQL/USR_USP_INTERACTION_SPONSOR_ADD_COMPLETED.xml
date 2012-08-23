@@ -33,6 +33,12 @@ create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED (
 	@owner uniqueidentifier = null,						-- Owner / Fundraiser assigned to the interaction 
 	@contactMethodDesc nvarchar(100) = '',				-- Email, Event, Mail, Phone, Task
 	@comment nvarchar(max) = '',						-- Comment
+	@letterTypeDesc nvarchar(100) = '',					-- Description of the row in USR_INTERACTIONEXTENSIONLETTERTYPECODE used to set LETTERTYPECODEID
+														-- The caller can pass null or empty string if this column isn't needed
+	@fulfillmentStatusDesc nvarchar(100) = '',			-- Description from USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE used to set FULFILLMENTSTATUSCODEID 
+														-- The caller can pass null or empty string if this column isn't needed
+	@eftBrochureCode tinyint = 0,						-- Whether an eft brochure is needed.  0 = No, 1 = Yes
+	@resendCode tinyint = 0,							-- Whether this is a resend of an interaction.  0 = No, 1 = Yes
 	@changeAgentID uniqueidentifier = null				-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
 )
 as
@@ -46,7 +52,23 @@ begin
 	declare @statusCode_Cancelled tinyint = 4
 	declare @statusCode_Declined tinyint = 5
 
-	exec USR_USP_INTERACTION_SPONSOR_ADD @id output, @constituentID, @summary, @categoryName, @subcategoryName, @expectedDate, @actualDate, @owner, @contactMethodDesc, @statusCode_Completed, @comment, @changeAgentID 
+	exec USR_USP_INTERACTION_SPONSOR_ADD 
+		@id = @id output,
+		@constituentID = @constituentID,
+		@summary = @summary, 
+		@categoryName = @categoryName,
+		@subcategoryName = @subcategoryName,
+		@expectedDate = @expectedDate, 
+		@actualDate = @actualDate,
+		@owner = @owner,
+		@contactMethodDesc = @contactMethodDesc,
+		@statusCode = @statusCode_Completed,
+		@comment = @comment,
+		@letterTypeDesc = @letterTypeDesc,
+		@fulfillmentStatusDesc = @fulfillmentStatusDesc, 
+		@eftBrochureCode = @eftBrochureCode, 
+		@resendCode = @resendCode,
+		@changeAgentID = @changeAgentID
 
 	return 0
 end

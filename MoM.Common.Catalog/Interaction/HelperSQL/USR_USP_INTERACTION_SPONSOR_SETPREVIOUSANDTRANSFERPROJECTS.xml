@@ -1,29 +1,29 @@
 ﻿<SQLStoredProcedureSpec
 	xmlns="bb_appfx_sqlstoredprocedure"
 	xmlns:common="bb_appfx_commontypes" 
-	ID="1cf41824-3d42-48e7-9eaf-51483a34947a"
-	Name="USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD"
-	Description="Used to set the TRANSFERCHILDID on a sponsor type of interaction extension"
+	ID="78bf7090-8c4c-49d1-9599-aab71a4c7492"
+	Name="USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS"
+	Description="Used to set PREVIOUSCHILDPROJECTID and TRANSFERCHILDPROJCTID on a sponsor type of interaction extension"
 	Author="Cary Mayeda"
-	SPName="USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD"
+	SPName="USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS"
 	GrantServiceRolePermission="true" >
 	
 	<!-- 
 	Remarks:    This is used to set the TRANSFERCHILDID on an existing interaction extension.
 				Use USR_USP_INTERACTION_SPONSOR_ADD_PENDING, USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED, or USR_USP_INTERACTION_SPONSOR_ADD first to create the row in 
 				the INTERACTION and USR_INTERACTIONEXTENSION tables
-
 	History:
 	Date            Modified By     Comments
-	13-Aug-2012		CMayeda			Initial Version
+	23-Aug-2012		CMayeda			Initial Version
 	-->
 
 	<CreateProcedureSQL>
 		<![CDATA[
-create procedure dbo.USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD (
-	@interactionID uniqueidentifier = null,							-- Interaction ID of the interaction to add the departed child to
-	@sponsorshipOpportunityChildID uniqueidentifier = null,			-- Transfer child ID
-	@changeAgentID uniqueidentifier = null							-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS (
+	@interactionID uniqueidentifier = null,						-- Interaction ID of the interaction to add the departed child to
+	@previousChildProjectID uniqueidentifier = null,			-- The child project id of the project the child is transferring from
+	@transferChildProjectID uniqueidentifier = null,			-- The child project id of the project the child is transferring to
+	@changeAgentID uniqueidentifier = null						-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
 )
 as
 begin
@@ -36,11 +36,11 @@ begin
 		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
 
 	update	dbo.USR_INTERACTIONEXTENSION
-	   set	TRANSFERCHILDID = @sponsorshipOpportunityChildID,
+	   set	PREVIOUSCHILDPROJECTID = @previousChildProjectID,
+			TRANSFERCHILDPROJECTID = @transferChildProjectID,
 			CHANGEDBYID = @changeAgentID,
 			DATECHANGED = @currentDate
 	 where	ID = @interactionID
-
 end
 
 		]]>

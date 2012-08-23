@@ -34,22 +34,29 @@ create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADD (
 	@contactMethodDesc nvarchar(100) = '',				-- Email, Event, Mail, Phone, Task
 	@statusCode tinyint = null,							-- 0 - Planned, 1 - Pending, 2 - Completed, 3 - Unsuccessful, 4 - Cancelled, 5 - Declined
 	@comment nvarchar(max) = '',						-- Comment
+	@letterTypeDesc nvarchar(100) = '',					-- Description of the row in USR_INTERACTIONEXTENSIONLETTERTYPECODE used to set LETTERTYPECODEID
+														-- The caller can pass null or empty string if this column isn't needed
+	@fulfillmentStatusDesc nvarchar(100) = '',			-- Description from USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE used to set FULFILLMENTSTATUSCODEID 
+														-- The caller can pass null or empty string if this column isn't needed
+	@eftBrochureCode tinyint = 0,						-- Whether an eft brochure is needed.  0 = No, 1 = Yes
+	@resendCode tinyint = 0,							-- Whether this is a resend of an interaction.  0 = No, 1 = Yes
 	@changeAgentID uniqueidentifier = null				-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
 )
 as
 begin
 	-- Constants
-	declare @eftBrochureCodeNo tinyint = 0
-	declare @resendCodeNo tinyint = 0
-
 	declare @raiseErrorIfNotFound_True bit = 1
-	
 	
 	-- Vars used for code/guid values
 	declare @subcategoryID uniqueidentifier = null
 	declare @contactMethodID uniqueidentifier = null
-	
-	declare @contactMethodError nvarchar(255) = ' Could not find the contact method = "' + @contactMethodDesc + '"'
+
+	declare @letterTypeCodeID uniqueidentifier = null
+	declare @fulfillmentStatusCodeID uniqueidentifier = null
+
+	declare @contactMethodError nvarchar(255) = 'Could not find the contact method = "' + @contactMethodDesc + '"'
+	declare @letterTypeError nvarchar(255) = 'Could not find the the letter type = "' + @letterTypeDesc + '"'
+	declare @fulfillmentError nvarchar(255) = 'Could not find the the fulfillment status = "' + @fulfillmentStatusDesc + '"'
 	
 	set @id = null
 	
@@ -61,11 +68,16 @@ begin
 		-- Get ChangeAgent if none was passed into the sproc
   		if @changeAgentID is null  
 			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
-	
+
+
 		-- Try to lookup ids
 		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName, @subcategoryName, @raiseErrorIfNotFound_True
 		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @contactMethodID output, @contactMethodDesc, 'dbo.INTERACTIONTYPECODE', @raiseErrorIfNotFound_True, @contactMethodError
-		
+		if @letterTypeDesc <> ''
+			exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @letterTypeCodeID output, @letterTypeDesc, 'dbo.USR_INTERACTIONEXTENSIONLETTERTYPECODE', @raiseErrorIfNotFound_True, @letterTypeError
+		if @fulfillmentStatusDesc <> ''
+			exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @fulfillmentStatusCodeID output, @fulfillmentStatusDesc, 'dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE', @raiseErrorIfNotFound_True, @fulfillmentError
+			
 		-- Use Blackbaud's add sproc - the null parm is @actualdate.  This is requried if the statuscode is set to Completed
 		exec USP_DATAFORMTEMPLATE_ADD_INTERACTION @id output, @changeAgentID, @constituentID,  @expectedDate, @actualDate,  @owner, @contactMethodID, @summary, @statusCode, @comment
 
@@ -80,8 +92,8 @@ begin
 			 
 			-- create extension row
 			insert dbo.USR_INTERACTIONEXTENSION 
-				(ID, EFTBROCHURECODE, RESENDCODE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
-				values (@id, @eftBrochureCodeNo, @resendCodeNo, @changeAgentID, @changeAgentID, @currentDate, @currentDate)
+				(ID, LETTERTYPECODEID, FULFILLMENTSTATUSCODEID, EFTBROCHURECODE, RESENDCODE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+				values (@id, @letterTypeCodeID, @fulfillmentStatusCodeID, @eftBrochureCode, @resendCode, @changeAgentID, @changeAgentID, @currentDate, @currentDate)
 		end
 	end try
 	begin catch

@@ -11,7 +11,7 @@
 	<!-- 
 	Remarks:    This is used to set the DEPARTEDCHILDID on an existing interaction extension.
 				Use USR_USP_INTERACTION_SPONSOR_ADD_PENDING, USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED, or USR_USP_INTERACTION_SPONSOR_ADD first to create the row in 
-
+				the INTERACTION and USR_INTERACTIONEXTENSION tables
 	History:
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version

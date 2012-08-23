@@ -28,7 +28,7 @@
 	<!-- define fields on the table -->
 	<Fields>
 		<!-- Sponsor Interaction Extension Fields -->
-		<CodeTableField Name="LETTERTYPECODEID" Description="Type of letter (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
+		<CodeTableField Name="LETTERTYPECODEID" Description="Type of letter (contacted, not contacted)" CodeTable="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
 		<CodeTableField Name="CHILDCOUNTLETTERVERSIONCODEID" Description="The version of the letter based on the number of children (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
 		<CodeTableField Name="FULFILLMENTSTATUSCODEID" Description="Fulfillment Status (Pending, Ready, Complete)" CodeTable="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
 		<EnumField Name="EFTBROCHURECODE" DefaultValue="0" Description="Whether or not to include an EFT Brochure" >

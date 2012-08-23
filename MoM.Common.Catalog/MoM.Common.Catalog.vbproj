@@ -319,6 +319,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTION_GETCATEGORYGROUP.xml" />
     <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTION_GETSUBCATEGORYGROUP.xml" />
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS.xml" />
     <Content Include="Interaction\Interaction Extension.View.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
