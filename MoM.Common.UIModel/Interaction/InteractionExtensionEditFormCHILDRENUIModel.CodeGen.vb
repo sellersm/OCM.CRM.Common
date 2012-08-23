@@ -41,13 +41,14 @@ Partial Public Class [InteractionExtensionEditFormCHILDRENUIModel]
         '
         _id.Name = "ID"
         _id.Caption = "ID"
+        _id.Visible = False
         Me.Fields.Add(_id)
         '
         '_childlookupid
         '
         _childlookupid.Name = "CHILDLOOKUPID"
-        _childlookupid.Caption = "Child ID"
-        _childlookupid.Enabled = False
+		_childlookupid.Caption = "Child ID"
+		_childlookupid.Enabled = False
         Me.Fields.Add(_childlookupid)
         '
         '_sponsorshipopportunitychildid

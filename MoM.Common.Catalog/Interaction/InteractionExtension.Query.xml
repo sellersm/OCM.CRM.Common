@@ -17,6 +17,8 @@
 	History:
 	Date            Modified By     Comments
 	07-Aug-2012		CMayeda			Initial Version
+	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
+									Added Lookup ID and Name for PREVIOUSCHILDPROJECT and TRANSFERCHILDPROJECT
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -39,8 +41,7 @@
 			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (TRANSFERCHILDID, 1) as TRANSFERCHILDLOOKUPID,
 			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = TRANSFERCHILDID) as TRANSFERCHILDNAME,
 
-			UNAVAILABLECHILDID
-			UNAVAILABLECHILDID, 
+			UNAVAILABLECHILDID,
 			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (UNAVAILABLECHILDID, 1) as UNAVAILABLECHILDLOOKUPID,
 			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = UNAVAILABLECHILDID) as UNAVAILABLECHILDNAME,
 
@@ -49,6 +50,13 @@
 			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = DOUBLESPONSOREDCHILDID) as DOUBLESPONSOREDCHILDNAME,
 			
 			PREVIOUSCHILDPROJECTID, 
+			dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (PREVIOUSCHILDPROJECTID) as PREVIOUSCHILDPROJECTLOOKUPID,
+			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(PREVIOUSCHILDPROJECTID)) as PREVIOUSCHILDPROJECTNAME,
+
+			TRANSFERCHILDPROJECTID, 
+			dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (TRANSFERCHILDPROJECTID) as TRANSFERCHILDPROJECTLOOKUPID,
+			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(TRANSFERCHILDPROJECTID)) as TRANSFERCHILDPROJECTNAME,
+
 			PREVIOUSBIRTHDATE, 
 			PREVIOUSNAME, 
 			EFTBROCHURE,
@@ -107,7 +115,14 @@
 			<OutputField Name="DOUBLESPONSOREDCHILDLOOKUPID" Caption="Double Sponsored Child ID" DataType="String" />
 			<OutputField Name="DOUBLESPONSOREDCHILDNAME" Caption="Double Sponsored Child Name" DataType="String" />
 
-			<OutputField Name="PREVIOUSCHILDPROJECTID" Caption="Previous Child Project ID" DataType="String" />
+			<OutputField Name="PREVIOUSCHILDPROJECTID" Caption="Previous Child Project ID" DataType="Guid" IsHidden="true" Category="System Fields"/>
+			<OutputField Name="PREVIOUSCHILDPROJECTLOOKUPID" Caption="Previous Child Project ID" DataType="String" />
+			<OutputField Name="PREVIOUSCHILDPROJECTNAME" Caption="Previous Child Project Name" DataType="String" />
+
+			<OutputField Name="TRANSFERCHILDPROJECTID" Caption="Transfer Child Project ID" DataType="Guid" IsHidden="true" Category="System Fields"/>
+			<OutputField Name="TRANSFERCHILDPROJECTLOOKUPID" Caption="Transfer Child Project ID" DataType="String" />
+			<OutputField Name="TRANSFERCHILDPROJECTNAME" Caption="Transfer Child Project Name" DataType="String" />
+
 			<OutputField Name="PREVIOUSBIRTHDATE" Caption="Previous Child Birthdate" DataType="Date" />
 			<OutputField Name="PREVIOUSNAME" Caption="Previous Child Name" DataType="String" />
 			<OutputField Name="EFTBROCHURE" Caption="Include EFT Brochure" DataType="String" >
@@ -160,6 +175,9 @@
 		<AddRelatedView Field ="TRANSFERCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Transfer Child" />
 		<AddRelatedView Field ="UNAVAILABLECHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Unavailable Child" />
 		<AddRelatedView Field ="DOUBLESPONSOREDCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Double Sponsored Child" />
+		<AddRelatedView Field ="PREVIOUSCHILDPROJECTID" RelatedView="USR_V_QUERY_CHILDPROJECTEXTENSION" RelatedField="ID" PathAlias="Previous Child Project"/>
+		<AddRelatedView Field ="TRANSFERCHILDPROJECTID" RelatedView="USR_V_QUERY_CHILDPROJECTEXTENSION" RelatedField="ID" PathAlias="Transfer Child Project"/>
+
 	</RelationshipOperations>
 
 </QueryViewSpec>

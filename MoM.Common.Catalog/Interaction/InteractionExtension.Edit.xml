@@ -18,6 +18,8 @@
 	Date            Modified By     Comments
 	07-Aug-2012		CMayeda			Initial Version
 	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
+	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
+									Added project search list
 	-->
     <SPDataForm>
         <LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
@@ -39,6 +41,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
     @DEPARTUREREASONCODEID uniqueidentifier = null output,
     @DOUBLESPONSOREDCHILDID uniqueidentifier = null output,
     @PREVIOUSCHILDPROJECTID uniqueidentifier = null output,
+    @TRANSFERCHILDPROJECTID uniqueidentifier = null output,
     @PREVIOUSBIRTHDATE datetime = null output,
     @PREVIOUSNAME nvarchar(150) = null output,
     @FIELDMEMODATESENT datetime = null output,
@@ -73,6 +76,7 @@ as
         @DEPARTUREREASONCODEID = DEPARTUREREASONCODEID, 
         @DOUBLESPONSOREDCHILDID = DOUBLESPONSOREDCHILDID, 
         @PREVIOUSCHILDPROJECTID = PREVIOUSCHILDPROJECTID, 
+		@TRANSFERCHILDPROJECTID = TRANSFERCHILDPROJECTID,
         @PREVIOUSBIRTHDATE = PREVIOUSBIRTHDATE, 
         @PREVIOUSNAME = PREVIOUSNAME, 
         @FIELDMEMODATESENT = FIELDMEMODATESENT, 
@@ -105,6 +109,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
     @DEPARTUREREASONCODEID uniqueidentifier,
     @DOUBLESPONSOREDCHILDID uniqueidentifier,
     @PREVIOUSCHILDPROJECTID uniqueidentifier,
+	@TRANSFERCHILDPROJECTID uniqueidentifier,
     @PREVIOUSBIRTHDATE datetime,
     @PREVIOUSNAME nvarchar(150),
     @FIELDMEMODATESENT datetime,
@@ -134,6 +139,7 @@ as begin
             DEPARTUREREASONCODEID = @DEPARTUREREASONCODEID,
             DOUBLESPONSOREDCHILDID = @DOUBLESPONSOREDCHILDID,
             PREVIOUSCHILDPROJECTID = @PREVIOUSCHILDPROJECTID,
+			TRANSFERCHILDPROJECTID = @TRANSFERCHILDPROJECTID,
             PREVIOUSBIRTHDATE = @PREVIOUSBIRTHDATE,
             PREVIOUSNAME = @PREVIOUSNAME,
             FIELDMEMODATESENT = @FIELDMEMODATESENT,
@@ -221,8 +227,13 @@ end
                 <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE" />
             </c:FormField>
             <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child" />
-            <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
-            <c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
+			<c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project">
+				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
+			</c:FormField>
+			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Transfer child project" >
+				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
+			</c:FormField>
+			<c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
             <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name" />
 			<c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Field memo date sent" />
 			<c:FormField FieldID="FIELDMEMOSENTCODEID" DataType="Guid" Caption="Field memo sent">

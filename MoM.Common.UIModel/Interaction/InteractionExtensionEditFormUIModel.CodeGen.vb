@@ -57,7 +57,8 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     Private WithEvents _departedchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
     Private WithEvents _departurereasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
-    Private WithEvents _previouschildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Private WithEvents _previouschildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Private WithEvents _transferchildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _previousbirthdate As Global.Blackbaud.AppFx.UIModeling.Core.DateField
     Private WithEvents _previousname As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _fieldmemodatesent As Global.Blackbaud.AppFx.UIModeling.Core.DateField
@@ -80,7 +81,8 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _departedchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         _departurereasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
-        _previouschildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+        _previouschildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        _transferchildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _previousbirthdate = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
         _previousname = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _fieldmemodatesent = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
@@ -95,7 +97,7 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         MyBase.RecordType = "Constituent Interaction"
         MyBase.FixedDialog = True
         MyBase.ExtensionTabCaption = "Additional Info"
-        MyBase.UserInterfaceUrl = "browser/htmlforms/Interactions/InteractionExtension.EditForm.html"
+        MyBase.UserInterfaceUrl = "browser/htmlforms/custom/InteractionExtension.EditForm.html"
 
         '
         '_lettertypecodeid
@@ -170,7 +172,15 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         '
         _previouschildprojectid.Name = "PREVIOUSCHILDPROJECTID"
         _previouschildprojectid.Caption = "Previous child project"
+        _previouschildprojectid.SearchListID = New Guid("a62848b0-d378-4c5f-886d-aa791a59fe55")
         Me.Fields.Add(_previouschildprojectid)
+        '
+        '_transferchildprojectid
+        '
+        _transferchildprojectid.Name = "TRANSFERCHILDPROJECTID"
+        _transferchildprojectid.Caption = "Transfer child project"
+        _transferchildprojectid.SearchListID = New Guid("a62848b0-d378-4c5f-886d-aa791a59fe55")
+        Me.Fields.Add(_transferchildprojectid)
         '
         '_previousbirthdate
         '
@@ -337,9 +347,20 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Previous child project")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [PREVIOUSCHILDPROJECTID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Public ReadOnly Property [PREVIOUSCHILDPROJECTID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         Get
             Return _previouschildprojectid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Transfer child project
+    ''' </summary>
+    <System.ComponentModel.Description("Transfer child project")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [TRANSFERCHILDPROJECTID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        Get
+            Return _transferchildprojectid
         End Get
     End Property
     

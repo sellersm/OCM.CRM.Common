@@ -2,7 +2,7 @@
   <SpecFileName>InteractionExtension.Edit.xml</SpecFileName>
   <Namespace></Namespace>
   <ClassName>InteractionExtensionEditFormUIModel</ClassName>
-  <HtmlInfo GenerateHtml="true">
+  <HtmlInfo GenerateHtml="false">
     <HtmlFile>InteractionExtension.EditForm.html</HtmlFile>
     <HtmlFolder>Interaction\</HtmlFolder>
   </HtmlInfo>

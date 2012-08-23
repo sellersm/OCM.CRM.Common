@@ -21,8 +21,8 @@
 	History:
 	Date            Modified By     Comments
 	27-Jul-2012		CMayeda			Initial Version
-
--->
+	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
+	-->
 
 
 	<!-- define fields on the table -->
@@ -48,7 +48,8 @@
 		<ForeignKeyField Name="DEPARTEDCHILDID" Description ="ID of the departed child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
 		<CodeTableField Name="DEPARTUREREASONCODEID" Description="Reason for the departure" CodeTable="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE"/>
 		<ForeignKeyField Name="DOUBLESPONSOREDCHILDID" Description ="ID of the child that was already sponsored by another person" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
-		<ForeignKeyField Name="PREVIOUSCHILDPROJECTID" Description="Used for the Child Project Transfer Letter" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+		<ForeignKeyField Name="PREVIOUSCHILDPROJECTID" Description="Used for the Child Project Transfer Letter - project transfered from" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+		<ForeignKeyField Name="TRANSFERCHILDPROJECTID" Description="Used for the Child Project Transfer Letter - project transfered to" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
 		<DateField Name="PREVIOUSBIRTHDATE" Description="Used for the Child Bithdate Change Notification letter"/>
 		<TextField Name="PREVIOUSNAME" Description="Used for the Child Name Change Notification letter" Length="150"/>
 
