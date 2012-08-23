@@ -3,10 +3,19 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="ba637e91-1ca0-4903-a4c2-b9e4e8b242ec"
 	Name="USR_USP_GETCODETABLEITEMID_DYNAMIC"
-	Description="REPLACE_WITH_DESCRIPTION"
-	Author="BETHESDA\cmayeda"
+	Description="This is used to retrieve the guid of a particular code table entry"
+	Author="Cary Mayeda"
 	SPName="USR_USP_GETCODETABLEITEMID_DYNAMIC"
 	>
+
+	<!-- 
+	Remarks:    This is used for getting code table guids in other sprocs and functions, since the codetable manager is only used in VB
+				It requires dynamic sql because the code table name is passed in
+
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+	-->
 
 	<CreateProcedureSQL>
 		<![CDATA[
