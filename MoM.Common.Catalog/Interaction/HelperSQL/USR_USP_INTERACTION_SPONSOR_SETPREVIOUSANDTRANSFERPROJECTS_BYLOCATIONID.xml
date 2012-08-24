@@ -1,0 +1,78 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="870f59b2-bf9f-4718-b04f-31982a1ab003"
+	Name="USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS_BYLOCATIONID"
+	Description="Used to set PREVIOUSCHILDPROJECTID and TRANSFERCHILDPROJCTID on a sponsor type of interaction extension"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS_BYLOCATIONID"
+	GrantServiceRolePermission="true" >
+	
+	<!-- 
+	Remarks:    This is used to set the PREVIOUSCHILDPROJECTID and TRANSFERCHILDPROJECTID columns on an existing interaction extension.
+				Use USR_USP_INTERACTION_SPONSOR_ADD_PENDING, USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED, or USR_USP_INTERACTION_SPONSOR_ADD first to create the row in 
+				the INTERACTION and USR_INTERACTIONEXTENSION tables
+				
+				Note: This uses the location ids found in the ID column of SPONSORSHIPLOCATION to populate the fields 
+				
+	History:
+	Date            Modified By     Comments
+	23-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS_BYLOCATIONID (
+	@interactionID uniqueidentifier = null,						-- Interaction ID of the interaction to add the departed child to
+	@previousLocationID uniqueidentifier = null,				-- The ID of the sponsorship location the child is transferring from
+	@transferLocationID uniqueidentifier = null,				-- The ID of child the sponsorship location the child is transferring to
+	@changeAgentID uniqueidentifier = null						-- Used to track who updated the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	declare @previousChildProjectID uniqueidentifier = null				-- The child project id of the project the child is transferring from
+	declare @transferChildProjectID uniqueidentifier = null				-- The child project id of the project the child is transferring to
+	
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+
+	-- Get ChangeAgent if none was passed into the sproc
+  	if @changeAgentID is null  
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+	begin try
+		select @previousChildProjectID = FIELDOFFICEID
+		  from dbo.SPONSORSHIPLOCATION
+		 where ID = @previousLocationID
+		 
+		if @previousChildProjectID is null
+			RAISERROR 1000000 'Field office for Previous Location is not configured.'
+			
+		select @transferChildProjectID = FIELDOFFICEID
+		  from dbo.SPONSORSHIPLOCATION
+		 where ID = @transferLocationID
+		 
+		if @transferChildProjectID is null
+			RAISERROR 1000000 'Field office for Transfer Location is not configured.'
+
+		update	dbo.USR_INTERACTIONEXTENSION
+		   set	PREVIOUSCHILDPROJECTID = @previousChildProjectID,
+				TRANSFERCHILDPROJECTID = @transferChildProjectID,
+				CHANGEDBYID = @changeAgentID,
+				DATECHANGED = @currentDate
+		 where	ID = @interactionID
+	
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+	return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

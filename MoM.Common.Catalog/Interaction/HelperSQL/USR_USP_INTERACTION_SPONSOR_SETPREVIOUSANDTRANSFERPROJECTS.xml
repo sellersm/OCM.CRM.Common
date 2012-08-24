@@ -9,9 +9,12 @@
 	GrantServiceRolePermission="true" >
 	
 	<!-- 
-	Remarks:    This is used to set the TRANSFERCHILDID on an existing interaction extension.
+	Remarks:    This is used to set the PREVIOUSCHILDPROJECTID and TRANSFERCHILDPROJECTID columns on an existing interaction extension.
 				Use USR_USP_INTERACTION_SPONSOR_ADD_PENDING, USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED, or USR_USP_INTERACTION_SPONSOR_ADD first to create the row in 
 				the INTERACTION and USR_INTERACTIONEXTENSION tables
+
+				Note: This uses the child project extension id (USR_CHILDPROJECTEXTENSION.ID) - same as CONSTITUENT.ID - to populate the fields 
+				
 	History:
 	Date            Modified By     Comments
 	23-Aug-2012		CMayeda			Initial Version
@@ -23,7 +26,7 @@ create procedure dbo.USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS 
 	@interactionID uniqueidentifier = null,						-- Interaction ID of the interaction to add the departed child to
 	@previousChildProjectID uniqueidentifier = null,			-- The child project id of the project the child is transferring from
 	@transferChildProjectID uniqueidentifier = null,			-- The child project id of the project the child is transferring to
-	@changeAgentID uniqueidentifier = null						-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+	@changeAgentID uniqueidentifier = null						-- Used to track who updated the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
 )
 as
 begin
