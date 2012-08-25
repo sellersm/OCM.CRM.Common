@@ -10,43 +10,54 @@
 
 	<!-- 
 	Remarks:    This is used for getting code table guids in other sprocs and functions, since the codetable manager is only used in VB
-				It requires dynamic sql because the code table name is passed in
-
+				It requires dynamic sql because the code table name is passed in.  
+				This defaults to using the DESCRIPTION column.  
+				However, it can be set to any column name by passing a column name in @codeTableDescField, which is useful in table lookups that are not code tables
+				The search is case insensitive, but contains no wildcards.
 	History:
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
+	24-Aug-2012		CMayeda			Added ability to specify the "description" column name
 	-->
 
 	<CreateProcedureSQL>
 		<![CDATA[
 create procedure dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC (
-	@codeTableID uniqueidentifier output,
-	@codeTableDesc nvarchar(100) = '',
-	@codeTableName nvarchar(100) = '',
-	@raiseErrorIfNotFound bit = 1,
-	@errorMessage nvarchar(255) = ''
+	@codeTableID uniqueidentifier output,			-- Returns the ID found
+	@codeTableDesc nvarchar(100) = '',				-- Description text value to lookup
+	@codeTableName nvarchar(100) = '',				-- Code table name
+	@raiseErrorIfNotFound bit = 1,					-- Whether to raise an error if the description isn't found in the code table
+	@errorMessage nvarchar(255) = '',				-- Optional - Error message to display if raising an error (see @raiseErrorIfNotFound)
+													--		If left blank, the default error message is Couldn't find DESCRIPTION="desc" from code table (with all the variables used to specify the correct info)
+	@codeTableDescField nvarchar(100) = ''			-- Optional - Specifies the column name to search 
+													--		If left blank, the default column name is "DESCRIPTION", which is the standard for code tables
 )
 as
 begin
+	set @codeTableID = null
+	
+	if @codeTableDescField = ''
+		set @codeTableDescField ='DESCRIPTION'
+		
 	declare @notFoundErrorMsg nvarchar(255) = ''
 	if @errorMessage <> ''
 		set @notFoundErrorMsg = @errorMessage 
 	else
-		set @notFoundErrorMsg = 'Couldn''t find description="' + @codeTableDesc + '" from code table ' + @codeTableName
+		set @notFoundErrorMsg = 'Couldn''t find ' + @codeTableDescField + '="' + @codeTableDesc + '" from code table ' + @codeTableName
 
 	set @codeTableID = null
 		
 	declare @sqlSelect nvarchar(max)
 	declare @sqlSelectParms nvarchar(500)
 	
-	set @sqlSelect = 'select @idOutput = ID from ' + @codeTableName + ' where lower (description) = lower (@codeTableDesc)'
+	set @sqlSelect = 'select @idOutput = ID from ' + @codeTableName + ' where lower (' + @codeTableDescField + ') = lower (@codeTableDesc)'
 	set @sqlSelectParms = '@idOutput uniqueidentifier output, @codeTableDesc nvarchar(100)'
 
 	begin try
 		exec sp_executesql @sqlSelect, @sqlSelectParms, @idOutput = @codeTableID output, @codeTableDesc = @codeTableDesc
 		
 		if 	@codeTableID is null and @raiseErrorIfNotFound = 1
-			RAISERROR 1000000 @notFoundErrorMsg
+			RAISERROR 1000000 @notFoundErrorMsg 
 			
 	end try
 	begin catch

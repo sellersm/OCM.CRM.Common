@@ -28,8 +28,8 @@ Date            Modified By     Comments
 	<CreateProcedureSQL>
 		<![CDATA[
 create procedure USR_USP_GETCODETABLEITEMID (
-	@VBCONSTANT as nvarchar(100),	-- Contant value used in the vb code behind.  This is the unique key that points to a specific code table entry in a specific code table
-	@DESCRIPTIONMODIFIEDVALID as bit,				-- Specifies if modified descriptions are treated as valid.  See Remarks above.
+	@VBCONSTANT as nvarchar(100),						-- Contant value used in the vb code behind.  This is the unique key that points to a specific code table entry in a specific code table
+	@DESCRIPTIONMODIFIEDVALID as bit,					-- Specifies if modified descriptions are treated as valid.  See Remarks above.
 	@CODETABLEITEMID uniqueidentifier = null output		-- Code table entry guid that matches the VBCONSTANT key.
 )
 as

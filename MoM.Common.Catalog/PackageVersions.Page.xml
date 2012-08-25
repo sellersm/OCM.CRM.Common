@@ -93,6 +93,14 @@
 						</RenderStyle>
 					</DataList>
 				</Section>
+				<Section ID="BCE9381B-BF0A-4453-8576-2E3931C095F7" Caption="Constituent">
+					<DataList ID="99c9bf75-48e5-4175-b4b4-debe23bf4569">
+						<!-- Constituent -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
 				<Section ID="2587278B-9F02-4B2A-800C-8E0E687BABBC" Caption="Country">
 					<DataList ID="50599970-0299-422b-a3d9-df1c4708bdf3">	<!-- Country -->
 						<RenderStyle>
@@ -100,13 +108,13 @@
 						</RenderStyle>
 					</DataList>
 				</Section>
-				<Section ID="B4066789-CB29-4544-B32B-719A1045C425" Caption="SponsorshipOpportunityTest">
-					<DataList ID="46a88aa5-7ff5-4fab-b0cd-f57bda68bdf8">	<!-- Test Sponsorship This can be removed when this page works-->
+				<!--<Section ID="B4066789-CB29-4544-B32B-719A1045C425" Caption="SponsorshipOpportunityTest">
+					<DataList ID="46a88aa5-7ff5-4fab-b0cd-f57bda68bdf8">	<Test Sponsorship This can be removed when this page works>
 						<RenderStyle>
 							<StandardView AutoSize="true" />
 						</RenderStyle>
 					</DataList>
-				</Section>
+				</Section>-->
 			</Sections>			
 
 		</Tab>
