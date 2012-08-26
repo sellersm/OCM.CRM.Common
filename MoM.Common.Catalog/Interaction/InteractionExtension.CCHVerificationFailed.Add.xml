@@ -47,6 +47,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_INTERACTIONEXTENSION_CCHVERIFI
     @DOUBLESPONSOREDCHILDID uniqueidentifier = null,
     @TRANSFERCHILDID uniqueidentifier = null,
     @PREVIOUSCHILDPROJECTID uniqueidentifier = null,
+	@TRANSFERCHILDPROJECTID uniqueidentifier = null,
     @PREVIOUSBIRTHDATE datetime = null,
     @PREVIOUSNAME nvarchar(150) = '',
     @FIELDMEMODATESENT datetime = null,
@@ -166,7 +167,12 @@ end
 			<c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child">
 				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
 			</c:FormField>
-			<c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
+			<c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project">
+				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
+			</c:FormField>
+			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Tranfer child project">
+				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
+			</c:FormField>
 			<c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
 			<c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name"/>
 			<c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Field memo date sent" />
