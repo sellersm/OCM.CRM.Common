@@ -86,18 +86,32 @@ begin
 	
 	begin try
 		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName_FieldMemo, @subcategoryName, @raiseErrorIfNotFound_True
-		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @contactMethodID output, @contactMethodDesc,  'dbo.INTERACTIONTYPECODE', @raiseErrorIfNotFound_True, @contactMethodError
 		
-		if @fieldmemoSentDesc <> ''
-			exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @fieldMemoSentCodeID output, @fieldMemoSentDesc,  'dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE', @raiseErrorIfNotFound_True, @fieldMemoSentError
-	
-		if @holdReasonDesc <> ''
-			exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @holdReasonCodeID output, @holdReasonDesc,  'dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE', @raiseErrorIfNotFound_True, @holdReasonCodeError
-	
-		if @unusableDesc <> ''
-			exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @unusableCodeID output, @unusableDesc,  'dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE', @raiseErrorIfNotFound_True, @unusableCodeError
-	
+		select @contactMethodID = ID from dbo.INTERACTIONTYPECODE where DESCRIPTION = lower (@contactMethodDesc)
+		if @contactMethodID is null 
+			RAISERROR 1000000 @contactMethodError
 
+		if @fieldmemoSentDesc <> ''
+		begin
+			select @fieldMemoSentCodeID = ID from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where DESCRIPTION = lower (@fieldMemoSentDesc)
+			if @fieldMemoSentCodeID is null 
+				RAISERROR 1000000 @fieldMemoSentError
+		end
+		
+		if @holdReasonDesc <> ''
+		begin
+			select @holdReasonCodeID = ID from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where DESCRIPTION = lower (@holdReasonDesc)
+			if @holdReasonCodeID is null 
+				RAISERROR 1000000 @holdReasonCodeError
+		end
+					
+		if @unusableDesc <> ''
+		begin
+			select @unusableCodeID = ID from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where DESCRIPTION = lower (@unusableDesc)
+			if @unusableCodeID is null 
+				RAISERROR 1000000 @unusableCodeError
+		end
+		
 		select @constituentID = CONSTITUENTID from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = @sponsorshipOpportunityChildID
 		if @constituentID is null 
 			RAISERROR 1000000 'No interaction was created - couldn''t find the Constituent Record for the child.'

@@ -72,11 +72,23 @@ begin
 
 		-- Try to lookup ids
 		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName, @subcategoryName, @raiseErrorIfNotFound_True
-		exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @contactMethodID output, @contactMethodDesc, 'dbo.INTERACTIONTYPECODE', @raiseErrorIfNotFound_True, @contactMethodError
+		select @contactMethodID = ID from dbo.INTERACTIONTYPECODE where DESCRIPTION = lower (@contactMethodDesc)
+		if @contactMethodID is null 
+			RAISERROR 1000000 @contactMethodError
+		
 		if @letterTypeDesc <> ''
-			exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @letterTypeCodeID output, @letterTypeDesc, 'dbo.USR_INTERACTIONEXTENSIONLETTERTYPECODE', @raiseErrorIfNotFound_True, @letterTypeError
+		begin
+			select @letterTypeCodeID = ID from dbo.USR_INTERACTIONEXTENSIONLETTERTYPECODE where DESCRIPTION = lower (@letterTypeDesc)
+			if @letterTypeCodeID is null 
+				RAISERROR 1000000 @letterTypeError
+		end
+		
 		if @fulfillmentStatusDesc <> ''
-			exec dbo.USR_USP_GETCODETABLEITEMID_DYNAMIC @fulfillmentStatusCodeID output, @fulfillmentStatusDesc, 'dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE', @raiseErrorIfNotFound_True, @fulfillmentError
+		begin
+			select @fulfillmentStatusCodeID = ID from dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE where DESCRIPTION = lower (@fulfillmentStatusDesc)
+			if @fulfillmentStatusCodeID is null 
+				RAISERROR 1000000 @fulfillmentError
+		end
 			
 		-- Use Blackbaud's add sproc - the null parm is @actualdate.  This is requried if the statuscode is set to Completed
 		exec USP_DATAFORMTEMPLATE_ADD_INTERACTION @id output, @changeAgentID, @constituentID,  @expectedDate, @actualDate,  @owner, @contactMethodID, @summary, @statusCode, @comment
