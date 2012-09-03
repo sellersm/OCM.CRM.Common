@@ -1,5 +1,5 @@
-﻿<GlobalChangeSpec 
-	xmlns="bb_appfx_globalchange"  
+﻿<GlobalChangeSpec
+	xmlns="bb_appfx_globalchange"
 	xmlns:common="bb_appfx_commontypes"
 	ID="d2623c35-d706-44b7-b541-2bd580c14ea1"
 	Name="Constituent Interaction Global Change"
@@ -9,16 +9,17 @@
 	GlobalChangeFolder="Interaction"
 	SPName="USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE"
 >
-<!-- 
+  <!-- 
  
   History:
     Date            Modified By     Comments
-    09-May-2012     BElfstrom       Created
+    5/9/2012        BElfstrom       Created
+    9/2/2012        BElfstrom       Added WebUIComponent code
     
 -->
-  
-	<CreateProcedureSQL>
-		<![CDATA[
+
+  <CreateProcedureSQL>
+    <![CDATA[
     
 create procedure dbo.USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE
 (
@@ -448,13 +449,13 @@ create procedure dbo.USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE
     end catch 
    
 		]]>
-    
-	</CreateProcedureSQL>
 
-	<ParametersFormMetaData>
-		<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+  </CreateProcedureSQL>
+
+  <ParametersFormMetaData>
+    <!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
 		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
-		<FormMetaData xmlns="bb_appfx_commontypes">
+    <FormMetaData xmlns="bb_appfx_commontypes">
       <FormFields>
         <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
           <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
@@ -630,7 +631,7 @@ create procedure dbo.USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE
               </Item>
             </Items>
           </ValueList>
-        </FormField> 
+        </FormField>
         <FormField FieldID="ACTUALDATE" DataType="Date" Caption="Actual date" CaptionResourceKey="$$actual_date" />
         <FormField FieldID="NEWACTUALDATE" DataType="Date" Caption="New actual date" CaptionResourceKey="$$actual_date" />
         <FormField FieldID="SPACE4" Hidden="true"/>
@@ -747,6 +748,11 @@ create procedure dbo.USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE
           </SimpleDataList>
         </FormField>
       </FormFields>
+      <WebUIComponent>
+        <WebUI>
+          <DefaultWebUI/>
+        </WebUI>
+      </WebUIComponent>
     </FormMetaData>
-	</ParametersFormMetaData>
+  </ParametersFormMetaData>
 </GlobalChangeSpec>
