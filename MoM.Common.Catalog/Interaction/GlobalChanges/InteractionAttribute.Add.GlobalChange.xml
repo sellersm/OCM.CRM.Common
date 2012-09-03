@@ -1,5 +1,5 @@
-﻿<GlobalChangeSpec 
-	xmlns="bb_appfx_globalchange"  
+﻿<GlobalChangeSpec
+	xmlns="bb_appfx_globalchange"
 	xmlns:common="bb_appfx_commontypes"
 	ID="745ed091-396d-4321-895b-2697558350da"
 	Name="Interaction attribute add global change"
@@ -12,8 +12,12 @@
 
   <!-- 
   This sproc adds an Interaction Attribute to an existing Interaction.
-  -->
   
+    History:
+    Date            Modified By     Comments
+    9/2/2012        BElfstrom       Added WebUIComponent code
+  -->
+
   <CreateProcedureSQL>
     <![CDATA[
 create procedure dbo.USR_USP_INTERACTIONATTRIBUTEADDGLOBALCHANGE
@@ -211,6 +215,11 @@ as
         <FormField FieldID="ENDDATETOADD" Caption="End date to add" DataType="Date" CaptionResourceKey="$$end_date" />
         <FormField FieldID="COMMENTTOADD" Caption="Comment to add" CaptionResourceKey="$$comment" />
       </FormFields>
+      <WebUIComponent>
+        <WebUI>
+          <DefaultWebUI/>
+        </WebUI>
+      </WebUIComponent>
     </FormMetaData>
   </ParametersFormMetaData>
 </GlobalChangeSpec>

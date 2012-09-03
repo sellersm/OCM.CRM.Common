@@ -1,5 +1,5 @@
-﻿<GlobalChangeSpec 
-	xmlns="bb_appfx_globalchange"  
+﻿<GlobalChangeSpec
+	xmlns="bb_appfx_globalchange"
 	xmlns:common="bb_appfx_commontypes"
 	ID="476399f7-9f2c-4507-bc72-d61756527cf1"
 	Name="Interaction attribute add - code table based global change"
@@ -9,10 +9,15 @@
 	GlobalChangeFolder="Interaction\Attribute"
 	SPName="USR_USP_INTERACTIONATTRIBUTEADDCODETABLEBASEDGLOBALCHANGE"
 >
-
-	<!-- describe the SP that performs the global change operation -->
-	<CreateProcedureSQL>
-		<![CDATA[
+  <!-- 
+ 
+  History:
+    Date            Modified By     Comments
+    9/2/2012        BElfstrom       Added WebUIComponent code
+    
+-->
+  <CreateProcedureSQL>
+    <![CDATA[
 create procedure dbo.USR_USP_INTERACTIONATTRIBUTEADDCODETABLEBASEDGLOBALCHANGE
 (
 
@@ -125,44 +130,49 @@ as
     
 	end catch
 		]]>
-</CreateProcedureSQL>
+  </CreateProcedureSQL>
 
-<ParametersFormMetaData>
+  <ParametersFormMetaData>
 
-<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+    <!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
 		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
-<FormMetaData xmlns="bb_appfx_commontypes">
-  <FormFields>
-    <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
-      <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
-        <FormFieldOverrides>
-          <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
-        </FormFieldOverrides>
-      </SearchList>
-    </FormField>
-    <FormField FieldID="ATTRIBUTECATEGORYID" DataType="Guid" Required="true" Caption="Category" CaptionResourceKey="$$category">
-      <SimpleDataList SimpleDataListID="3bedd3ed-03f8-45cd-8735-08ea77d5db07">
-        <Params>
-          <Param ID="RECORDTYPE">
-            <Value>Interaction</Value>
-          </Param>
-        </Params>
-      </SimpleDataList>
-    </FormField>
-    <FormField FieldID="SPACE1" Hidden="true"/>
-    <FormField FieldID="VALUETOADD" DataType="Guid" Caption="Select table value" CaptionResourceKey="$$value">
-      <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
-        <Params>
-          <Param ID="ATTRIBUTECATEGORYID">
-            <Value>Fields!ATTRIBUTECATEGORYID</Value>
-          </Param>
-        </Params>
-      </SimpleDataList>
-    </FormField>
-    <FormField FieldID="STARTDATETOADD" Caption="Start date to add" DataType="Date"  CaptionResourceKey="$$start_date" />
-    <FormField FieldID="ENDDATETOADD" Caption="End date to add" DataType="Date" CaptionResourceKey="$$end_date" />
-    <FormField FieldID="COMMENTTOADD" Caption="Comment to add" CaptionResourceKey="$$comment" />
-  </FormFields>
-</FormMetaData>
-</ParametersFormMetaData>
+    <FormMetaData xmlns="bb_appfx_commontypes">
+      <FormFields>
+        <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+          <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="ATTRIBUTECATEGORYID" DataType="Guid" Required="true" Caption="Category" CaptionResourceKey="$$category">
+          <SimpleDataList SimpleDataListID="3bedd3ed-03f8-45cd-8735-08ea77d5db07">
+            <Params>
+              <Param ID="RECORDTYPE">
+                <Value>Interaction</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+        <FormField FieldID="SPACE1" Hidden="true"/>
+        <FormField FieldID="VALUETOADD" DataType="Guid" Caption="Select table value" CaptionResourceKey="$$value">
+          <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
+            <Params>
+              <Param ID="ATTRIBUTECATEGORYID">
+                <Value>Fields!ATTRIBUTECATEGORYID</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+        <FormField FieldID="STARTDATETOADD" Caption="Start date to add" DataType="Date"  CaptionResourceKey="$$start_date" />
+        <FormField FieldID="ENDDATETOADD" Caption="End date to add" DataType="Date" CaptionResourceKey="$$end_date" />
+        <FormField FieldID="COMMENTTOADD" Caption="Comment to add" CaptionResourceKey="$$comment" />
+      </FormFields>
+      <WebUIComponent>
+        <WebUI>
+          <DefaultWebUI/>
+        </WebUI>
+      </WebUIComponent>
+    </FormMetaData>
+  </ParametersFormMetaData>
 </GlobalChangeSpec>

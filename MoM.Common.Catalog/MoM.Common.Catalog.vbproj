@@ -294,8 +294,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.Delete.GlobalChange.xml" />
-    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.GlobalChange.xml" />
+    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.Delete.GlobalChange.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.GlobalChange.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Add.CodeTableBased.GlobalChange.xml" />
     <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Add.GlobalChange.xml" />
     <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />

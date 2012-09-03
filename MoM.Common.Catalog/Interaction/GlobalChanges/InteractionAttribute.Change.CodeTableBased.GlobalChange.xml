@@ -1,5 +1,5 @@
-﻿<GlobalChangeSpec 
-	xmlns="bb_appfx_globalchange"  
+﻿<GlobalChangeSpec
+	xmlns="bb_appfx_globalchange"
 	xmlns:common="bb_appfx_commontypes"
 	ID="3f40db91-6f23-4848-8b5f-b2cb9bffcd21"
 	Name="Interaction Attribute Code Table Based Global Change"
@@ -10,11 +10,12 @@
 	SPName="USR_USP_INTERACTIONATTRIBUTECODETABLEGLOBALCHANGE"
 >
 
-<!-- 
+  <!-- 
  
   History:
     Date            Modified By     Comments
-    07-June-2012    BElfstrom       Created
+    6/7/2012        BElfstrom       Created
+    9/2/2012        BElfstrom       Added WebUIComponent code
     
   Comments:
     This procedure deletes interaction atrtributes that are of data type code table.
@@ -278,139 +279,144 @@ as
 
 		]]>
 
-</CreateProcedureSQL>
+  </CreateProcedureSQL>
 
-<ParametersFormMetaData>
+  <ParametersFormMetaData>
 
-<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+    <!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
 		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
-<FormMetaData xmlns="bb_appfx_commontypes">
-  <FormFields>
-    <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
-      <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
-        <FormFieldOverrides>
-          <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
-        </FormFieldOverrides>
-      </SearchList>
-    </FormField>
-    <FormField FieldID="ATTRIBUTECATEGORYID" DataType="Guid" Required="true" Caption="Category" CaptionResourceKey="$$category">
-      <SimpleDataList SimpleDataListID="3bedd3ed-03f8-45cd-8735-08ea77d5db07">
-        <Params>
-          <Param ID="RECORDTYPE">
-            <Value>Interaction</Value>
-          </Param>
-        </Params>
-      </SimpleDataList>
-    </FormField>
-    <FormField FieldID="SPACE1" Hidden="true"/>
-    <FormField FieldID="VALUEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Value change do you want to make" DefaultValueText="0" CaptionResourceKey="$$status">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>1</Value>
-            <Label>Replace specific Value with new Value</Label>
-          </Item>
-          <Item>
-            <Value>2</Value>
-            <Label>Replace Value for all interactions in query</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="CODETABLEVALUETOREPLACE" DataType="Guid" Caption="Value to replace" CaptionResourceKey="$$value">
-      <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
-        <Params>
-          <Param ID="ATTRIBUTECATEGORYID">
-            <Value>Fields!ATTRIBUTECATEGORYID</Value>
-          </Param>
-        </Params>
-      </SimpleDataList>
-    </FormField>
-    <FormField FieldID="NEWCODETABLEVALUE" DataType="Guid" Caption="New Value" CaptionResourceKey="$$value">
-      <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
-        <Params>
-          <Param ID="ATTRIBUTECATEGORYID">
-            <Value>Fields!ATTRIBUTECATEGORYID</Value>
-          </Param>
-        </Params>
-      </SimpleDataList>
-    </FormField>
-    <FormField FieldID="SPACE2" Hidden="true"/>
-    <FormField FieldID="COMMENTATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Comment change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>1</Value>
-            <Label>Replace Comment with new Comment or blank</Label>
-          </Item>
-          <Item>
-            <Value>2</Value>
-            <Label>Replace Comment for all interactions in query</Label>
-          </Item>
-          <Item>
-            <Value>3</Value>
-            <Label>Replace Comment with blank for attributes in query</Label>
-          </Item>
-          <Item>
-            <Value>4</Value>
-            <Label>Replace blank Comments with new Comment for all attributes in query</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="COMMENTTOREPLACE" Caption="Comment to replace" CaptionResourceKey="$$attribute" />
-    <FormField FieldID="NEWCOMMENT" Caption="New Comment" CaptionResourceKey="$$attribute" />
-    <FormField FieldID="SPACE3" Hidden="true"/>
-    <FormField FieldID="STARTDATEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Start Date change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>1</Value>
-            <Label>Replace Start Date with new Start Date or blank</Label>
-          </Item>
-          <Item>
-            <Value>2</Value>
-            <Label>Replace Start Date for all interactions in query</Label>
-          </Item>
-          <Item>
-            <Value>3</Value>
-            <Label>Replace Start Date with blank for all interactions in query</Label>
-          </Item>
-          <Item>
-            <Value>4</Value>
-            <Label>Replace blank Start Date with new Start Date for all interactions in query</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="STARTDATETOREPLACE" Caption="Start Date to replace" DataType="Date"  CaptionResourceKey="$$attribute" />
-    <FormField FieldID="NEWSTARTDATE" Caption="New Start Date" DataType="Date" CaptionResourceKey="$$attribute" />
-    <FormField FieldID="SPACE4" Hidden="true"/>
-    <FormField FieldID="ENDDATEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What End Date change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>1</Value>
-            <Label>Replace End Date with new End Date or blank</Label>
-          </Item>
-          <Item>
-            <Value>2</Value>
-            <Label>Replace End Date for all interactions in query</Label>
-          </Item>
-          <Item>
-            <Value>3</Value>
-            <Label>Replace End Date with blank for all interactions in query</Label>
-          </Item>
-          <Item>
-            <Value>4</Value>
-            <Label>Replace blank End Date with new End Date for all interactions in query</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="ENDDATETOREPLACE" Caption="End Date to replace" DataType="Date" CaptionResourceKey="$$attribute" />
-    <FormField FieldID="NEWENDDATE" Caption="New End Date" DataType="Date" CaptionResourceKey="$$attribute" />
-  </FormFields>
-</FormMetaData>
-</ParametersFormMetaData>
+    <FormMetaData xmlns="bb_appfx_commontypes">
+      <FormFields>
+        <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+          <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="ATTRIBUTECATEGORYID" DataType="Guid" Required="true" Caption="Category" CaptionResourceKey="$$category">
+          <SimpleDataList SimpleDataListID="3bedd3ed-03f8-45cd-8735-08ea77d5db07">
+            <Params>
+              <Param ID="RECORDTYPE">
+                <Value>Interaction</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+        <FormField FieldID="SPACE1" Hidden="true"/>
+        <FormField FieldID="VALUEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Value change do you want to make" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Replace specific Value with new Value</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Replace Value for all interactions in query</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="CODETABLEVALUETOREPLACE" DataType="Guid" Caption="Value to replace" CaptionResourceKey="$$value">
+          <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
+            <Params>
+              <Param ID="ATTRIBUTECATEGORYID">
+                <Value>Fields!ATTRIBUTECATEGORYID</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+        <FormField FieldID="NEWCODETABLEVALUE" DataType="Guid" Caption="New Value" CaptionResourceKey="$$value">
+          <SimpleDataList SimpleDataListID="c0051779-cd7c-443b-a6b7-37e77980f6ba">
+            <Params>
+              <Param ID="ATTRIBUTECATEGORYID">
+                <Value>Fields!ATTRIBUTECATEGORYID</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+        <FormField FieldID="SPACE2" Hidden="true"/>
+        <FormField FieldID="COMMENTATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Comment change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Replace Comment with new Comment or blank</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Replace Comment for all interactions in query</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Replace Comment with blank for attributes in query</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Replace blank Comments with new Comment for all attributes in query</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMMENTTOREPLACE" Caption="Comment to replace" CaptionResourceKey="$$attribute" />
+        <FormField FieldID="NEWCOMMENT" Caption="New Comment" CaptionResourceKey="$$attribute" />
+        <FormField FieldID="SPACE3" Hidden="true"/>
+        <FormField FieldID="STARTDATEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What Start Date change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Replace Start Date with new Start Date or blank</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Replace Start Date for all interactions in query</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Replace Start Date with blank for all interactions in query</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Replace blank Start Date with new Start Date for all interactions in query</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="STARTDATETOREPLACE" Caption="Start Date to replace" DataType="Date"  CaptionResourceKey="$$attribute" />
+        <FormField FieldID="NEWSTARTDATE" Caption="New Start Date" DataType="Date" CaptionResourceKey="$$attribute" />
+        <FormField FieldID="SPACE4" Hidden="true"/>
+        <FormField FieldID="ENDDATEATTRIBUTEPROCESS" DataType="TinyInt" Required="false" Caption="What End Date change do you want to make?" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Replace End Date with new End Date or blank</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Replace End Date for all interactions in query</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Replace End Date with blank for all interactions in query</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Replace blank End Date with new End Date for all interactions in query</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="ENDDATETOREPLACE" Caption="End Date to replace" DataType="Date" CaptionResourceKey="$$attribute" />
+        <FormField FieldID="NEWENDDATE" Caption="New End Date" DataType="Date" CaptionResourceKey="$$attribute" />
+      </FormFields>
+      <WebUIComponent>
+        <WebUI>
+          <DefaultWebUI/>
+        </WebUI>
+      </WebUIComponent>
+    </FormMetaData>
+  </ParametersFormMetaData>
 </GlobalChangeSpec>

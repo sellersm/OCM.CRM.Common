@@ -9,11 +9,12 @@
 	GlobalChangeFolder="Interaction\Attribute"
 	SPName="USR_USP_INTERACTIONATTRIBUTEGLOBALCHANGE"
 >
-<!-- 
+  <!-- 
  
   History:
     Date            Modified By     Comments
-    09-June-2012    BElfstrom       Created
+    6/9/2012        BElfstrom       Created
+    9/2/2012        BElfstrom       Added WebUIComponent code
     
   Comments:
     The query used by this procedure returns a set of Interaction IDs.  The attribute
@@ -483,6 +484,11 @@ as
 				<common:CustomComponentID AssemblyName="REPLACE_WITH_ASSEMBLYNAME" ClassName="REPLACE_WITH_FULLCLASSNAME" />
 			</common:FormUIComponent>
       -->
+      <WebUIComponent>
+        <WebUI>
+          <DefaultWebUI/>
+        </WebUI>
+      </WebUIComponent>
     </FormMetaData>
   </ParametersFormMetaData>
 </GlobalChangeSpec>

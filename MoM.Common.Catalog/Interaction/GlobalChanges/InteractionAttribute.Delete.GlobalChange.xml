@@ -1,5 +1,5 @@
-﻿<GlobalChangeSpec 
-	xmlns="bb_appfx_globalchange"  
+﻿<GlobalChangeSpec
+	xmlns="bb_appfx_globalchange"
 	xmlns:common="bb_appfx_commontypes"
 	ID="55f640ec-967e-4328-82dd-6a7e1d29a2cb"
 	Name="Delete interaction attribute global change"
@@ -9,16 +9,17 @@
 	GlobalChangeFolder="Interaction\Attribute"
 	SPName="USR_USP_DELETEINTERACTIONATTRIBUTEGLOBALCHANGE"
 >
-<!-- 
+  <!-- 
  
   History:
     Date            Modified By     Comments
-    14-June-2012    BElfstrom       Created
+    6/14/2012       BElfstrom       Created
+    9/2/2012        BElfstrom       Added WebUIComponent code
     
 -->
-	<!-- describe the SP that performs the global change operation -->
-	<CreateProcedureSQL>
-		<![CDATA[
+  <!-- describe the SP that performs the global change operation -->
+  <CreateProcedureSQL>
+    <![CDATA[
 create procedure dbo.USR_USP_DELETEINTERACTIONATTRIBUTEGLOBALCHANGE
 (
 	@CHANGEAGENTID uniqueidentifier = null,
@@ -369,247 +370,252 @@ as
 
 ]]>
 
-</CreateProcedureSQL>
+  </CreateProcedureSQL>
 
-<ParametersFormMetaData>
+  <ParametersFormMetaData>
 
-<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+    <!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
 		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
-<FormMetaData xmlns="bb_appfx_commontypes">
-  <FormFields>
-    <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
-      <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
-        <FormFieldOverrides>
-          <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
-        </FormFieldOverrides>
-      </SearchList>
-    </FormField>  
-    <FormField FieldID="ATTRIBUTECATEGORYID" DataType="Guid" Required="true" Caption="Category" CaptionResourceKey="$$category">
-      <SimpleDataList SimpleDataListID="e097b9b4-bb16-42e8-a5ef-147f334aafd6">
-        <Params>
-          <Param ID="RECORDTYPE">
-            <Value>Interaction</Value>
-          </Param>
-        </Params>
-      </SimpleDataList>
-    </FormField>
-    <FormField FieldID="SPACE" Hidden="true"/>
-    <FormField FieldID="ATTRIBUTEFIELD1" DataType="String" Required="false" Caption="Attribute field" DefaultValueText="0" CaptionResourceKey="$$attribute_field">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>VALUE</Value>
-            <Label>Value</Label>
-          </Item>
-          <Item>
-            <Value>STARTDATE</Value>
-            <Label>Start Date</Label>
-          </Item>
-          <Item>
-            <Value>ENDDATE</Value>
-            <Label>End Date</Label>
-          </Item>
-          <Item>
-            <Value>COMMENT</Value>
-            <Label>Comment</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="COMPARISONOPERATOR1" DataType="TinyInt" Required="false" Caption="Comparison" DefaultValueText="0" CaptionResourceKey="$$attribute_process">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>1</Value>
-            <Label>Equals</Label>
-          </Item>
-          <Item>
-            <Value>2</Value>
-            <Label>Is greater than</Label>
-          </Item>
-          <Item>
-            <Value>3</Value>
-            <Label>Is less than</Label>
-          </Item>
-          <Item>
-            <Value>4</Value>
-            <Label>Is greater than or equal to</Label>
-          </Item>
-          <Item>
-            <Value>5</Value>
-            <Label>Is less than or equal to</Label>
-          </Item>
-          <Item>
-            <Value>6</Value>
-            <Label>Is not equal to</Label>
-          </Item>
-          <Item>
-            <Value>7</Value>
-            <Label>Is equal to blank</Label>
-          </Item>
-          <Item>
-            <Value>8</Value>
-            <Label>Is not equal to blank</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="COMPARISONVALUE1" Caption="Comparison value" CaptionResourceKey="$$comparison_value" />
-    <FormField FieldID="SPACE1" Hidden="true"/>
-    <FormField FieldID="LOGICALOPERATOR1" DataType="String" Required="false" Caption="And/Or" DefaultValueText="0" CaptionResourceKey="$$logical_operator">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>And</Value>
-            <Label>And</Label>
-          </Item>
-          <Item>
-            <Value>Or</Value>
-            <Label>Or</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="SPACE2" Hidden="true"/>
-    <FormField FieldID="ATTRIBUTEFIELD2" DataType="String" Required="false" Caption="Attribute field" DefaultValueText="0" CaptionResourceKey="$$attribute_field">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>VALUE</Value>
-            <Label>Value</Label>
-          </Item>
-          <Item>
-            <Value>STARTDATE</Value>
-            <Label>Start Date</Label>
-          </Item>
-          <Item>
-            <Value>ENDDATE</Value>
-            <Label>End Date</Label>
-          </Item>
-          <Item>
-            <Value>COMMENT</Value>
-            <Label>Comment</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="COMPARISONOPERATOR2" DataType="TinyInt" Required="false" Caption="Comparison" DefaultValueText="0" CaptionResourceKey="$$attribute_process">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>1</Value>
-            <Label>Equals</Label>
-          </Item>
-          <Item>
-            <Value>2</Value>
-            <Label>Is greater than</Label>
-          </Item>
-          <Item>
-            <Value>3</Value>
-            <Label>Is less than</Label>
-          </Item>
-          <Item>
-            <Value>4</Value>
-            <Label>Is greater than or equal to</Label>
-          </Item>
-          <Item>
-            <Value>5</Value>
-            <Label>Is less than or equal to</Label>
-          </Item>
-          <Item>
-            <Value>6</Value>
-            <Label>Is not equal to</Label>
-          </Item>
-          <Item>
-            <Value>7</Value>
-            <Label>Is equal to blank</Label>
-          </Item>
-          <Item>
-            <Value>8</Value>
-            <Label>Is not equal to blank</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="COMPARISONVALUE2" Caption="Comparison value" CaptionResourceKey="$$comparison_value" />
-    <FormField FieldID="SPACE3" Hidden="true"/>
-    <FormField FieldID="LOGICALOPERATOR2" DataType="String" Required="false" Caption="And/Or" DefaultValueText="0" CaptionResourceKey="$$logical_operator">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>And</Value>
-            <Label>And</Label>
-          </Item>
-          <Item>
-            <Value>Or</Value>
-            <Label>Or</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="SPACE4" Hidden="true"/>
-    <FormField FieldID="ATTRIBUTEFIELD3" DataType="String" Required="false" Caption="Attribute field" DefaultValueText="0" CaptionResourceKey="$$attribute_field">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>VALUE</Value>
-            <Label>Value</Label>
-          </Item>
-          <Item>
-            <Value>STARTDATE</Value>
-            <Label>Start Date</Label>
-          </Item>
-          <Item>
-            <Value>ENDDATE</Value>
-            <Label>End Date</Label>
-          </Item>
-          <Item>
-            <Value>COMMENT</Value>
-            <Label>Comment</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="COMPARISONOPERATOR3" DataType="TinyInt" Required="false" Caption="Comparison" DefaultValueText="0" CaptionResourceKey="$$attribute_process">
-      <ValueList>
-        <Items>
-          <Item>
-            <Value>1</Value>
-            <Label>Equals</Label>
-          </Item>
-          <Item>
-            <Value>2</Value>
-            <Label>Is greater than</Label>
-          </Item>
-          <Item>
-            <Value>3</Value>
-            <Label>Is less than</Label>
-          </Item>
-          <Item>
-            <Value>4</Value>
-            <Label>Is greater than or equal to</Label>
-          </Item>
-          <Item>
-            <Value>5</Value>
-            <Label>Is less than or equal to</Label>
-          </Item>
-          <Item>
-            <Value>6</Value>
-            <Label>Is not equal to</Label>
-          </Item>
-          <Item>
-            <Value>7</Value>
-            <Label>Is equal to blank</Label>
-          </Item>
-          <Item>
-            <Value>8</Value>
-            <Label>Is not equal to blank</Label>
-          </Item>
-        </Items>
-      </ValueList>
-    </FormField>
-    <FormField FieldID="COMPARISONVALUE3" Caption="Comparison value" CaptionResourceKey="$$comparison_value" />
-  </FormFields>
-</FormMetaData>
-</ParametersFormMetaData>
+    <FormMetaData xmlns="bb_appfx_commontypes">
+      <FormFields>
+        <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+          <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="ATTRIBUTECATEGORYID" DataType="Guid" Required="true" Caption="Category" CaptionResourceKey="$$category">
+          <SimpleDataList SimpleDataListID="e097b9b4-bb16-42e8-a5ef-147f334aafd6">
+            <Params>
+              <Param ID="RECORDTYPE">
+                <Value>Interaction</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+        <FormField FieldID="SPACE" Hidden="true"/>
+        <FormField FieldID="ATTRIBUTEFIELD1" DataType="String" Required="false" Caption="Attribute field" DefaultValueText="0" CaptionResourceKey="$$attribute_field">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>VALUE</Value>
+                <Label>Value</Label>
+              </Item>
+              <Item>
+                <Value>STARTDATE</Value>
+                <Label>Start Date</Label>
+              </Item>
+              <Item>
+                <Value>ENDDATE</Value>
+                <Label>End Date</Label>
+              </Item>
+              <Item>
+                <Value>COMMENT</Value>
+                <Label>Comment</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMPARISONOPERATOR1" DataType="TinyInt" Required="false" Caption="Comparison" DefaultValueText="0" CaptionResourceKey="$$attribute_process">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Equals</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Is greater than</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Is less than</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Is greater than or equal to</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Is less than or equal to</Label>
+              </Item>
+              <Item>
+                <Value>6</Value>
+                <Label>Is not equal to</Label>
+              </Item>
+              <Item>
+                <Value>7</Value>
+                <Label>Is equal to blank</Label>
+              </Item>
+              <Item>
+                <Value>8</Value>
+                <Label>Is not equal to blank</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMPARISONVALUE1" Caption="Comparison value" CaptionResourceKey="$$comparison_value" />
+        <FormField FieldID="SPACE1" Hidden="true"/>
+        <FormField FieldID="LOGICALOPERATOR1" DataType="String" Required="false" Caption="And/Or" DefaultValueText="0" CaptionResourceKey="$$logical_operator">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>And</Value>
+                <Label>And</Label>
+              </Item>
+              <Item>
+                <Value>Or</Value>
+                <Label>Or</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="SPACE2" Hidden="true"/>
+        <FormField FieldID="ATTRIBUTEFIELD2" DataType="String" Required="false" Caption="Attribute field" DefaultValueText="0" CaptionResourceKey="$$attribute_field">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>VALUE</Value>
+                <Label>Value</Label>
+              </Item>
+              <Item>
+                <Value>STARTDATE</Value>
+                <Label>Start Date</Label>
+              </Item>
+              <Item>
+                <Value>ENDDATE</Value>
+                <Label>End Date</Label>
+              </Item>
+              <Item>
+                <Value>COMMENT</Value>
+                <Label>Comment</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMPARISONOPERATOR2" DataType="TinyInt" Required="false" Caption="Comparison" DefaultValueText="0" CaptionResourceKey="$$attribute_process">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Equals</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Is greater than</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Is less than</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Is greater than or equal to</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Is less than or equal to</Label>
+              </Item>
+              <Item>
+                <Value>6</Value>
+                <Label>Is not equal to</Label>
+              </Item>
+              <Item>
+                <Value>7</Value>
+                <Label>Is equal to blank</Label>
+              </Item>
+              <Item>
+                <Value>8</Value>
+                <Label>Is not equal to blank</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMPARISONVALUE2" Caption="Comparison value" CaptionResourceKey="$$comparison_value" />
+        <FormField FieldID="SPACE3" Hidden="true"/>
+        <FormField FieldID="LOGICALOPERATOR2" DataType="String" Required="false" Caption="And/Or" DefaultValueText="0" CaptionResourceKey="$$logical_operator">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>And</Value>
+                <Label>And</Label>
+              </Item>
+              <Item>
+                <Value>Or</Value>
+                <Label>Or</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="SPACE4" Hidden="true"/>
+        <FormField FieldID="ATTRIBUTEFIELD3" DataType="String" Required="false" Caption="Attribute field" DefaultValueText="0" CaptionResourceKey="$$attribute_field">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>VALUE</Value>
+                <Label>Value</Label>
+              </Item>
+              <Item>
+                <Value>STARTDATE</Value>
+                <Label>Start Date</Label>
+              </Item>
+              <Item>
+                <Value>ENDDATE</Value>
+                <Label>End Date</Label>
+              </Item>
+              <Item>
+                <Value>COMMENT</Value>
+                <Label>Comment</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMPARISONOPERATOR3" DataType="TinyInt" Required="false" Caption="Comparison" DefaultValueText="0" CaptionResourceKey="$$attribute_process">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Equals</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Is greater than</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Is less than</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Is greater than or equal to</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Is less than or equal to</Label>
+              </Item>
+              <Item>
+                <Value>6</Value>
+                <Label>Is not equal to</Label>
+              </Item>
+              <Item>
+                <Value>7</Value>
+                <Label>Is equal to blank</Label>
+              </Item>
+              <Item>
+                <Value>8</Value>
+                <Label>Is not equal to blank</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMPARISONVALUE3" Caption="Comparison value" CaptionResourceKey="$$comparison_value" />
+      </FormFields>
+      <WebUIComponent>
+        <WebUI>
+          <DefaultWebUI/>
+        </WebUI>
+      </WebUIComponent>
+    </FormMetaData>
+  </ParametersFormMetaData>
 </GlobalChangeSpec>
