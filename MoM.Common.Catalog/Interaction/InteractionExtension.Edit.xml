@@ -20,6 +20,7 @@
 	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
 	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
 									Added project search list
+	03-Sep-2012		CMayeda			Added missing search lists to child fields.
 	-->
     <SPDataForm>
         <LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
@@ -220,13 +221,21 @@ end
                     </c:Items>
                 </c:ValueList>
             </c:FormField>
-            <c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailable child" />
-            <c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transfer child" />
-            <c:FormField FieldID="DEPARTEDCHILDID" DataType="Guid" Caption="Departed child" />
-            <c:FormField FieldID="DEPARTUREREASONCODEID" DataType="Guid" Caption="Departure reason">
+			<c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailable child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
+			<c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transfer child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
+			<c:FormField FieldID="DEPARTEDCHILDID" DataType="Guid" Caption="Departed child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
+			<c:FormField FieldID="DEPARTUREREASONCODEID" DataType="Guid" Caption="Departure reason">
                 <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE" />
             </c:FormField>
-            <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child" />
+			<c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child">
+				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
+			</c:FormField>
 			<c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project">
 				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
 			</c:FormField>

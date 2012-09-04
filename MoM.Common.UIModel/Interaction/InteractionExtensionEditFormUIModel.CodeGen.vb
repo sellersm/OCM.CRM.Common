@@ -52,11 +52,11 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     Private WithEvents _fulfillmentstatuscodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _eftbrochurecode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of EFTBROCHURECODES))
     Private WithEvents _resendcode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of RESENDCODES))
-    Private WithEvents _unavailablechildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
-    Private WithEvents _transferchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
-    Private WithEvents _departedchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Private WithEvents _unavailablechildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Private WithEvents _transferchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Private WithEvents _departedchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _departurereasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-    Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _previouschildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _transferchildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _previousbirthdate As Global.Blackbaud.AppFx.UIModeling.Core.DateField
@@ -76,11 +76,11 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _fulfillmentstatuscodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _eftbrochurecode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of EFTBROCHURECODES))
         _resendcode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of RESENDCODES))
-        _unavailablechildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
-        _transferchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
-        _departedchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+        _unavailablechildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        _transferchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        _departedchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _departurereasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-        _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+        _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _previouschildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _transferchildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _previousbirthdate = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
@@ -141,18 +141,21 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         '
         _unavailablechildid.Name = "UNAVAILABLECHILDID"
         _unavailablechildid.Caption = "Unavailable child"
+        _unavailablechildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_unavailablechildid)
         '
         '_transferchildid
         '
         _transferchildid.Name = "TRANSFERCHILDID"
         _transferchildid.Caption = "Transfer child"
+        _transferchildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_transferchildid)
         '
         '_departedchildid
         '
         _departedchildid.Name = "DEPARTEDCHILDID"
         _departedchildid.Caption = "Departed child"
+        _departedchildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_departedchildid)
         '
         '_departurereasoncodeid
@@ -166,6 +169,7 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         '
         _doublesponsoredchildid.Name = "DOUBLESPONSOREDCHILDID"
         _doublesponsoredchildid.Caption = "Double sponsored child"
+        _doublesponsoredchildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_doublesponsoredchildid)
         '
         '_previouschildprojectid
@@ -292,7 +296,7 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Unavailable child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [UNAVAILABLECHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Public ReadOnly Property [UNAVAILABLECHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         Get
             Return _unavailablechildid
         End Get
@@ -303,7 +307,7 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Transfer child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [TRANSFERCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Public ReadOnly Property [TRANSFERCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         Get
             Return _transferchildid
         End Get
@@ -314,7 +318,7 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Departed child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [DEPARTEDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Public ReadOnly Property [DEPARTEDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         Get
             Return _departedchildid
         End Get
@@ -336,7 +340,7 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Double sponsored child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [DOUBLESPONSOREDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Public ReadOnly Property [DOUBLESPONSOREDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         Get
             Return _doublesponsoredchildid
         End Get
