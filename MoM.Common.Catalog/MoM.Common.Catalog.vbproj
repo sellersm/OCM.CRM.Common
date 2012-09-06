@@ -149,7 +149,9 @@
     <EmbeddedResource Include="PackageVersionsPage.Task.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\Tables\InteractionExtension.Table.xml" />
+    <EmbeddedResource Include="Interaction\Tables\InteractionExtension.Table.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\Tables\InteractionExtensionChildren.Table.xml">
@@ -320,6 +322,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.ExpectedDateType.CodeTable.xml" />
     <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTION_GETCATEGORYGROUP.xml" />
     <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTION_GETSUBCATEGORYGROUP.xml" />
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS.xml" />

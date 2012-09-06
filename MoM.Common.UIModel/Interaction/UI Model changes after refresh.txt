@@ -1,0 +1,146 @@
+Copy the children ui model codegen, because it disables objects
+
+Top of form
+		<tr id="#MAP#CHILDCOUNTLETTERVERSIONCODEID_container">
+			<td>
+				<label id="#MAP#CHILDCOUNTLETTERVERSIONCODEID_caption" for="#MAP#CHILDCOUNTLETTERVERSIONCODEID_value">
+				</label>
+			</td>
+			<td>
+				<span id="#MAP#CHILDCOUNTLETTERVERSIONCODEID_value" />
+			</td>
+		</tr>
+
+Bottom of form for edit and add
+	
+	</table>
+</div>
+<div id="#MAP#ADDRESSBLOCK_container">
+	<br />
+	<h3>
+		Shipping address</h3>
+	<table>
+		<tr>
+			<td valign="top">
+				<label id="#MAP#ADDRESSBLOCK_caption" for="#MAP#ADDRESSBLOCK_value">
+				</label>
+			</td>
+			<td>
+				<textarea id="#MAP#ADDRESSBLOCK_value" rows="3" cols="1"></textarea>
+			</td>
+		</tr>
+		<tr id="#MAP#CITY_container">
+			<td>
+				<label id="#MAP#CITY_caption" for="#MAP#CITY_value">
+				</label>
+			</td>
+			<td>
+				<input id="#MAP#CITY_value" type="text" />
+			</td>
+		</tr>
+		<tr id="#MAP#STATEID_container">
+			<td>
+				<label id="#MAP#STATEID_caption" for="#MAP#STATEID_value">
+				</label>
+			</td>
+			<td>
+				<input id="#MAP#STATEID_value" type="text" />
+			</td>
+		</tr>
+		<tr id="#MAP#POSTCODE_container">
+			<td>
+				<label id="#MAP#POSTCODE_caption" for="#MAP#POSTCODE_value">
+				</label>
+			</td>
+			<td>
+				<input id="#MAP#POSTCODE_value" type="text" />
+			</td>
+		</tr>
+	</table>
+</div>
+<div id="#MAP#CHILDREN_container">
+	<br />
+	<h3>
+		Children</h3>
+	<table>
+		<tr>
+			<td>
+				<div id="#MAP#CHILDREN_value" style="height: 100px; width: 400px;">
+				</div>
+			</td>
+		</tr>
+	</table>
+	<!-- To define fields in multiple columns on the form, simply add/move the fields to this div
+        <div class="bbui-forms-fieldset-column">
+            <table>
+            </table>
+        </div>
+        -->
+</div>
+
+
+
+Bottom of form for VIEW
+	</table>
+</div>
+<div id="#MAP#ADDRESSBLOCK_container">
+	<br />
+	<h3>
+		Shipping address</h3>
+
+	<table>
+		<tr>
+			<td>
+				<span id="#MAP#ADDRESSBLOCK_caption" class="bbui-forms-captionlight"></span>
+			</td>
+			<td>
+				<span id="#MAP#ADDRESSBLOCK_value" class="bbui-pre"></span>
+			</td>
+		</tr>
+		<tr id="#MAP#CITY_container">
+			<td>
+				<span id="#MAP#CITY_caption" class="bbui-forms-captionlight"></span>
+			</td>
+			<td>
+				<span id="#MAP#CITY_value"></span>
+			</td>
+		</tr>
+		<tr id="#MAP#STATEID_container">
+			<td>
+				<span id="#MAP#STATEID_caption" class="bbui-forms-captionlight"></span>
+			</td>
+			<td>
+				<span id="#MAP#STATEID_value"></span>
+			</td>
+		</tr>
+		<tr id="#MAP#POSTCODE_container">
+			<td>
+				<span id="#MAP#POSTCODE_caption" class="bbui-forms-captionlight"></span>
+			</td>
+			<td>
+				<span id="#MAP#POSTCODE_value"></span>
+			</td>
+		</tr>
+	</table>
+</div>
+<div id="#MAP#CHILDREN_container">
+	<br />
+	<h3>
+		Children</h3>
+	<table>
+		<tr>
+			<td>
+				<div id="#MAP#CHILDREN_value" style="height: 100px; width: 400px;">
+				</div>
+			</td>
+		</tr>
+	</table>
+	<!-- To define fields in multiple columns on the form, simply add/move the fields to this div
+        <div class="bbui-forms-fieldset-column">
+            <table>
+            </table>
+        </div>
+        -->
+</div>
+
+

@@ -25,12 +25,12 @@
 	<ViewImplementation ViewName="USR_V_QUERY_INTERACTIONEXTENSION">
 		<ViewSQL>
 			<![CDATA[
-	select	ID,
+	select	USR_INTERACTIONEXTENSION.ID,
 			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where ID = CHILDCOUNTLETTERVERSIONCODEID) as CHILDCOUNTLETTERVERSIONCODE, 
 			(select DESCRIPTION from USR_INTERACTIONEXTENSIONLETTERTYPECODE where ID = LETTERTYPECODEID) as LETTERTYPECODE,
 			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE where ID = FULFILLMENTSTATUSCODEID) as FULFILLMENTSTATUSCODE, 
 
-			dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT (ID) as NUMBEROFCHILDREN,
+			dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT (USR_INTERACTIONEXTENSION.ID) as NUMBEROFCHILDREN,
 			
 			DEPARTEDCHILDID,
 			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (DEPARTEDCHILDID, 1) as DEPARTEDCHILDLOOKUPID,
@@ -63,11 +63,23 @@
 			RESEND,
 			FIELDMEMODATESENT,  
 			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = FIELDMEMOSENTCODEID) as FIELDMEMOSENTCODE,
-			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = HOLDREASONCODEID) as HOLDREASONCODE ,
-			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = UNUSABLECODEID) as UNUSABLECODE 
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = HOLDREASONCODEID) as HOLDREASONCODE,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = UNUSABLECODEID) as UNUSABLECODE,
+			
+			RESERVATIONREQREPCODE,
+			RESERVATIONREQNUMBEROFPROFILES,
+			RESERVATIONREQDISPLAYRACKS,
+			RESERVATIONREQBROCHURES,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE where ID = RESERVATIONREQEXPECTEDDATETYPECODEID) as RESERVATIONREQEXPECTEDDATETYPECODE,
+			ADDRESSBLOCK,
+			CITY,
+			STATE.DESCRIPTION as [STATEID_TRANSLATION],
+			STATE.ABBREVIATION as [STATEID_ABBREVIATION],
+			POSTCODE
 
-	from	dbo.USR_INTERACTIONEXTENSION 
-
+	  from	dbo.USR_INTERACTIONEXTENSION 
+	  left  outer join 
+				dbo.STATE on STATE.ID = USR_INTERACTIONEXTENSION.STATEID
 			]]>
 		</ViewSQL> 
 	</ViewImplementation>
@@ -163,6 +175,37 @@
 					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
 				</LookupInfo>
 			</OutputField>
+
+			<OutputField Name="RESERVATIONREQREPCODE" Caption="Rep code" Category="Reservation Request" DataType="String" />
+			<OutputField Name="RESERVATIONREQNUMBEROFPROFILES" Caption="Number of profiles" Category="Reservation Request" DataType="SmallInt" />
+			<OutputField Name="RESERVATIONREQDISPLAYRACKS" Caption="Number of display racks" Category="Reservation Request" DataType="SmallInt" />
+			<OutputField Name="RESERVATIONREQBROCHURES" Caption="Number of brochures" Category="Reservation Request" DataType="SmallInt" />
+			<OutputField Name="RESERVATIONREQEXPECTEDDATETYPECODE" Caption="Expected date type" Category="Reservation Request" DataType="String" />
+			<OutputField Caption="Address" Name="ADDRESSBLOCK" Category="Reservation Request" />
+			<OutputField Caption="City" Name="CITY" Category="Reservation Request" />
+			<OutputField Caption="State" Name="STATEID_TRANSLATION" Category="Reservation Request" >
+				<LookupInfo>
+					<SimpleDataList SimpleDataListID="B46D36D1-D3ED-4f6e-91DA-89B6C88CA0C6">
+						<common:Params>
+							<common:Param ID="INCLUDEINACTIVE">
+								<common:Value>1</common:Value>
+							</common:Param>
+						</common:Params>
+					</SimpleDataList>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Caption="State abbreviation" Name="STATEID_ABBREVIATION" Category="Reservation Request" >
+				<LookupInfo>
+					<SimpleDataList SimpleDataListID="7FA91401-596C-4f7c-936D-6E41683121D7">
+						<common:Params>
+							<common:Param ID="INCLUDEINACTIVE">
+								<common:Value>1</common:Value>
+							</common:Param>
+						</common:Params>
+					</SimpleDataList>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Caption="ZIP" Name="POSTCODE" Category="Reservation Request" />
 
 
 		</OutputFields>

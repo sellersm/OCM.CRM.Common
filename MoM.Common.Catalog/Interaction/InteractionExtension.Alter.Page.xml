@@ -15,6 +15,7 @@
 	Date            Modified By     Comments
 	05-Aug-2012		CMayeda			Initial Version
 	15-Aug-2012		CMayeda			Change context for the Interaction Add action to "= Page.Fields!CONSTITUENTID"
+	05-Sep-2012		CMayeda			Added Additional Info (Interaction Extension View Form) to the Constituent Interaction Page (single interaction)
 	-->
 	
 	<!-- define how the page header should appear -->
@@ -22,7 +23,23 @@
 
 	<AlterExistingPages>
 		<AlterPages>
-			<!-- Constituent Interactions Page -->
+			<!-- Constituent Interaction Page - Single Interaction -->
+			<AlterPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa">
+				<AlterTabs>
+					<AlterTab TabID="f924cf1b-3c85-49fb-9097-c9b869336db2">
+						<AlterSections>
+							<AddSection Sequence="2">
+								<Section ID="db3264c1-27da-4b42-9ac3-73647c1ff62c" Caption="Additional Info">
+									<DataForm ID="c742aec6-52ac-4eab-afb3-41d74ed15193" />
+								</Section>
+							</AddSection>
+						</AlterSections>
+						
+					</AlterTab>
+				</AlterTabs>
+			</AlterPage>
+			
+			<!-- Constituent Interactions Page - list of interactions -->
 			<AlterPage PageID="ede4cf10-a84d-4434-87ef-ae143c78eaaf">								
 				<AlterTabs>					
 					<AddTab Sequence ="2">

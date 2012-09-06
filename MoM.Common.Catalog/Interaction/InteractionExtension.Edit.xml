@@ -49,7 +49,18 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
     @FIELDMEMOSENTCODEID uniqueidentifier = null output,
     @HOLDREASONCODEID uniqueidentifier = null output,
     @UNUSABLECODEID uniqueidentifier = null output,
+	@RESERVATIONREQREPCODE nvarchar(100) = null output,
+	@RESERVATIONREQNUMBEROFPROFILES smallint = null output,
+	@RESERVATIONREQDISPLAYRACKS smallint = null output,
+	@RESERVATIONREQBROCHURES smallint = null output,
+	@RESERVATIONREQEXPECTEDDATETYPECODEID uniqueidentifier = null output,
+	@STATEID uniqueidentifier = null output,
+	@ADDRESSBLOCK nvarchar(150) = null output,
+	@CITY nvarchar(50) = null output,
+	@POSTCODE nvarchar(12) = null output,
+	
 	@CHILDREN xml = null output
+		
 )
 as
 
@@ -84,6 +95,16 @@ as
         @FIELDMEMOSENTCODEID = FIELDMEMOSENTCODEID, 
         @HOLDREASONCODEID = HOLDREASONCODEID, 
         @UNUSABLECODEID = UNUSABLECODEID,
+		@RESERVATIONREQREPCODE = RESERVATIONREQREPCODE,
+		@RESERVATIONREQNUMBEROFPROFILES = RESERVATIONREQNUMBEROFPROFILES,
+		@RESERVATIONREQDISPLAYRACKS = RESERVATIONREQDISPLAYRACKS,
+		@RESERVATIONREQBROCHURES = RESERVATIONREQBROCHURES,
+		@RESERVATIONREQEXPECTEDDATETYPECODEID = RESERVATIONREQEXPECTEDDATETYPECODEID,
+		@STATEID = STATEID,
+		@ADDRESSBLOCK = ADDRESSBLOCK,
+		@CITY = CITY,
+		@POSTCODE = POSTCODE,
+
 		@CHILDREN= dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN_TOITEMLISTXML(@ID)
 	from dbo.USR_INTERACTIONEXTENSION
 	where ID = @ID
@@ -117,6 +138,16 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
     @FIELDMEMOSENTCODEID uniqueidentifier,
     @HOLDREASONCODEID uniqueidentifier,
     @UNUSABLECODEID uniqueidentifier,
+	@RESERVATIONREQREPCODE nvarchar(100),
+	@RESERVATIONREQNUMBEROFPROFILES smallint,
+	@RESERVATIONREQDISPLAYRACKS smallint,
+	@RESERVATIONREQBROCHURES smallint,
+	@RESERVATIONREQEXPECTEDDATETYPECODEID uniqueidentifier,
+	@STATEID uniqueidentifier,
+	@ADDRESSBLOCK nvarchar(150),
+	@CITY nvarchar(50),
+	@POSTCODE nvarchar(12),
+
 	@CHILDREN xml
 )
 as begin
@@ -147,7 +178,16 @@ as begin
             FIELDMEMOSENTCODEID = @FIELDMEMOSENTCODEID,
             HOLDREASONCODEID = @HOLDREASONCODEID,
             UNUSABLECODEID = @UNUSABLECODEID,
-
+			RESERVATIONREQREPCODE = @RESERVATIONREQREPCODE,
+			RESERVATIONREQNUMBEROFPROFILES = @RESERVATIONREQNUMBEROFPROFILES,
+			RESERVATIONREQDISPLAYRACKS = @RESERVATIONREQDISPLAYRACKS,
+			RESERVATIONREQBROCHURES = RESERVATIONREQBROCHURES,
+			RESERVATIONREQEXPECTEDDATETYPECODEID = @RESERVATIONREQEXPECTEDDATETYPECODEID,
+			STATEID = @STATEID,
+			ADDRESSBLOCK = @ADDRESSBLOCK,
+			CITY = @CITY,
+			POSTCODE = @POSTCODE,
+			
 			CHANGEDBYID = @CHANGEAGENTID,
 			DATECHANGED = getdate()
 		where ID = @ID
@@ -184,13 +224,13 @@ end
     </SPDataForm>
     <c:FormMetaData FixedDialog="true">
         <c:FormFields>
-            <c:FormField FieldID="LETTERTYPECODEID" DataType="Guid" Caption="Letter type">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
-            </c:FormField>
-            <c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODEID" DataType="Guid" Caption="Child count letter version">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
-            </c:FormField>
-            <c:FormField FieldID="FULFILLMENTSTATUSCODEID" DataType="Guid" Caption="Fulfillment status">
+			<c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODEID" DataType="Guid" Caption="Child count letter version">
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
+			</c:FormField>
+			<c:FormField FieldID="LETTERTYPECODEID" DataType="Guid" Caption="Letter type">
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
+			</c:FormField>
+			<c:FormField FieldID="FULFILLMENTSTATUSCODEID" DataType="Guid" Caption="Fulfillment status">
                 <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
             </c:FormField>
             <c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="EFT brochure" DefaultValueText="0">
@@ -254,6 +294,21 @@ end
             <c:FormField FieldID="UNUSABLECODEID" DataType="Guid" Caption="Unusable item">
                 <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
             </c:FormField>
+
+			<c:FormField FieldID="RESERVATIONREQREPCODE" Caption="Rep code" DataType="String" MaxLength="100" />
+			<c:FormField FieldID="RESERVATIONREQNUMBEROFPROFILES" Caption="Number of profiles" DataType="SmallInt" />
+			<c:FormField FieldID="RESERVATIONREQDISPLAYRACKS" Caption="Display racks" DataType="SmallInt" />
+			<c:FormField FieldID="RESERVATIONREQBROCHURES" Caption="Brochures" DataType="SmallInt" />
+			<c:FormField FieldID="RESERVATIONREQEXPECTEDDATETYPECODEID" DataType="Guid" Caption="Expected date type">
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE" />
+			</c:FormField>
+			<c:FormField FieldID="ADDRESSBLOCK" MaxLength="150" Caption="Address" DefaultValueText="" Multiline="true" />
+			<c:FormField FieldID="CITY" MaxLength="50" Caption="City" DefaultValueText=""  />
+			<c:FormField FieldID="STATEID" DataType="Guid" Caption="State" >
+				<c:SimpleDataList SimpleDataListID="b46d36d1-d3ed-4f6e-91da-89b6c88ca0c6" ShowDescription="true" />
+			</c:FormField>
+			<c:FormField FieldID="POSTCODE" MaxLength="12" Caption="ZIP" DefaultValueText=""  />
+
 			<c:FormField FieldID="CHILDREN" Caption="Children">
 				<c:Collection>
 					<c:Fields>

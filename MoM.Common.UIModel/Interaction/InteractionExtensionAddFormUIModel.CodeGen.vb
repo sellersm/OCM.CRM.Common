@@ -47,8 +47,8 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
 
 #End Region
 
-    Private WithEvents _lettertypecodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _childcountletterversioncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+    Private WithEvents _lettertypecodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _fulfillmentstatuscodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _eftbrochurecode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of EFTBROCHURECODES))
     Private WithEvents _resendcode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of RESENDCODES))
@@ -65,14 +65,23 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     Private WithEvents _fieldmemosentcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _holdreasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _unusablecodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+    Private WithEvents _reservationreqrepcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+    Private WithEvents _reservationreqnumberofprofiles As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+    Private WithEvents _reservationreqdisplayracks As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+    Private WithEvents _reservationreqbrochures As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+    Private WithEvents _reservationreqexpecteddatetypecodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+    Private WithEvents _addressblock As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+    Private WithEvents _city As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+    Private WithEvents _stateid As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+    Private WithEvents _postcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _children As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionAddFormCHILDRENUIModel)
 
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
     Public Sub New()
         MyBase.New()
 
-        _lettertypecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _childcountletterversioncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        _lettertypecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _fulfillmentstatuscodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _eftbrochurecode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of EFTBROCHURECODES))
         _resendcode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of RESENDCODES))
@@ -89,6 +98,15 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _fieldmemosentcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _holdreasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _unusablecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        _reservationreqrepcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        _reservationreqnumberofprofiles = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+        _reservationreqdisplayracks = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+        _reservationreqbrochures = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+        _reservationreqexpecteddatetypecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        _addressblock = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        _city = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        _stateid = New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+        _postcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _children = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionAddFormCHILDRENUIModel)
 
         MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add
@@ -98,15 +116,8 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         MyBase.ContextRecordType = "INTERACTION"
         MyBase.FixedDialog = True
         MyBase.ExtensionTabCaption = "Additional Info"
-        MyBase.UserInterfaceUrl = "browser/htmlforms/custom/InteractionExtension.AddForm.html"
+        MyBase.UserInterfaceUrl = "browser/htmlforms/Interaction/InteractionExtension.AddForm.html"
 
-        '
-        '_lettertypecodeid
-        '
-        _lettertypecodeid.Name = "LETTERTYPECODEID"
-        _lettertypecodeid.Caption = "Letter type"
-        _lettertypecodeid.CodeTableName = "USR_INTERACTIONEXTENSIONLETTERTYPECODE"
-        Me.Fields.Add(_lettertypecodeid)
         '
         '_childcountletterversioncodeid
         '
@@ -114,6 +125,13 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _childcountletterversioncodeid.Caption = "Child count letter version"
         _childcountletterversioncodeid.CodeTableName = "USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE"
         Me.Fields.Add(_childcountletterversioncodeid)
+        '
+        '_lettertypecodeid
+        '
+        _lettertypecodeid.Name = "LETTERTYPECODEID"
+        _lettertypecodeid.Caption = "Letter type"
+        _lettertypecodeid.CodeTableName = "USR_INTERACTIONEXTENSIONLETTERTYPECODE"
+        Me.Fields.Add(_lettertypecodeid)
         '
         '_fulfillmentstatuscodeid
         '
@@ -229,6 +247,68 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _unusablecodeid.CodeTableName = "USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"
         Me.Fields.Add(_unusablecodeid)
         '
+        '_reservationreqrepcode
+        '
+        _reservationreqrepcode.Name = "RESERVATIONREQREPCODE"
+        _reservationreqrepcode.Caption = "Rep code"
+        _reservationreqrepcode.MaxLength = 100
+        Me.Fields.Add(_reservationreqrepcode)
+        '
+        '_reservationreqnumberofprofiles
+        '
+        _reservationreqnumberofprofiles.Name = "RESERVATIONREQNUMBEROFPROFILES"
+        _reservationreqnumberofprofiles.Caption = "Number of profiles"
+        Me.Fields.Add(_reservationreqnumberofprofiles)
+        '
+        '_reservationreqdisplayracks
+        '
+        _reservationreqdisplayracks.Name = "RESERVATIONREQDISPLAYRACKS"
+        _reservationreqdisplayracks.Caption = "Display racks"
+        Me.Fields.Add(_reservationreqdisplayracks)
+        '
+        '_reservationreqbrochures
+        '
+        _reservationreqbrochures.Name = "RESERVATIONREQBROCHURES"
+        _reservationreqbrochures.Caption = "Brochures"
+        Me.Fields.Add(_reservationreqbrochures)
+        '
+        '_reservationreqexpecteddatetypecodeid
+        '
+        _reservationreqexpecteddatetypecodeid.Name = "RESERVATIONREQEXPECTEDDATETYPECODEID"
+        _reservationreqexpecteddatetypecodeid.Caption = "Expected date type"
+        _reservationreqexpecteddatetypecodeid.CodeTableName = "USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE"
+        Me.Fields.Add(_reservationreqexpecteddatetypecodeid)
+        '
+        '_addressblock
+        '
+        _addressblock.Name = "ADDRESSBLOCK"
+        _addressblock.Caption = "Address"
+        _addressblock.MaxLength = 150
+        _addressblock.MultiLine = True
+        Me.Fields.Add(_addressblock)
+        '
+        '_city
+        '
+        _city.Name = "CITY"
+        _city.Caption = "City"
+        _city.MaxLength = 50
+        Me.Fields.Add(_city)
+        '
+        '_stateid
+        '
+        _stateid.Name = "STATEID"
+        _stateid.Caption = "State"
+        _stateid.SimpleDataListID = New Guid("b46d36d1-d3ed-4f6e-91da-89b6c88ca0c6")
+        _stateid.ShowDescription = True
+        Me.Fields.Add(_stateid)
+        '
+        '_postcode
+        '
+        _postcode.Name = "POSTCODE"
+        _postcode.Caption = "ZIP"
+        _postcode.MaxLength = 12
+        Me.Fields.Add(_postcode)
+        '
         '_children
         '
         _children.Name = "CHILDREN"
@@ -240,17 +320,6 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     End Sub
     
     ''' <summary>
-    ''' Letter type
-    ''' </summary>
-    <System.ComponentModel.Description("Letter type")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [LETTERTYPECODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-        Get
-            Return _lettertypecodeid
-        End Get
-    End Property
-    
-    ''' <summary>
     ''' Child count letter version
     ''' </summary>
     <System.ComponentModel.Description("Child count letter version")> _
@@ -258,6 +327,17 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     Public ReadOnly Property [CHILDCOUNTLETTERVERSIONCODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         Get
             Return _childcountletterversioncodeid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Letter type
+    ''' </summary>
+    <System.ComponentModel.Description("Letter type")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [LETTERTYPECODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        Get
+            Return _lettertypecodeid
         End Get
     End Property
     
@@ -434,6 +514,105 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     Public ReadOnly Property [UNUSABLECODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         Get
             Return _unusablecodeid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Rep code
+    ''' </summary>
+    <System.ComponentModel.Description("Rep code")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [RESERVATIONREQREPCODE]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        Get
+            Return _reservationreqrepcode
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Number of profiles
+    ''' </summary>
+    <System.ComponentModel.Description("Number of profiles")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [RESERVATIONREQNUMBEROFPROFILES]() As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+        Get
+            Return _reservationreqnumberofprofiles
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Display racks
+    ''' </summary>
+    <System.ComponentModel.Description("Display racks")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [RESERVATIONREQDISPLAYRACKS]() As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+        Get
+            Return _reservationreqdisplayracks
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Brochures
+    ''' </summary>
+    <System.ComponentModel.Description("Brochures")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [RESERVATIONREQBROCHURES]() As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
+        Get
+            Return _reservationreqbrochures
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Expected date type
+    ''' </summary>
+    <System.ComponentModel.Description("Expected date type")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [RESERVATIONREQEXPECTEDDATETYPECODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        Get
+            Return _reservationreqexpecteddatetypecodeid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Address
+    ''' </summary>
+    <System.ComponentModel.Description("Address")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [ADDRESSBLOCK]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        Get
+            Return _addressblock
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' City
+    ''' </summary>
+    <System.ComponentModel.Description("City")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [CITY]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        Get
+            Return _city
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' State
+    ''' </summary>
+    <System.ComponentModel.Description("State")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [STATEID]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+        Get
+            Return _stateid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' ZIP
+    ''' </summary>
+    <System.ComponentModel.Description("ZIP")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [POSTCODE]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        Get
+            Return _postcode
         End Get
     End Property
     

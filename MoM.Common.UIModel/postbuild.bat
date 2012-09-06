@@ -5,7 +5,7 @@ echo.
 echo copy all htmlforms to the appropriate location on the webserver...
 xcopy "C:\MissionOfMercy\CRM\Source\MoM.Common\MoM.Common.UIModel\Interaction\InteractionExtension.AddForm.html" "C:\Program Files\Blackbaud\bbappfx\vroot\browser\htmlforms\custom" /y /d
 xcopy "C:\MissionOfMercy\CRM\Source\MoM.Common\MoM.Common.UIModel\Interaction\InteractionExtension.EditForm.html" "C:\Program Files\Blackbaud\bbappfx\vroot\browser\htmlforms\custom" /y /d
-
+xcopy "C:\MissionOfMercy\CRM\Source\MoM.Common\MoM.Common.UIModel\Interaction\InteractionExtension.ViewForm.html" "C:\Program Files\Blackbaud\bbappfx\vroot\browser\htmlforms\custom" /y /d
 
 rem echo copy all htmlforms to the appropriate location on the webserver...
 rem xcopy %~dp0htmlforms\*.* %~dp0..\..\..\..\Blackbaud.AppFx.Server\Deploy\browser\htmlforms\ /e /y /r

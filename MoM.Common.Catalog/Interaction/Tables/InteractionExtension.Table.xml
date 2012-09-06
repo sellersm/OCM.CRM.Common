@@ -59,6 +59,18 @@
 		<CodeTableField Name="HOLDREASONCODEID" Description="Field Memo - Reason for hold" CodeTable="USR_INTERACTIONEXTENSIONHOLDREASONCODE"/>
 		<CodeTableField Name="UNUSABLECODEID" Description="Field Memo - Unusable item" CodeTable="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"/>
 
+		<!-- Reservation Request Interaction Extension Fields -->
+		<TextField Name="RESERVATIONREQREPCODE" Description="Rep Code for the reservation request" Length="100"/>
+		<NumberField Name="RESERVATIONREQNUMBEROFPROFILES" Description="Number of Profiles needed for this reservation request" Type="smallint" />
+		<NumberField Name="RESERVATIONREQDISPLAYRACKS" Description="Number of Display Racks requested" Type="smallint"  />
+		<NumberField Name="RESERVATIONREQBROCHURES" Description="Number of Brochures requested" Type="smallint"  />
+		<CodeTableField Name="RESERVATIONREQEXPECTEDDATETYPECODEID" CodeTable="USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE" Description="Type of deadline (hard vs soft)" />
+		<ForeignKeyField Name="STATEID" ForeignTable="STATE" />
+		<TextField Description="Contains the address lines." Name="ADDRESSBLOCK" Length="150" />
+		<TextField Description="Contains the address city." Name="CITY" Length="50" />
+		<TextField Description="Contains the address post code." Name="POSTCODE" Length="12" />
+
+
 	</Fields>
 	<Triggers>
 		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">

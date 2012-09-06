@@ -125,6 +125,13 @@
     <Compile Include="Interaction\InteractionExtensionEditFormUIModel.vb" />
     <Compile Include="Interaction\InteractionExtensionFields.vb" />
     <Compile Include="Interaction\InteractionExtensionHelper.vb" />
+    <Compile Include="Interaction\InteractionExtensionViewFormCHILDRENUIModel.CodeGen.vb">
+      <DependentUpon>InteractionExtensionViewFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Interaction\InteractionExtensionViewFormUIModel.CodeGen.vb">
+      <DependentUpon>InteractionExtensionViewFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Interaction\InteractionExtensionViewFormUIModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +142,13 @@
     <None Include="postbuild.bat" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
+      <Link>LinkedSpecs\Interaction Extension.View.xml</Link>
+    </None>
+    <Content Include="Interaction\InteractionExtension.ViewForm.html" />
+    <Content Include="Interaction\InteractionExtensionViewFormUIModel.xml">
+      <DependentUpon>InteractionExtensionViewFormUIModel.vb</DependentUpon>
+    </Content>
     <None Include="..\MoM.Common.Catalog\Common.UIModelVersion.View.xml">
       <Link>LinkedSpecs\Common.UIModelVersion.View.xml</Link>
     </None>
