@@ -25,6 +25,7 @@
 	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
 	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
 									Added project search list
+	05-Sep-2012		CMayeda			Added Reservation Request fields									
 	-->
 	
     <SPDataForm>

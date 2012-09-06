@@ -21,6 +21,7 @@
 	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
 									Added project search list
 	03-Sep-2012		CMayeda			Added missing search lists to child fields.
+	05-Sep-2012		CMayeda			Added Reservation Request fields
 	-->
     <SPDataForm>
         <LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">

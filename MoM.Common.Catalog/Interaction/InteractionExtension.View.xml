@@ -11,8 +11,7 @@
     xmlns="bb_appfx_viewdataformtemplate"  >
 
 	<!-- 
-	Remarks:    Extending the view form didn't work.
-				Also in order to minimize the changes for the UI Model Field Manager, all code table fields are named with the ID suffix even though they contain the description and not the id
+	Remarks:    In order to minimize the changes for the UI Model Field Manager, all code table fields are named with the ID suffix even though they contain the description and not the id
 					LETTERTYPECODEID
 					CHILDCOUNTLETTERVERSIONCODEID
 					FULFILLMENTSTATUSCODEID
@@ -27,10 +26,10 @@
 	03-Sep-2012		CMayeda			Initial Version
 	-->
 
-	<SPDataForm SPName="USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION">
+	<SPDataForm SPName="USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION">
         <c:CreateProcedureSQL>
 <![CDATA[
-create procedure dbo.USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION 
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION 
 (
 	@ID uniqueidentifier,
 	@DATALOADED bit = 0 output,

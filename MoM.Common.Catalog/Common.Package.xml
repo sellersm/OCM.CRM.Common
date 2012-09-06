@@ -17,6 +17,7 @@
 	14-Aug-2012		BElfstrom		add global changes and updated package
 	03-Sep-2012		CMayeda			Added Interaction Response specs	
 									Added USR_USP_INTERACTION_SPONSOR_ADDCHILDREN
+	05-Sep-2012		CMayeda			Added InteractionExtension.View.xml and ExpectedDateType.CodeTable.xml
 -->
 
 
@@ -66,6 +67,7 @@
 	<common:DependencyList>
 	    <!-- Codetables -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.DepartureReason.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ExpectedDateType.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.FieldMemoSent.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.FulfillmentStatus.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.HoldReason.CodeTable.xml" />
@@ -129,7 +131,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.View.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Edit.xml" />
-		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction Extension.View.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.View.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.CCHVerificationFailed.Add.xml" />
 
 		<!-- Queries -->

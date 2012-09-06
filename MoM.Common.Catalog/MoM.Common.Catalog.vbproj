@@ -331,7 +331,7 @@
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADDCHILDREN.xml" />
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_ADDRESPONSE.xml" />
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_GETRESPONSEID.xml" />
-    <Content Include="Interaction\Interaction Extension.View.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.View.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
