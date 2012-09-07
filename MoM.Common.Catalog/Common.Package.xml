@@ -134,6 +134,9 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.View.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.CCHVerificationFailed.Add.xml" />
 
+		<!-- ** THIS IS TEMPORARY FOR 0.3.4 DEPLOYMENT TO GOLD CONFIG BECAUSE InteractionExtension.Query.xml HAS A DEPENDCY ON THIS FROM CHILD PROEJCT **-->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildProject.Extension.Query.xml" />
+
 		<!-- Queries -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Query.xml" />
