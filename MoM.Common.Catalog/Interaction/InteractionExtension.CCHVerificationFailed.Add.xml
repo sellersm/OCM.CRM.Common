@@ -5,7 +5,7 @@
 	Name="Interaction Extension for CCH Verification Failed"
     Description="Used for extending the wrapped Interaction Add form used to create a Field Memo for the CCH Verification Failed task"
     Author="Cary Mayeda"
-    RecordType="Interaction Extension"
+    RecordType="Interaction"
 	DataFormInstanceID="69a5705b-bebb-4157-9973-a2993a0ee178" 
 	c:SecurityUIFolder="Interaction Extension" >
 
