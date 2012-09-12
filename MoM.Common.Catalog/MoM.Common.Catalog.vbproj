@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
+    <Folder Include="Temp 0.3.4 Deployment\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeTableManager.Table.xml">
@@ -332,9 +333,6 @@
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_ADDRESPONSE.xml" />
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_GETRESPONSEID.xml" />
     <EmbeddedResource Include="Interaction\InteractionExtension.View.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Temp 0.3.4 Deployment\ChildProject.Extension.Query.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
