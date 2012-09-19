@@ -334,6 +334,9 @@
     <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_GETRESPONSEID.xml" />
     <EmbeddedResource Include="Interaction\InteractionExtension.View.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Interaction\Tables\Code Tables\InteractionExtention.ItemsEnclosed.CodeTable.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
