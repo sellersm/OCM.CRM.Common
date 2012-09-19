@@ -18,6 +18,7 @@
 	03-Sep-2012		CMayeda			Added Interaction Response specs	
 									Added USR_USP_INTERACTION_SPONSOR_ADDCHILDREN
 	05-Sep-2012		CMayeda			Added InteractionExtension.View.xml and ExpectedDateType.CodeTable.xml
+  19-Sep-2012   BElfstrom Added Items Enclosed Code table
 -->
 
 
@@ -75,8 +76,9 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.LetterType.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UnusableItem.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelField.CodeTable.xml" />
-		
-		<!-- Tables -->
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ItemsEnclosed.CodeTable.xml" />
+
+    <!-- Tables -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CodeTableManager.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Table.xml" />		
