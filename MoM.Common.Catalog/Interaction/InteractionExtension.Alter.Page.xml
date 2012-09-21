@@ -16,10 +16,11 @@
 	05-Aug-2012		CMayeda			Initial Version
 	15-Aug-2012		CMayeda			Change context for the Interaction Add action to "= Page.Fields!CONSTITUENTID"
 	05-Sep-2012		CMayeda			Added Additional Info (Interaction Extension View Form) to the Constituent Interaction Page (single interaction)
+	19-Sep-2012		CMayeda			Recreated Goto action group on the Sponsorship Interactions tab on the Constituent Interactions Page, because it wasn't showing in Web shell. Fogbugz Case - 832
 	-->
 	
 	<!-- define how the page header should appear -->
-	<PageHeader Caption="ALTER PAGE - ONLY USED TO ALTER THE CONSTITUENT INTERACTION PAGE" ImageKey="" />
+	<PageHeader Caption="ALTER PAGE - ONLY USED TO ALTER THE CONSTITUENT INTERACTION PAGES AND SPONSORSHIP PAGES " ImageKey="" />
 
 	<AlterExistingPages>
 		<AlterPages>
@@ -54,7 +55,7 @@
 										</RenderStyle>
 									</DataList>
 									<Actions>
-										<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+										<!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
 											<ActionGroup>
 												<Actions>
 													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
@@ -76,6 +77,29 @@
 												</Actions>
 											</ActionGroup>
 										</Action>
+										-->
+										<!-- Not sure why the oob above didn't work in Webshell-->
+										<Action ID="2e0fd330-cfac-4a6a-8e60-5cb9407c88bf" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="True">
+											<ActionGroup>
+												<Actions>
+													<Action ID="f5c0ff55-7ec2-44bc-96d9-d2f0a6d0d3f3" Caption="Interaction">
+														<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+														</ShowPage>
+													</Action>
+													<Action ID="386151be-3420-424d-b1b8-b02f33b4252f" Caption="Owner">
+														<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>OWNERID</SectionField>
+															</ActionContext>
+														</ShowPage>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+
 										<Action ID="CB044C21-7937-4233-8AB4-495E3E7D4121" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
 											<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
 												<ActionContext>
