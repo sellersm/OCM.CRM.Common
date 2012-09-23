@@ -4,9 +4,9 @@
     ID="0afa5709-40bf-4f62-85da-a0b3ee0b0891"
     Name="Common Package"
     Description="Mission of Mercy specs used in Mom.Common class"
-    Author="Cary Mayeda"
-    >
-<!-- 
+    Author="Cary Mayeda" >
+	
+	<!-- 
 	Remarks:    
 
 	History:
@@ -18,8 +18,8 @@
 	03-Sep-2012		CMayeda			Added Interaction Response specs	
 									Added USR_USP_INTERACTION_SPONSOR_ADDCHILDREN
 	05-Sep-2012		CMayeda			Added InteractionExtension.View.xml and ExpectedDateType.CodeTable.xml
-  19-Sep-2012   BElfstrom Added Items Enclosed Code table
--->
+	19-Sep-2012		BElfstrom		Added Items Enclosed Code table
+	-->
 
 
 	<!-- Note:  the order of the items listed here is important.  For example, you won't be able to load a data form that references 
@@ -77,7 +77,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UnusableItem.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelField.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ItemsEnclosed.CodeTable.xml" />
-
+																									
 		<!-- Tables -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CodeTableManager.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Table.xml" />
