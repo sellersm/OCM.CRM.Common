@@ -32,7 +32,7 @@
 		<CodeTableField Name="LETTERTYPECODEID" Description="Type of letter (contacted, not contacted)" CodeTable="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
 		<CodeTableField Name="CHILDCOUNTLETTERVERSIONCODEID" Description="The version of the letter based on the number of children (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
 		<CodeTableField Name="FULFILLMENTSTATUSCODEID" Description="Fulfillment Status (Pending, Ready, Complete)" CodeTable="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
-		<EnumField Name="EFTBROCHURECODE" DefaultValue="0" Description="Whether or not to include an EFT Brochure" >
+		<EnumField Name="EFTBROCHURECODE" DefaultValue="0" Description="Whether to include an EFT Brochure" >
 			<EnumValues>
 				<EnumValue ID="0" Translation="No"/>
 				<EnumValue ID="1" Translation="Yes"/>
@@ -70,7 +70,6 @@
 		<TextField Description="Contains the address lines." Name="ADDRESSBLOCK" Length="150" />
 		<TextField Description="Contains the address city." Name="CITY" Length="50" />
 		<TextField Description="Contains the address post code." Name="POSTCODE" Length="12" />
-
 
 	</Fields>
 	<Triggers>

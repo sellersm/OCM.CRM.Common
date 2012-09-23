@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
+	22-Sep-2012		CMayeda			Added check for null @interactionID
 	-->
 
 	<CreateProcedureSQL>
@@ -27,14 +28,24 @@ create procedure dbo.USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD (
 )
 as
 begin
+	begin try
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+		
+		if @interactionID is null
+			RAISERROR 1000000 'Interaction ID cannot be null'
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+	
     -- Used for setting date fields to today's date
 	declare @currentDate datetime = null  
 	set @currentDate = getdate()	
 
-	-- Get ChangeAgent if none was passed into the sproc
-  	if @changeAgentID is null  
-		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
-
+	
 	update	dbo.USR_INTERACTIONEXTENSION
 	   set	TRANSFERCHILDID = @sponsorshipOpportunityChildID,
 			CHANGEDBYID = @changeAgentID,

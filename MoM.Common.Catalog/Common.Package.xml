@@ -76,9 +76,9 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.LetterType.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UnusableItem.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelField.CodeTable.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ItemsEnclosed.CodeTable.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ItemsEnclosed.CodeTable.xml" />
 
-    <!-- Tables -->
+		<!-- Tables -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CodeTableManager.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Table.xml" />		

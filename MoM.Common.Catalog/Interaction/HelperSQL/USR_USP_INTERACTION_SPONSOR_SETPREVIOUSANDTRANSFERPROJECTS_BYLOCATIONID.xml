@@ -18,6 +18,7 @@
 	History:
 	Date            Modified By     Comments
 	23-Aug-2012		CMayeda			Initial Version
+	22-Sep-2012		CMayeda			Added check for null @interactionID
 	-->
 
 	<CreateProcedureSQL>
@@ -37,11 +38,14 @@ begin
 	declare @currentDate datetime = null  
 	set @currentDate = getdate()	
 
-	-- Get ChangeAgent if none was passed into the sproc
-  	if @changeAgentID is null  
-		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
-	
 	begin try
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+			
+		if @interactionID is null
+			RAISERROR 1000000 'Interaction ID cannot be null'
+
 		select @previousChildProjectID = FIELDOFFICEID
 		  from dbo.SPONSORSHIPLOCATION
 		 where ID = @previousLocationID

@@ -17,6 +17,7 @@
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
 	03-Sep-2012		CMayeda			Modified to use USR_USP_INTERACTION_SPONSOR_ADDCHILDREN
+	22-Sep-2012		CMayeda			Added check for null @interactionID	
 	-->
 	
 	<CreateProcedureSQL>
@@ -33,6 +34,9 @@ begin
   		if @changeAgentID is null  
 		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
 	
+		if @interactionID is null
+			RAISERROR 1000000 'Interaction ID cannot be null'
+
 		declare @childIDList dbo.USR_UDT_CHILDIDLIST 
 		insert @childIDList 
 		select @sponsorshipOpportunityChildID 
