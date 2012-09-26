@@ -55,6 +55,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_INTERACTIONEXTENSION
 	@FIELDMEMOSENTCODEID uniqueidentifier = null,
     @HOLDREASONCODEID uniqueidentifier = null,
     @UNUSABLECODEID uniqueidentifier = null,
+	@SPONSORID uniqueidentifier = null,
 	@RESERVATIONREQREPCODE nvarchar(100) = null,
 	@RESERVATIONREQNUMBEROFPROFILES smallint = null,
 	@RESERVATIONREQDISPLAYRACKS smallint = null,
@@ -101,6 +102,7 @@ as begin
 			FIELDMEMOSENTCODEID, 
 			HOLDREASONCODEID, 
 			UNUSABLECODEID, 
+			SPONSORID,
 			RESERVATIONREQREPCODE, 
 			RESERVATIONREQNUMBEROFPROFILES, 
 			RESERVATIONREQDISPLAYRACKS, 
@@ -134,6 +136,7 @@ as begin
 			@FIELDMEMOSENTCODEID, 
 			@HOLDREASONCODEID, 
 			@UNUSABLECODEID, 
+			@SPONSORID,
 			@RESERVATIONREQREPCODE, 
 			@RESERVATIONREQNUMBEROFPROFILES, 
 			@RESERVATIONREQDISPLAYRACKS, 
@@ -256,6 +259,10 @@ end
 			</c:FormField>
 			<c:FormField FieldID="UNUSABLECODEID" DataType="Guid" Caption="Unusable item">
 				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+			</c:FormField>
+
+			<c:FormField FieldID="SPONSORID" Caption="Sponsor" DataType="Guid">
+				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
 			</c:FormField>
 
 			<c:FormField FieldID="RESERVATIONREQREPCODE" Caption="Rep code" DataType="String" MaxLength="100" />

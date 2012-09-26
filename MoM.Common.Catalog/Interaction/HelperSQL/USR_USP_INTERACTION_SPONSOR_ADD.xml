@@ -72,6 +72,7 @@ begin
 
 		-- Try to lookup ids
 		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName, @subcategoryName, @raiseErrorIfNotFound_True
+		
 		select @contactMethodID = ID from dbo.INTERACTIONTYPECODE where DESCRIPTION = lower (@contactMethodDesc)
 		if @contactMethodID is null 
 			RAISERROR 1000000 @contactMethodError

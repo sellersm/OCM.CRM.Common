@@ -7,8 +7,7 @@
 	Author="Cary Mayeda"
 	Tablename="USR_INTERACTIONEXTENSION"
 	PrimaryKeyAsForeignKeyTablename="INTERACTION"
-	WarnOnMissingIndexes="false" 
-	CustomIdentifier="true" >
+	WarnOnMissingIndexes="false" >
 
 
 	<!-- 
@@ -23,6 +22,8 @@
 	27-Jul-2012		CMayeda			Initial Version
 	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
 	05-Sep-2012		CMayeda			Added Reservation Request fields
+	26-Sep-2012		CMayeda			Added SPONSORID, ITEMSENCLOSEDCODEID
+									Removed Sequence ID (customidentifier) because we can use the one on the INTERACTION table.
 	-->
 
 
@@ -60,6 +61,10 @@
 		<CodeTableField Name="HOLDREASONCODEID" Description="Field Memo - Reason for hold" CodeTable="USR_INTERACTIONEXTENSIONHOLDREASONCODE"/>
 		<CodeTableField Name="UNUSABLECODEID" Description="Field Memo - Unusable item" CodeTable="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"/>
 
+		<!-- Child and Sponsor Letter Interaction Extension Fields -->
+		<ForeignKeyField Name="SPONSORID" Description="Sponsor ID at time of interaction creation" OnDelete="RaiseError" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
+		<CodeTableField Name="ITEMSENCLOSEDCODEID" Description="Items Enclosed" CodeTable="USR_ITEMSENCLOSEDCODE"/>
+
 		<!-- Reservation Request Interaction Extension Fields -->
 		<TextField Name="RESERVATIONREQREPCODE" Description="Rep Code for the reservation request" Length="100"/>
 		<NumberField Name="RESERVATIONREQNUMBEROFPROFILES" Description="Number of Profiles needed for this reservation request" Type="smallint" />
@@ -67,9 +72,9 @@
 		<NumberField Name="RESERVATIONREQBROCHURES" Description="Number of Brochures requested" Type="smallint"  />
 		<CodeTableField Name="RESERVATIONREQEXPECTEDDATETYPECODEID" CodeTable="USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE" Description="Type of deadline (hard vs soft)" />
 		<ForeignKeyField Name="STATEID" ForeignTable="STATE" />
-		<TextField Description="Contains the address lines." Name="ADDRESSBLOCK" Length="150" />
-		<TextField Description="Contains the address city." Name="CITY" Length="50" />
-		<TextField Description="Contains the address post code." Name="POSTCODE" Length="12" />
+		<TextField Name="ADDRESSBLOCK" Description="Contains the address lines." Length="150" />
+		<TextField Name="CITY" Description="Contains the address city." Length="50" />
+		<TextField Name="POSTCODE" Description="Contains the address post code." Length="12" />
 
 	</Fields>
 	<Triggers>
@@ -85,8 +90,8 @@ as begin
 	 where	exists (select ID from inserted where inserted.FIELDMEMODATESENT is not null)
 end
 
-				]]>				
-			</CreateTriggerSQL>			
+				]]>
+			</CreateTriggerSQL>
 		</Trigger>
 		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
 			<CreateTriggerSQL>

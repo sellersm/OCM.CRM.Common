@@ -1,8 +1,8 @@
 ﻿<UIModelWizardMetadata>
-  <SpecFileName>Interaction Extension.View.xml</SpecFileName>
+  <SpecFileName>InteractionExtension.View.xml</SpecFileName>
   <Namespace></Namespace>
   <ClassName>InteractionExtensionViewFormUIModel</ClassName>
-  <HtmlInfo GenerateHtml="false">
+  <HtmlInfo GenerateHtml="true">
     <HtmlFile>InteractionExtension.ViewForm.html</HtmlFile>
     <HtmlFolder>Interaction\</HtmlFolder>
   </HtmlInfo>

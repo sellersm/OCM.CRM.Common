@@ -5,7 +5,7 @@
     Description="Used for viewing a given Interaction Extension"
     Author="Cary Mayeda"
     DataFormInstanceID="c742aec6-52ac-4eab-afb3-41d74ed15193"
-	RecordType="Interaction Extension"
+	RecordType="Constituent Interaction"
 	c:SecurityUIFolder="Interaction Extension"
     OwnerIDMapperID="00000000-0000-0000-0000-000000000000"
     xmlns="bb_appfx_viewdataformtemplate"  >
@@ -39,9 +39,9 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
     @FULFILLMENTSTATUSCODEID nvarchar(100) = null output,
     @EFTBROCHURECODE tinyint = null output,
     @RESENDCODE tinyint = null output,
-    @UNAVAILABLECHILDID uniqueidentifier = null output,
-    @TRANSFERCHILDID uniqueidentifier = null output,
-    @DEPARTEDCHILDID uniqueidentifier = null output,
+    @UNAVAILABLECHILDID nvarchar(200) = null output,
+    @TRANSFERCHILDID nvarchar(200) = null output,
+    @DEPARTEDCHILDID nvarchar(200) = null output,
     @DEPARTUREREASONCODEID nvarchar(100) = null output,
     @DOUBLESPONSOREDCHILDID uniqueidentifier = null output,
     @PREVIOUSCHILDPROJECTID uniqueidentifier = null output,
@@ -52,6 +52,8 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
     @FIELDMEMOSENTCODEID nvarchar(100) = null output,
     @HOLDREASONCODEID nvarchar(100) = null output,
     @UNUSABLECODEID nvarchar(100) = null output,
+	@SEQUENCEID int = null output,
+	@SPONSORID uniqueidentifier = null output,
 	@RESERVATIONREQREPCODE nvarchar(100) = null output,
 	@RESERVATIONREQNUMBEROFPROFILES smallint = null output,
 	@RESERVATIONREQDISPLAYRACKS smallint = null output,
@@ -61,7 +63,6 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
 	@ADDRESSBLOCK nvarchar(150) = null output,
 	@CITY nvarchar(50) = null output,
 	@STATEID uniqueidentifier = null output,
-
 	@CHILDREN xml = null output
 )
 as
@@ -80,9 +81,9 @@ as
 			@FULFILLMENTSTATUSCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE where ID = FULFILLMENTSTATUSCODEID), 
 			@EFTBROCHURECODE = EFTBROCHURECODE, 
 			@RESENDCODE = RESENDCODE, 
-			@UNAVAILABLECHILDID = UNAVAILABLECHILDID, 
-			@TRANSFERCHILDID = TRANSFERCHILDID, 
-			@DEPARTEDCHILDID = DEPARTEDCHILDID, 
+			@UNAVAILABLECHILDID = dbo.USR_UFN_CHILD_GETCHILDNAME (UNAVAILABLECHILDID, 1, 1),	-- 1=Include LookupID, 1=Include ProjectID
+			@TRANSFERCHILDID = dbo.USR_UFN_CHILD_GETCHILDNAME (TRANSFERCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
+			@DEPARTEDCHILDID = dbo.USR_UFN_CHILD_GETCHILDNAME (DEPARTEDCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
 			@DEPARTUREREASONCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE where ID = DEPARTUREREASONCODEID), 
 			@DOUBLESPONSOREDCHILDID = DOUBLESPONSOREDCHILDID, 
 			@PREVIOUSCHILDPROJECTID = PREVIOUSCHILDPROJECTID, 
@@ -93,6 +94,8 @@ as
 			@FIELDMEMOSENTCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = FIELDMEMOSENTCODEID), 
 			@HOLDREASONCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = HOLDREASONCODEID), 
 			@UNUSABLECODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = UNUSABLECODEID),
+			@SEQUENCEID = INTERACTION.SEQUENCEID,
+			@SPONSORID = SPONSORID,
 			@RESERVATIONREQREPCODE = RESERVATIONREQREPCODE,
 			@RESERVATIONREQNUMBEROFPROFILES = RESERVATIONREQNUMBEROFPROFILES,
 			@RESERVATIONREQDISPLAYRACKS = RESERVATIONREQDISPLAYRACKS,
@@ -102,7 +105,7 @@ as
 			@ADDRESSBLOCK = ADDRESSBLOCK,
 			@CITY = CITY,
 			@STATEID = STATEID,
-					
+			
 			@CHILDREN = dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN_TOITEMLISTXML(@ID)
 	  from	dbo.USR_INTERACTIONEXTENSION int_ext
 	  join	dbo.INTERACTION on INTERACTION.ID = int_ext.ID
@@ -147,9 +150,9 @@ as
                     </c:Items>
                 </c:ValueList>
             </c:FormField>
-            <c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailable child" />
-            <c:FormField FieldID="TRANSFERCHILDID" DataType="Guid" Caption="Transfer child" />
-            <c:FormField FieldID="DEPARTEDCHILDID" DataType="Guid" Caption="Departed child" />
+            <c:FormField FieldID="UNAVAILABLECHILDID" DataType="String" Caption="Unavailable child" />
+            <c:FormField FieldID="TRANSFERCHILDID" DataType="String" Caption="Transfer child" />
+            <c:FormField FieldID="DEPARTEDCHILDID" DataType="String" Caption="Departed child" />
             <c:FormField FieldID="DEPARTUREREASONCODEID" MaxLength="100" Caption="Departure reason" />
             <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child" />
             <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
@@ -160,6 +163,12 @@ as
             <c:FormField FieldID="FIELDMEMOSENTCODEID" MaxLength="100" Caption="Field memo sent" />
             <c:FormField FieldID="HOLDREASONCODEID" MaxLength="100" Caption="Hold reason" />
             <c:FormField FieldID="UNUSABLECODEID" MaxLength="100" Caption="Unusable item" />
+
+			<c:FormField FieldID="SEQUENCEID" Caption="Interaction sequence" DataType="Integer" DoNotApplyFormat="true" />
+			<c:FormField FieldID="SPONSORID" Caption="Sponsor" DataType="Guid">
+				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
+			</c:FormField>
+
 			<c:FormField FieldID="RESERVATIONREQREPCODE" Caption="Rep code" DataType="String" MaxLength="100" />
 			<c:FormField FieldID="RESERVATIONREQNUMBEROFPROFILES" Caption="Number of profiles" DataType="SmallInt" />
 			<c:FormField FieldID="RESERVATIONREQDISPLAYRACKS" Caption="Display racks" DataType="SmallInt" />
@@ -171,7 +180,6 @@ as
 				<c:SimpleDataList SimpleDataListID="b46d36d1-d3ed-4f6e-91da-89b6c88ca0c6" ShowDescription="true" />
 			</c:FormField>
 			<c:FormField FieldID="POSTCODE" MaxLength="12" Caption="ZIP" DefaultValueText=""  />
-
 			<c:FormField FieldID="CHILDREN" Caption="Children">
 				<c:Collection>
 					<c:Fields>
@@ -194,5 +202,5 @@ as
             </c:WebUI>
         </c:WebUIComponent>
     </c:FormMetaData>
-	<!--<c:DataFormExtension DataFormInstanceID="e3574968-1684-4b51-9752-3599be1b4ec4" RenderStyle="AfterParent" TabCaption="Additional Info" />-->
+	<c:DataFormExtension DataFormInstanceID="e3574968-1684-4b51-9752-3599be1b4ec4" RenderStyle="AfterParent" TabCaption="Additional Info" />
 </ViewDataFormTemplateSpec>

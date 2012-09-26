@@ -65,6 +65,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     Private WithEvents _fieldmemosentcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _holdreasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _unusablecodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+    Private WithEvents _sponsorid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _reservationreqrepcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _reservationreqnumberofprofiles As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
     Private WithEvents _reservationreqdisplayracks As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
@@ -98,6 +99,7 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _fieldmemosentcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _holdreasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _unusablecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        _sponsorid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _reservationreqrepcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _reservationreqnumberofprofiles = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
         _reservationreqdisplayracks = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
@@ -246,6 +248,13 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
         _unusablecodeid.Caption = "Unusable item"
         _unusablecodeid.CodeTableName = "USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"
         Me.Fields.Add(_unusablecodeid)
+        '
+        '_sponsorid
+        '
+        _sponsorid.Name = "SPONSORID"
+        _sponsorid.Caption = "Sponsor"
+        _sponsorid.SearchListID = New Guid("23c5c603-d7d8-4106-aecc-65392b563887")
+        Me.Fields.Add(_sponsorid)
         '
         '_reservationreqrepcode
         '
@@ -514,6 +523,17 @@ Partial Public Class [InteractionExtensionAddFormUIModel]
     Public ReadOnly Property [UNUSABLECODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         Get
             Return _unusablecodeid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Sponsor
+    ''' </summary>
+    <System.ComponentModel.Description("Sponsor")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [SPONSORID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        Get
+            Return _sponsorid
         End Get
     End Property
     

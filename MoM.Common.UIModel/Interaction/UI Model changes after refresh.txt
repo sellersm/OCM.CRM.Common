@@ -80,7 +80,9 @@ Bottom of form for edit and add
 
 
 
-Bottom of form for VIEW
+Bottom of form for VIEW (after 	<tr id="#MAP#RESERVATIONREQEXPECTEDDATETYPECODEID_container">
+
+	
 	</table>
 </div>
 <div id="#MAP#ADDRESSBLOCK_container">
