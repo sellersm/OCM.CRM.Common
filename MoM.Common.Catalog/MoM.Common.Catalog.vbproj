@@ -335,7 +335,7 @@
     <EmbeddedResource Include="Interaction\InteractionExtension.View.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtention.ItemsEnclosed.CodeTable.xml">
+    <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.ItemsEnclosed.CodeTable.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
