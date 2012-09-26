@@ -57,7 +57,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
     Private WithEvents _transferchildid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _departedchildid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _departurereasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
-    Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _previouschildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
     Private WithEvents _transferchildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
     Private WithEvents _previousbirthdate As Global.Blackbaud.AppFx.UIModeling.Core.DateField
@@ -93,7 +93,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         _transferchildid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _departedchildid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _departurereasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
-        _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+        _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _previouschildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         _transferchildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.GuidField
         _previousbirthdate = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
@@ -121,7 +121,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         MyBase.RecordType = "Constituent Interaction"
         MyBase.FixedDialog = True
         MyBase.ExtensionTabCaption = "Additional Info"
-        MyBase.UserInterfaceUrl = "browser/htmlforms/Interaction/InteractionExtension.ViewForm.html"
+        MyBase.UserInterfaceUrl = "browser/htmlforms/custom/InteractionExtension.ViewForm.html"
 
         '
         '_interactionsubcategoryid
@@ -211,6 +211,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         _doublesponsoredchildid.Name = "DOUBLESPONSOREDCHILDID"
         _doublesponsoredchildid.Caption = "Double sponsored child"
         _doublesponsoredchildid.DBReadOnly = True
+        _doublesponsoredchildid.MaxLength = 200
         Me.Fields.Add(_doublesponsoredchildid)
         '
         '_previouschildprojectid
@@ -277,7 +278,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         '_sequenceid
         '
         _sequenceid.Name = "SEQUENCEID"
-        _sequenceid.Caption = "Interaction Sequence ID"
+        _sequenceid.Caption = "Interaction sequence"
         _sequenceid.DBReadOnly = True
         _sequenceid.DoNotApplyFormat = True
         Me.Fields.Add(_sequenceid)
@@ -487,7 +488,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
     ''' </summary>
     <System.ComponentModel.Description("Double sponsored child")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [DOUBLESPONSOREDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+    Public ReadOnly Property [DOUBLESPONSOREDCHILDID]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
         Get
             Return _doublesponsoredchildid
         End Get
@@ -582,9 +583,9 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
     End Property
     
     ''' <summary>
-    ''' Interaction Sequence ID
+    ''' Interaction sequence
     ''' </summary>
-    <System.ComponentModel.Description("Interaction Sequence ID")> _
+    <System.ComponentModel.Description("Interaction sequence")> _
     <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
     Public ReadOnly Property [SEQUENCEID]() As Global.Blackbaud.AppFx.UIModeling.Core.IntegerField
         Get

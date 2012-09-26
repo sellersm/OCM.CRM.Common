@@ -24,6 +24,7 @@
 	History:
 	Date            Modified By     Comments
 	03-Sep-2012		CMayeda			Initial Version
+	25-Sep-2012		CMayeda			Modified Child fields to display name instead of ID
 	-->
 
 	<SPDataForm SPName="USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION">
@@ -43,7 +44,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
     @TRANSFERCHILDID nvarchar(200) = null output,
     @DEPARTEDCHILDID nvarchar(200) = null output,
     @DEPARTUREREASONCODEID nvarchar(100) = null output,
-    @DOUBLESPONSOREDCHILDID uniqueidentifier = null output,
+    @DOUBLESPONSOREDCHILDID  nvarchar(200) = null output,
     @PREVIOUSCHILDPROJECTID uniqueidentifier = null output,
     @TRANSFERCHILDPROJECTID uniqueidentifier = null output,
     @PREVIOUSBIRTHDATE datetime = null output,
@@ -85,7 +86,7 @@ as
 			@TRANSFERCHILDID = dbo.USR_UFN_CHILD_GETCHILDNAME (TRANSFERCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
 			@DEPARTEDCHILDID = dbo.USR_UFN_CHILD_GETCHILDNAME (DEPARTEDCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
 			@DEPARTUREREASONCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE where ID = DEPARTUREREASONCODEID), 
-			@DOUBLESPONSOREDCHILDID = DOUBLESPONSOREDCHILDID, 
+			@DOUBLESPONSOREDCHILDID =  dbo.USR_UFN_CHILD_GETCHILDNAME (DOUBLESPONSOREDCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
 			@PREVIOUSCHILDPROJECTID = PREVIOUSCHILDPROJECTID, 
 			@TRANSFERCHILDPROJECTID = TRANSFERCHILDPROJECTID,
 			@PREVIOUSBIRTHDATE = PREVIOUSBIRTHDATE, 
@@ -119,9 +120,9 @@ as
     <c:FormMetaData FixedDialog="true">
         <c:FormFields>
 			<c:FormField FieldID="INTERACTIONSUBCATEGORYID" DataType="Guid" Caption="Interaction subcategoryid" Hidden="true" />
-            <c:FormField FieldID="LETTERTYPECODEID" MaxLength="100" Caption="Letter type" />
-            <c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODEID" MaxLength="100" Caption="Child count letter version" />
-            <c:FormField FieldID="FULFILLMENTSTATUSCODEID" MaxLength="100" Caption="Fulfillment status" />
+            <c:FormField FieldID="LETTERTYPECODEID" DataType="String" Caption="Letter type" />
+            <c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODEID" DataType="String"  Caption="Child count letter version" />
+            <c:FormField FieldID="FULFILLMENTSTATUSCODEID" DataType="String"  Caption="Fulfillment status" />
             <c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="EFT brochure" DefaultValueText="0">
                 <c:ValueList>
                     <c:Items>
@@ -153,8 +154,8 @@ as
             <c:FormField FieldID="UNAVAILABLECHILDID" DataType="String" Caption="Unavailable child" />
             <c:FormField FieldID="TRANSFERCHILDID" DataType="String" Caption="Transfer child" />
             <c:FormField FieldID="DEPARTEDCHILDID" DataType="String" Caption="Departed child" />
-            <c:FormField FieldID="DEPARTUREREASONCODEID" MaxLength="100" Caption="Departure reason" />
-            <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child" />
+            <c:FormField FieldID="DEPARTUREREASONCODEID" DataType="String" MaxLength="100" Caption="Departure reason" />
+            <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="String" Caption="Double sponsored child" />
             <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
 			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Transfer child project" />
 			<c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
