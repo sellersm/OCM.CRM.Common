@@ -56,16 +56,20 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     Private WithEvents _transferchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _departedchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _departurereasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+    Private WithEvents _departurereasonotherdescription As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _doublesponsoredchildid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _previouschildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _transferchildprojectid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _previousbirthdate As Global.Blackbaud.AppFx.UIModeling.Core.DateField
     Private WithEvents _previousname As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+    Private WithEvents _sponsoredprojectid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _fieldmemodatesent As Global.Blackbaud.AppFx.UIModeling.Core.DateField
     Private WithEvents _fieldmemosentcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _holdreasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _unusablecodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _sponsorid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+    Private WithEvents _itemsenclosedcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+    Private WithEvents _originallettersubcategoryid As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
     Private WithEvents _reservationreqrepcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _reservationreqnumberofprofiles As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
     Private WithEvents _reservationreqdisplayracks As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
@@ -90,16 +94,20 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _transferchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _departedchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _departurereasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        _departurereasonotherdescription = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _doublesponsoredchildid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _previouschildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _transferchildprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _previousbirthdate = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
         _previousname = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        _sponsoredprojectid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _fieldmemodatesent = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
         _fieldmemosentcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _holdreasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _unusablecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _sponsorid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        _itemsenclosedcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        _originallettersubcategoryid = New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
         _reservationreqrepcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _reservationreqnumberofprofiles = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
         _reservationreqdisplayracks = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
@@ -185,6 +193,13 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _departurereasoncodeid.CodeTableName = "USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE"
         Me.Fields.Add(_departurereasoncodeid)
         '
+        '_departurereasonotherdescription
+        '
+        _departurereasonotherdescription.Name = "DEPARTUREREASONOTHERDESCRIPTION"
+        _departurereasonotherdescription.Caption = "Other reason"
+        _departurereasonotherdescription.MaxLength = 250
+        Me.Fields.Add(_departurereasonotherdescription)
+        '
         '_doublesponsoredchildid
         '
         _doublesponsoredchildid.Name = "DOUBLESPONSOREDCHILDID"
@@ -219,6 +234,13 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _previousname.MaxLength = 150
         Me.Fields.Add(_previousname)
         '
+        '_sponsoredprojectid
+        '
+        _sponsoredprojectid.Name = "SPONSOREDPROJECTID"
+        _sponsoredprojectid.Caption = "Sponsored project"
+        _sponsoredprojectid.SearchListID = New Guid("b095dc74-4c09-40c9-9c9d-e8ff55b584ce")
+        Me.Fields.Add(_sponsoredprojectid)
+        '
         '_fieldmemodatesent
         '
         _fieldmemodatesent.Name = "FIELDMEMODATESENT"
@@ -252,6 +274,20 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _sponsorid.Caption = "Sponsor"
         _sponsorid.SearchListID = New Guid("23c5c603-d7d8-4106-aecc-65392b563887")
         Me.Fields.Add(_sponsorid)
+        '
+        '_itemsenclosedcodeid
+        '
+        _itemsenclosedcodeid.Name = "ITEMSENCLOSEDCODEID"
+        _itemsenclosedcodeid.Caption = "Items enclosed"
+        _itemsenclosedcodeid.CodeTableName = "USR_ITEMSENCLOSEDCODE"
+        Me.Fields.Add(_itemsenclosedcodeid)
+        '
+        '_originallettersubcategoryid
+        '
+        _originallettersubcategoryid.Name = "ORIGINALLETTERSUBCATEGORYID"
+        _originallettersubcategoryid.Caption = "Original Letter Subcategory"
+        _originallettersubcategoryid.SimpleDataListID = New Guid("0eacc39b-07d1-4641-8774-e319559535a7")
+        Me.Fields.Add(_originallettersubcategoryid)
         '
         '_reservationreqrepcode
         '
@@ -425,6 +461,17 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     End Property
     
     ''' <summary>
+    ''' Other reason
+    ''' </summary>
+    <System.ComponentModel.Description("Other reason")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [DEPARTUREREASONOTHERDESCRIPTION]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        Get
+            Return _departurereasonotherdescription
+        End Get
+    End Property
+    
+    ''' <summary>
     ''' Double sponsored child
     ''' </summary>
     <System.ComponentModel.Description("Double sponsored child")> _
@@ -480,6 +527,17 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     End Property
     
     ''' <summary>
+    ''' Sponsored project
+    ''' </summary>
+    <System.ComponentModel.Description("Sponsored project")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [SPONSOREDPROJECTID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+        Get
+            Return _sponsoredprojectid
+        End Get
+    End Property
+    
+    ''' <summary>
     ''' Field memo date sent
     ''' </summary>
     <System.ComponentModel.Description("Field memo date sent")> _
@@ -531,6 +589,28 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     Public ReadOnly Property [SPONSORID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         Get
             Return _sponsorid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Items enclosed
+    ''' </summary>
+    <System.ComponentModel.Description("Items enclosed")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [ITEMSENCLOSEDCODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+        Get
+            Return _itemsenclosedcodeid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Original Letter Subcategory
+    ''' </summary>
+    <System.ComponentModel.Description("Original Letter Subcategory")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [ORIGINALLETTERSUBCATEGORYID]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+        Get
+            Return _originallettersubcategoryid
         End Get
     End Property
     

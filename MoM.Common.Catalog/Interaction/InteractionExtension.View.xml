@@ -25,6 +25,8 @@
 	Date            Modified By     Comments
 	03-Sep-2012		CMayeda			Initial Version
 	25-Sep-2012		CMayeda			Modified Child fields to display name instead of ID
+	26-Sep-2012		CMayeda			Added SponsorID
+	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
 	-->
 
 	<SPDataForm SPName="USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION">
@@ -44,17 +46,21 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
     @TRANSFERCHILDID nvarchar(200) = null output,
     @DEPARTEDCHILDID nvarchar(200) = null output,
     @DEPARTUREREASONCODEID nvarchar(100) = null output,
+	@DEPARTUREREASONOTHERDESCRIPTION nvarchar(250) = null output,
     @DOUBLESPONSOREDCHILDID  nvarchar(200) = null output,
     @PREVIOUSCHILDPROJECTID uniqueidentifier = null output,
     @TRANSFERCHILDPROJECTID uniqueidentifier = null output,
     @PREVIOUSBIRTHDATE datetime = null output,
     @PREVIOUSNAME nvarchar(150) = null output,
+	@SPONSOREDPROJECTID uniqueidentifier = null output,
     @FIELDMEMODATESENT datetime = null output,
     @FIELDMEMOSENTCODEID nvarchar(100) = null output,
     @HOLDREASONCODEID nvarchar(100) = null output,
     @UNUSABLECODEID nvarchar(100) = null output,
 	@SEQUENCEID int = null output,
 	@SPONSORID uniqueidentifier = null output,
+	@ITEMSENCLOSEDCODEID uniqueidentifier = null output,
+	@ORIGINALLETTERSUBCATEGORYID uniqueidentifier = null output,
 	@RESERVATIONREQREPCODE nvarchar(100) = null output,
 	@RESERVATIONREQNUMBEROFPROFILES smallint = null output,
 	@RESERVATIONREQDISPLAYRACKS smallint = null output,
@@ -86,17 +92,22 @@ as
 			@TRANSFERCHILDID = dbo.USR_UFN_CHILD_GETCHILDNAME (TRANSFERCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
 			@DEPARTEDCHILDID = dbo.USR_UFN_CHILD_GETCHILDNAME (DEPARTEDCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
 			@DEPARTUREREASONCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE where ID = DEPARTUREREASONCODEID), 
+			@DEPARTUREREASONOTHERDESCRIPTION = DEPARTUREREASONOTHERDESCRIPTION,
 			@DOUBLESPONSOREDCHILDID =  dbo.USR_UFN_CHILD_GETCHILDNAME (DOUBLESPONSOREDCHILDID, 1, 1),			-- 1=Include LookupID, 1=Include ProjectID
 			@PREVIOUSCHILDPROJECTID = PREVIOUSCHILDPROJECTID, 
 			@TRANSFERCHILDPROJECTID = TRANSFERCHILDPROJECTID,
 			@PREVIOUSBIRTHDATE = PREVIOUSBIRTHDATE, 
 			@PREVIOUSNAME = PREVIOUSNAME, 
+			@SPONSOREDPROJECTID = SPONSOREDPROJECTID,
 			@FIELDMEMODATESENT = FIELDMEMODATESENT, 
 			@FIELDMEMOSENTCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = FIELDMEMOSENTCODEID), 
 			@HOLDREASONCODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = HOLDREASONCODEID), 
 			@UNUSABLECODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = UNUSABLECODEID),
 			@SEQUENCEID = INTERACTION.SEQUENCEID,
 			@SPONSORID = SPONSORID,
+			@ITEMSENCLOSEDCODEID = ITEMSENCLOSEDCODEID,
+			@ORIGINALLETTERSUBCATEGORYID = ORIGINALLETTERSUBCATEGORYID,
+
 			@RESERVATIONREQREPCODE = RESERVATIONREQREPCODE,
 			@RESERVATIONREQNUMBEROFPROFILES = RESERVATIONREQNUMBEROFPROFILES,
 			@RESERVATIONREQDISPLAYRACKS = RESERVATIONREQDISPLAYRACKS,
@@ -155,12 +166,17 @@ as
             <c:FormField FieldID="TRANSFERCHILDID" DataType="String" Caption="Transfer child" />
             <c:FormField FieldID="DEPARTEDCHILDID" DataType="String" Caption="Departed child" />
             <c:FormField FieldID="DEPARTUREREASONCODEID" DataType="String" MaxLength="100" Caption="Departure reason" />
-            <c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="String" Caption="Double sponsored child" />
+			<c:FormField FieldID="DEPARTUREREASONOTHERDESCRIPTION" DataType="String" MaxLength="250" Caption="Other reason" />
+			<c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="String" Caption="Double sponsored child" />
             <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project" />
 			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Transfer child project" />
 			<c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
             <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name" Multiline="true" />
-            <c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Field memo date sent" />
+			<c:FormField FieldID="SPONSOREDPROJECTID" DataType="Guid" Caption="Sponsored project">
+				<c:SearchList SearchListID="b095dc74-4c09-40c9-9c9d-e8ff55b584ce"/>
+			</c:FormField>
+
+			<c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Field memo date sent" />
             <c:FormField FieldID="FIELDMEMOSENTCODEID" MaxLength="100" Caption="Field memo sent" />
             <c:FormField FieldID="HOLDREASONCODEID" MaxLength="100" Caption="Hold reason" />
             <c:FormField FieldID="UNUSABLECODEID" MaxLength="100" Caption="Unusable item" />
@@ -169,7 +185,13 @@ as
 			<c:FormField FieldID="SPONSORID" Caption="Sponsor" DataType="Guid">
 				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
 			</c:FormField>
-
+			<c:FormField FieldID="ITEMSENCLOSEDCODEID" Caption="Items enclosed" DataType="Guid">
+				<c:CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE"/>
+			</c:FormField>
+			<c:FormField FieldID="ORIGINALLETTERSUBCATEGORYID" Caption="Original Letter Subcategory" DataType="Guid">
+				<c:SimpleDataList SimpleDataListID="0eacc39b-07d1-4641-8774-e319559535a7" />
+			</c:FormField>
+			
 			<c:FormField FieldID="RESERVATIONREQREPCODE" Caption="Rep code" DataType="String" MaxLength="100" />
 			<c:FormField FieldID="RESERVATIONREQNUMBEROFPROFILES" Caption="Number of profiles" DataType="SmallInt" />
 			<c:FormField FieldID="RESERVATIONREQDISPLAYRACKS" Caption="Display racks" DataType="SmallInt" />

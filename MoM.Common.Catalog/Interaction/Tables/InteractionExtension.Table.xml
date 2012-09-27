@@ -24,6 +24,7 @@
 	05-Sep-2012		CMayeda			Added Reservation Request fields
 	26-Sep-2012		CMayeda			Added SPONSORID, ITEMSENCLOSEDCODEID
 									Removed Sequence ID (customidentifier) because we can use the one on the INTERACTION table.
+	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
 	-->
 
 
@@ -49,12 +50,14 @@
 		<ForeignKeyField Name="TRANSFERCHILDID" Description ="ID of the transfer child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
 		<ForeignKeyField Name="DEPARTEDCHILDID" Description ="ID of the departed child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
 		<CodeTableField Name="DEPARTUREREASONCODEID" Description="Reason for the departure" CodeTable="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE"/>
+		<TextField Name="DEPARTUREREASONOTHERDESCRIPTION" Description="Description of the reason a child was departed that wasn't included in  the code table" Length="250"/>
 		<ForeignKeyField Name="DOUBLESPONSOREDCHILDID" Description ="ID of the child that was already sponsored by another person" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
 		<ForeignKeyField Name="PREVIOUSCHILDPROJECTID" Description="Used for the Child Project Transfer Letter - project transfered from" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
 		<ForeignKeyField Name="TRANSFERCHILDPROJECTID" Description="Used for the Child Project Transfer Letter - project transfered to" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
 		<DateField Name="PREVIOUSBIRTHDATE" Description="Used for the Child Bithdate Change Notification letter"/>
 		<TextField Name="PREVIOUSNAME" Description="Used for the Child Name Change Notification letter" Length="150"/>
-
+		<ForeignKeyField Name="SPONSOREDPROJECTID" Description="Used for project sponsorship interactions" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPOPPORTUNITY" OnDelete="RaiseError"/>
+		
 		<!-- Child Field Memo Interaction Extension Fields -->
 		<DateField Name="FIELDMEMODATESENT" Description="The date the field memo was sent" />
 		<CodeTableField Name="FIELDMEMOSENTCODEID" Description="Field Memo Sent" CodeTable="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE"/>
@@ -64,6 +67,7 @@
 		<!-- Child and Sponsor Letter Interaction Extension Fields -->
 		<ForeignKeyField Name="SPONSORID" Description="Sponsor ID at time of interaction creation" OnDelete="RaiseError" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
 		<CodeTableField Name="ITEMSENCLOSEDCODEID" Description="Items Enclosed" CodeTable="USR_ITEMSENCLOSEDCODE"/>
+		<ForeignKeyField Name="ORIGINALLETTERSUBCATEGORYID" Description="Original Letter Subcategory ID" OnDelete="RaiseError" ForeignTable="INTERACTIONSUBCATEGORY" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
 
 		<!-- Reservation Request Interaction Extension Fields -->
 		<TextField Name="RESERVATIONREQREPCODE" Description="Rep Code for the reservation request" Length="100"/>
