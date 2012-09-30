@@ -173,13 +173,13 @@
     <EmbeddedResource Include="Interaction\InteractionExtensionChildren.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\InteractionExtension.SponsorInteractionList.DataList.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\Tables\Code Tables\InteractionExtension.LetterChildVersion.CodeTable.xml" />
