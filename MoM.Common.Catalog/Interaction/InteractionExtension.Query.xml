@@ -57,6 +57,10 @@
 			dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (TRANSFERCHILDPROJECTID) as TRANSFERCHILDPROJECTLOOKUPID,
 			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(TRANSFERCHILDPROJECTID)) as TRANSFERCHILDPROJECTNAME,
 
+			SPONSOREDPROJECTID,
+			dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (SPONSOREDPROJECTID) as SPONSOREDPROJECTLOOKUPID,
+			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(SPONSOREDPROJECTID)) as SPONSOREDPROJECTNAME,
+			
 			PREVIOUSBIRTHDATE, 
 			PREVIOUSNAME, 
 			EFTBROCHURE,
@@ -135,6 +139,10 @@
 			<OutputField Name="TRANSFERCHILDPROJECTLOOKUPID" Caption="Transfer Child Project ID" DataType="String" />
 			<OutputField Name="TRANSFERCHILDPROJECTNAME" Caption="Transfer Child Project Name" DataType="String" />
 
+			<OutputField Name="SPONSOREDPROJECTID" Caption="Sponsored Project ID" DataType="Guid" IsHidden="true" Category="System Fields"/>
+			<OutputField Name="SPONSOREDPROJECTLOOKUPID" Caption="Sponsored Project ID" DataType="String" />
+			<OutputField Name="TRANSFERCHILDPROJECTNAME" Caption="Sponsored Project Name" DataType="String" />
+						 
 			<OutputField Name="PREVIOUSBIRTHDATE" Caption="Previous Child Birthdate" DataType="Date" />
 			<OutputField Name="PREVIOUSNAME" Caption="Previous Child Name" DataType="String" />
 			<OutputField Name="EFTBROCHURE" Caption="Include EFT Brochure" DataType="String" >
