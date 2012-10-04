@@ -7,14 +7,13 @@
 	Author="Cary Mayeda"
 	DBTablename="USR_INTERACTIONEXTENSIONUIMODELFIELDCODE"
 	Category="Interaction Extension"
-	SortMethod="UserDefined"
-/>
+	SortMethod="Alpha" />
 
-<!-- 
+	<!-- 
 	Remarks:    This is used to specify the fields to allow table driven visible / required properties in ui model forms
 
 	History:
 	Date            Modified By     Comments
 	02-Aug-2012		CMayeda			Initial Version
-
--->
+	03-Oct-2012		CMayeda			Changed sort order to Alpha
+	-->
