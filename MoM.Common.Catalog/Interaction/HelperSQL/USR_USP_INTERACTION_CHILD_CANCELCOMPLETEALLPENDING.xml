@@ -21,9 +21,9 @@
 	<CreateProcedureSQL>
 		<![CDATA[
 create procedure dbo.USR_USP_INTERACTION_CHILD_CANCELCOMPLETEALLPENDING (
-	@sponsorshipOpportunityChildID uniqueidentifier,	-- Child whose interactions will be cancelled / completed
-	@nonFieldMemocomment nvarchar(max),					-- The string to set the Comment field to for Non-Field Memo interactions
-	@fieldMemocomment nvarchar(max)						-- The string to set the Comment field to for Field Memo interactions
+	@sponsorshipOpportunityChildID uniqueidentifier = null ,	-- Child whose interactions will be cancelled / completed
+	@nonFieldMemocomment nvarchar(max) = '',					-- The string to set the Comment field to for Non-Field Memo interactions
+	@fieldMemocomment nvarchar(max) = ''						-- The string to set the Comment field to for Field Memo interactions
 )
 
 

@@ -1,0 +1,69 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="afedeb26-b6ad-4c8f-a262-554272e1b998"
+	Name="USR_USP_INTERACTION_CHILD_CANCELPENDINGLETTERS"
+	Description="The cancels or completes pending child interactions"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_CHILD_CANCELPENDINGLETTERS" >
+
+	<!-- 
+	Remarks:    This is used from the sponsorship cancellation form to cancel all pending letter interactions on the child.
+				
+				Currently all interactions in the Child Letters category are cancelled except for @exceptionSubcategoryName_ChildLetter1	
+
+	History:
+	Date            Modified By     Comments
+	05-Oct-2012		CMayeda			Initial Version
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_CHILD_CANCELPENDINGLETTERS (
+	@sponsorshipOpportunityChildID uniqueidentifier = null,	-- Child whose interactions will be cancelled 
+	@comment nvarchar(max) = ''								-- The string to set the Comment field to 
+)
+
+as
+begin
+	set nocount on
+	
+	-- Constants
+	declare @statusCode_Planned tinyint = 0
+	declare @statusCode_Pending tinyint = 1
+	declare @statusCode_Completed tinyint = 2
+	declare @statusCode_Unsuccessful tinyint = 3
+	declare @statusCode_Cancelled tinyint = 4
+	declare @statusCode_Declined tinyint = 5
+
+	declare @childLettersCategoryName nvarchar(100) = 'Child Letters'
+	declare @exceptionSubcategoryName_ChildLetter1 nvarchar(100) = 'Child Letter 1'
+	
+	-- Get the constituent id of the child, because interactions are stored on the constituent
+	declare @constituentID uniqueidentifier
+
+	select	@constituentID = CONSTITUENTID
+	  from	SPONSORSHIPOPPORTUNITYCHILD
+	 where	ID = @sponsorshipOpportunityChildID 
+
+
+	-- Update Child Letter interactions 
+	update	dbo.INTERACTION 
+	   set	STATUSCODE = @statusCode_Cancelled,
+			COMMENT = @comment
+			
+	 where	CONSTITUENTID = @constituentID 
+	   and	STATUSCODE = @statusCode_Pending
+	   and	exists (select subcat.ID from dbo.INTERACTIONSUBCATEGORY subcat 
+			 	      inner join dbo.INTERACTIONCATEGORY cat on subcat.INTERACTIONCATEGORYID = cat.ID 
+				      where lower(cat.NAME) = lower (@childLettersCategoryName)
+					    and lower (subcat.NAME) <> lower (@exceptionSubcategoryName_ChildLetter1) 
+						and INTERACTION.INTERACTIONSUBCATEGORYID = subcat.ID )
+   
+   
+	end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
