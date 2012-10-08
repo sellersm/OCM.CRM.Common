@@ -1,0 +1,167 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="4e9bb303-9b66-4da4-b26f-228b4c2dd065"
+	Name="USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS"
+	Description="The cancels or completes pending child interactions"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS" >
+
+	<!-- 
+	Remarks:    This is used from the sponsorship cancellation form to cancel all pending letter interactions on the child.
+				
+				Currently all interactions in the Child Letters category are cancelled except for @exceptionSubcategoryName_ChildLetter1	
+
+	History:
+	Date            Modified By     Comments
+	05-Oct-2012		CMayeda			Initial Version
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS (
+	@sponsorshipID uniqueidentifier = null,						-- Sponsorship whose interactions will be cancelled 
+	@sponsorshipOpportunityChildID uniqueidentifier = null,		-- Child whose interactions will be cancelled / completed
+	@cancelComment nvarchar(max) = '',							-- The string that is appended to the field when the interaction is cancelled
+	@removeChildComment nvarchar(max) = '',						-- The string that is appended to the field when the interaction has multiple children, is left pending, but the child has been removed
+																-- this should assume that the name and a space is prefixed to this parameter
+	@changeAgentID uniqueidentifier = null						-- Used to specify change agent for CHANGEDBYID and ADDEDBYID fields.  USP_CHANGEAGENT_GETORCREATECHANGEAGENT is called if it's null
+)
+
+as
+begin
+	set nocount on
+
+	-- Constants
+	declare @statusCode_Planned tinyint = 0
+	declare @statusCode_Pending tinyint = 1
+	declare @statusCode_Completed tinyint = 2
+	declare @statusCode_Unsuccessful tinyint = 3
+	declare @statusCode_Cancelled tinyint = 4
+	declare @statusCode_Declined tinyint = 5
+
+	declare @childCountLetterVersion_OneChildLetter uniqueidentifier = null
+	declare @childCountLetterVersion_TwoChildrenLetter uniqueidentifier = null
+	declare @childCountLetterVersion_MultipleChildrenLetter uniqueidentifier = null
+
+	begin try
+	
+		if @sponsorshipID is null
+			RAISERROR 1000000 'Sponsorship ID cannot be null'
+
+		if @sponsorshipOpportunityChildID is null
+			RAISERROR 1000000 'Sponsorship Opportunity Child ID cannot be null'
+			
+		-- Get ChangeAgent if none was passed into the sproc
+		if @changeAgentID is null  
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+
+		-- Get letter code table ids
+		select @childCountLetterVersion_OneChildLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('One Child Letter')
+		if @childCountLetterVersion_OneChildLetter is null 
+			RAISERROR 1000000 'Could not add child to interaction, because the id for the "One Child Letter" could not be found.'
+		
+		select @childCountLetterVersion_TwoChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Two Children Letter')
+		if @childCountLetterVersion_OneChildLetter is null 
+			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Two Children Letter" could not be found.'
+		
+		select @childCountLetterVersion_MultipleChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Multiple Children Letter')
+		if @childCountLetterVersion_MultipleChildrenLetter is null 
+			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.'
+			
+	
+		declare @financialSponsorID uniqueidentifier = null
+		set @financialSponsorID = dbo.USR_UFN_SPONSORSHIP_GETFINANCIALSPONSOR (@sponsorshipID)
+		if @financialSponsorID is null
+			RAISERROR 1000000 'Could not find the financial sponsor.'
+
+		declare @correspondentID uniqueidentifier = null
+		set @correspondentID = dbo.USR_UFN_SPONSORSHIP_GETCORRESPONDENT (@sponsorshipID)
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+	declare @childName nvarchar(250) = ''
+	set @childName = (select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = @sponsorshipOpportunityChildID)
+	set @removeChildComment = ltrim(rtrim (@childName + ' ' + @removeChildComment))
+
+
+	-- Determine how many children are in the pending interactions the child is a part of for the financial sponsor and correspondent
+	-- This is used to determine if we cancel the interaction or just remove the child from the Children list
+	declare @interactionChildCount table (
+		interactionID uniqueidentifier,
+		childCount integer
+	)
+	
+	insert @interactionChildCount 
+	select INTERACTIONID, count(*) 
+	  from dbo.USR_INTERACTIONEXTENSIONCHILDREN 
+	 where exists (select INTERACTIONID from dbo.USR_INTERACTIONEXTENSIONCHILDREN i2 
+	                where i2.SPONSORSHIPOPPORTUNITYCHILDID = @sponsorshipOpportunityChildID and i2.INTERACTIONID = USR_INTERACTIONEXTENSIONCHILDREN.INTERACTIONID)
+	   and exists (select ID from dbo.INTERACTION where INTERACTION.ID = USR_INTERACTIONEXTENSIONCHILDREN.INTERACTIONID 
+	                                                and INTERACTION.STATUSCODE = @statusCode_Pending	   
+	                                                and INTERACTION.CONSTITUENTID in (@financialSponsorID, @correspondentID))
+	group by INTERACTIONID 
+
+		
+	-- Cancel Sponsor interactions where this is the only child in the Children's grid
+	update	dbo.INTERACTION 
+	   set	STATUSCODE = @statusCode_Cancelled,
+			COMMENT = case 
+						when COMMENT is null then @cancelComment
+						when COMMENT = '' then @cancelComment
+						else COMMENT + char(13) + @cancelComment
+					end,
+			CHANGEDBYID = @changeAgentID,
+			DATECHANGED = getdate()		
+	 where	CONSTITUENTID in (@financialSponsorID, @correspondentID)
+	   and	STATUSCODE = @statusCode_Pending
+	   and	exists (select iccount.interactionID from @interactionChildCount iccount where interactionID = INTERACTION.ID and iccount.childCount = 1)
+
+
+	-- Remove the child from interactions that have more than one child in the Children's grid
+	delete dbo.USR_INTERACTIONEXTENSIONCHILDREN 
+	 where exists  (select iccount.interactionID from @interactionChildCount iccount where interactionID = USR_INTERACTIONEXTENSIONCHILDREN.INTERACTIONID and iccount.childCount > 1)
+	   and USR_INTERACTIONEXTENSIONCHILDREN.SPONSORSHIPOPPORTUNITYCHILDID = @sponsorshipOpportunityChildID 
+       and exists (select INTERACTION.ID from dbo.INTERACTION where ID = USR_INTERACTIONEXTENSIONCHILDREN.INTERACTIONID and INTERACTION.STATUSCODE = @statusCode_Pending)
+   
+	declare @interactionsChildRemoved table (ID uniqueidentifier)
+	    
+	-- Add remove child comment	
+	update	dbo.INTERACTION 
+	   set	COMMENT = case 
+						when COMMENT is null then @removeChildComment
+						when COMMENT = '' then @removeChildComment
+						else COMMENT + char(13) + @removeChildComment
+					  end,
+			CHANGEDBYID = @changeAgentID,
+			DATECHANGED = getdate()	
+	output	inserted.ID into @interactionsChildRemoved
+	 where	CONSTITUENTID in (@financialSponsorID, @correspondentID)
+	   and	STATUSCODE = @statusCode_Pending
+	   and	 exists (select iccount.interactionID from @interactionChildCount iccount where interactionID = INTERACTION.ID and iccount.childCount > 1)
+
+	-- Update the child count letter version.  
+	-- Note iccount.childCount is the count before removing the child
+  	update	dbo.USR_INTERACTIONEXTENSION
+	   set	CHILDCOUNTLETTERVERSIONCODEID = case iccount.childCount
+														when 1 then null
+														when 2 then @childCountLetterVersion_OneChildLetter
+														when 3 then @childCountLetterVersion_TwoChildrenLetter
+														else @childCountLetterVersion_MultipleChildrenLetter
+													end,
+			CHANGEDBYID = @changeAgentID,
+			DATECHANGED = getdate()	
+	  from 	USR_INTERACTIONEXTENSION int_ext
+	  join	@interactionChildCount iccount on int_ext.ID = iccount.interactionID
+	 where	exists (select ID from @interactionsChildRemoved icr where icr.ID = int_ext.ID)
+
+  
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

@@ -15,6 +15,7 @@
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
 	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix	
+	07-Oct-2012		CMayeda			Removed child letter from where clause, since it should display all interactions on a child's consitutent record.
 	-->
 
 	<!-- define the SP that returns the data for the datalist -->
@@ -53,6 +54,7 @@ as begin
 	*/
 	select	INTERACTION.ID,
 			INTERACTION.EXPECTEDDATE,
+			INTERACTION.OBJECTIVE,
 			(select DESCRIPTION from dbo.INTERACTIONTYPECODE  where ID = INTERACTION.INTERACTIONTYPECODEID) as CONTACTMETHOD,
 			cat.NAME as INTERACTIONSUBCATEGORY,			
 			subcat.NAME as INTERACTIONSUBCATEGORY,	
@@ -80,7 +82,7 @@ inner join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
 	 where	so_child.ID = @SPONSORSHIPOPPORTUNITYCHILDID
 	   and	INTERACTION.ISINTERACTION = 1  			 
 --	   and	cat.ID in (@interactionCategoryID_ChildFieldMemo, @interactionCategoryID_ChildLetter)
-   	   and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('child') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
+--     and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('child') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
 
    	return 0
 end
@@ -106,6 +108,7 @@ end
 			<OutputFields>
 				<OutputField FieldID="ID" Caption="ID" DataType="Guid" IsHidden="true" />
 				<OutputField FieldID="EXPECTEDDATE" Caption="Expected date" DataType="Date" />
+				<OutputField FieldID="OBJECTIVE" Caption="Summary" DataType="String" />
 				<OutputField FieldID="CONTACTMETHOD" Caption="Contact method" DataType="String" />
 				<OutputField FieldID="INTERACTIONCATEGORY" Caption="Category" DataType="String" />
 				<OutputField FieldID="INTERACTIONSUBCATEGORY" Caption="Subcategory" DataType="String" />

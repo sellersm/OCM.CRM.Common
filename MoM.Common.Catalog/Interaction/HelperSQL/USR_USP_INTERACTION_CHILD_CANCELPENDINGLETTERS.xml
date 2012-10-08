@@ -20,13 +20,21 @@
 	<CreateProcedureSQL>
 		<![CDATA[
 create procedure dbo.USR_USP_INTERACTION_CHILD_CANCELPENDINGLETTERS (
-	@sponsorshipOpportunityChildID uniqueidentifier = null,	-- Child whose interactions will be cancelled 
-	@comment nvarchar(max) = ''								-- The string to set the Comment field to 
+	@sponsorshipOpportunityChildID uniqueidentifier = null,		-- Child whose interactions will be cancelled 
+	@comment nvarchar(max) = '',								-- The string that is appended to the field.
+	@changeAgentID uniqueidentifier = null						-- Used to specify change agent for CHANGEDBYID and ADDEDBYID fields.  USP_CHANGEAGENT_GETORCREATECHANGEAGENT is called if it's null
 )
 
 as
 begin
 	set nocount on
+
+	if @sponsorshipOpportunityChildID is null
+		RETURN 1
+		
+	if @changeAgentID is null  
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
 	
 	-- Constants
 	declare @statusCode_Planned tinyint = 0
@@ -36,8 +44,8 @@ begin
 	declare @statusCode_Cancelled tinyint = 4
 	declare @statusCode_Declined tinyint = 5
 
-	declare @childLettersCategoryName nvarchar(100) = 'Child Letters'
-	declare @exceptionSubcategoryName_ChildLetter1 nvarchar(100) = 'Child Letter 1'
+	declare @childLettersCategoryName nvarchar(100) = 'Child Letters'					-- Interaction category to cancel (except for the exception subcategory below)
+	declare @exceptionSubcategoryName_ChildLetter1 nvarchar(100) = 'Child Letter 1'		-- Letter type that isn't cancelled
 	
 	-- Get the constituent id of the child, because interactions are stored on the constituent
 	declare @constituentID uniqueidentifier
@@ -50,7 +58,13 @@ begin
 	-- Update Child Letter interactions 
 	update	dbo.INTERACTION 
 	   set	STATUSCODE = @statusCode_Cancelled,
-			COMMENT = @comment
+			COMMENT = case 
+						when COMMENT is null then @comment
+						when COMMENT = '' then @comment
+						else COMMENT + char(13) + @comment
+					end,
+			CHANGEDBYID = @changeAgentID,
+			DATECHANGED = getdate()
 			
 	 where	CONSTITUENTID = @constituentID 
 	   and	STATUSCODE = @statusCode_Pending

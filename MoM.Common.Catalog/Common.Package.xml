@@ -21,6 +21,7 @@
 	19-Sep-2012		BElfstrom		Added Items Enclosed Code table
 	26-Sep-2012		CMayeda			Added USR_USP_INTERACTION_CHILDLETTER_ADD_PENDING and USR_USP_INTERACTION_CHILDLETTER_ADD 
 	05-Oct-2012		CMayeda			Added USR_USP_INTERACTION_CHILD_CANCELPENDINGLETTERS.xml
+	07-Oct-2012		CMayeda			Added USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS.xml
 	-->
 
 
@@ -111,6 +112,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_ADD_PENDING.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_ADDCHILD.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_ADDCHILDREN.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_SETDEPARTEDCHILD.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_SETDOUBLESPONSOREDCHILD.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD.xml" />
