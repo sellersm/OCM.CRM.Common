@@ -15,6 +15,7 @@
 	History:
 	Date            Modified By     Comments
 	05-Oct-2012		CMayeda			Initial Version
+	09-Oct-2012		CMayeda			Included interactinos with specific child id extension fields (e.g. UNAVAILABLECHILDID) to be cancelled.
 	-->
 	
 	<CreateProcedureSQL>
@@ -106,7 +107,7 @@ begin
 	group by INTERACTIONID 
 
 		
-	-- Cancel Sponsor interactions where this is the only child in the Children's grid
+	-- Cancel Sponsor interactions where this is the only child in the Children's grid or in one of the specific child fields
 	update	dbo.INTERACTION 
 	   set	STATUSCODE = @statusCode_Cancelled,
 			COMMENT = case 
@@ -116,11 +117,16 @@ begin
 					end,
 			CHANGEDBYID = @changeAgentID,
 			DATECHANGED = getdate()		
+	  from dbo.INTERACTION 
+	  join dbo.USR_INTERACTIONEXTENSION int_ext on INTERACTION.ID = int_ext.ID
 	 where	CONSTITUENTID in (@financialSponsorID, @correspondentID)
 	   and	STATUSCODE = @statusCode_Pending
-	   and	exists (select iccount.interactionID from @interactionChildCount iccount where interactionID = INTERACTION.ID and iccount.childCount = 1)
-
-
+	   and	((exists (select iccount.interactionID from @interactionChildCount iccount where interactionID = INTERACTION.ID and iccount.childCount = 1))
+		      or (int_ext.UNAVAILABLECHILDID = @sponsorshipOpportunityChildID)
+		      or (int_ext.TRANSFERCHILDID = @sponsorshipOpportunityChildID)
+		      or (int_ext.DEPARTEDCHILDID = @sponsorshipOpportunityChildID)
+			  or (int_ext.DOUBLESPONSOREDCHILDID = @sponsorshipOpportunityChildID))
+			  
 	-- Remove the child from interactions that have more than one child in the Children's grid
 	delete dbo.USR_INTERACTIONEXTENSIONCHILDREN 
 	 where exists  (select iccount.interactionID from @interactionChildCount iccount where interactionID = USR_INTERACTIONEXTENSIONCHILDREN.INTERACTIONID and iccount.childCount > 1)
