@@ -8,7 +8,7 @@
 	SPName="USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS" >
 
 	<!-- 
-	Remarks:    This is used from the sponsorship cancellation form to cancel all pending letter interactions on the child.
+	Remarks:    This is used from the sponsorship cancellation form and the departure form to cancel all pending letter interactions for the sponsor for the specific child.
 				
 				Currently all interactions in the Child Letters category are cancelled except for @exceptionSubcategoryName_ChildLetter1	
 

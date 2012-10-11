@@ -2,7 +2,7 @@
     xmlns="bb_appfx_pagedefinition"
     xmlns:common="bb_appfx_commontypes"
     ID="8fee7f1d-49d5-453f-b8f8-a23060c6e72d"
-    Name="Child Interaction Extension Page"
+    Name="Child Interactions Extension Page"
     Description="Used to view interactions related to a child"
     Author="Cary Mayeda"
     ContextRecordType="Sponsorship opportunity"
@@ -14,6 +14,7 @@
 	History:
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
+	10-Oct-2012		CMayeda			Updated the name to be consistent with Blackbaud's Consituent Interactions page (plural intead of singular)
 
 	-->
 

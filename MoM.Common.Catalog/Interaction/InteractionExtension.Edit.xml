@@ -1,4 +1,4 @@
-<EditDataFormTemplateSpec 
+<EditDataFormTemplateSpec
     xmlns:c="bb_appfx_commontypes"
     ID="55904df7-4e42-4792-ae34-5dcf5aa3db47"
     Name="Interaction Extension Edit Form"
@@ -9,7 +9,7 @@
     c:SecurityUIFolder="Interaction Extension"
     OwnerIDMapperID="00000000-0000-0000-0000-000000000000"
     xmlns="bb_appfx_editdataformtemplate" >
-	
+
 	<!-- 
 	Remarks:    This extends the out of the box "Interaction Edit Form 4"
 				The UI Model Helper utilizes the Interaction Extension UI Model Field Manager to allow meta data to manage the state of the fields on the form based on the Interaction Subcategory (which is a unique key)
@@ -25,10 +25,10 @@
 	26-Sep-2012		CMayeda			Added SponsorID
 	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
 	-->
-    <SPDataForm>
-        <LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
-            <c:CreateProcedureSQL>
-<![CDATA[
+	<SPDataForm>
+		<LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
+			<c:CreateProcedureSQL>
+				<![CDATA[
 create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
 (
     @ID uniqueidentifier,
@@ -124,11 +124,11 @@ as
 
 	return 0;
 ]]>
-</c:CreateProcedureSQL>
-        </LoadImplementation>
-        <SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION">
-            <c:CreateProcedureSQL>
-<![CDATA[
+			</c:CreateProcedureSQL>
+		</LoadImplementation>
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION">
+			<c:CreateProcedureSQL>
+				<![CDATA[
 create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
 (
 	@ID uniqueidentifier,
@@ -226,9 +226,9 @@ as begin
 	return 0;
 end
 ]]>
-</c:CreateProcedureSQL>
-            <c:ExpectedDBExceptions>
-                <c:Constraints>
+			</c:CreateProcedureSQL>
+			<c:ExpectedDBExceptions>
+				<c:Constraints>
 					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_LETTERTYPECODEID" Field="LETTERTYPECODEID" Type="ForeignKey" />
 					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_CHILDCOUNTLETTERVERSIONCODEID" Field="CHILDCOUNTLETTERVERSIONCODEID" Type="ForeignKey" />
 					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_FULFILLMENTSTATUSCODEID" Field="FULFILLMENTSTATUSCODEID" Type="ForeignKey" />
@@ -242,11 +242,11 @@ end
 					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_HOLDREASONCODEID" Field="HOLDREASONCODEID" Type="ForeignKey" />
 					<c:Constraint Name="FK_USR_INTERACTIONEXTENSION_UNUSABLECODEID" Field="UNUSABLECODEID" Type="ForeignKey" />
 				</c:Constraints>
-            </c:ExpectedDBExceptions>
-        </SaveImplementation>
-    </SPDataForm>
-    <c:FormMetaData FixedDialog="true">
-        <c:FormFields>
+			</c:ExpectedDBExceptions>
+		</SaveImplementation>
+	</SPDataForm>
+	<c:FormMetaData FixedDialog="true">
+		<c:FormFields>
 			<c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODEID" DataType="Guid" Caption="Child count letter version">
 				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
 			</c:FormField>
@@ -254,36 +254,36 @@ end
 				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
 			</c:FormField>
 			<c:FormField FieldID="FULFILLMENTSTATUSCODEID" DataType="Guid" Caption="Fulfillment status">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
-            </c:FormField>
-            <c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="EFT brochure" DefaultValueText="0">
-                <c:ValueList>
-                    <c:Items>
-                        <c:Item>
-                            <c:Value>0</c:Value>
-                            <c:Label>No</c:Label>
-                        </c:Item>
-                        <c:Item>
-                            <c:Value>1</c:Value>
-                            <c:Label>Yes</c:Label>
-                        </c:Item>
-                    </c:Items>
-                </c:ValueList>
-            </c:FormField>
-            <c:FormField FieldID="RESENDCODE" DataType="TinyInt" Caption="Resend?" DefaultValueText="0">
-                <c:ValueList>
-                    <c:Items>
-                        <c:Item>
-                            <c:Value>0</c:Value>
-                            <c:Label>No</c:Label>
-                        </c:Item>
-                        <c:Item>
-                            <c:Value>1</c:Value>
-                            <c:Label>Yes</c:Label>
-                        </c:Item>
-                    </c:Items>
-                </c:ValueList>
-            </c:FormField>
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+			</c:FormField>
+			<c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="EFT brochure" DefaultValueText="0">
+				<c:ValueList>
+					<c:Items>
+						<c:Item>
+							<c:Value>0</c:Value>
+							<c:Label>No</c:Label>
+						</c:Item>
+						<c:Item>
+							<c:Value>1</c:Value>
+							<c:Label>Yes</c:Label>
+						</c:Item>
+					</c:Items>
+				</c:ValueList>
+			</c:FormField>
+			<c:FormField FieldID="RESENDCODE" DataType="TinyInt" Caption="Resend?" DefaultValueText="0">
+				<c:ValueList>
+					<c:Items>
+						<c:Item>
+							<c:Value>0</c:Value>
+							<c:Label>No</c:Label>
+						</c:Item>
+						<c:Item>
+							<c:Value>1</c:Value>
+							<c:Label>Yes</c:Label>
+						</c:Item>
+					</c:Items>
+				</c:ValueList>
+			</c:FormField>
 			<c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailable child">
 				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
 			</c:FormField>
@@ -294,8 +294,8 @@ end
 				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
 			</c:FormField>
 			<c:FormField FieldID="DEPARTUREREASONCODEID" DataType="Guid" Caption="Departure reason">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE" />
-            </c:FormField>
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE" />
+			</c:FormField>
 			<c:FormField FieldID="DEPARTUREREASONOTHERDESCRIPTION" DataType="String" MaxLength="250" Caption="Other reason" />
 			<c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child">
 				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
@@ -303,25 +303,24 @@ end
 			<c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project">
 				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
 			</c:FormField>
-			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Transfer child project" >
+			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Tranfer child project">
 				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
 			</c:FormField>
 			<c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
-            <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name" />
+			<c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name"/>
 			<c:FormField FieldID="SPONSOREDPROJECTID" DataType="Guid" Caption="Sponsored project">
 				<c:SearchList SearchListID="b095dc74-4c09-40c9-9c9d-e8ff55b584ce"/>
 			</c:FormField>
-
 			<c:FormField FieldID="FIELDMEMODATESENT" DataType="Date" Caption="Field memo date sent" />
 			<c:FormField FieldID="FIELDMEMOSENTCODEID" DataType="Guid" Caption="Field memo sent">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
-            </c:FormField>
-            <c:FormField FieldID="HOLDREASONCODEID" DataType="Guid" Caption="Hold reason">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONHOLDREASONCODE" />
-            </c:FormField>
-            <c:FormField FieldID="UNUSABLECODEID" DataType="Guid" Caption="Unusable item">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
-            </c:FormField>
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
+			</c:FormField>
+			<c:FormField FieldID="HOLDREASONCODEID" DataType="Guid" Caption="Hold reason">
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONHOLDREASONCODE" />
+			</c:FormField>
+			<c:FormField FieldID="UNUSABLECODEID" DataType="Guid" Caption="Unusable item">
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+			</c:FormField>
 
 			<c:FormField FieldID="SPONSORID" Caption="Sponsor" DataType="Guid">
 				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
@@ -359,16 +358,17 @@ end
 				</c:Collection>
 			</c:FormField>
 
-		</c:FormFields>
-        <c:FormUIComponent />
 
-        <c:WebUIComponent>
-            <c:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.InteractionExtensionEditFormUIModel" />
-            <c:WebUI>
-                <c:ExternalResource Url="browser/htmlforms/custom/InteractionExtension.EditForm.html" />
-            </c:WebUI>
-        </c:WebUIComponent>
-    </c:FormMetaData>
+		</c:FormFields>
+		<c:FormUIComponent />
+
+		<c:WebUIComponent>
+			<c:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.InteractionExtensionEditFormUIModel" />
+			<c:WebUI>
+				<c:ExternalResource Url="browser/htmlforms/custom/InteractionExtension.EditForm.html" />
+			</c:WebUI>
+		</c:WebUIComponent>
+	</c:FormMetaData>
 
 	<c:DataFormExtension DataFormInstanceID="ab3b9569-4c7c-4646-a793-347856753b60" RenderStyle="Tab" TabCaption="Additional Info" />
 

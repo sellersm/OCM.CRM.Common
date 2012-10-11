@@ -143,13 +143,13 @@ as begin
 			@PREVIOUSCHILDPROJECTID, 
 			@PREVIOUSBIRTHDATE, 
 			@PREVIOUSNAME, 
-			@SPONSOREDPROJECTID,
+			@SPONSOREDPROJECTID,			
 			@FIELDMEMODATESENT, 
 			@FIELDMEMOSENTCODEID, 
 			@HOLDREASONCODEID, 
 			@UNUSABLECODEID, 
 			@SPONSORID,
-			@ITEMSENCLOSEDCODEID,
+			@ITEMSENCLOSEDCODEID,			
 			@ORIGINALLETTERSUBCATEGORYID,
 			@RESERVATIONREQREPCODE, 
 			@RESERVATIONREQNUMBEROFPROFILES, 
@@ -203,7 +203,7 @@ end
 	<Context ContextRecordType="INTERACTION" RecordIDParameter="INTERACTIONID" />
 
 	<c:FormMetaData FixedDialog="true">
-        <c:FormFields>
+		<c:FormFields>
 			<c:FormField FieldID="CHILDCOUNTLETTERVERSIONCODEID" DataType="Guid" Caption="Child count letter version">
 				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
 			</c:FormField>
@@ -211,8 +211,8 @@ end
 				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
 			</c:FormField>
 			<c:FormField FieldID="FULFILLMENTSTATUSCODEID" DataType="Guid" Caption="Fulfillment status">
-                <c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
-            </c:FormField>
+				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+			</c:FormField>
 			<c:FormField FieldID="EFTBROCHURECODE" DataType="TinyInt" Caption="EFT brochure" DefaultValueText="0">
 				<c:ValueList>
 					<c:Items>
@@ -257,14 +257,14 @@ end
 			<c:FormField FieldID="DOUBLESPONSOREDCHILDID" DataType="Guid" Caption="Double sponsored child">
 				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
 			</c:FormField>
-            <c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project">
+			<c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project">
 				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
 			</c:FormField>
 			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Tranfer child project">
 				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
 			</c:FormField>
 			<c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
-            <c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name"/>
+			<c:FormField FieldID="PREVIOUSNAME" MaxLength="150" Caption="Previous name"/>
 			<c:FormField FieldID="SPONSOREDPROJECTID" DataType="Guid" Caption="Sponsored project">
 				<c:SearchList SearchListID="b095dc74-4c09-40c9-9c9d-e8ff55b584ce"/>
 			</c:FormField>
