@@ -18,6 +18,7 @@
 	Date            Modified By     Comments
 	07-Aug-2012		CMayeda			Initial Version
 	03-Oct-2012		CMayeda			Added SEQUENCEID from INTERACTION table
+	16-Oct-2012		CMayeda			Fixed missing Children on query
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -32,7 +33,7 @@
 			so_child.NAME as CHILDNAME
 			
 	  from	dbo.USR_INTERACTIONEXTENSIONCHILDREN	int_children
-	  join dbo.INTERACTION int on int_children.ID = int.ID
+	  join dbo.INTERACTION int on int_children.INTERACTIONID = int.ID
  left join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
 				int_children.SPONSORSHIPOPPORTUNITYCHILDID = so_child.ID				
  left join	dbo.SPONSORSHIPOPPORTUNITY so on
