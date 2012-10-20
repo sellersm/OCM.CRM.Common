@@ -13,6 +13,7 @@
 	History:
 	Date            Modified By     Comments
 	17-Jul-2012		CMayeda			Initial Version
+	20-Oct-2012		CMayeda			Added Child Photo	
 	-->
 
 	<!-- define how the page header should appear -->
@@ -74,6 +75,13 @@
 				</Section>
 				<Section ID="F3A1A5F5-5FE2-4541-AAC6-06E3827DA50C" HideCaption="True" >
 					<DataList ID="5e770cd1-b0db-4b08-b365-9047a3973a35">	<!-- Child Bio -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="0C3BAA7E-37A5-4E67-BA4A-DC88F9182D75" HideCaption="True" >
+					<DataList ID="EA9E4C55-A3DD-46E7-8CC8-5E5CBC601B20">  <!-- Child Photo -->
 						<RenderStyle>
 							<StandardView AutoSize="true" />
 						</RenderStyle>
