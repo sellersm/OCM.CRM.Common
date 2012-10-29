@@ -86,7 +86,7 @@
 			<CreateTriggerSQL>
 				<![CDATA[
 
-create trigger USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
+create trigger dbo.USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
 as begin
 	update	INTERACTION
 	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
@@ -102,7 +102,7 @@ end
 			<CreateTriggerSQL>
 				<![CDATA[
 
-create trigger USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
+create trigger dbo.USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
 as begin
 	if update(FIELDMEMODATESENT)
 		update	INTERACTION
