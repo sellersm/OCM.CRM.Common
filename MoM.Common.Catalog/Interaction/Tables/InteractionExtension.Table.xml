@@ -82,32 +82,34 @@
 
 	</Fields>
 	<Triggers>
-		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+		<Trigger Name="USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
 			<CreateTriggerSQL>
 				<![CDATA[
 
-create trigger TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
+create trigger USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
 as begin
 	update	INTERACTION
-	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT)
+	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
+			DATECHANGED = getdate()
 	  from	INTERACTION, inserted
-	 where	exists (select ID from inserted where inserted.FIELDMEMODATESENT is not null)
+	 where	exists (select ID from inserted where inserted.ID = INTERACTION.ID and inserted.FIELDMEMODATESENT is not null)
 end
 
 				]]>
 			</CreateTriggerSQL>
 		</Trigger>
-		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+		<Trigger Name="USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
 			<CreateTriggerSQL>
 				<![CDATA[
 
-create trigger TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
+create trigger USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
 as begin
 	if update(FIELDMEMODATESENT)
 		update	INTERACTION
-		   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT)
+		   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
+				DATECHANGED = getdate()
 		  from	INTERACTION, inserted
-		 where	exists (select ID from inserted where inserted.FIELDMEMODATESENT is not null)
+		 where	exists (select ID from inserted where inserted.ID = INTERACTION.ID and inserted.FIELDMEMODATESENT is not null)
 end
 				
 				]]>
