@@ -25,7 +25,7 @@
 									Removed Sequence ID (customidentifier) because we can use the one on the INTERACTION table.
 	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
 	27-Oct-2012		CMayeda			Fixed trigger
-	31-Oct-2012		CMayeda			Added indexes
+	31-Oct-2012		CMayeda			Added indexes, another trigger fix
 	-->
 
 
@@ -134,8 +134,9 @@ as begin
 	update	INTERACTION
 	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
 			DATECHANGED = getdate()
-	  from	INTERACTION, inserted
-	 where	exists (select ID from inserted where inserted.ID = INTERACTION.ID and inserted.FIELDMEMODATESENT is not null)
+	  from	INTERACTION
+	  join  inserted on inserted.ID = INTERACTION.ID
+	 where	inserted.FIELDMEMODATESENT is not null
 end
 
 				]]>
@@ -151,8 +152,9 @@ as begin
 		update	INTERACTION
 		   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
 				DATECHANGED = getdate()
-		  from	INTERACTION, inserted
-		 where	exists (select ID from inserted where inserted.ID = INTERACTION.ID and inserted.FIELDMEMODATESENT is not null)
+		  from	INTERACTION
+	      join  inserted on inserted.ID = INTERACTION.ID
+	     where	inserted.FIELDMEMODATESENT is not null
 end
 				
 				]]>
