@@ -6,8 +6,7 @@
 	Description="Extension of the Interaction table"
 	Author="Cary Mayeda"
 	Tablename="USR_INTERACTIONEXTENSION"
-	PrimaryKeyAsForeignKeyTablename="INTERACTION"
-	WarnOnMissingIndexes="false" >
+	PrimaryKeyAsForeignKeyTablename="INTERACTION" >
 
 
 	<!-- 
@@ -25,6 +24,8 @@
 	26-Sep-2012		CMayeda			Added SPONSORID, ITEMSENCLOSEDCODEID
 									Removed Sequence ID (customidentifier) because we can use the one on the INTERACTION table.
 	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
+	27-Oct-2012		CMayeda			Fixed trigger
+	31-Oct-2012		CMayeda			Added indexes
 	-->
 
 
@@ -81,6 +82,48 @@
 		<TextField Name="POSTCODE" Description="Contains the address post code." Length="12" />
 
 	</Fields>
+	<Indexes>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="UNAVAILABLECHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="TRANSFERCHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="DEPARTEDCHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="DOUBLESPONSOREDCHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="PREVIOUSCHILDPROJECTID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="TRANSFERCHILDPROJECTID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="SPONSORID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="RESERVATIONREQREPCODE"/>
+			</IndexFields>
+		</Index>
+	</Indexes>
 	<Triggers>
 		<Trigger Name="USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
 			<CreateTriggerSQL>

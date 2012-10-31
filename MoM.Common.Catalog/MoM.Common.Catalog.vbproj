@@ -357,6 +357,9 @@
   <ItemGroup>
     <EmbeddedResource Include="USR_UFN_SMARTFIELD_GETTABLENAME.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

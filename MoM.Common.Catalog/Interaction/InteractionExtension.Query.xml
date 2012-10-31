@@ -34,7 +34,7 @@
 			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE where ID = int_ext.FULFILLMENTSTATUSCODEID) as FULFILLMENTSTATUSCODE, 
 
 			dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT (int_ext.ID) as NUMBEROFCHILDREN,
-			
+			dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT (int_ext.ID) as NUMBEROFCHILDRENTEXT,
 			int_ext.DEPARTEDCHILDID,
 			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.DEPARTEDCHILDID, 1) as DEPARTEDCHILDLOOKUPID,
 			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = int_ext.DEPARTEDCHILDID) as DEPARTEDCHILDNAME,
@@ -103,7 +103,8 @@
 					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
 				</LookupInfo>
 			</OutputField>
-			<OutputField Name="NUMBEROFCHILDREN" Caption="Number of Children" DataType="SmallInt" />
+			<OutputField Name="NUMBEROFCHILDREN" Caption="Number of Children (number)" DataType="SmallInt" />
+			<OutputField Name="NUMBEROFCHILDRENTEXT" Caption="Number of Children (text)" DataType="String" />
 			<OutputField Name="LETTERTYPECODE" Caption="Letter Type" DataType="String">
 				<LookupInfo>
 					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONLETTERTYPECODE"/>
@@ -123,6 +124,8 @@
 					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
 				</LookupInfo>
 			</OutputField>
+			<OutputField Name="DEPARTUREREASONOTHERDESCRIPTION" Caption="Departure Reason Other Description" DataType="String" />
+			
 
 			<OutputField Name="TRANSFERCHILDID" Caption="Transfer Child record" Category="System Fields" DataType="Guid" IsHidden="true" />
 			<OutputField Name="TRANSFERCHILDLOOKUPID" Caption="Transfer Child ID" DataType="String" />

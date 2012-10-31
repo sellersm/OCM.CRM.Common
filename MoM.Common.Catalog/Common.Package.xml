@@ -23,6 +23,7 @@
 	05-Oct-2012		CMayeda			Added USR_USP_INTERACTION_CHILD_CANCELPENDINGLETTERS.xml
 	07-Oct-2012		CMayeda			Added USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS.xml
 	13-Oct-2012		CMayeda			Added USR_UFN_SMARTFIELD_GETTABLENAME.xml
+	31-Oct-2012		CMayeda			Added USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT.xml
 	-->
 
 
@@ -94,6 +95,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTION_GETCATEGORYGROUP.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_SMARTFIELD_GETTABLENAME.xml" />
 		

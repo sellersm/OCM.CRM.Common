@@ -3,10 +3,18 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="9ED273CF-E5A6-49CE-980B-7B8DF36D2925"
 	Name="Interaction Child List"
-	Description="Used to allow multiple children to be associated with an interaction."
+	Description="Used to allow associate one or more children with an interaction."
 	Author="Cary Mayeda"
-	Tablename="USR_INTERACTIONEXTENSIONCHILDREN" 
-	>
+	Tablename="USR_INTERACTIONEXTENSIONCHILDREN" >
+	
+	<!-- 
+	Remarks:    
+	
+	History:
+	Date            Modified By     Comments
+	27-Jul-2012		CMayeda			Initial Version
+	31-Oct-2012		CMayeda			Added indexes
+	-->
 
 	<!-- define fields on the table -->
 	<Fields>
@@ -14,4 +22,16 @@
 		<ForeignKeyField Name="SPONSORSHIPOPPORTUNITYCHILDID" Description="Child that the sponsor action refers to" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="SetToNull" />
 	</Fields>
 
+	<Indexes>
+		<Index IsUnique ="false">
+			<IndexFields>
+				<IndexField Name="INTERACTIONID"/>				
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name ="SPONSORSHIPOPPORTUNITYCHILDID"/>
+			</IndexFields>
+		</Index>
+	</Indexes>
 </TableSpec>
