@@ -24,6 +24,16 @@
 	07-Oct-2012		CMayeda			Added USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS.xml
 	13-Oct-2012		CMayeda			Added USR_UFN_SMARTFIELD_GETTABLENAME.xml
 	31-Oct-2012		CMayeda			Added USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT.xml
+	09-Nov-2012		Memphis			Added all the items for Child Letter Scanner:  
+									ChildLetterBarCode.Add.xml
+									ChildLetterBarcode.Task.xml
+									InteractionExtension.Table.xml
+									LetterScannerLog.Table.xml
+									ScannerLog.DataList.xml
+									USR_USP_PARSERAISERSEDGEBARCODE.xml
+									USR_USP_RE_CRM_CHILDLETTERSCANNER.xml
+									ViewScannerLog.Page.xml
+									ViewScannerLogDataList.Task.xml
 	-->
 
 

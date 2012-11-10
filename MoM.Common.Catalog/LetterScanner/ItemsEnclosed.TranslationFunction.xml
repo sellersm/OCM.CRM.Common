@@ -1,0 +1,24 @@
+﻿<TranslationFunctionSpec
+	xmlns="bb_appfx_translationfunction"
+	xmlns:common="bb_appfx_commontypes"
+	ID="d801f4cd-7213-4c6c-a997-941d03f53f58"
+	Name="Items Enclosed Translation Function"
+	Description="Returns the name of the item enclosed"
+	Author="Bill Elfstrom"
+	RecordType="USR_ITEMSENCLOSEDCODE"
+	>
+
+	<SQLTranslationFunction FNName="USR_UFN_ITEMSENCLOSEDCODETRANSLATIONFUNCTION">
+		<common:CreateFunctionSQL>
+			<![CDATA[
+create function dbo.USR_UFN_ITEMSENCLOSEDCODETRANSLATIONFUNCTION(@ID uniqueidentifier) returns nvarchar(100) 
+as
+begin
+	declare @s nvarchar(100);
+	select @s = DESCRIPTION from dbo.USR_ITEMSENCLOSEDCODE where ID = @ID;
+	return @s;
+end	
+			]]>
+		</common:CreateFunctionSQL>
+	</SQLTranslationFunction>
+</TranslationFunctionSpec>

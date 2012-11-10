@@ -363,6 +363,25 @@
   <ItemGroup>
     <EmbeddedResource Include="Interaction\InteractionExtension.SponsorshipFulfillmentChildInfo.Query.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\ChildLetterBarCode.Add.xml" />
+    <EmbeddedResource Include="LetterScanner\ChildLetterBarcode.Task.xml" />
+    <EmbeddedResource Include="LetterScanner\ChangeAgent.Translation function.xml" />
+    <EmbeddedResource Include="LetterScanner\ChangeAgentIDByName.SimpleDataList.xml" />
+    <EmbeddedResource Include="LetterScanner\ItemsEnclosed.SimpleList.xml" />
+    <EmbeddedResource Include="LetterScanner\ItemsEnclosed.TranslationFunction.xml" />
+    <EmbeddedResource Include="LetterScanner\LetterScannerLog.Table.xml" />
+    <EmbeddedResource Include="LetterScanner\ScannerLog.DataList.xml" />
+    <EmbeddedResource Include="LetterScanner\USR_USP_CREATESCANSESSIONTEXT.xml" />
+    <EmbeddedResource Include="LetterScanner\USR_USP_PARSERAISERSEDGEBARCODE.xml" />
+    <EmbeddedResource Include="LetterScanner\USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
+    <EmbeddedResource Include="LetterScanner\USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml" />
+    <EmbeddedResource Include="LetterScanner\ViewScannerLog.Page.xml" />
+    <EmbeddedResource Include="LetterScanner\ViewScannerLogDataList.Task.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\LetterScanner.Package.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

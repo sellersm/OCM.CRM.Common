@@ -24,7 +24,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisRules>
     </CodeAnalysisRules>
     <CodeAnalysisRuleSet>UIModel.ruleset</CodeAnalysisRuleSet>
@@ -132,16 +132,19 @@
       <DependentUpon>InteractionExtensionViewFormUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="Interaction\InteractionExtensionViewFormUIModel.vb" />
+    <Compile Include="LetterScanner\BarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="LetterScanner\BarCodeAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="LetterScanner\BarCodeAddDataFormUIModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="htmlforms\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="UIModel.ruleset" />
     <None Include="postbuild.bat" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="htmlforms\BarCodeAddDataForm.html" />
+    <Content Include="LetterScanner\BarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
       <Link>LinkedSpecs\Interaction Extension.View.xml</Link>
     </None>

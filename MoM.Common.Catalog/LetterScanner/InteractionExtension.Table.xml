@@ -6,7 +6,8 @@
 	Description="Extension of the Interaction table"
 	Author="Cary Mayeda"
 	Tablename="USR_INTERACTIONEXTENSION"
-	PrimaryKeyAsForeignKeyTablename="INTERACTION" >
+	PrimaryKeyAsForeignKeyTablename="INTERACTION"
+	WarnOnMissingIndexes="false" >
 
 
 	<!-- 
@@ -24,9 +25,6 @@
 	26-Sep-2012		CMayeda			Added SPONSORID, ITEMSENCLOSEDCODEID
 									Removed Sequence ID (customidentifier) because we can use the one on the INTERACTION table.
 	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
-	27-Oct-2012		CMayeda			Fixed trigger
-	31-Oct-2012		CMayeda			Added indexes, another trigger fix
-	09-Nov-2012		Memphis			Added the fields for Letter Scanner feature
 	-->
 
 
@@ -82,95 +80,51 @@
 		<TextField Name="CITY" Description="Contains the address city." Length="50" />
 		<TextField Name="POSTCODE" Description="Contains the address post code." Length="12" />
 
-		<!-- Letter Interaction Extension Fields -->
-		<EnumField Name="COMPLETEDAFTERCANCELLATIONCODE" DefaultValue="0" Description="Set to true if an interaction status was changed from cancelled to completed">
-			<EnumValues>
-				<EnumValue ID="0" Translation="False"/>
-				<EnumValue ID="1" Translation="True"/>
-			</EnumValues>
-		</EnumField>
-		<TextField Name="SCANSESSION" Description="Used to identify what scn session the letter was scanned in" Length="68"/>
-		<GuidField Name="COMPLETEDBYID" Description="Interaction completed by"/>
-		<ForeignKeyField Name="CHILDID" Description="Child ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError" />
-		<ForeignKeyField Name="CHILDPROJECTID" Description="Child Project ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPLOCATION" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
-		<NumberField Name="ORIGINALLETTERSEQUENCEID" Description="Sequence ID of original scanned letter" Type="int" />
-		<GuidField Name="APPEALID" Description="Appeal ID"/>
 
-
+    <!-- Letter Interaction Extension Fields -->
+    <EnumField Name="COMPLETEDAFTERCANCELLATIONCODE" DefaultValue="0" Description="Set to true if an interaction status was changed from cancelled to completed">
+      <EnumValues>
+        <EnumValue ID="0" Translation="False"/>
+        <EnumValue ID="1" Translation="True"/>
+      </EnumValues>
+    </EnumField>
+    <TextField Name="SCANSESSION" Description="Used to identify what scn session the letter was scanned in" Length="68"/>
+    <GuidField Name="COMPLETEDBYID" Description="Interaction completed by"/>
+    <ForeignKeyField Name="CHILDID" Description="Child ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError" />
+    <ForeignKeyField Name="CHILDPROJECTID" Description="Child Project ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPLOCATION" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+    <NumberField Name="ORIGINALLETTERSEQUENCEID" Description="Sequence ID of original scanned letter" Type="int" />
+    <GuidField Name="APPEALID" Description="Appeal ID"/>
+    
+    
+    
 	</Fields>
-	<Indexes>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="UNAVAILABLECHILDID"/>
-			</IndexFields>
-		</Index>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="TRANSFERCHILDID"/>
-			</IndexFields>
-		</Index>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="DEPARTEDCHILDID"/>
-			</IndexFields>
-		</Index>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="DOUBLESPONSOREDCHILDID"/>
-			</IndexFields>
-		</Index>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="PREVIOUSCHILDPROJECTID"/>
-			</IndexFields>
-		</Index>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="TRANSFERCHILDPROJECTID"/>
-			</IndexFields>
-		</Index>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="SPONSORID"/>
-			</IndexFields>
-		</Index>
-		<Index IsUnique="false">
-			<IndexFields>
-				<IndexField Name="RESERVATIONREQREPCODE"/>
-			</IndexFields>
-		</Index>
-	</Indexes>
 	<Triggers>
-		<Trigger Name="USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
 			<CreateTriggerSQL>
 				<![CDATA[
 
-create trigger dbo.USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
+create trigger TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
 as begin
 	update	INTERACTION
-	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
-			DATECHANGED = getdate()
-	  from	INTERACTION
-	  join  inserted on inserted.ID = INTERACTION.ID
-	 where	inserted.FIELDMEMODATESENT is not null
+	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT)
+	  from	INTERACTION, inserted
+	 where	exists (select ID from inserted where inserted.FIELDMEMODATESENT is not null)
 end
 
 				]]>
 			</CreateTriggerSQL>
 		</Trigger>
-		<Trigger Name="USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+		<Trigger Name="TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
 			<CreateTriggerSQL>
 				<![CDATA[
 
-create trigger dbo.USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
+create trigger TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
 as begin
 	if update(FIELDMEMODATESENT)
 		update	INTERACTION
-		   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
-				DATECHANGED = getdate()
-		  from	INTERACTION
-	      join  inserted on inserted.ID = INTERACTION.ID
-	     where	inserted.FIELDMEMODATESENT is not null
+		   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT)
+		  from	INTERACTION, inserted
+		 where	exists (select ID from inserted where inserted.FIELDMEMODATESENT is not null)
 end
 				
 				]]>

@@ -1,0 +1,15 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="f5ea5827-fd20-41af-a657-04efd57f3b63"
+	Name="Scan Child Letters"
+	Description="Launch child letter scanner."
+	Author="Blackbaud Professional Services"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="0"
+	>
+
+	<!-- indicate what this task should do (navigate to a page, show a form, etc. -->
+  <common:ShowAddDataForm DataFormID="7262ae36-fccf-4e16-92d8-6c87bfbf5568" />
+
+</TaskSpec>
