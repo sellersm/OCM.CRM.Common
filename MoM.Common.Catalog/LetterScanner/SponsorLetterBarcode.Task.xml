@@ -1,15 +1,15 @@
 ﻿<TaskSpec
 	xmlns="bb_appfx_task"
 	xmlns:common="bb_appfx_commontypes" 
-	ID="f5ea5827-fd20-41af-a657-04efd57f3b63"
-	Name="Scan RE child letters"
-	Description="Launch RE child letter scanner."
-	Author="Blackbaud Professional Services"
+	ID="11abdf5e-36b6-48a6-9579-175d1c4478c8"
+	Name="Scan RE sponsor letters"
+	Description="Launch RE sponsor letter scanner."
+	Author="Memphis Sellers"
 	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
 	Sequence="0"
 	>
 
 	<!-- indicate what this task should do (navigate to a page, show a form, etc. -->
-  <common:ShowAddDataForm DataFormID="7262ae36-fccf-4e16-92d8-6c87bfbf5568" />
+  <common:ShowAddDataForm DataFormID="bef3a82d-f674-4c1c-8699-ba8cc13139c4" />
 
 </TaskSpec>

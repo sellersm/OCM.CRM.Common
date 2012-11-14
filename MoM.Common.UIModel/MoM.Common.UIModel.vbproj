@@ -132,10 +132,13 @@
       <DependentUpon>InteractionExtensionViewFormUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="Interaction\InteractionExtensionViewFormUIModel.vb" />
-    <Compile Include="LetterScanner\BarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
-    <Compile Include="LetterScanner\BarCodeAddDataFormUIModel.CodeGen.vb" />
-    <Compile Include="LetterScanner\BarCodeAddDataFormUIModel.vb" />
+    <Compile Include="ChildLetterScanner\BarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="ChildLetterScanner\BarCodeAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="ChildLetterScanner\BarCodeAddDataFormUIModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.vb" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -144,7 +147,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="htmlforms\BarCodeAddDataForm.html" />
-    <Content Include="LetterScanner\BarCodeAddDataFormUIModel.xml" />
+    <Content Include="ChildLetterScanner\BarCodeAddDataFormUIModel.xml" />
+    <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
+    <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
       <Link>LinkedSpecs\Interaction Extension.View.xml</Link>
     </None>

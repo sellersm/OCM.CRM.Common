@@ -32,6 +32,9 @@ Partial Public Class [BarCodeAddDataFormBARCODEELEMENTSUIModel]
 	Private WithEvents _resultsok As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 	Private WithEvents _scanmessage As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _exception As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+	'Add a column for letter stack:
+	Private WithEvents _letterstack As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+
 
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
 	Public Sub New()
@@ -45,6 +48,15 @@ Partial Public Class [BarCodeAddDataFormBARCODEELEMENTSUIModel]
 		_resultsok = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 		_scanmessage = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_exception = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		_letterstack = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+
+		'
+		'_letterstack
+		'
+		_letterstack.Caption = "Letter stack"
+		_letterstack.Name = "LETTERSTACK"
+		_letterstack.MaxLength = 25
+		Me.Fields.Add(_letterstack)
 
 		'
 		'_resultsok
@@ -118,6 +130,17 @@ Partial Public Class [BarCodeAddDataFormBARCODEELEMENTSUIModel]
 		OnCreated()
 
 	End Sub
+	''' <summary>
+	''' Letter stack
+	''' </summary>
+	<System.ComponentModel.Description("Letter stack")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [LETTERSTACK]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		Get
+			Return _letterstack
+		End Get
+	End Property
+
 	''' <summary>
 	''' OK
 	''' </summary>

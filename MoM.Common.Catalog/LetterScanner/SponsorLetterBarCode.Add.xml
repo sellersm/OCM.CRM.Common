@@ -1,30 +1,31 @@
 <AddDataFormTemplateSpec 
     xmlns="bb_appfx_adddataformtemplate"
     xmlns:common="bb_appfx_commontypes"
-    ID="8e7c2281-2538-4d91-a20d-223b0e1cbf93"
-    Name="Child Letter Scanner add data form"
-    Description="Add data form for Child letter scanner."
-    Author="Blackbaud Product Development"
-    DataFormInstanceID="7262ae36-fccf-4e16-92d8-6c87bfbf5568"
+    ID="147fce52-6c63-46f9-894e-181df34c65a0"
+    Name="Sponsor letter scanner add data form"
+    Description="Add data form for sponsor letter scanner."
+    Author="Memphis Sellers"
+    DataFormInstanceID="bef3a82d-f674-4c1c-8699-ba8cc13139c4"
     RecordType="Bar Code"
     common:SecurityUIFolder="Bar Code"
-	FormHeader="RE Child Letter Scanner"
+	FormHeader="RE Sponsor Letter Scanner"
     >
 
 	<SPDataForm>
 		<!-- describe the preload SP (if applicable), which should be used to fetch field default values from the database.  If no
 		preload is needed, then this section can be removed -->
 		<!-- describe the save SP -->
-		<SaveImplementation SPName="USP_DATAFORMTEMPLATE_ADD_BARCODESCANNER">
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_BARCODESCANNER_SPONSOR">
 			<common:CreateProcedureSQL>
 				<![CDATA[
-create procedure dbo.USP_DATAFORMTEMPLATE_ADD_BARCODESCANNER
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_BARCODESCANNER_SPONSOR
 (
     @ID uniqueidentifier = null output,
     @CHANGEAGENTID uniqueidentifier = null,
 	  @BARCODE nvarchar(20) = '',
 	  @BARCODEELEMENTS xml = null, 
-    @SUBMIT bit = 0
+    @SUBMIT bit = 0,
+	@ITEMSENCLOSEDCODEID uniqueidentifier = null
 )
 as
 
@@ -85,13 +86,16 @@ return 0
         </common:Collection>
       </common:FormField>
       <common:FormField FieldID="SUBMIT" Caption="Save results" DataType="Boolean" />
+	<common:FormField FieldID="ITEMSENCLOSEDCODEID" DataType="Guid" Caption="Items enclosed" Required="false">
+		<common:CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE" />
+	</common:FormField>			
       
 		</common:FormFields>
 
         <common:WebUIComponent>
-            <common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.BarCodeAddDataFormUIModel" />
+            <common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.SponsorBarCodeAddDataFormUIModel" />
             <common:WebUI>
-				<common:ExternalResource Url="browser/htmlforms/custom/BarCodeAddDataForm.html"/>
+				<common:ExternalResource Url="browser/htmlforms/custom/SponsorBarCodeAddDataForm.html"/>
             </common:WebUI>
         </common:WebUIComponent>
 

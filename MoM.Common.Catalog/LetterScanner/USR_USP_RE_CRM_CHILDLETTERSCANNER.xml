@@ -135,7 +135,7 @@ begin
 			if @NumberOfPendingInteractions = 0
 				begin
 					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'There are no pending interactions for this ' + @LetterFullName + '. '
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No pending interactions for this ' + @LetterFullName + '. '
 				end
 			else	
 				begin	
@@ -177,13 +177,13 @@ begin
 			if @NumberOfPendingInteractions = 0
 				begin
 					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'There are no pending interactions for this ' + @LetterFullName + '.'
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No pending interactions for this ' + @LetterFullName + '.'
 				end
 			else
 				if @NumberOfPendingInteractions > 1 
 					begin	
 						set @ExceptionOccurred = 1
-						set @ScannerMessage = coalesce(@ScannerMessage, '') + 'There is more than one pending interaction for this ' + @LetterFullName + '.'
+						set @ScannerMessage = coalesce(@ScannerMessage, '') + 'More than one pending interaction for this ' + @LetterFullName + '.'
 					end
 				else 		
 					-- Set the interaction to Completed and get the interaction ID and sequence number to use later			
@@ -249,8 +249,7 @@ end
 
 if @ExceptionOccurred = 0
 begin	
-	if not exists (SELECT * FROM dbo.ADDRESS where constituentID = @SponsorID 
-		and HISTORICALENDDATE is null)
+	if not exists (SELECT * FROM dbo.ADDRESS where constituentID = @SponsorID and HISTORICALENDDATE is null)
 		begin
 			set @ExceptionOccurred = 1
 			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No active addresses exist for sponsor.'
@@ -343,6 +342,17 @@ if @ExceptionOccurred = 0
 		GETDATE(), 
 		GETDATE()
 		)
+		
+		-- call 'add child to interaction sproc' from Cary here, to get the child info in this interaction:
+		-- get the sponsorshipopportunitychildid for the given childLookupId
+
+		if @ChildID is not null
+		begin
+			exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
+				@interactionID = @NewID,
+				@sponsorshipOpportunityChildID = @ChildID,
+				@changeAgentID = @ChangeAgentID
+		end
 		
 		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Send Child Response Letter interaction was created on the sponsor account.  '
 

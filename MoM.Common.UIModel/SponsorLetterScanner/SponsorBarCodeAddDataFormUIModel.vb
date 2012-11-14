@@ -1,6 +1,6 @@
 Imports System.Data.SqlClient
 
-Public Class BarCodeAddDataFormUIModel
+Public Class SponsorBarCodeAddDataFormUIModel
 
 	Dim _sponsorLookupId As String
 	Dim _childLookupId As String
@@ -33,7 +33,7 @@ Public Class BarCodeAddDataFormUIModel
 		_scanOutcome = String.Empty
 		_scannerMessage = String.Empty
 
-		Dim element As BarCodeAddDataFormBARCODEELEMENTSUIModel = New BarCodeAddDataFormBARCODEELEMENTSUIModel()
+		Dim element As SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel = New SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel()
 		element.RESULTSOK.Enabled = False
 
 		If _barcode.Value.ToString().Length = 15 Then
@@ -46,9 +46,9 @@ Public Class BarCodeAddDataFormUIModel
 				'***    FOR TESTING ONLY ***
 				'***   Hardcoding these values:
 				'*** COMMENT THESE LINES WHEN DONE TESTING:
-				'_sponsorLookupId = "8-10000010"	 'Jonny Tester
-				'_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
-				'_letterFullname = "Child Acknowledgement Letter"
+				_sponsorLookupId = "8-10000010"	 'Jonny Tester
+				_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
+				_letterFullname = "Sponsor Letter"
 				'
 				'******** END OF TEST CODE:
 
@@ -59,13 +59,26 @@ Public Class BarCodeAddDataFormUIModel
 				' Bar code is correctly formatted, parse the string and add original bar code value and parse status into the gridview
 				element.RESULTSOK.Value = Not _exceptionOccurred 'String.IsNullOrEmpty(_exceptionMessage)
 				'element.BARCODE.Value = _barcode.Value.ToString()
+
 				'Make the Scan Status be: "Success" or "Unsuccessful"
-				element.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
-				If _exceptionOccurred Then
-					element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
-				Else
+				If (_scanOutcome.Contains("successful") Or (_scanOutcome.Contains("Extra"))) Then
+					element.SCANSTATUS.Value = "Success!"
 					element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.GoodImageAndText
+				Else
+					element.SCANSTATUS.Value = "Unsuccessful"
+					element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 				End If
+				'element.SCANSTATUS.Value = IIf((_scanOutcome.Contains("successful") Or _scanOutcome.Contains("Extra")), "Success!", "")	'  _scanOutcome
+
+				'figure out which Letter Stack this letter should go into:
+				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
+
+				'If _exceptionOccurred Then
+				'	element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
+				'Else
+				'	element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.GoodImageAndText
+				'End If
+
 				element.SCANMESSAGE.Value = _scannerMessage
 				element.SPONSORLOOKUPID.Value = _sponsorLookupId
 				element.CHILDLOOKUPID.Value = _childLookupId
@@ -73,6 +86,10 @@ Public Class BarCodeAddDataFormUIModel
 			Else
 				element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 				element.RESULTSOK.Value = False
+
+				'we know this is an exception
+				element.LETTERSTACK.Value = "Exception"
+
 				'Make the Scan Status be: "Success" or "Unsuccessful"
 				element.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
 				'element.BARCODE.Value = _barcode.Value.ToString()
@@ -86,6 +103,10 @@ Public Class BarCodeAddDataFormUIModel
 		Else
 			' Bar code is not correctly formatted, do not parse the string but add original bar code value and invalid status into the gridview
 			element.BARCODE.Value = _barcode.Value.ToString()
+
+			'we know this is an exception
+			element.LETTERSTACK.Value = "Exception"
+
 			element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 			element.SCANSTATUS.Value = "Unsuccessful"
 			element.EXCEPTION.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.BadImageAndText
@@ -172,16 +193,34 @@ Public Class BarCodeAddDataFormUIModel
 		'scanoutcome will have this value if there was an exception: 'Place the letter on the exception stack.'
 		'@ExceptionOccurred will have a value of 1
 
+		'@SponsorLookupID nvarchar(6),
+		'@ChildLookupID nvarchar(7),
+		'@LetterFullname nvarchar(100),
+		'@ChangeAgentID uniqueidentifier,
+		'@ItemsEnclosedCode as uniqueidentifier,
+		'@ScanSession nvarchar(68),
+		'@ScannerMessage nvarchar(1000) OUTPUT,
+		'@ScanOutcome nvarchar(100) OUTPUT,
+		'@ExceptionOccurred bit OUTPUT
+
+
 		Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
 			Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
 			cmd.Connection = conn
-			cmd.CommandText = "dbo.USR_USP_RE_CRM_CHILDLETTERSCANNER"
+			cmd.CommandText = "dbo.USR_USP_RE_CRM_SPONSORLETTERSCANNER"
 			cmd.CommandType = CommandType.StoredProcedure
 
 			cmd.Parameters.AddWithValue("@SponsorLookupID", _sponsorLookupId)
 			cmd.Parameters.AddWithValue("@ChildLookupID", _childLookupId)
 			cmd.Parameters.AddWithValue("@LetterFullname", _letterFullname)
 			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
+
+			If Me.ITEMSENCLOSEDCODEID.HasValue Then
+				cmd.Parameters.AddWithValue("@ItemsEnclosedCode", Me.ITEMSENCLOSEDCODEID.Value)
+			Else
+				cmd.Parameters.AddWithValue("@ItemsEnclosedCode", DBNull.Value)
+			End If
+
 			cmd.Parameters.AddWithValue("@ScanSession", _scanSession)
 
 			Dim scannerMessage As SqlParameter = New SqlParameter("@ScannerMessage", String.Empty)
@@ -215,7 +254,29 @@ Public Class BarCodeAddDataFormUIModel
 
 	Private Function GetScanSession() As String
 		'return the unique identifier of this user and scanning session
-		Return GetRequestContext().AppUserInfo.AppUserName.ToString() & Date.UtcNow.ToFileTime
+		Return GetRequestContext().AppUserInfo.AppUserName.ToString() & Date.Now.ToShortDateString() & Date.Now.ToShortTimeString()
+	End Function
+
+	Private Function GetLetterStack(ByVal scanOutcome As String) As String
+		'determines which letter stack this letter should be placed in
+		'extra letter = scanOutcome contains 'Place letter in the Extra Letter stack'
+		'exception = Place letter in exception stack
+		'success = Place letter on successful scan stack
+		Dim letterStack As String = String.Empty
+		If scanOutcome.ToLower().Contains("extra") Then
+			letterStack = "Extra Letter"
+		End If
+
+		If scanOutcome.ToLower().Contains("exception") Then
+			letterStack = "Exception"
+		End If
+
+		If scanOutcome.ToLower().Contains("successful") Then
+			letterStack = "Success"
+		End If
+
+		Return letterStack
+
 	End Function
 
 End Class
