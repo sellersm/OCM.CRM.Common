@@ -22,6 +22,10 @@
 									USR_USP_RE_CRM_CHILDLETTERSCANNER.xml
 									ViewScannerLog.Page.xml
 									ViewScannerLogDataList.Task.xml
+	13-Nov-2012		Memphis			Added files for sponsor letter scanner: 
+										SponsorLetterBarcode.Task.xml
+										SponsorLetterBarCode.Add.xml
+										USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml
 	-->	
 	
 
@@ -33,9 +37,11 @@
 		<!-- Sprocs -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_PARSERAISERSEDGEBARCODE.xml" />
         <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml" />
 
 		<!-- forms-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarCode.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorLetterBarCode.Add.xml" />
 
 		<!-- DataLists-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.DataList.xml" />
@@ -43,6 +49,7 @@
 		<!-- Pages, Tasks-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ViewScannerLogDataList.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarcode.Task.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorLetterBarcode.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ViewScannerLog.Page.xml" />
 	</common:DependencyList>
 
