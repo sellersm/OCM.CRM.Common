@@ -46,9 +46,9 @@ Public Class BarCodeAddDataFormUIModel
 				'***    FOR TESTING ONLY ***
 				'***   Hardcoding these values:
 				'*** COMMENT THESE LINES WHEN DONE TESTING:
-				_sponsorLookupId = "8-10000010"	 'Jonny Tester
-				_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
-				_letterFullname = "Child Acknowledgement Letter"
+				'_sponsorLookupId = "8-10000010"	 'Jonny Tester
+				'_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
+				'_letterFullname = "Child Acknowledgement Letter"
 				'
 				'******** END OF TEST CODE:
 
