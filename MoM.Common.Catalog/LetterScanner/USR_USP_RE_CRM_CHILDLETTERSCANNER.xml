@@ -282,7 +282,7 @@ if @ExceptionOccurred = 0
 	
 	-- Get Subcategory
 	Declare @InteractionSubcategoryID as uniqueidentifier
-	set @InteractionSubcategoryID = (Select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = 'send child response letter')
+	set @InteractionSubcategoryID = (Select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = lower ('Send Child Correspondence')
 
 	Declare @NewID as uniqueidentifier
 	set @NewID = NEWID()
