@@ -64,6 +64,10 @@ Public Class BarCodeAddDataFormUIModel
 				If (_scanOutcome.Contains("successful") Or (_scanOutcome.Contains("Extra"))) Then
 					element.SCANSTATUS.Value = "Success!"
 					element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.GoodImageAndText
+
+					Me.BARCODE.Value = ""
+					'Me.Fields("BARCODE").ValueObject = ""  -- If we create a field list
+
 				Else
 					element.SCANSTATUS.Value = "Unsuccessful"
 					element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
