@@ -3,11 +3,18 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="d6e20a77-ffba-48ee-8345-2f3a4e3d3ea6"
 	Name="USR_USP_RE_CRM_CHILDLETTERSCANNER"
-	Description="REPLACE_WITH_DESCRIPTION"
+	Description="Used to scann child letters with the barcode format from RE"
 	Author="Bill Elfstrom"
 	SPName="USR_USP_RE_CRM_CHILDLETTERSCANNER"
-	GrantServiceRolePermission="true"
-	>
+	GrantServiceRolePermission="true" >
+	
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	05-Dec-2012		CMayeda			Changed sponsorship interaction subcategory to 'Send Child Correspondence'
+	-->
 
 	<CreateProcedureSQL>
 		<![CDATA[
@@ -286,7 +293,7 @@ if @ExceptionOccurred = 0
 	
 	-- Get Subcategory
 	Declare @InteractionSubcategoryID as uniqueidentifier
-	set @InteractionSubcategoryID = (Select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = lower ('Send Child Correspondence')
+	set @InteractionSubcategoryID = (Select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = lower ('Send Child Correspondence'))
 
 	Declare @NewID as uniqueidentifier
 	set @NewID = NEWID()

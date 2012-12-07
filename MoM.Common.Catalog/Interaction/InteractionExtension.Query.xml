@@ -20,6 +20,7 @@
 	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
 									Added Lookup ID and Name for PREVIOUSCHILDPROJECT and TRANSFERCHILDPROJECT
 	03-Oct-2012		CMayeda			Added SEQUENCEID from INTERACTION table
+	05-Dec-2012		CMayeda			Fixed Sponsored Project fields
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -141,7 +142,7 @@
 			<OutputField Name="DOUBLESPONSOREDCHILDLOOKUPID" Caption="Double Sponsored Child ID" DataType="String" />
 			<OutputField Name="DOUBLESPONSOREDCHILDNAME" Caption="Double Sponsored Child Name" DataType="String" />
 
-			<OutputField Name="PREVIOUSCHILDPROJECTID" Caption="Previous Child Project ID" DataType="Guid" IsHidden="true" Category="System Fields"/>
+			<OutputField Name="PREVIOUSCHILDPROJECTID" Caption="Previous Child Project record" DataType="Guid" IsHidden="true" Category="System Fields"/>
 			<OutputField Name="PREVIOUSCHILDPROJECTLOOKUPID" Caption="Previous Child Project ID" DataType="String" />
 			<OutputField Name="PREVIOUSCHILDPROJECTNAME" Caption="Previous Child Project Name" DataType="String" />
 
@@ -149,9 +150,9 @@
 			<OutputField Name="TRANSFERCHILDPROJECTLOOKUPID" Caption="Transfer Child Project ID" DataType="String" />
 			<OutputField Name="TRANSFERCHILDPROJECTNAME" Caption="Transfer Child Project Name" DataType="String" />
 
-			<OutputField Name="SPONSOREDPROJECTID" Caption="Sponsored Project ID" DataType="Guid" IsHidden="true" Category="System Fields"/>
+			<OutputField Name="SPONSOREDPROJECTID" Caption="Sponsored Project record" DataType="Guid" IsHidden="true" Category="System Fields"/>
 			<OutputField Name="SPONSOREDPROJECTLOOKUPID" Caption="Sponsored Project ID" DataType="String" />
-			<OutputField Name="TRANSFERCHILDPROJECTNAME" Caption="Sponsored Project Name" DataType="String" />
+			<OutputField Name="SPONSOREDPROJECTNAME" Caption="Sponsored Project Name" DataType="String" />
 						 
 			<OutputField Name="PREVIOUSBIRTHDATE" Caption="Previous Child Birthdate" DataType="Date" />
 			<OutputField Name="PREVIOUSNAME" Caption="Previous Child Name" DataType="String" />

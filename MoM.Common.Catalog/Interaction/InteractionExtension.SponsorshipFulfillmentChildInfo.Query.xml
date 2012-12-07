@@ -17,15 +17,15 @@
 	History:
 	Date            Modified By     Comments
 	05-Oct-2012		CMayeda			Initial Version
+	05-Dec-2012		CMayeda			Removed USR_INTERACTIONEXTENSIONCHILDREN ID field.
 	-->
 
 	<!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_INTERACTIONEXTENSIONSPONSORSHIPFULFILLMENTCHILDREN">
 		<ViewSQL>
 			<![CDATA[
-	select	int_children.ID,
+	select	int_children.INTERACTIONID as ID,
 			int.SEQUENCEID,
-			int_children.INTERACTIONID,
 			int_children.SPONSORSHIPOPPORTUNITYCHILDID,
 			proj_const.LOOKUPID as PROJECTLOOKUPID,
 			so.LOOKUPID as CHILDLOOKUPID,
@@ -44,9 +44,8 @@
 	
 	union all
 
-	select	null,
+	select	int_ext.ID as ID,
 			int.SEQUENCEID,
-			int_ext.ID as INTERACTIONID,
 			int_ext.TRANSFERCHILDID ,
 			proj_const.LOOKUPID as PROJECTLOOKUPID,
 			so.LOOKUPID as CHILDLOOKUPID,
@@ -71,8 +70,7 @@
 	<!-- describe each field in the view output -->
 	<Output>
 		<OutputFields>
-			<OutputField Name="ID" Caption="Interaction Extension Children System Record" Category="System Fields" DataType="Guid" IsHidden="true"/>
-			<OutputField Name="INTERACTIONID" Caption="Interaction System Record" Category="System Fields" DataType="Guid"  IsHidden="true"/>
+			<OutputField Name="ID" Caption="Interaction System Record" Category="System Fields" DataType="Guid"  IsHidden="true"/>
 			<OutputField Name="SEQUENCEID" Caption="Sequence ID" DataType="Integer" />
 			<OutputField Name="SPONSORSHIPOPPORTUNITYCHILDID" Caption="Child System Record"  Category="Sponsorship Opportunity Child Record" DataType="Guid" />
 			<OutputField Name="CHILDLOOKUPID" Caption="Child ID" Category="Fields" DataType="String" />
@@ -84,7 +82,7 @@
 		<!--AddToParentView Field="INTERACTIONID" ParentView="V_QUERY_INTERACTION" ParentViewRelatedField="ID" PathAlias="Children"/>-->
 		<!--<AddToParentView Field="INTERACTIONID" ParentView="V_QUERY_INTERACTIONALL" ParentViewRelatedField="ID" PathAlias="Children"/>-->
 		<AddRelatedView Field ="SPONSORSHIPOPPORTUNITYCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Sponsorship Opportunity" />
-		<AddRelatedView Field="INTERACTIONID" RelatedView="V_QUERY_INTERACTION" RelatedField="ID" PathAlias="Interactions"/>
+		<AddRelatedView Field="ID" RelatedView="V_QUERY_INTERACTION" RelatedField="ID" PathAlias="Interactions"/>
 
 	</RelationshipOperations>
 
