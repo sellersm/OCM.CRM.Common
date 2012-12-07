@@ -1,0 +1,19 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="8309999b-603e-40aa-a8d3-fc749cc67a94" 
+	Name="Interaction Extension Departure Reason"
+	Description="The departure reason used by fulfillment vendor"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE"
+	Category="Interaction Extension"
+	SortMethod="UserDefined"
+/>
+<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	27-Jul-2012		CMayeda			Initial Version
+-->
+

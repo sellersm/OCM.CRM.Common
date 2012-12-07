@@ -1,0 +1,48 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="3a0bbd3e-04ed-4d45-a496-0b32e8c4f9c2"
+	Name="LetterScannerLog"
+	Description="Letter Scanner Log"
+	Author="Bill Elfstrom"
+	Tablename="USR_LETTERSCANNERLOG"
+  CustomIdentifier="true"
+	>
+
+<!-- 
+  History:
+    Date            Modified By     Comments
+    22-Sep-2012     BElfstrom       Created
+-->
+
+  <Fields>
+    <EnumField Name="LOGTYPECODE" DefaultValue="0" Description="Type of scanner log">
+      <EnumValues>
+        <EnumValue ID="0" Translation="EXCEPTION"/>
+        <EnumValue ID="1" Translation="SUCCESS"/>
+        <EnumValue ID="2" Translation="EXTRA LETTER"/>
+      </EnumValues>
+    </EnumField>
+    <TextField Name="SCANSESSION" Description="Used to identify what scan session the letter was scanned in" Length="68"/>
+    <NumberField Name="ORIGINALSEQUENCEID" Description="Original sequence ID of letter scanned" Type="int"  />
+    <TextField Name="DESCRIPTION" Description="Description" Length="1000" />
+    <TextField Name="SCANOUTCOME" Description="Scan Outcome" Length="100" />
+    <ForeignKeyField Name="CHILDID" Description="Child ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError" />
+    <ForeignKeyField Name="SPONSORID" Description="Sponsor ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+    <ForeignKeyField Name="CHILDPROJECTID" Description="Child Project ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPLOCATION" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+    <ForeignKeyField Name="LETTERSUBCATEGORYID" Description="Letter Subcategory ID" Cardinality="ManyToOne" ForeignTable="INTERACTIONSUBCATEGORY" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+    <DateField Name="DATESPONSORSHIPCANCELLED" Description="Date the sponsorship was cancelled"/>
+    <NumberField Name="NUMBEROFDAYSSPONSORED" Description="Number of days sponsored" Type="smallint" />
+    <TextField Name="CANCELLATIONREASON" Description="Reason for cancellation" Length="100" />
+  </Fields>
+  <!-- define any indexes on the table -->
+  <Indexes>
+    <Index IsUnique="false">
+      <IndexFields>
+        <IndexField Name="SCANSESSION"/>
+      </IndexFields>
+    </Index>
+  </Indexes>
+</TableSpec>
+
+

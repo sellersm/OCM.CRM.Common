@@ -1,0 +1,60 @@
+<PackageSpec 
+    xmlns="bb_appfx_package"
+    xmlns:common="bb_appfx_commontypes"
+    ID="28672c7c-defa-41c2-b7b4-44744cf02092"
+    Name="LetterScanner Package"
+    Description="Contains Letter Scanner customizations."
+    Author="Memphis Sellers"
+    >
+
+
+	<!-- 
+	Remarks:    contains customizations for the letterscanner feature
+
+	History:
+	Date            Modified By     Comments
+	09-Nov-2012		Memphis			Added all the items for Child Letter Scanner:  
+									ChildLetterBarCode.Add.xml
+									ChildLetterBarcode.Task.xml
+									LetterScannerLog.Table.xml
+									ScannerLog.DataList.xml
+									USR_USP_PARSERAISERSEDGEBARCODE.xml
+									USR_USP_RE_CRM_CHILDLETTERSCANNER.xml
+									ViewScannerLog.Page.xml
+									ViewScannerLogDataList.Task.xml
+	13-Nov-2012		Memphis			Added files for sponsor letter scanner: 
+										SponsorLetterBarcode.Task.xml
+										SponsorLetterBarCode.Add.xml
+										USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml
+	06-Dec-2012		Memphis			Added ScannerLog.Query.xml
+	-->	
+	
+
+	
+	<common:DependencyList>
+		<!-- Tables -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.LetterScannerLog.Table.xml" />
+
+		<!-- Sprocs -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_PARSERAISERSEDGEBARCODE.xml" />
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml" />
+
+		<!-- forms-->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarCode.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorLetterBarCode.Add.xml" />
+
+		<!-- DataLists-->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.DataList.xml" />
+
+		<!-- Pages, Tasks-->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ViewScannerLogDataList.Task.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarcode.Task.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorLetterBarcode.Task.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ViewScannerLog.Page.xml" />
+		
+		<!-- Query -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.Query.xml" />
+	</common:DependencyList>
+
+</PackageSpec>

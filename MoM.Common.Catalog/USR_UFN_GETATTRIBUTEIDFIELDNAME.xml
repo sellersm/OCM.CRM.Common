@@ -1,0 +1,54 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="39756a82-b390-4354-94ff-eb8d75ae8d58"
+	Name="Get interaction attribute ID field name"
+	Description="Get interaction attribute ID field name based on attribute category"
+	Author="Bill Elfstrom"
+	DBFunctionName="USR_UFN_GETATTRIBUTEIDFIELDNAME"
+	>
+ <!-- 
+ 
+  History:
+    Date            Modified By     Comments
+    11-June-2012    BElfstrom       Created
+    
+  Comments:
+  Because different attribute tables use different fields to
+  link to interaction IDs, this function returns the field name to use.
+  The field name is based on the attribute category.
+-->
+
+  <CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_GETATTRIBUTEIDFIELDNAME(@ATTRIBUTECATEGORYID uniqueidentifier)
+  returns nvarchar(100)
+  with execute as caller
+  as begin
+
+  declare @RETURNED_ID_VALUE as nvarchar(13)
+  declare @DATATYPE as tinyint 
+  
+  declare @DATATYPE_TEXT tinyint = 0
+  declare @DATATYPE_NUMERIC tinyint = 1
+  declare @DATATYPE_DATE tinyint = 2
+  declare @DATATYPE_MONEY tinyint = 3
+  declare @DATATYPE_BOOLEAN tinyint = 4 
+  
+  set @DATATYPE = (select DATATYPECODE from ATTRIBUTECATEGORY
+  where ID = @ATTRIBUTECATEGORYID)	
+  
+  if @DATATYPE = @DATATYPE_TEXT or @DATATYPE = @DATATYPE_NUMERIC
+	  set @RETURNED_ID_VALUE = 'ID'
+  else
+    if @DATATYPE = @DATATYPE_DATE or @DATATYPE = @DATATYPE_MONEY or @DATATYPE = @DATATYPE_BOOLEAN
+	    set @RETURNED_ID_VALUE = 'INTERACTIONID'
+    else  -- unknown
+      set @RETURNED_ID_VALUE = null
+      
+	return @RETURNED_ID_VALUE
+  
+end
+		]]>
+	</CreateFunctionSQL>
+</SQLFunctionSpec>

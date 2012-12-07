@@ -1,0 +1,100 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes"
+	ID="5FEC52B4-B2C6-4FED-B6B4-F6F63019D913"
+	Name="USR_USP_INTERACTION_SPONSOR_ADDCHILDREN"
+	Description="Used to add a children to a sponsor interaction extension"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_ADDCHILDREN"
+	GrantServiceRolePermission="true" >
+
+	<!-- 
+	Remarks:    This adds the children in @childIDList to the list of children associated with the interaction passed in @interactionID
+				It also updates the CHILDCOUNTLETTERVERSIONCODEID based on the current number of children associated with the interaction
+				This assumes that the row in USR_INTERACTIONEXTENSION exists. It does not create it if it doesn't.
+
+	History:
+	Date            Modified By     Comments
+	03-Sep-2012		CMayeda			Initial Version
+	22-Sep-2012		CMayeda			Added check for null @interactionID
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILDREN (
+	@interactionID uniqueidentifier = null,							-- Interaction ID to add the child to.
+	@childIDList dbo.USR_UDT_CHILDIDLIST readonly,					-- The children to add to the interactionbe set ineligible
+	@changeAgentID uniqueidentifier = null							-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	set nocount on
+	
+	-- Constants
+	declare @raiseErrorIfNotFoundTrue bit = 1
+
+	declare @childCountLetterVersion_OneChildLetter uniqueidentifier = null
+	declare @childCountLetterVersion_TwoChildrenLetter uniqueidentifier = null
+	declare @childCountLetterVersion_MultipleChildrenLetter uniqueidentifier = null
+
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+
+	begin try
+		-- Get letter code table ids
+		select @childCountLetterVersion_OneChildLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('One Child Letter')
+		if @childCountLetterVersion_OneChildLetter is null 
+			RAISERROR 1000000 'Could not add child to interaction, because the id for the "One Child Letter" could not be found.'
+		
+		select @childCountLetterVersion_TwoChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Two Children Letter')
+		if @childCountLetterVersion_OneChildLetter is null 
+			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Two Children Letter" could not be found.'
+		
+		select @childCountLetterVersion_MultipleChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Multiple Children Letter')
+		if @childCountLetterVersion_MultipleChildrenLetter is null 
+			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.'
+			
+
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+		if @interactionID is null
+			RAISERROR 1000000 'Interaction ID cannot be null'
+
+		-- Add the child
+		insert	dbo.USR_INTERACTIONEXTENSIONCHILDREN
+			(INTERACTIONID, SPONSORSHIPOPPORTUNITYCHILDID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		select @interactionID, sponsorshipOpportunityChildID, @changeAgentID, @changeAgentID, @currentDate, @currentDate
+		  from @childIDList childlist
+			 where not exists (select INTERACTIONID from dbo.USR_INTERACTIONEXTENSIONCHILDREN where INTERACTIONID = @interactionID and SPONSORSHIPOPPORTUNITYCHILDID = childlist.sponsorshipOpportunityChildID)
+	 
+		-- Update the letter version based on the number of children on this interaction
+		declare @numberOfChildren as smallint = 0
+		set @numberOfChildren = dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT (@interactionID)
+	
+		if @numberOfChildren >= 0 
+			update	dbo.USR_INTERACTIONEXTENSION
+			   set	CHILDCOUNTLETTERVERSIONCODEID = case @numberOfChildren
+														when 0 then null
+														when 1 then @childCountLetterVersion_OneChildLetter
+														when 2 then @childCountLetterVersion_TwoChildrenLetter
+														else @childCountLetterVersion_MultipleChildrenLetter
+													end 
+			 where	ID = @interactionID	
+		else
+			RAISERROR 1000000 'Could not set Child Count Letter Version - USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT returned a value less than zero'			
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

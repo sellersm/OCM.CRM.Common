@@ -1,0 +1,20 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="bceb9623-5f68-4f67-a24e-d53b628d7a6b" 
+	Name="Interaction Extension Fulfillment Status"
+	Description="The status of the fulfillment of a sponsor letter or rep reservation request (pending, ready, complete)"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE"
+	Category="Interaction Extension"
+	SortMethod="UserDefined"
+/>
+
+<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	27-Jul-2012		CMayeda			Initial Version
+
+-->
