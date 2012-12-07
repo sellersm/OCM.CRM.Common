@@ -1,6 +1,6 @@
 Imports System.Data.SqlClient
 
-Public Class BarCodeAddDataFormUIModel
+Public Class CRMChildLetterScannerAddDataFormUIModel
 
 	Dim _sponsorLookupId As String
 	Dim _childLookupId As String
@@ -10,9 +10,11 @@ Public Class BarCodeAddDataFormUIModel
 	Dim _scannerSession As String
 	Dim _scannerMessage As String
 	Dim _exceptionOccurred As Boolean
+	Dim _interactionLookupId As String
+	Dim _childProjectLookupId As String
 
 
-	Private Sub BarCodeAddDataFormUIModel_Loaded(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.LoadedEventArgs) Handles Me.Loaded
+	Private Sub CRMChildLetterScannerAddDataFormUIModel_Loaded(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.LoadedEventArgs) Handles Me.Loaded
 		Me.SUBMIT.Visible = False
 		Me.SUBMIT.Value = False
 
@@ -21,7 +23,7 @@ Public Class BarCodeAddDataFormUIModel
 
 	End Sub
 
-	Private Sub BarCodeAddDataFormUIModel_Validate(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.BeginValidateEventArgs) Handles Me.BeginValidate
+	Private Sub CRMChildLetterScannerAddDataFormUIModel_Validate(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.BeginValidateEventArgs) Handles Me.BeginValidate
 		' this function performs form field validation and update
 		If IsNothing(_barcode.Value) Then
 			_barcode.Value = ""
@@ -34,8 +36,11 @@ Public Class BarCodeAddDataFormUIModel
 		_exceptionMessage = String.Empty
 		_scanOutcome = String.Empty
 		_scannerMessage = String.Empty
+		_interactionLookupId = String.Empty
+		_childProjectLookupId = String.Empty
+		_exceptionOccurred = False
 
-		Dim element As BarCodeAddDataFormBARCODEELEMENTSUIModel = New BarCodeAddDataFormBARCODEELEMENTSUIModel()
+		Dim element As CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel = New CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel()
 		element.RESULTSOK.Enabled = False
 
 		If _barcode.Value.ToString().Length = 15 Then
@@ -185,17 +190,31 @@ Public Class BarCodeAddDataFormUIModel
 		'scanoutcome will have this value if there was an exception: 'Place the letter on the exception stack.'
 		'@ExceptionOccurred will have a value of 1
 
+		'USR_USP_CHILDLETTERSCANNER_CRM()
+		'@SponsorLookupID nvarchar(6),	
+		'@ChildLookupID nvarchar(7),	
+		'@ChildProjectLookupID nvarchar(100),
+		'@InteractionSequenceLookupId nvarchar(100),
+		'@ChangeAgentID uniqueidentifier,
+		'@ScanSession nvarchar(68),
+		'@ScannerMessage nvarchar(1000) OUTPUT,
+		'@ScanOutcome nvarchar(100) OUTPUT,
+		'@ExceptionOccurred bit OUTPUT
+
+
+
 		Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
 			Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
 			cmd.Connection = conn
-			cmd.CommandText = "dbo.USR_USP_RE_CRM_CHILDLETTERSCANNER"
+			cmd.CommandText = "dbo.USR_USP_CHILDLETTERSCANNER_CRM"
 			cmd.CommandType = CommandType.StoredProcedure
 
 			cmd.Parameters.AddWithValue("@SponsorLookupID", _sponsorLookupId)
 			cmd.Parameters.AddWithValue("@ChildLookupID", _childLookupId)
-			cmd.Parameters.AddWithValue("@LetterFullname", _letterFullname)
-			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
+			cmd.Parameters.AddWithValue("@ChildProjectLookupID", _childProjectLookupId)
+			cmd.Parameters.AddWithValue("@InteractionSequenceLookupId", _interactionLookupId)
 			cmd.Parameters.AddWithValue("@ScanSession", _scannerSession)
+			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
 
 			Dim scannerMessage As SqlParameter = New SqlParameter("@ScannerMessage", String.Empty)
 			scannerMessage.Direction = ParameterDirection.Output

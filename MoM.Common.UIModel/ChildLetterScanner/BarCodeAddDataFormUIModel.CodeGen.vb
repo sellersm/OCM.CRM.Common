@@ -27,7 +27,8 @@ Partial Public Class [BarCodeAddDataFormUIModel]
 
     Private WithEvents _barcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _barcodeelements As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of BarCodeAddDataFormBARCODEELEMENTSUIModel)
-    Private WithEvents _submit As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+	Private WithEvents _submit As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+	Private WithEvents _scansession As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
     Public Sub New()
@@ -35,7 +36,8 @@ Partial Public Class [BarCodeAddDataFormUIModel]
 
         _barcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _barcodeelements = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of BarCodeAddDataFormBARCODEELEMENTSUIModel)
-        _submit = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+		_submit = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+		_scansession = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
         MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add
         MyBase.DataFormTemplateId = New Guid("8e7c2281-2538-4d91-a20d-223b0e1cbf93")
@@ -66,6 +68,14 @@ Partial Public Class [BarCodeAddDataFormUIModel]
         _submit.Name = "SUBMIT"
         _submit.Caption = "Save results"
         Me.Fields.Add(_submit)
+
+		'
+		'_scansession
+		'
+		_scansession.Caption = "Scan session"
+		_scansession.Name = "SCANSESSION"
+		_scansession.MaxLength = 100
+		Me.Fields.Add(_scansession)
 
 		OnCreated()
 
@@ -103,5 +113,16 @@ Partial Public Class [BarCodeAddDataFormUIModel]
             Return _submit
         End Get
     End Property
-    
+
+	''' <summary>
+	''' Scan session
+	''' </summary>
+	<System.ComponentModel.Description("Scan session")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [SCANSESSION]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		Get
+			Return _scansession
+		End Get
+	End Property
+
 End Class

@@ -364,8 +364,8 @@
     <EmbeddedResource Include="Interaction\InteractionExtension.SponsorshipFulfillmentChildInfo.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LetterScanner\ChildLetterBarCode.Add.xml" />
-    <EmbeddedResource Include="LetterScanner\ChildLetterBarcode.Task.xml" />
+    <EmbeddedResource Include="LetterScanner\RE Letter Scanner\ChildLetterBarCode.Add.xml" />
+    <EmbeddedResource Include="LetterScanner\RE Letter Scanner\ChildLetterBarcode.Task.xml" />
     <EmbeddedResource Include="LetterScanner\ChangeAgent.Translation function.xml" />
     <EmbeddedResource Include="LetterScanner\ChangeAgentIDByName.SimpleDataList.xml" />
     <EmbeddedResource Include="LetterScanner\ItemsEnclosed.SimpleList.xml" />
@@ -373,9 +373,9 @@
     <EmbeddedResource Include="LetterScanner\LetterScannerLog.Table.xml" />
     <EmbeddedResource Include="LetterScanner\ScannerLog.DataList.xml" />
     <EmbeddedResource Include="LetterScanner\USR_USP_CREATESCANSESSIONTEXT.xml" />
-    <EmbeddedResource Include="LetterScanner\USR_USP_PARSERAISERSEDGEBARCODE.xml" />
-    <EmbeddedResource Include="LetterScanner\USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
-    <EmbeddedResource Include="LetterScanner\USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml" />
+    <EmbeddedResource Include="LetterScanner\RE Letter Scanner\USR_USP_PARSERAISERSEDGEBARCODE.xml" />
+    <EmbeddedResource Include="LetterScanner\RE Letter Scanner\USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
+    <EmbeddedResource Include="LetterScanner\RE Letter Scanner\USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml" />
     <EmbeddedResource Include="LetterScanner\ViewScannerLog.Page.xml" />
     <EmbeddedResource Include="LetterScanner\ViewScannerLogDataList.Task.xml" />
   </ItemGroup>
@@ -383,10 +383,31 @@
     <EmbeddedResource Include="LetterScanner\LetterScanner.Package.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LetterScanner\SponsorLetterBarCode.Add.xml" />
+    <EmbeddedResource Include="LetterScanner\RE Letter Scanner\SponsorLetterBarCode.Add.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LetterScanner\SponsorLetterBarcode.Task.xml" />
+    <EmbeddedResource Include="LetterScanner\RE Letter Scanner\SponsorLetterBarcode.Task.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\CRM Letter Scanner\CRM_ChildLetterBarCode.Add.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\CRM Letter Scanner\CRM_SponsorLetterBarcode.Task.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\CRM Letter Scanner\CRM_ChildLetterBarcode.Task.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\CRM Letter Scanner\CRM_SponsorLetterBarCode.Add.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\CRM Letter Scanner\USR_USP_CHILDLETTERSCANNER_CRM.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\CRM Letter Scanner\USR_USP_SPONSORLETTERSCANNER_CRM.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\ScannerLog.Query.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

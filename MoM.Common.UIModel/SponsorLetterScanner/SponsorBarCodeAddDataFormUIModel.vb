@@ -7,7 +7,7 @@ Public Class SponsorBarCodeAddDataFormUIModel
 	Dim _letterFullname As String
 	Dim _exceptionMessage As String
 	Dim _scanOutcome As String
-	Dim _scanSession As String
+	Dim _scannerSession As String
 	Dim _scannerMessage As String
 	Dim _exceptionOccurred As Boolean
 
@@ -16,7 +16,9 @@ Public Class SponsorBarCodeAddDataFormUIModel
 		Me.SUBMIT.Visible = False
 		Me.SUBMIT.Value = False
 
-		_scanSession = GetScanSession()
+		_scannerSession = GetScanSession()
+		Me.SCANSESSION.Value = _scannerSession
+
 	End Sub
 
 	Private Sub BarCodeAddDataFormUIModel_Validate(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.BeginValidateEventArgs) Handles Me.BeginValidate
@@ -46,9 +48,9 @@ Public Class SponsorBarCodeAddDataFormUIModel
 				'***    FOR TESTING ONLY ***
 				'***   Hardcoding these values:
 				'*** COMMENT THESE LINES WHEN DONE TESTING:
-				_sponsorLookupId = "8-10000010"	 'Jonny Tester
-				_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
-				_letterFullname = "Sponsor Letter"
+				'_sponsorLookupId = "8-10000010"	 'Jonny Tester
+				'_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
+				'_letterFullname = "Sponsor Letter"
 				'
 				'******** END OF TEST CODE:
 
@@ -99,6 +101,10 @@ Public Class SponsorBarCodeAddDataFormUIModel
 				element.EXCEPTION.Value = _exceptionMessage.ToString()
 				element.LETTERNAME.Value = _letterFullname
 			End If
+
+			'clear out the barcode field:
+			Me.BARCODE.Value = String.Empty
+			_barcode.Value = String.Empty
 
 		Else
 			' Bar code is not correctly formatted, do not parse the string but add original bar code value and invalid status into the gridview
@@ -221,7 +227,7 @@ Public Class SponsorBarCodeAddDataFormUIModel
 				cmd.Parameters.AddWithValue("@ItemsEnclosedCode", DBNull.Value)
 			End If
 
-			cmd.Parameters.AddWithValue("@ScanSession", _scanSession)
+			cmd.Parameters.AddWithValue("@ScanSession", _scannerSession)
 
 			Dim scannerMessage As SqlParameter = New SqlParameter("@ScannerMessage", String.Empty)
 			scannerMessage.Direction = ParameterDirection.Output

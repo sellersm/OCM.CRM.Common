@@ -1,6 +1,6 @@
 Imports System.Data.SqlClient
 
-Public Class BarCodeAddDataFormUIModel
+Public Class CRMSponsorLetterScannerAddDataFormUIModel
 
 	Dim _sponsorLookupId As String
 	Dim _childLookupId As String
@@ -35,7 +35,7 @@ Public Class BarCodeAddDataFormUIModel
 		_scanOutcome = String.Empty
 		_scannerMessage = String.Empty
 
-		Dim element As BarCodeAddDataFormBARCODEELEMENTSUIModel = New BarCodeAddDataFormBARCODEELEMENTSUIModel()
+		Dim element As CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel = New CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel()
 		element.RESULTSOK.Enabled = False
 
 		If _barcode.Value.ToString().Length = 15 Then
@@ -50,7 +50,7 @@ Public Class BarCodeAddDataFormUIModel
 				'*** COMMENT THESE LINES WHEN DONE TESTING:
 				'_sponsorLookupId = "8-10000010"	 'Jonny Tester
 				'_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
-				'_letterFullname = "Child Acknowledgement Letter"
+				'_letterFullname = "Sponsor Letter"
 				'
 				'******** END OF TEST CODE:
 
@@ -82,6 +82,10 @@ Public Class BarCodeAddDataFormUIModel
 			Else
 				element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 				element.RESULTSOK.Value = False
+
+				'we know this is an exception
+				element.LETTERSTACK.Value = "Exception"
+
 				'Make the Scan Status be: "Success" or "Unsuccessful"
 				element.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
 				'element.BARCODE.Value = _barcode.Value.ToString()
@@ -99,6 +103,10 @@ Public Class BarCodeAddDataFormUIModel
 		Else
 			' Bar code is not correctly formatted, do not parse the string but add original bar code value and invalid status into the gridview
 			element.BARCODE.Value = _barcode.Value.ToString()
+
+			'we know this is an exception
+			element.LETTERSTACK.Value = "Exception"
+
 			element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 			element.SCANSTATUS.Value = "Unsuccessful"
 			element.EXCEPTION.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.BadImageAndText
@@ -185,16 +193,34 @@ Public Class BarCodeAddDataFormUIModel
 		'scanoutcome will have this value if there was an exception: 'Place the letter on the exception stack.'
 		'@ExceptionOccurred will have a value of 1
 
+		'@SponsorLookupID nvarchar(6),
+		'@ChildLookupID nvarchar(7),
+		'@LetterFullname nvarchar(100),
+		'@ChangeAgentID uniqueidentifier,
+		'@ItemsEnclosedCode as uniqueidentifier,
+		'@ScanSession nvarchar(68),
+		'@ScannerMessage nvarchar(1000) OUTPUT,
+		'@ScanOutcome nvarchar(100) OUTPUT,
+		'@ExceptionOccurred bit OUTPUT
+
+
 		Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
 			Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
 			cmd.Connection = conn
-			cmd.CommandText = "dbo.USR_USP_RE_CRM_CHILDLETTERSCANNER"
+			cmd.CommandText = "dbo.USR_USP_RE_CRM_SPONSORLETTERSCANNER"
 			cmd.CommandType = CommandType.StoredProcedure
 
 			cmd.Parameters.AddWithValue("@SponsorLookupID", _sponsorLookupId)
 			cmd.Parameters.AddWithValue("@ChildLookupID", _childLookupId)
 			cmd.Parameters.AddWithValue("@LetterFullname", _letterFullname)
 			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
+
+			If Me.ITEMSENCLOSEDCODEID.HasValue Then
+				cmd.Parameters.AddWithValue("@ItemsEnclosedCode", Me.ITEMSENCLOSEDCODEID.Value)
+			Else
+				cmd.Parameters.AddWithValue("@ItemsEnclosedCode", DBNull.Value)
+			End If
+
 			cmd.Parameters.AddWithValue("@ScanSession", _scannerSession)
 
 			Dim scannerMessage As SqlParameter = New SqlParameter("@ScannerMessage", String.Empty)
@@ -230,7 +256,6 @@ Public Class BarCodeAddDataFormUIModel
 		'return the unique identifier of this user and scanning session
 		Return GetRequestContext().AppUserInfo.AppUserName.ToString() & Date.Now.ToShortDateString() & Date.Now.ToShortTimeString()
 	End Function
-
 
 	Private Function GetLetterStack(ByVal scanOutcome As String) As String
 		'determines which letter stack this letter should be placed in

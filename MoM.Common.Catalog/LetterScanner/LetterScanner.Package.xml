@@ -26,6 +26,7 @@
 										SponsorLetterBarcode.Task.xml
 										SponsorLetterBarCode.Add.xml
 										USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml
+	06-Dec-2012		Memphis			Added ScannerLog.Query.xml
 	-->	
 	
 
@@ -51,6 +52,9 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarcode.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorLetterBarcode.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ViewScannerLog.Page.xml" />
+		
+		<!-- Query -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.Query.xml" />
 	</common:DependencyList>
 
 </PackageSpec>

@@ -1,0 +1,22 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="ecbfc188-e2cd-4634-b047-019053b49e79"
+	Name="USP_xxx"
+	Description="REPLACE_WITH_DESCRIPTION"
+	Author="memphis-PC\Administrator"
+	SPName="USP_xxx"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USP_xxx
+as
+begin
+	-- do work
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

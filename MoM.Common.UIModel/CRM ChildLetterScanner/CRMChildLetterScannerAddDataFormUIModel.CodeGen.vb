@@ -14,8 +14,8 @@ Option Infer On
 ''' <summary>
 ''' Represents the UI model for the 'Bar code add data form' data form
 ''' </summary>
-<Global.Blackbaud.AppFx.UIModeling.Core.DataFormUIModelMetadata(Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add, "147fce52-6c63-46f9-894e-181df34c65a0", "bef3a82d-f674-4c1c-8699-ba8cc13139c4", "Sponsor Letter Bar Code Scanner")> _
-Partial Public Class [SponsorBarCodeAddDataFormUIModel]
+<Global.Blackbaud.AppFx.UIModeling.Core.DataFormUIModelMetadata(Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add, "1ca12f92-794b-4130-99bc-47bf8b04e909", "d8fb582e-9a10-4945-a044-2b3b15b13b52", "CRM child letter scanner add data form")> _
+Partial Public Class [CRMChildLetterScannerAddDataFormUIModel]
 	Inherits Global.Blackbaud.AppFx.UIModeling.Core.DataFormUIModel
 
 #Region "Extensibility methods"
@@ -26,27 +26,26 @@ Partial Public Class [SponsorBarCodeAddDataFormUIModel]
 #End Region
 
 	Private WithEvents _barcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
-	Private WithEvents _barcodeelements As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel)
+	Private WithEvents _barcodeelements As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel)
 	Private WithEvents _submit As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
-	Private WithEvents _itemsenclosedcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
 	Private WithEvents _scansession As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+
 
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
 	Public Sub New()
 		MyBase.New()
 
 		_barcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
-		_barcodeelements = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel)
+		_barcodeelements = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel)
 		_submit = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
-		_itemsenclosedcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-		_scansession = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		_scanSession = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
 		MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add
-		MyBase.DataFormTemplateId = New Guid("147fce52-6c63-46f9-894e-181df34c65a0")
-		MyBase.DataFormInstanceId = New Guid("bef3a82d-f674-4c1c-8699-ba8cc13139c4")
+		MyBase.DataFormTemplateId = New Guid("1ca12f92-794b-4130-99bc-47bf8b04e909")
+		MyBase.DataFormInstanceId = New Guid("d8fb582e-9a10-4945-a044-2b3b15b13b52")
 		MyBase.RecordType = "Bar Code"
 		MyBase.FixedDialog = False
-		MyBase.UserInterfaceUrl = "browser/htmlforms/custom/SponsorBarCodeAddDataForm.html"
+		MyBase.UserInterfaceUrl = "browser/htmlforms/custom/CRMChildLetterScannerAddDataForm.html"
 
 		'
 		'_barcode
@@ -72,21 +71,12 @@ Partial Public Class [SponsorBarCodeAddDataFormUIModel]
 		Me.Fields.Add(_submit)
 
 		'
-		'_itemsenclosedcodeid
-		'
-		_itemsenclosedcodeid.Caption = "Items enclosed"
-		_itemsenclosedcodeid.Name = "ITEMSENCLOSEDCODEID"
-		_itemsenclosedcodeid.Required = False
-		_itemsenclosedcodeid.CodeTableName = "USR_ITEMSENCLOSEDCODE"
-		Me.Fields.Add(_itemsenclosedcodeid)
-
-		'
 		'_scansession
 		'
-		_scansession.Caption = "Scan session"
-		_scansession.Name = "SCANSESSION"
-		_scansession.MaxLength = 100
-		Me.Fields.Add(_scansession)
+		_scanSession.Caption = "Scan session"
+		_scanSession.Name = "SCANSESSION"
+		_scanSession.MaxLength = 100
+		Me.Fields.Add(_scanSession)
 
 		OnCreated()
 
@@ -108,7 +98,7 @@ Partial Public Class [SponsorBarCodeAddDataFormUIModel]
 	''' </summary>
 	<System.ComponentModel.Description("Elements")> _
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-	Public ReadOnly Property [BARCODEELEMENTS]() As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel)
+	Public ReadOnly Property [BARCODEELEMENTS]() As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel)
 		Get
 			Return _barcodeelements
 		End Get
@@ -125,16 +115,6 @@ Partial Public Class [SponsorBarCodeAddDataFormUIModel]
 		End Get
 	End Property
 
-	''' <summary>
-	''' Items enclosed
-	''' </summary>
-	<System.ComponentModel.Description("Items enclosed")> _
-	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-	Public ReadOnly Property [ITEMSENCLOSEDCODEID]() As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
-		Get
-			Return _itemsenclosedcodeid
-		End Get
-	End Property
 
 	''' <summary>
 	''' Scan session

@@ -42,6 +42,10 @@ declare @StatusCodePending as tinyint
 declare @ErrMsg nvarchar(4000)
 declare @ErrSeverity int
 
+--Expected Date is last day of month, 3 months in advance
+declare @expectedDate date = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);
+
+
 -- Constants
 set @StatusCodeCompleted = 2
 set @StatusCodePending = 1
@@ -305,7 +309,7 @@ if @ExceptionOccurred = 0
 		@NewID,
 		@SponsorID,
 		@InteractionTypeCode,
-		@Date,
+		@expectedDate,
 		@Date,
 		@StatusCodeCompleted,
 		@InteractionSubcategoryID,

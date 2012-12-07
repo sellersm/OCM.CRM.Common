@@ -109,6 +109,12 @@
       <DependentUpon>CommonUIModelVersionUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="CommonUIModelVersionUIModel.vb" />
+    <Compile Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.vb" />
+    <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.vb" />
     <Compile Include="Interaction\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
     </Compile>
@@ -146,8 +152,12 @@
     <None Include="postbuild.bat" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.xml" />
+    <Content Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.xml" />
     <Content Include="htmlforms\BarCodeAddDataForm.html" />
     <Content Include="ChildLetterScanner\BarCodeAddDataFormUIModel.xml" />
+    <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
+    <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
     <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
