@@ -65,7 +65,7 @@ Public Class BarCodeAddDataFormUIModel
 					element.SCANSTATUS.Value = "Success!"
 					element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.GoodImageAndText
 
-					_barcode.Value = ""
+					Me.BARCODE.Value = ""
 					'Me.Fields("BARCODE").ValueObject = ""  -- If we create a field list
 
 				Else
