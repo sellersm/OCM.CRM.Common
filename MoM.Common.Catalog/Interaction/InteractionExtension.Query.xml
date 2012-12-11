@@ -21,6 +21,7 @@
 									Added Lookup ID and Name for PREVIOUSCHILDPROJECT and TRANSFERCHILDPROJECT
 	03-Oct-2012		CMayeda			Added SEQUENCEID from INTERACTION table
 	05-Dec-2012		CMayeda			Fixed Sponsored Project fields
+	10-Dec-2012		CMayeda			Added Letter Scanner fields
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -84,13 +85,26 @@
 			int_ext.CITY,
 			STATE.DESCRIPTION as [STATEID_TRANSLATION],
 			STATE.ABBREVIATION as [STATEID_ABBREVIATION],
-			int_ext.POSTCODE
+			int_ext.POSTCODE,
+			
+			int_ext.COMPLETEDAFTERCANCELLATION,
+			int_ext.SCANSESSION,
+			intsubcat.NAME as ORIGINALLETTERSUBCATEGORYNAME,
+			ORIGINALLETTERSEQUENCEID,
+   			int_ext.CHILDID,
+			(select	LOOKUPID from dbo.SPONSORSHIPOPPORTUNITY where ID = int_ext.CHILDID) as CHILDLOOKUPID,
+			(select	NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = int_ext.CHILDID) as CHILDNAME,
+			int_ext.CHILDPROJECTID,
+			childproj.LOOKUPID as CHILDPROJECTLOOKUPID,
+			childproj.NAME as CHILDPROJECTNAME
 
 	  from	dbo.USR_INTERACTIONEXTENSION int_ext
 	  join	dbo.INTERACTION on int_ext.ID = INTERACTION.ID
-	  left  outer join 
-				dbo.STATE on STATE.ID = int_ext.STATEID
-				
+ left join	dbo.STATE on STATE.ID = int_ext.STATEID
+ left join	dbo.CONSTITUENT childproj on childproj.ID = int_ext.CHILDPROJECTID
+ left join	dbo.INTERACTIONSUBCATEGORY intsubcat on intsubcat.ID = ORIGINALLETTERSUBCATEGORYID
+    
+ 				
 			]]>
 		</ViewSQL> 
 	</ViewImplementation>
@@ -225,7 +239,37 @@
 				</LookupInfo>
 			</OutputField>
 			<OutputField Caption="ZIP" Name="POSTCODE" Category="Reservation Request" />
+			
+			<OutputField Name="COMPLETEDAFTERCANCELLATION" Caption="Completed After Cancellation" DataType="String" >
+				<LookupInfo>
+					<TranslationList>
+						<common:Options>
+							<common:TranslationListOption Value="True" />
+							<common:TranslationListOption Value="False" />
+						</common:Options>
+					</TranslationList>
+				</LookupInfo>
+			</OutputField>
 
+			<OutputField Name="SCANSESSION" Caption="Scan Session" DataType="String" />
+			<OutputField Name="ORIGINALLETTERSEQUENCEID" Caption="Original Letter Sequence ID" DataType="Integer" />
+			<OutputField Name="CHILDID" Caption="Child record" Category="System Fields" DataType="Guid" IsHidden="true" />
+			<OutputField Name="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
+			<OutputField Name="CHILDNAME" Caption="Child Name" DataType="String" />
+			<OutputField Name="CHILDPROJECTID" Caption="Child Project record" Category="System Fields" DataType="Guid" IsHidden="true" />
+			<OutputField Name="CHILDPROJECTLOOKUPID" Caption="Child Project Lookup ID" DataType="String" />
+			<OutputField Name="CHILDPROJECTNAME" Caption="Child Project Name" DataType="String" />
+			<OutputField Caption="Original Letter Subcategory" Name="ORIGINALLETTERSUBCATEGORYNAME" CaptionResourceKey="$$subcategory">
+				<LookupInfo>
+					<SimpleDataList SimpleDataListID="0EACC39B-07D1-4641-8774-E319559535A7">
+						<common:Params>
+							<common:Param ID="INCLUDEINACTIVE">
+								<common:Value>1</common:Value>
+							</common:Param>
+						</common:Params>
+					</SimpleDataList>
+				</LookupInfo>
+			</OutputField>
 
 		</OutputFields>
 	</Output>
