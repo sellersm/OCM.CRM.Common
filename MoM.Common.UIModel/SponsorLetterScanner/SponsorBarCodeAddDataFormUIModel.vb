@@ -115,8 +115,13 @@ Public Class SponsorBarCodeAddDataFormUIModel
 			' Bar code is not correctly formatted, do not parse the string but add original bar code value and invalid status into the gridview
 			element.BARCODE.Value = _barcode.Value.ToString()
 
-			'we know this is an exception
-			element.LETTERSTACK.Value = "Exception"
+			'figure out which Letter Stack this letter should go into:
+			element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
+			If element.LETTERSTACK.Value.ToString().ToLower().Contains("exception") Then
+				element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.BadTextOnly
+			Else
+				element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.GoodTextOnly
+			End If
 
 			element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 			element.SCANSTATUS.Value = "Unsuccessful"
