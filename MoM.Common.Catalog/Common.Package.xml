@@ -34,6 +34,7 @@
 									USR_USP_RE_CRM_CHILDLETTERSCANNER.xml
 									ViewScannerLog.Page.xml
 									ViewScannerLogDataList.Task.xml
+	10-Dec-2012		CMayeda			Added InteractionExtension.SponsorshipFulfillmentChildInfo.Query.xml
 	-->
 
 
@@ -165,7 +166,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Query.xml" />
-
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorshipFulfillmentChildInfo.Query.xml" />
+		
 		<!-- Global Changes -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Delete.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChange.xml" />
