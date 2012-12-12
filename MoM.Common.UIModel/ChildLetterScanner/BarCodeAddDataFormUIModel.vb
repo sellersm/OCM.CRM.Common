@@ -74,11 +74,20 @@ Public Class BarCodeAddDataFormUIModel
 
 				'figure out which Letter Stack this letter should go into:
 				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
+				If element.LETTERSTACK.Value.ToString().ToLower().Contains("exception") Then
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.BadTextOnly
+				Else
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.GoodTextOnly
+				End If
 
 				element.SCANMESSAGE.Value = _scannerMessage
 				element.SPONSORLOOKUPID.Value = _sponsorLookupId
 				element.CHILDLOOKUPID.Value = _childLookupId
 				element.LETTERNAME.Value = _letterFullname
+
+				'clear out the barcode field:
+				Me.BARCODE.Value = String.Empty
+				_barcode.Value = String.Empty
 			Else
 				element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 				element.RESULTSOK.Value = False
@@ -90,11 +99,14 @@ Public Class BarCodeAddDataFormUIModel
 				element.EXCEPTION.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.BadImageAndText
 				element.EXCEPTION.Value = _exceptionMessage.ToString()
 				element.LETTERNAME.Value = _letterFullname
+				'figure out which Letter Stack this letter should go into:
+				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
+				If element.LETTERSTACK.Value.ToString().ToLower().Contains("exception") Then
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.BadTextOnly
+				Else
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.GoodTextOnly
+				End If
 			End If
-
-			'clear out the barcode field:
-			Me.BARCODE.Value = String.Empty
-			_barcode.Value = String.Empty
 
 		Else
 			' Bar code is not correctly formatted, do not parse the string but add original bar code value and invalid status into the gridview

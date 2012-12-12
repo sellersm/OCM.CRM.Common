@@ -31,12 +31,12 @@ as
 		lsl.DATESPONSORSHIPCANCELLED,
 		lsl.NUMBEROFDAYSSPONSORED
 	from dbo.USR_LETTERSCANNERLOG lsl
-	join dbo.SPONSORSHIPOPPORTUNITYCHILD sc on lsl.childid = sc.ID
-	join dbo.SPONSORSHIPOPPORTUNITY so on so.ID = sc.ID
-	join dbo.CONSTITUENT c on c.ID = lsl.sponsorid
-	join dbo.CHANGEAGENT au on lsl.addedbyid = au.ID
-	join dbo.SPONSORSHIPLOCATION sl on sl.ID = so.SPONSORSHIPLOCATIONID
-	join dbo.INTERACTIONSUBCATEGORY isc on lsl.LETTERSUBCATEGORYID = isc.ID
+	left join dbo.SPONSORSHIPOPPORTUNITYCHILD sc on lsl.childid = sc.ID
+	left join dbo.SPONSORSHIPOPPORTUNITY so on so.ID = sc.ID
+	left join dbo.CONSTITUENT c on c.ID = lsl.sponsorid
+	left join dbo.CHANGEAGENT au on lsl.addedbyid = au.ID
+	left join dbo.SPONSORSHIPLOCATION sl on sl.ID = so.SPONSORSHIPLOCATIONID
+	left join dbo.INTERACTIONSUBCATEGORY isc on lsl.LETTERSUBCATEGORYID = isc.ID
 	order by lsl.DATEADDED desc
 	--where CONTEXTID = @CONTEXTID
 			]]>

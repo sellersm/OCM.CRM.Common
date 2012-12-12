@@ -74,23 +74,32 @@ Public Class SponsorBarCodeAddDataFormUIModel
 
 				'figure out which Letter Stack this letter should go into:
 				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
-
-				'If _exceptionOccurred Then
-				'	element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
-				'Else
-				'	element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.GoodImageAndText
-				'End If
+				If element.LETTERSTACK.Value.ToString().Contains("Exception") Then
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.BadTextOnly
+				Else
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.GoodTextOnly
+				End If
 
 				element.SCANMESSAGE.Value = _scannerMessage
 				element.SPONSORLOOKUPID.Value = _sponsorLookupId
 				element.CHILDLOOKUPID.Value = _childLookupId
 				element.LETTERNAME.Value = _letterFullname
+
+				'clear out the barcode field:
+				Me.BARCODE.Value = String.Empty
+				_barcode.Value = String.Empty
+
 			Else
 				element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 				element.RESULTSOK.Value = False
 
-				'we know this is an exception
-				element.LETTERSTACK.Value = "Exception"
+				'figure out which Letter Stack this letter should go into:
+				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
+				If element.LETTERSTACK.Value.ToString().ToLower().Contains("exception") Then
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.BadTextOnly
+				Else
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.GoodTextOnly
+				End If
 
 				'Make the Scan Status be: "Success" or "Unsuccessful"
 				element.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
@@ -101,10 +110,6 @@ Public Class SponsorBarCodeAddDataFormUIModel
 				element.EXCEPTION.Value = _exceptionMessage.ToString()
 				element.LETTERNAME.Value = _letterFullname
 			End If
-
-			'clear out the barcode field:
-			Me.BARCODE.Value = String.Empty
-			_barcode.Value = String.Empty
 
 		Else
 			' Bar code is not correctly formatted, do not parse the string but add original bar code value and invalid status into the gridview
@@ -239,7 +244,7 @@ Public Class SponsorBarCodeAddDataFormUIModel
 			Dim scanOutcome As SqlParameter = New SqlParameter("@ScanOutcome", String.Empty)
 			scanOutcome.Direction = ParameterDirection.Output
 			scanOutcome.SqlDbType = SqlDbType.NVarChar
-			scanOutcome.Size = 100
+			scanOutcome.Size = 1000
 			cmd.Parameters.Add(scanOutcome)
 
 			Dim exceptionOccurred As SqlParameter = New SqlParameter("@ExceptionOccurred", 0)

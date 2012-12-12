@@ -2,17 +2,25 @@ Imports System.Data.SqlClient
 
 Public Class CRMChildLetterScannerAddDataFormUIModel
 
-	Dim _sponsorLookupId As String
-	Dim _childLookupId As String
-	Dim _letterFullname As String
-	Dim _exceptionMessage As String
-	Dim _scanOutcome As String
-	Dim _scannerSession As String
-	Dim _scannerMessage As String
-	Dim _exceptionOccurred As Boolean
-	Dim _interactionLookupId As String
-	Dim _childProjectLookupId As String
+	Private _sponsorLookupId As String
+	Private _childLookupId As String
+	Private _letterFullname As String
+	Private _exceptionMessage As String
+	Private _scanOutcome As String
+	Private _scannerSession As String
+	Private _scannerMessage As String
+	Private _exceptionOccurred As Boolean
+	Private _interactionSequenceId As Integer
+	Private _childProjectLookupId As String
 
+	' using these variables to make testing easier
+	'************** CHANGE VALUES BACK AFTER TESTING! ***************
+	Private _ISTESTING As Boolean = False
+	Private _sponsorIdLength As Integer = 6
+	Private _childIdLength As Integer = 7
+	Private _projectIdLength As Integer = 6
+	Private _interactionIdLength As Integer = 8	 ' 8
+	Private _barCodeLength As Integer = _sponsorIdLength + _childIdLength + _projectIdLength + _interactionIdLength
 
 	Private Sub CRMChildLetterScannerAddDataFormUIModel_Loaded(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.LoadedEventArgs) Handles Me.Loaded
 		Me.SUBMIT.Visible = False
@@ -36,28 +44,28 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 		_exceptionMessage = String.Empty
 		_scanOutcome = String.Empty
 		_scannerMessage = String.Empty
-		_interactionLookupId = String.Empty
+		'_interactionSequenceId = 0
 		_childProjectLookupId = String.Empty
 		_exceptionOccurred = False
 
 		Dim element As CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel = New CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel()
 		element.RESULTSOK.Enabled = False
 
-		If _barcode.Value.ToString().Length = 15 Then
+		If _barcode.Value.ToString().Length = _barCodeLength Then
 			' call the parse sproc and show results:
 			SetParseResults(_barcode.Value.ToString())
 
 			'if the parsing was OK, then call the process sproc:
 			If String.IsNullOrEmpty(_exceptionMessage) Then
 				'***************************
-				'***    FOR TESTING ONLY ***
-				'***   Hardcoding these values:
-				'*** COMMENT THESE LINES WHEN DONE TESTING:
-				'_sponsorLookupId = "8-10000010"	 'Jonny Tester
-				'_childLookupId = "8-10000105"	 'Andrew G. asfdasdf
-				'_letterFullname = "Child Acknowledgement Letter"
-				'
-				'******** END OF TEST CODE:
+				'*** BE SURE THE _ISTETSING FLAG IS SET TO FALSE WHEN DEPLOYING:
+				If _ISTESTING Then
+					'_sponsorLookupId = "8-10000150"		'Lester t. Jester
+					'_childLookupId = "8-10000065"		'Andrea G. McKeehan
+					'_interactionSequenceId = 10000180
+					'_childProjectLookupId = "8-10000000"
+					'******** END OF TEST CODE:
+				End If
 
 				ProcessBarCode()
 
@@ -79,11 +87,20 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 
 				'figure out which Letter Stack this letter should go into:
 				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
+				If element.LETTERSTACK.Value.ToString().Contains("Exception") Then
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.BadTextOnly
+				Else
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.GoodTextOnly
+				End If
 
 				element.SCANMESSAGE.Value = _scannerMessage
 				element.SPONSORLOOKUPID.Value = _sponsorLookupId
 				element.CHILDLOOKUPID.Value = _childLookupId
-				element.LETTERNAME.Value = _letterFullname
+				element.CHILDPROJECTLOOKUPID.Value = _childProjectLookupId
+
+				'clear out the barcode field:
+				Me.BARCODE.Value = String.Empty
+				_barcode.Value = String.Empty
 			Else
 				element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 				element.RESULTSOK.Value = False
@@ -94,12 +111,15 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 				element.CHILDLOOKUPID.Value = _childLookupId
 				element.EXCEPTION.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.BadImageAndText
 				element.EXCEPTION.Value = _exceptionMessage.ToString()
-				element.LETTERNAME.Value = _letterFullname
+				element.CHILDPROJECTLOOKUPID.Value = _childProjectLookupId
+				'figure out which Letter Stack this letter should go into:
+				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
+				If element.LETTERSTACK.Value.ToString().ToLower().Contains("exception") Then
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.BadTextOnly
+				Else
+					element.LETTERSTACK.ValueDisplayStyle = ValueDisplayStyle.GoodTextOnly
+				End If
 			End If
-
-			'clear out the barcode field:
-			Me.BARCODE.Value = String.Empty
-			_barcode.Value = String.Empty
 
 		Else
 			' Bar code is not correctly formatted, do not parse the string but add original bar code value and invalid status into the gridview
@@ -107,10 +127,10 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 			element.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 			element.SCANSTATUS.Value = "Unsuccessful"
 			element.EXCEPTION.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.BadImageAndText
-			element.EXCEPTION.Value = "Bar Code must be 15 characters long."
+			element.EXCEPTION.Value = String.Format("Bar Code must be {0} characters long.", _barCodeLength)
 			element.RESULTSOK.Value = False
 			'set the scan outcome to something so it's displayed below for the invalid reason:
-			_scanOutcome = "Unable to read Bar Code: must be 15 characters long."
+			_scanOutcome = String.Format("Unable to read Bar Code: must be {0} characters long.", _barCodeLength)
 		End If
 
 		BARCODEELEMENTS.Value.Add(element)
@@ -128,80 +148,56 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 
 	Private Sub SetParseResults(ByVal barCode As String)
 		Dim sBarCode As String = _barcode.Value.ToString()
-		Dim sValidationStatus As String = ""
+		Dim errorMessage As String = String.Empty
+		_exceptionMessage = String.Empty
 
-		Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
-			Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
-			cmd.Connection = conn
-			cmd.CommandText = "dbo.USR_USP_PARSERAISERSEDGEBARCODE"
-			cmd.CommandType = CommandType.StoredProcedure
+		' Memphis 12/10/12 - no real need for a SQL call just to parse a string value, so removed all the sql/sproc stuff & 
+		'                    replaced it with the following vb code:
+		'
+		'assign output variable values here:
 
-			cmd.Parameters.AddWithValue("@BarcodeString", barCode)
+		If Not String.IsNullOrEmpty(sBarCode) Then
+			'Sponsor should be 6 characters, child 7 characters, child project 6 characters, interaction sequence 10 digits
+			_sponsorLookupId = sBarCode.Substring(0, _sponsorIdLength)
+			If (Not _ISTESTING) AndAlso (Not IsNumeric(_sponsorLookupId)) Then
+				errorMessage = errorMessage + "Sponsor Lookup Id isn't a number."
+			End If
 
-			Dim sponsorLookupId As SqlParameter = New SqlParameter("@SponsorLookupID", String.Empty)
-			sponsorLookupId.Direction = ParameterDirection.Output
-			sponsorLookupId.SqlDbType = SqlDbType.NVarChar
-			sponsorLookupId.Size = 6
-			cmd.Parameters.Add(sponsorLookupId)
+			_childLookupId = sBarCode.Substring(_sponsorIdLength, _childIdLength)
+			If (Not _ISTESTING) AndAlso (Not IsNumeric(_childLookupId.Substring(1, _childIdLength - 1))) Then
+				errorMessage = errorMessage + "Child Lookup Id isn't a number."
+			End If
 
-			Dim childLookupId As SqlParameter = New SqlParameter("@ChildLookupID", String.Empty)
-			childLookupId.Direction = ParameterDirection.Output
-			childLookupId.SqlDbType = SqlDbType.NVarChar
-			childLookupId.Size = 7
-			cmd.Parameters.Add(childLookupId)
+			_childProjectLookupId = sBarCode.Substring(_sponsorIdLength + _childIdLength, _projectIdLength)
+			If (Not _ISTESTING) AndAlso (Not IsNumeric(_childProjectLookupId)) Then
+				errorMessage = errorMessage + "Child Proejct Lookup Id isn't a number."
+			End If
 
-			Dim letterFullname As SqlParameter = New SqlParameter("@LetterFullname", String.Empty)
-			letterFullname.Direction = ParameterDirection.Output
-			letterFullname.SqlDbType = SqlDbType.NVarChar
-			letterFullname.Size = 100
-			cmd.Parameters.Add(letterFullname)
+			If Not Integer.TryParse(sBarCode.Substring(_sponsorIdLength + _childIdLength + _projectIdLength, _interactionIdLength), _interactionSequenceId) Then
+				'interaction sequence is actually an INT so it must be a number, even in testing.
+				'If (Not IsNumeric(_interactionSequenceId)) Then
+				errorMessage = errorMessage + "Interaction Sequence Id isn't a number."
+			End If
 
-			Dim exceptionMessage As SqlParameter = New SqlParameter("@ExceptionMessage", String.Empty)
-			exceptionMessage.Direction = ParameterDirection.Output
-			exceptionMessage.SqlDbType = SqlDbType.NVarChar
-			exceptionMessage.Size = 1000
-			cmd.Parameters.Add(exceptionMessage)
+			_scanOutcome = ""
+		Else
+			_exceptionMessage = "Bar code is empty!"
+		End If
 
-			'ScanOutcome
-			Dim scanOutcome As SqlParameter = New SqlParameter("@ScanOutcome", String.Empty)
-			scanOutcome.Direction = ParameterDirection.Output
-			scanOutcome.SqlDbType = SqlDbType.NVarChar
-			scanOutcome.Size = 100
-			cmd.Parameters.Add(scanOutcome)
-
-			cmd.ExecuteNonQuery()
-
-			'assign output variable values here:
-			_sponsorLookupId = cmd.Parameters("@SponsorLookupID").Value.ToString()
-			_childLookupId = cmd.Parameters("@ChildLookupID").Value.ToString()
-			_letterFullname = cmd.Parameters("@LetterFullname").Value.ToString()
-			_exceptionMessage = cmd.Parameters("@ExceptionMessage").Value.ToString()
-			_scanOutcome = cmd.Parameters("@ScanOutcome").Value.ToString()
-
-		End Using
+		If Not errorMessage.Equals(String.Empty) Then
+			'we must have something wrong
+			_exceptionMessage = "Bar code not formatted correct: " + errorMessage
+		End If
 
 	End Sub
 
 	Private Sub ProcessBarCode()
 		Dim sBarCode As String = _barcode.Value.ToString()
-		Dim sValidationStatus As String = ""
+		'Dim sValidationStatus As String = ""
 
 		'If there's an error, then theoretically:
 		'scanoutcome will have this value if there was an exception: 'Place the letter on the exception stack.'
 		'@ExceptionOccurred will have a value of 1
-
-		'USR_USP_CHILDLETTERSCANNER_CRM()
-		'@SponsorLookupID nvarchar(6),	
-		'@ChildLookupID nvarchar(7),	
-		'@ChildProjectLookupID nvarchar(100),
-		'@InteractionSequenceLookupId nvarchar(100),
-		'@ChangeAgentID uniqueidentifier,
-		'@ScanSession nvarchar(68),
-		'@ScannerMessage nvarchar(1000) OUTPUT,
-		'@ScanOutcome nvarchar(100) OUTPUT,
-		'@ExceptionOccurred bit OUTPUT
-
-
 
 		Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
 			Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
@@ -212,7 +208,7 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 			cmd.Parameters.AddWithValue("@SponsorLookupID", _sponsorLookupId)
 			cmd.Parameters.AddWithValue("@ChildLookupID", _childLookupId)
 			cmd.Parameters.AddWithValue("@ChildProjectLookupID", _childProjectLookupId)
-			cmd.Parameters.AddWithValue("@InteractionSequenceLookupId", _interactionLookupId)
+			cmd.Parameters.AddWithValue("@InteractionSequenceId", _interactionSequenceId)
 			cmd.Parameters.AddWithValue("@ScanSession", _scannerSession)
 			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
 
@@ -226,7 +222,7 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 			Dim scanOutcome As SqlParameter = New SqlParameter("@ScanOutcome", String.Empty)
 			scanOutcome.Direction = ParameterDirection.Output
 			scanOutcome.SqlDbType = SqlDbType.NVarChar
-			scanOutcome.Size = 100
+			scanOutcome.Size = 1000
 			cmd.Parameters.Add(scanOutcome)
 
 			Dim exceptionOccurred As SqlParameter = New SqlParameter("@ExceptionOccurred", 0)

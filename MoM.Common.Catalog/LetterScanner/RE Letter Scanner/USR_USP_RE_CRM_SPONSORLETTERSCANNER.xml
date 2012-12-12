@@ -27,7 +27,7 @@ create procedure dbo.USR_USP_RE_CRM_SPONSORLETTERSCANNER
 @ItemsEnclosedCode as uniqueidentifier,
 @ScanSession nvarchar(68),
 @ScannerMessage nvarchar(1000) OUTPUT,
-@ScanOutcome nvarchar(100) OUTPUT,
+@ScanOutcome nvarchar(1000) OUTPUT,
 @ExceptionOccurred bit OUTPUT
 
 as
@@ -54,6 +54,9 @@ declare @SponsorLetterSubcategoryID as uniqueidentifier
 declare @StatusCodeCompleted as tinyint
 declare @StatusCodePending as tinyint
 declare @TempTable TABLE(SponsorLetterSequenceID int)
+--Expected Date is last day of month, 3 months in advance
+declare @expectedDate date = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);
+
 
 -- Set constants
 set @StatusCodeCompleted = 2
@@ -163,7 +166,7 @@ if @ExceptionOccurred = 0
 		@NewID
 		,@SponsorID
 		,@InteractionTypeCode
-		,@Date
+		,@expectedDate
 		,@Date
 		,@StatusCodeCompleted
 		,@SponsorLetterSubcategoryID
@@ -289,7 +292,7 @@ if @ExceptionOccurred = 0
 		@NewID
 		,@ChildID
 		,@InteractionTypeCode
-		,@Date
+		,@expectedDate
 		,@StatusCodePending
 		,@ChildAcknowledgementLetterSubcategoryID
 		,'Child Acknowledgement Letter'
@@ -465,20 +468,6 @@ begin catch
 
 	RAISERROR(@ErrMsg, @ErrSeverity, 1)
 end catch
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 end
 

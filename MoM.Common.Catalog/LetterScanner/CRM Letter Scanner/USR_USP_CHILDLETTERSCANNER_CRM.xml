@@ -11,14 +11,14 @@
 	<CreateProcedureSQL>
 		<![CDATA[
 create procedure dbo.USR_USP_CHILDLETTERSCANNER_CRM
-@SponsorLookupID nvarchar(6),	
-@ChildLookupID nvarchar(7),	
-@ChildProjectLookupID nvarchar(100),
-@InteractionSequenceLookupId nvarchar(100),
+@SponsorLookupID nvarchar(6),	-- ** RESET TO 6 **
+@ChildLookupID nvarchar(7),	    -- ** RESET TO 7 **
+@ChildProjectLookupID nvarchar(6),
+@InteractionSequenceId int,
 @ChangeAgentID uniqueidentifier,
 @ScanSession nvarchar(68),
 @ScannerMessage nvarchar(1000) OUTPUT,
-@ScanOutcome nvarchar(100) OUTPUT,
+@ScanOutcome nvarchar(1000) OUTPUT,
 @ExceptionOccurred bit OUTPUT
 
 as
@@ -68,7 +68,7 @@ if @ChangeAgentID is null
 --   not one of the above status, then goto exception processing
 -- (case [COMPLETEDAFTERCANCELLATIONCODE] when (0) then N'False' when (1) then N'True'  end)
 
-set @InteractionStatus = (select [STATUS] from dbo.INTERACTION where LOOKUPID = @InteractionSequenceLookupId)
+set @InteractionStatus = (select [STATUS] from dbo.INTERACTION where SEQUENCEID = @InteractionSequenceId)
 
 if @InteractionStatus is not null
 	begin
@@ -91,7 +91,7 @@ else
 if @newInteractionStatus = 'EXCEPTION'
 	begin
 		set @ExceptionOccurred = 1
-		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Interaction is already completed or has a problem.'
+		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Interaction is completed or neither pending nor cancelled.'
 	end
 			
 
@@ -121,11 +121,8 @@ if @ExceptionOccurred = 0
 
 if @ExceptionOccurred = 0
 	begin
-	-- get the Child Project ID
-	set @BarcodeChildProjectID = (select ID from dbo.SPONSORSHIPLOCATION where LOOKUPID = @ChildProjectLookupID)
-
- -- Don't think we need this one ?????:
-	--set @BarcodeChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+		-- get the Child Project ID
+		set @BarcodeChildProjectID = (select ID from dbo.SPONSORSHIPLOCATION where LOOKUPID = @ChildProjectLookupID)
 		if @BarcodeChildProjectID is null
 			begin
 				set @ExceptionOccurred = 1
@@ -217,7 +214,7 @@ if @ExceptionOccurred = 0
 			INTO @TempTable
 		from (select TOP 1 ID, SEQUENCEID
 		from dbo.INTERACTION 
-		where LOOKUPID = @InteractionSequenceLookupId
+		where SEQUENCEID = @InteractionSequenceId
 		--where CONSTITUENTID = @ChildID 
 		--and INTERACTIONSUBCATEGORYID = @OriginalLetterSubcategoryID
 		--and STATUSCODE = @StatusCodePending
@@ -250,7 +247,7 @@ if @ExceptionOccurred = 0
 				where ID = @OriginalInteractionID
 			end
 			
-		--set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The Child Acknowledgement Letter was completed.  '		
+		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The Child Interaction was completed. '		
 	end
 
 

@@ -52,7 +52,7 @@ Partial Public Class [CRMChildLetterScannerAddDataFormUIModel]
 		'
 		_barcode.Name = "BARCODE"
 		_barcode.Caption = "Bar code"
-		_barcode.MaxLength = 20
+		_barcode.MaxLength = 100
 		Me.Fields.Add(_barcode)
 		'
 		'_barcodeelements
