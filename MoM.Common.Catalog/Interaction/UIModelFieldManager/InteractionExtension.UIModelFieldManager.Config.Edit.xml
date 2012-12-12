@@ -1,0 +1,132 @@
+﻿<EditDataFormTemplateSpec 
+	xmlns="bb_appfx_editdataformtemplate"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="1223ac97-1453-4e91-a401-ce317b8aec6a" 
+	Name="Interaction Extension UI Model Field Manager Config Field Edit Data Form"
+	Description="Used to edit a configuration item for a specific interaction subcategory to control a field in the UI Model Interaction Extension forms" 
+	Author="Cary Mayeda"
+	DataFormInstanceID="a52f4aa8-e611-4fa7-9cc3-984844d46363" 
+	RecordType="Interaction Extension UI Model Field Manager"
+	common:SecurityUIFolder="Interaction Extension" >
+
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	05-Aug-2012		CMayeda			Initial Version
+	-->
+	
+	<SPDataForm>
+
+		<!-- define the edit load SP, which is used to load the data for the form -->
+		<LoadImplementation SPName="USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_CONFIG">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_CONFIG(
+    @ID uniqueidentifier,
+    @DATALOADED bit = 0 output,
+    @TSLONG bigint = 0 output,
+	@UIMODELFIELDCODEID uniqueidentifier = null output,
+	@ISVISIBLE bit = null output,
+	@ISREQUIRED bit = null output
+)
+as
+
+	set nocount on;
+
+	-- be sure to set these, in case the select returns no rows
+	set @DATALOADED = 0
+	set @TSLONG = 0
+
+	-- populate the output parameters, which correspond to fields on the form.  Note that
+	-- we set @DATALOADED = 1 to indicate that the load was successful.  Otherwise, the system
+	-- will display a "no data loaded" message.  Also note that we fetch the TSLONG so that concurrency
+	-- can be considered.
+	select	@DATALOADED = 1,
+			@TSLONG = TSLONG,
+			@UIMODELFIELDCODEID = UIMODELFIELDCODEID,
+			@ISVISIBLE = ISVISIBLE,
+			@ISREQUIRED = ISREQUIRED		
+	  from	dbo.USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER
+	 where	ID = @ID
+
+	return 0;
+				]]>
+			</common:CreateProcedureSQL>
+		</LoadImplementation>
+
+		<SaveImplementation SPName="USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_CONFIG">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_CONFIG (
+	@ID uniqueidentifier,
+	@CHANGEAGENTID uniqueidentifier = null,
+	@UIMODELFIELDCODEID uniqueidentifier,
+	@ISVISIBLE bit,
+	@ISREQUIRED bit
+)
+as
+
+	set nocount on;
+
+	if @changeAgentID is null  
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+
+	declare @currentDate datetime
+	set @currentDate = getdate()
+
+
+	begin try
+		-- handle updating the data
+		update dbo.USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER set
+			UIMODELFIELDCODEID = @UIMODELFIELDCODEID,
+			ISVISIBLE = @ISVISIBLE,
+			ISREQUIRED = @ISREQUIRED,
+			CHANGEDBYID = @CHANGEAGENTID,
+			DATECHANGED = @CURRENTDATE
+		where ID = @ID
+	end try
+	begin catch
+		exec dbo.USP_RAISE_ERROR
+		return 1
+	end catch
+
+return 0;
+				]]>
+			</common:CreateProcedureSQL>
+			<common:ExpectedDBExceptions>
+				<common:Constraints>
+					<common:Constraint Name="FK_USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_UIMODELFIELDCODEID" Field="UIMODELFIELDCODEID" Type="ForeignKey" />
+				</common:Constraints>
+				<common:CustomExceptions>
+					<common:Exception ErrorCode="2601" Field="UIMODELFIELDCODEID" SearchText ="UIX_USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_INTERACTIONSUBCATEGORYID_UIMODELFIELDCODEID">
+						<common:CustomErrorMsg>A configuration already exists for this interaction subcategory and field</common:CustomErrorMsg>
+					</common:Exception>
+				</common:CustomExceptions>
+			</common:ExpectedDBExceptions>
+		</SaveImplementation>
+
+	</SPDataForm>
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system paramters 
+	like the record ID, DATALOADED, TSLONG, and CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="true">
+
+		<common:FormFields>
+			<common:FormField FieldID="UIMODELFIELDCODEID" Caption="UI Model Field ID" DataType="Guid" Required="true" >
+				<common:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUIMODELFIELDCODE" IncludeInactive="false"/>
+			</common:FormField>
+			<common:FormField FieldID="ISVISIBLE" Caption="Is visible" DataType="Boolean" />
+			<common:FormField FieldID="ISREQUIRED" Caption="Is required" DataType="Boolean" />
+		</common:FormFields>
+
+		<common:WebUIComponent>
+			<common:WebUI>
+				<common:DefaultWebUI/>
+			</common:WebUI>
+		</common:WebUIComponent>
+	</common:FormMetaData>
+
+
+</EditDataFormTemplateSpec>

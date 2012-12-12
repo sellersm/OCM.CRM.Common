@@ -1,0 +1,758 @@
+﻿<GlobalChangeSpec
+	xmlns="bb_appfx_globalchange"
+	xmlns:common="bb_appfx_commontypes"
+	ID="d2623c35-d706-44b7-b541-2bd580c14ea1"
+	Name="Constituent Interaction Global Change"
+	Description="Global Change for an Interaction"
+	Author="Bill Elfstrom"
+	DisplayName="Change constituent interactions"
+	GlobalChangeFolder="Interaction"
+	SPName="USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE"
+>
+  <!-- 
+ 
+  History:
+    Date            Modified By     Comments
+    5/9/2012        BElfstrom       Created
+    9/2/2012        BElfstrom       Added WebUIComponent code
+    
+-->
+
+  <CreateProcedureSQL>
+    <![CDATA[
+    
+create procedure dbo.USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE
+(
+  @IDSETREGISTERID uniqueidentifier = null,
+	@CHANGEAGENTID uniqueidentifier = null,
+	@ASOF as datetime = null,
+  @STATUSCODE tinyint = 0,
+  @NEWSTATUSCODE tinyint = 0,
+  @EXPECTEDDATE datetime = null,
+  @NEWEXPECTEDDATE datetime = null,
+  @EXPECTEDDATEPROCESS tinyint = 0,
+  @FUNDRAISERID uniqueidentifier = null,
+  @NEWFUNDRAISERID uniqueidentifier = null,
+  @FUNDRAISERIDPROCESS tinyint = 0,
+  @STATUSCODEPROCESS tinyint = 0,
+  @INTERACTIONTYPECODEID uniqueidentifier,
+  @NEWINTERACTIONTYPECODEID uniqueidentifier,
+  @INTERACTIONTYPECODEIDPROCESS tinyint = 0,
+  @EVENTID uniqueidentifier = null,
+  @NEWEVENTID uniqueidentifier = null,
+  @EVENTIDPROCESS tinyint = 0,
+  @ACTUALDATE datetime = null,
+  @NEWACTUALDATE datetime = null,
+  @ACTUALDATEPROCESS tinyint = 0,
+  @COMMENT nvarchar(max) = '',
+  @NEWCOMMENT nvarchar(max) = '',
+  @COMMENTPROCESS tinyint = 0,
+  @INTERACTIONCATEGORYID uniqueidentifier = null,
+  @NEWINTERACTIONCATEGORYID uniqueidentifier = null,
+  @INTERACTIONSUBCATEGORYID uniqueidentifier = null,
+  @NEWINTERACTIONSUBCATEGORYID uniqueidentifier = null,
+  @INTERACTIONCATEGORYPROCESS as tinyint = 0,
+  @SPACE nvarchar(1),
+  @SPACE1 nvarchar(1),
+  @SPACE2 nvarchar(1),
+  @SPACE3 nvarchar(1),
+  @SPACE4 nvarchar(1),
+  @SPACE5 nvarchar(1),
+  @SPACE6 nvarchar(1),
+  @NUMBERADDED int = 0 output,
+	@NUMBEREDITED int = 0 output,
+	@NUMBERDELETED int = 0 output
+  )
+
+  as			
+
+  set nocount off;
+
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate();
+	
+  set @NUMBERADDED = 0;
+	set @NUMBEREDITED = 0;
+	set @NUMBERDELETED = 0; 
+
+  
+	if @CHANGEAGENTID is null
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+			
+  if @IDSETREGISTERID is null
+	  raiserror ('IDSETREGISTERID is required',13,1);	
+ 
+ 	/* Check for missing Sub Catagory.  The Interaction table only stores Sub catagories.  */
+	if @INTERACTIONSUBCATEGORYID Is Null and  @INTERACTIONCATEGORYID is not null
+    RAISERROR 1000000 'A Category was entered but no Sub Category was entered.  You must enter a Sub Category if a Category is entered.'  
+
+ 	/* Check for missing Sub Catagory.  The Interaction table only stores Sub catagories.  */
+	if @NEWINTERACTIONSUBCATEGORYID Is Null and  @NEWINTERACTIONCATEGORYID is not null
+    RAISERROR 1000000 'A Category was entered but no Sub Category was entered.  You must enter a Sub Category if a Category is entered.'  
+
+ 
+	begin try
+		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate
+
+  -- Build a CTE with values from the selection joined with the interaction table to get all fields
+  ;with allSelectionResults (ID, FUNDRAISERID, STATUSCODE, INTERACTIONTYPECODEID, EXPECTEDDATE, ACTUALDATE, COMMENT, 
+  EVENTID, INTERACTIONSUBCATEGORYID) as
+  (select INTERACTION.ID, INTERACTION.FUNDRAISERID, INTERACTION.STATUSCODE, INTERACTION.INTERACTIONTYPECODEID, 
+    INTERACTION.EXPECTEDDATE, INTERACTION.ACTUALDATE, INTERACTION.COMMENT, 
+    INTERACTION.EVENTID, INTERACTION.INTERACTIONSUBCATEGORYID
+      from INTERACTION 
+      join UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID) selection on
+			  INTERACTION.ID = selection.ID),
+
+
+  -- This filters any entry that does not conform to entry rules.
+  -- Write records only for interaction records where changes need to be made 
+
+  allItemsToUpdate (
+  ID, 
+  updateFundRaiserFlag, newFundRaiser, 
+  updateStatusCodeFlag, newStatusCode,
+  updateInteractionTypeCodeIDFlag, newInteractionTypeCodeID,
+  updateExpectedDateFlag, newExpectedDate,
+  updateActualDateFlag, newActualDate,
+  updateCommentFlag, newComment,
+  updateEventIDFlag, newEventID,
+  updateInteractionCategoryFlag, newInteractionSubCategoryID
+  ) 
+  
+  as 
+  
+  (
+  -- Owner
+  -- 1  --change specific
+  select ID, 1, @NEWFUNDRAISERID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where (@FUNDRAISERIDPROCESS = 1) and (@NEWFUNDRAISERID is not null) and (FUNDRAISERID = @FUNDRAISERID)
+
+  union
+
+  -- 2  --change all selections
+  select ID, 1, @NEWFUNDRAISERID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @FUNDRAISERIDPROCESS = 2 and @NEWFUNDRAISERID is not null and @FUNDRAISERID is null
+
+  union
+
+  -- 3  --blank specific
+  select ID, 1, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where (@FUNDRAISERIDPROCESS = 3) and @NEWFUNDRAISERID is null and (FUNDRAISERID = @FUNDRAISERID)
+
+  union
+
+  -- 4  --blank all selections
+  select ID, 1, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @FUNDRAISERIDPROCESS = 4 and @NEWFUNDRAISERID is null and @FUNDRAISERID is null
+
+  union
+  
+  -- 5  --replace if blank
+  select ID, 1, @NEWFUNDRAISERID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @FUNDRAISERIDPROCESS = 5 and @NEWFUNDRAISERID is not null and @FUNDRAISERID is null
+  and FUNDRAISERID is null
+
+  union
+
+  -- Status
+  -- 1 change for specific status code
+  select ID, 0, null, 1, @NEWSTATUSCODE, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults where @STATUSCODEPROCESS = 1 
+  and @NEWSTATUSCODE is not null and @STATUSCODE = STATUSCODE
+
+  union
+
+  -- 2 change for all status codes in the selection
+  select ID, 0, null, 1, @NEWSTATUSCODE, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults where @STATUSCODEPROCESS = 2 
+  and @NEWSTATUSCODE is not null and @STATUSCODE is null
+
+  union
+
+  --Contact method
+  -- 1 change for specific status code
+  select ID, 0, null, 0, null, 1, @NEWINTERACTIONTYPECODEID, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @INTERACTIONTYPECODEIDPROCESS = 1 and @NEWINTERACTIONTYPECODEID is not null and @INTERACTIONTYPECODEID = INTERACTIONTYPECODEID
+
+  union
+
+  --  2 change for all status codes in the selection
+  select ID, 0, null, 0, null, 1, @NEWINTERACTIONTYPECODEID, 0, null, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @INTERACTIONTYPECODEIDPROCESS = 2 and @NEWINTERACTIONTYPECODEID is not null and @INTERACTIONTYPECODEID is null
+
+  union
+
+  -- Expected Date
+  -- 1 - Change for specific Expected Date
+  select ID, 0, null, 0, null, 0, null, 1, @NEWEXPECTEDDATE, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @EXPECTEDDATEPROCESS = 1 and @NEWEXPECTEDDATE is not null and @EXPECTEDDATE = EXPECTEDDATE
+
+  union
+  
+ -- 2 - Change for all selected interactions
+  select ID, 0, null, 0, null, 0, null, 1, @NEWEXPECTEDDATE, 0, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @EXPECTEDDATEPROCESS = 2 and @NEWEXPECTEDDATE is not null and @EXPECTEDDATE is null
+  
+  union
+  
+  -- Actual Date
+  -- 1 - Change for specific Actual Date 
+  select ID, 0, null, 0, null, 0, null, 0, null, 1, @NEWACTUALDATE, 0, null, 0, null, 0, null from allSelectionResults 
+  where @ACTUALDATEPROCESS = 1 and @NEWACTUALDATE is not null and @ACTUALDATE = ACTUALDATE
+
+  union
+  
+  -- 2 - Change Actual Date for all selected interactions
+  select ID, 0, null, 0, null, 0, null, 0, null, 1, @NEWACTUALDATE, 0, null, 0, null, 0, null from allSelectionResults 
+  where @ACTUALDATEPROCESS = 2 and @NEWACTUALDATE is not null and @ACTUALDATE is null
+  
+    union
+  
+  -- 3 - blank specific
+  select ID, 0, null, 0, null, 0, null, 0, null, 1, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @ACTUALDATEPROCESS = 3 and @NEWACTUALDATE is null and @ACTUALDATE is not null 
+  and (@ACTUALDATE = ACTUALDATE)
+  
+    union
+  
+  -- 4 - blank all selections
+  select ID, 0, null, 0, null, 0, null, 0, null, 1, null, 0, null, 0, null, 0, null from allSelectionResults 
+  where @ACTUALDATEPROCESS = 4 and @NEWACTUALDATE is null and @ACTUALDATE is null
+
+    union
+  
+  -- 5 - replace if blank
+  select ID, 0, null, 0, null, 0, null, 0, null, 1, @NEWACTUALDATE, 0, null, 0, null, 0, null from allSelectionResults 
+  where @ACTUALDATEPROCESS = 5 and @NEWACTUALDATE is not null and @ACTUALDATE is null and ACTUALDATE is null
+  
+    union
+    
+  -- Comment
+  -- 1 - Change for specific Comment 
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWCOMMENT, 0, null, 0, null from allSelectionResults 
+  where @COMMENTPROCESS = 1 and @NEWCOMMENT <> '' and @COMMENT = COMMENT
+
+    union
+  
+  -- 2 - Change comment for all selected interactions
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWCOMMENT, 0, null, 0, null from allSelectionResults 
+  where @COMMENTPROCESS = 2 and @NEWCOMMENT <> '' and @COMMENT = ''
+  
+    union
+  
+  -- 3 - blank specific
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 1, '', 0, null, 0, null from allSelectionResults 
+  where @COMMENTPROCESS = 3 and @NEWCOMMENT = '' and @COMMENT <> '' 
+  and (@COMMENT = COMMENT)
+  
+    union
+  
+  -- 4 - blank all selections
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 1, '', 0, null, 0, null from allSelectionResults 
+  where @COMMENTPROCESS = 4 and @NEWCOMMENT = '' and @COMMENT = ''
+
+    union
+  
+  -- 5 - replace if blank
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWCOMMENT, 0, null, 0, null from allSelectionResults 
+  where @COMMENTPROCESS = 5 and @NEWCOMMENT <> '' and @COMMENT = '' and COMMENT = ''
+  
+    union
+  
+  -- Event 
+  -- 1 - Change for specific event 
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWEVENTID, 0, null from allSelectionResults 
+  where @EVENTIDPROCESS = 1 and @NEWEVENTID is not null and @EVENTID = EVENTID
+
+    union
+  
+  -- 2 - Change event for all selected interactions
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWEVENTID, 0, null from allSelectionResults 
+  where @EVENTIDPROCESS = 2 and @NEWEVENTID is not null and @EVENTID is null
+  
+    union
+  
+  -- 3 - blank specific event
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, null, 0, null from allSelectionResults 
+  where @EVENTIDPROCESS = 3 and @NEWEVENTID is null and @EVENTID is not null 
+  and (@EVENTID = EVENTID)
+  
+    union
+  
+  -- 4 - blank all selections
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, null, 0, null from allSelectionResults 
+  where @EVENTIDPROCESS = 4 and @NEWEVENTID is null and @EVENTID is null
+
+    union
+  
+  -- 5 - replace if blank
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWEVENTID, 0, null from allSelectionResults 
+  where @EVENTIDPROCESS = 5 and @NEWEVENTID is not null and @EVENTID is null and EVENTID is null
+  
+  
+    union
+  
+  -- Sub Category
+  -- 1 - Change for specific category/subcategory 
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWINTERACTIONSUBCATEGORYID from allSelectionResults 
+  where @INTERACTIONCATEGORYPROCESS = 1 and @NEWINTERACTIONSUBCATEGORYID is not null and @INTERACTIONSUBCATEGORYID = INTERACTIONSUBCATEGORYID
+
+    union
+  
+  -- 2 - Change category/subcategory for all selected interactions
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWINTERACTIONSUBCATEGORYID from allSelectionResults 
+  where @INTERACTIONCATEGORYPROCESS = 2 and @NEWINTERACTIONSUBCATEGORYID is not null
+
+    union
+
+  -- 3 - blank out sub category for specific subcategory
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, null from allSelectionResults 
+  where @INTERACTIONCATEGORYPROCESS = 3 and @NEWINTERACTIONSUBCATEGORYID is null and @NEWINTERACTIONCATEGORYID is null 
+  and @INTERACTIONSUBCATEGORYID = INTERACTIONSUBCATEGORYID
+    
+    union
+    
+  -- 4 - blank out sub category for all selected interactions
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, null from allSelectionResults 
+  where @INTERACTIONCATEGORYPROCESS = 4 and @NEWINTERACTIONSUBCATEGORYID is null and @NEWINTERACTIONCATEGORYID is null
+  and @INTERACTIONSUBCATEGORYID is null and @INTERACTIONCATEGORYID is null
+  
+    union
+    
+  -- 5 - Change subcategory if subcategory blank for all selected interactions
+  select ID, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 0, null, 1, @NEWINTERACTIONSUBCATEGORYID from allSelectionResults 
+  where @INTERACTIONCATEGORYPROCESS = 5 and @INTERACTIONSUBCATEGORYID is null 
+  and @INTERACTIONCATEGORYID is null and @NEWINTERACTIONSUBCATEGORYID is not null 
+  and INTERACTIONSUBCATEGORYID is null
+  
+  ),
+
+
+  -- Create a cte with only one record per interaction - no matter how many fields need 
+  -- to be updated.  If at least one field needs to be updated, include it.
+
+  uniqueRows (ID) as
+  (select distinct ID from allItemsToUpdate where updateFundRaiserFlag = 1 
+  or updateStatusCodeFlag = 1 or updateInteractionTypeCodeIDFlag = 1 
+  or updateExpectedDateFlag = 1 or updateActualDateFlag = 1
+  or updateCommentFlag = 1 or updateEventIDFlag = 1
+  or updateInteractionCategoryFlag = 1
+  ),
+
+
+  -- this is a list of interaction recs that need to be changed and the specific fields with changes
+  itemsToUpdate (ID, updateFundRaiserFlag, newFundRaiser, 
+  updateStatusCodeFlag, newStatusCode, 
+  updateInteractionTypeCodeIDFlag, newInteractionTypeCodeID,
+  updateExpectedDateFlag, newExpectedDate,
+  updateActualDateFlag, newActualDate,
+  updateCommentFlag, newComment,
+  updateEventIDFlag, newEventID,
+  updateInteractionCategoryFlag, newInteractionSubCategoryID
+  ) 
+  
+  as 
+  
+  (select uniqueRows.ID, 
+    fundRaiser.updateFundRaiserFlag, fundRaiser.newFundRaiser, 
+    statusCode.updateStatusCodeFlag, statusCode.newStatusCode, 
+    interactionTypeCode.updateInteractionTypeCodeIDFlag, interactionTypeCode.newInteractionTypeCodeID,
+    expectedDate.updateExpectedDateFlag, expectedDate.newExpectedDate, 
+    actualDate.updateActualDateFlag, actualDate.newActualDate,
+    commentTable.updateCommentFlag, commentTable.newComment,
+    eventID.updateEventIDFlag, eventID.newEventID,
+    interactionCategory.updateInteractionCategoryFlag, 
+    interactionCategory.newInteractionSubCategoryID
+   
+    from uniqueRows
+     
+  left join allItemsToUpdate fundRaiser on
+			  fundraiser.ID = uniqueRows.ID
+		  and fundraiser.updateFundRaiserFlag = 1
+  left join allItemsToUpdate statusCode on
+			  statusCode.ID = uniqueRows.ID
+		  and statusCode.updateStatusCodeFlag = 1
+  left join allItemsToUpdate interactionTypeCode on
+			  interactionTypeCode.ID = uniqueRows.ID
+		  and interactionTypeCode.updateInteractionTypeCodeIDFlag = 1 
+  left join allItemsToUpdate expectedDate on
+			  expectedDate.ID = uniqueRows.ID
+		  and expectedDate.updateExpectedDateFlag = 1 
+  left join allItemsToUpdate actualDate on
+			actualDate.ID = uniqueRows.ID
+		and actualDate.updateActualDateFlag = 1 
+  left join allItemsToUpdate commentTable on
+			commentTable.ID = uniqueRows.ID
+		and commentTable.updateCommentFlag = 1
+  left join allItemsToUpdate eventID on
+			eventID.ID = uniqueRows.ID
+		and eventID.updateEventIDFlag = 1
+  left join allItemsToUpdate interactionCategory on
+			interactionCategory.ID = uniqueRows.ID
+		and interactionCategory.updateInteractionCategoryFlag = 1
+)
+
+
+  -- all editing check have been made at this point
+  -- The update tests the specific fields if an update is needed, if not it replaces the value
+  -- with the existing value
+  update INTERACTION
+     set FUNDRAISERID = case	
+						  when itemsToUpdate.updateFundRaiserFlag = 1 then itemsToUpdate.newFundRaiser
+						  else INTERACTION.FUNDRAISERID
+					    end,
+         STATUSCODE = case
+						  when itemsToUpdate.updateStatusCodeFlag = 1 then itemsToUpdate.newStatusCode
+						  else INTERACTION.STATUSCODE
+					    end,
+         INTERACTIONTYPECODEID = case
+						  when itemsToUpdate.updateInteractionTypeCodeIDFlag = 1 then itemsToUpdate.newInteractionTypeCodeID
+						  else INTERACTION.INTERACTIONTYPECODEID
+					    end,
+         EXPECTEDDATE = case
+						  when itemsToUpdate.updateExpectedDateFlag = 1 then itemsToUpdate.newExpectedDate
+						  else INTERACTION.EXPECTEDDATE
+					    end,
+         ACTUALDATE = case
+						  when itemsToUpdate.updateActualDateFlag = 1 then itemsToUpdate.newActualDate
+						  else INTERACTION.ACTUALDATE
+					    end,
+         COMMENT = case
+						  when itemsToUpdate.updateCommentFlag = 1 then itemsToUpdate.newComment
+						  else INTERACTION.COMMENT
+					    end,
+         EVENTID = case
+						  when itemsToUpdate.updateEventIDFlag = 1 then itemsToUpdate.newEventID
+						  else INTERACTION.EVENTID
+					    end,  
+         INTERACTIONSUBCATEGORYID = case
+						  when itemsToUpdate.updateInteractionCategoryFlag = 1 then itemsToUpdate.newInteractionSubCategoryID
+						  else INTERACTION.INTERACTIONSUBCATEGORYID
+					    end
+              
+    from INTERACTION
+    join itemsToUpdate on
+			  INTERACTION.ID = itemsToUpdate.ID
+
+    set @NUMBEREDITED = @@ROWCOUNT;
+    
+	  end try
+	
+	  begin catch
+
+      -- Raise an error with the details of the exception
+      declare @ErrMsg nvarchar(4000), @ErrSeverity int
+      select @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY()
+      raiserror(@ErrMsg, @ErrSeverity, 1)
+    
+		  return 1;      
+
+    end catch 
+   
+		]]>
+
+  </CreateProcedureSQL>
+
+  <ParametersFormMetaData>
+    <!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
+    <FormMetaData xmlns="bb_appfx_commontypes">
+      <FormFields>
+        <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+          <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="RECORDTYPEID" DataType="Guid" ReadOnly="true" Hidden="true" />
+        <FormField FieldID="INTERACTIONTYPECODEIDPROCESS" DataType="TinyInt" Required="false" Caption="Contact method process" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change contact methodfor specific contact method</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change contact method for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="INTERACTIONTYPECODEID" DataType="Guid" Required="false" Caption="Contact method" CaptionResourceKey="$$contact_method">
+          <CodeTable CodeTableName="INTERACTIONTYPECODE" />
+        </FormField>
+        <FormField FieldID="NEWINTERACTIONTYPECODEID" DataType="Guid" Required="false" Caption="New contact method" CaptionResourceKey="$$contact_method">
+          <CodeTable CodeTableName="INTERACTIONTYPECODE" />
+        </FormField>
+        <FormField FieldID="SPACE" Hidden="true" />
+        <FormField FieldID="STATUSCODEPROCESS" DataType="TinyInt" Required="false" Caption="Status code process" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change specific status code</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change status code for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="STATUSCODE" DataType="TinyInt" Required="false" Caption="Status" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Pending</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Completed</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Canceled</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Declined</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="NEWSTATUSCODE" DataType="TinyInt" Required="false" Caption="New status" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Pending</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Completed</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Canceled</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Declined</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="SPACE1" Hidden="true" />
+        <!--Owner -->
+        <FormField FieldID="FUNDRAISERIDPROCESS" DataType="TinyInt" Required="false" Caption="Owner process" DefaultValueText="0" CaptionResourceKey="$$status">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change owner for specific owner</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change owner for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Change owner to blank for specific owner</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Change owner to blank for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Change owner if owner is blank for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="FUNDRAISERID" DataType="Guid" Caption="Owner" CaptionResourceKey="$$owner">
+          <SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="INCLUDEORGANIZATIONS" Caption="Organizations" ReadOnly="true" DefaultValueText="False" />
+              <FormFieldOverride FieldID="EXCLUDEHOUSEHOLDS" Caption="EXCLUDEHOUSEHOLDS" Hidden="true" DefaultValueText="True" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="NEWFUNDRAISERID" DataType="Guid" Caption="New Owner" CaptionResourceKey="$$owner">
+          <SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="INCLUDEORGANIZATIONS" Caption="Organizations" ReadOnly="true" DefaultValueText="False" />
+              <FormFieldOverride FieldID="EXCLUDEHOUSEHOLDS" Caption="EXCLUDEHOUSEHOLDS" Hidden="true" DefaultValueText="True" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="SPACE2" Hidden="true"/>
+        <FormField FieldID="EXPECTEDDATEPROCESS" DataType="TinyInt" Required="false" Caption="Expected date process" DefaultValueText="0" CaptionResourceKey="$$expected_date">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change specific expected date</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change expected date for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="EXPECTEDDATE" DataType="Date" Required="false" Caption="Expected date" CaptionResourceKey="$$expected_date" />
+        <FormField FieldID="NEWEXPECTEDDATE" DataType="Date" Required="false" Caption="New expected date" CaptionResourceKey="$$expected_date" />
+        <FormField FieldID="SPACE3" Hidden="true"/>
+        <FormField FieldID="ACTUALDATEPROCESS" DataType="TinyInt" Required="false" Caption="Actual date process" DefaultValueText="0" CaptionResourceKey="$$actual_date">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change specific actual date</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change actual date for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Change actual date to blank for specific actual date</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Change actual date to blank for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Change actual date if actual date is blank for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="ACTUALDATE" DataType="Date" Caption="Actual date" CaptionResourceKey="$$actual_date" />
+        <FormField FieldID="NEWACTUALDATE" DataType="Date" Caption="New actual date" CaptionResourceKey="$$actual_date" />
+        <FormField FieldID="SPACE4" Hidden="true"/>
+        <FormField FieldID="COMMENTPROCESS" DataType="TinyInt" Required="false" Caption="Comment process" DefaultValueText="0" CaptionResourceKey="$$comment">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change specific comment</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change comment for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Change comment to blank for specific comments</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Change comment to blank for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Change comment if comment blank for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="COMMENT" Caption="Comment" CaptionResourceKey="$$comment" />
+        <FormField FieldID="NEWCOMMENT" Caption="New comment" CaptionResourceKey="$$comment" />
+        <FormField FieldID="SPACE5" Hidden="true"/>
+        <FormField FieldID="EVENTIDPROCESS" DataType="TinyInt" Required="false" Caption="Event process" DefaultValueText="0" CaptionResourceKey="$$expected_date">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change specific event</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change event for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Change event to blank for specific event</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Change event to blank for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Change event if event blank for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="EVENTID" DataType="Guid" Caption="Event" CaptionResourceKey="$$event">
+          <SearchList SearchListID="21452a39-7c7d-4334-8b89-6c0ea619acec" EnableQuickFind="true" />
+        </FormField>
+        <FormField FieldID="NEWEVENTID" DataType="Guid" Caption="New event" CaptionResourceKey="$$event">
+          <SearchList SearchListID="21452a39-7c7d-4334-8b89-6c0ea619acec" EnableQuickFind="true" />
+        </FormField>
+        <FormField FieldID="SPACE6" Hidden="true"/>
+        <FormField FieldID="INTERACTIONCATEGORYPROCESS" DataType="TinyInt" Required="false" Caption="Sub Category process" DefaultValueText="0" CaptionResourceKey="$$expected_date">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Change specific subcategory</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Change subcategory for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Change subcategory to blank for specific subcategory</Label>
+              </Item>
+              <Item>
+                <Value>4</Value>
+                <Label>Change subcategory to blank for all selected interactions</Label>
+              </Item>
+              <Item>
+                <Value>5</Value>
+                <Label>Change subcategory if subcategory blank for all selected interactions</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="INTERACTIONCATEGORYID" DataType="Guid" Caption="Category" CaptionResourceKey="$$category">
+          <SimpleDataList SimpleDataListID="cbba7545-b66f-44ac-aa24-d9c2f8cbc4ec" />
+        </FormField>
+        <FormField FieldID="INTERACTIONSUBCATEGORYID" DataType="Guid" Caption="Subcategory" CaptionResourceKey="$$subcategory">
+          <SimpleDataList SimpleDataListID="0eacc39b-07d1-4641-8774-e319559535a7">
+            <Params>
+              <Param ID="INTERACTIONCATEGORYID">
+                <Value>Fields!INTERACTIONCATEGORYID</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+        <FormField FieldID="NEWINTERACTIONCATEGORYID" DataType="Guid" Caption="New Category" CaptionResourceKey="$$category">
+          <SimpleDataList SimpleDataListID="cbba7545-b66f-44ac-aa24-d9c2f8cbc4ec" />
+        </FormField>
+        <FormField FieldID="NEWINTERACTIONSUBCATEGORYID" DataType="Guid" Caption="New Subcategory" CaptionResourceKey="$$subcategory">
+          <SimpleDataList SimpleDataListID="0eacc39b-07d1-4641-8774-e319559535a7">
+            <Params>
+              <Param ID="INTERACTIONCATEGORYID">
+                <Value>Fields!NEWINTERACTIONCATEGORYID</Value>
+              </Param>
+            </Params>
+          </SimpleDataList>
+        </FormField>
+      </FormFields>
+      <WebUIComponent>
+        <WebUI>
+          <DefaultWebUI/>
+        </WebUI>
+      </WebUIComponent>
+    </FormMetaData>
+  </ParametersFormMetaData>
+</GlobalChangeSpec>

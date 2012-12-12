@@ -1,0 +1,20 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="8a04ddb9-9b5f-42b2-a2e2-af0f9516ce75" 
+	Name="Interaction Extension Expected Date Status"
+	Description="The flexibilty of the expected date (hard deadline vs soft deadline)"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE"
+	Category="Interaction Extension"
+	SortMethod="UserDefined"
+/>
+
+<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	05-Sep-2012		CMayeda			Initial Version
+
+-->

@@ -1,0 +1,15 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="17c29f8d-4339-4c23-9fc8-9c19f7463299"
+	Name="View ScannerLog Data List"
+	Description="Displays the page to view ScannerLog."
+	Author="Memphis Sellers"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="0"
+	>
+
+	<!-- indicate what this task should do (navigate to a page, show a form, etc. -->
+	<common:ShowPage PageID="f4ee16f0-48ed-4475-bcc6-78036d0535e0" />
+
+</TaskSpec>

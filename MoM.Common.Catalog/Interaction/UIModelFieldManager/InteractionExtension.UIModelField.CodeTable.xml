@@ -1,0 +1,19 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="a6b2ddb1-2917-41f8-8878-46c244ababda" 
+	Name="Interaction Extension UI Model Fields"
+	Description="This is a code table containing all the fields to be displayed in a ui model form for Interaction Extension data"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONUIMODELFIELDCODE"
+	Category="Interaction Extension"
+	SortMethod="Alpha" />
+
+	<!-- 
+	Remarks:    This is used to specify the fields to allow table driven visible / required properties in ui model forms
+
+	History:
+	Date            Modified By     Comments
+	02-Aug-2012		CMayeda			Initial Version
+	03-Oct-2012		CMayeda			Changed sort order to Alpha
+	-->

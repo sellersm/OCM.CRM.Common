@@ -1,0 +1,15 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="349e560f-4d31-4b59-964a-eff9492573b4"
+	Name="Scan CRM sponsor letters"
+	Description="Launch CRM sponsor letter scanner."
+	Author="Memphis Sellers"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="0"
+	>
+
+	<!-- indicate what this task should do (navigate to a page, show a form, etc. -->
+  <common:ShowAddDataForm DataFormID="3c59e129-a487-432a-bc41-f9f85c127858" />
+
+</TaskSpec>

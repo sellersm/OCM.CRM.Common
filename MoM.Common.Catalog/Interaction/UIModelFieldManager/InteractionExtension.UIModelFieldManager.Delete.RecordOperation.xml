@@ -1,0 +1,44 @@
+<RecordOperationSpec 
+    xmlns:c="bb_appfx_commontypes"
+    ID="e4158e20-75ac-4e03-b8b1-9cab84888aec"
+    Name="Interaction Extension UI Model Field Manager Delete"
+    Description="Used to delete the given Field configuration in the UI Model Field Manager"
+    Author="Cary Mayeda"
+    RecordType="Interaction Extension UI Model Field Manager"
+    OperationType="Delete"
+	c:SecurityUIFolder="Interaction Extension"
+    xmlns="bb_appfx_recordoperation" >
+	
+	<!-- 
+	Remarks:    Uses the system generated delete routine to allow proper recording of the deleting agent
+
+	History:
+	Date            Modified By     Comments
+	05-Aug-2012		CMayeda			Initial Version
+	-->
+	
+    <SPRecord>
+        <SPOperationImplementation SPName="USP_INTERACTION_EXTENSION_UI_MODEL_FIELD_MANAGER_DELETE">
+            <c:CreateProcedureSQL>
+<![CDATA[
+create procedure dbo.USP_INTERACTION_EXTENSION_UI_MODEL_FIELD_MANAGER_DELETE
+(
+	@ID uniqueidentifier,
+	@CHANGEAGENTID uniqueidentifier
+)
+as begin
+	--check deletion rules, if any
+
+	-- use the system generated delete routine to allow proper recording of the deleting agent
+	exec USP_USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_DELETEBYID_WITHCHANGEAGENTID @ID, @CHANGEAGENTID
+	return 0;
+	
+end
+]]>
+</c:CreateProcedureSQL>
+        </SPOperationImplementation>
+    </SPRecord>
+    <Prompt>
+        <StandardPrompt Text="Are you sure you want to delete this Interaction Extension UI Model Field Manager" />
+    </Prompt>
+</RecordOperationSpec>

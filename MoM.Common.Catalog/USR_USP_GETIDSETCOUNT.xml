@@ -1,0 +1,45 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="e46f8a67-8fdc-4d1c-a2e4-b26596f9b85d"
+	Name="USR_USP_GETIDSETCOUNT"
+	Description="Gets the number of rows in a selection"
+	Author="Cary Mayeda"
+	SPName="USR_USP_GETIDSETCOUNT"
+	>
+
+	<!-- 
+	Remarks:	Used to find the row count for a selection.
+				It uses Blackbaud's table function UFN_IDSETREADER_GETRESULTS				
+				
+	History:
+	Date			Modified By		Comments
+    03-Apr-2012		CMayeda			Initial Version
+	12-Jul-2012		CMayeda			Moved to Common catalog
+	-->
+
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+		
+create procedure dbo.USR_USP_GETIDSETCOUNT (
+	@IDSetRegisterID uniqueidentifier,		-- Specify a Selection Set ID to get the count for
+	@SelectionCount int = NULL output)		-- The number of rows for the specified selection
+
+as 
+begin
+	begin try
+		select @SelectionCount = count(*) from UFN_IDSETREADER_GETRESULTS (@IDSetRegisterID) 
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

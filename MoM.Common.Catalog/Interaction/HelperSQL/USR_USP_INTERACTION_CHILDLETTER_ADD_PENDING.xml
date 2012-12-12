@@ -1,0 +1,71 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="48c08ea6-ebbe-49d8-a006-c23fc8205820"
+	Name="USR_USP_INTERACTION_CHILDLETTER_ADD_PENDING"
+	Description="Used to add a sponsor type of interaction with a status of pending"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_CHILDLETTER_ADD_PENDING" 
+	GrantServiceRolePermission="true" >
+
+	<!-- 
+	Remarks:    This wraps the oob Blackbaud sproc USP_DATAFORMTEMPLATE_ADD_INTERACTION and inserts a row in the USR_INTERACTIONEXTENSION table by calling USR_USP_INTERACTION_CHILDLETTER_ADD
+				This was created to make it easier to add a pending interaction, because actual date is not required for a pending interaction.
+				This takes descriptions in for the code table values and looks them up (case insensitive). If any of the lookups fail, it raises an error				
+				No other validation is handled other than the standard check for @changeAgentID. This relies on the oob Blackbaud sproc in terms of validation.
+				
+				Note: The subcategoryid lookup uses both @categoryName and @subcategoryName
+	History:
+	Date            Modified By     Comments
+	26-Sep-2012		CMayeda			Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_CHILDLETTER_ADD_PENDING (
+	@id uniqueidentifier output,								-- This returns the ID of the interaction created
+	@sponsorhipOpportunityChildID uniqueidentifier = null,		-- The Constituent ID to create the interaction for
+	@summary nvarchar(100) = '',								-- The summary / objective of the interaction
+	@categoryName nvarchar(100) = '',							-- Name of the interaction category (not the guid)
+	@subcategoryName nvarchar(100) = '',						-- Name of the interaction subcategory (not the guid)
+	@expectedDate date = null,									-- Expected Date of the interaction
+	@owner uniqueidentifier = null,								-- Owner / Fundraiser assigned to the interaction 
+	@contactMethodDesc nvarchar(100) = '',						-- Email, Event, Mail, Phone, Task
+	@comment nvarchar(max) = '',								-- Comment
+	@sponsorID uniqueidentifier = null,							-- Constituent ID of the sponsor the child is to write to
+	@changeAgentID uniqueidentifier = null						-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	-- Constants
+	-- Note: only @statusCodePending is used.  Just thought it would be nice to see all the possible values.
+	declare @statusCode_Planned tinyint = 0
+	declare @statusCode_Pending tinyint = 1
+	declare @statusCode_Completed tinyint = 2
+	declare @statusCode_Unsuccessful tinyint = 3
+	declare @statusCode_Cancelled tinyint = 4
+	declare @statusCode_Declined tinyint = 5
+
+	exec USR_USP_INTERACTION_CHILDLETTER_ADD
+		@id = @id output,
+		@sponsorhipOpportunityChildID = @sponsorhipOpportunityChildID,
+		@summary = @summary, 
+		@categoryName = @categoryName,
+		@subcategoryName = @subcategoryName,
+		@expectedDate = @expectedDate, 
+		@actualDate = null,
+		@owner = @owner,
+		@contactMethodDesc = @contactMethodDesc,
+		@statusCode = @statusCode_Pending,
+		@comment = @comment,
+		@sponsorID = @sponsorID,
+		@changeAgentID = @changeAgentID
+
+	return 0
+
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

@@ -1,0 +1,72 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="4c4cc0ee-bfe9-43dc-bad9-edca42bdddec"
+	Name="USR_USP_CREATESCANSESSIONTEXT"
+	Description="Create Scan Session text"
+	Author="Bill Elfstrom"
+	SPName="USR_USP_CREATESCANSESSIONTEXT"
+	>
+
+ <!-- 
+ 
+  History:
+ 
+  Date            Modified By     Comments
+  10-02-2012      BElfstrom       Created
+  
+  This procedure builds a unique string used to identify a letter scanning session.
+  It is the user name combined with a date time stamp.  For example: belfstrom_2012_10_02_130957
+    
+-->
+  
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_CREATESCANSESSIONTEXT
+@ScanSession as nvarchar(68) OUTPUT
+
+as
+begin
+
+begin try	
+	
+	declare @Username nvarchar(128) = null
+	declare @ChangeAgentID as uniqueidentifier
+
+	exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT  @ChangeAgentID output;
+	set @Username = (select USERNAME from dbo.CHANGEAGENT where ID = @ChangeAgentID)
+
+	-- strip off everything before the backslash
+	set @Username = RIGHT(@Username,(LEN(@Username))- (CHARINDEX('\',@Username)))
+
+	declare @CurrentDate as datetime
+	set @CurrentDate = GETDATE()
+
+	declare @DateTimeStamp as nvarchar(40)
+
+	Set @DateTimeStamp =  CAST(DATEPART(YYYY,@CurrentDate) AS VARCHAR(4)) + '_' + 
+	RIGHT('00' + CAST(DATEPART(MM,@CurrentDate) AS VARCHAR(2)), 2) + '_' +
+	RIGHT('00' + CAST(DATEPART(DD,@CurrentDate) AS VARCHAR(2)), 2) + '_' +
+	RIGHT('00' + CAST(DATEPART(HH,@CurrentDate) AS VARCHAR(2)), 2) +
+	RIGHT('00' + CAST(DATEPART(MI,@CurrentDate) AS VARCHAR(2)), 2) +
+	RIGHT('00' + CAST(DATEPART(SS,@CurrentDate) AS VARCHAR(2)), 2)
+
+	set @ScanSession = @Username + '_' + @DateTimeStamp
+
+end try
+begin catch
+
+  -- Raise an error with the details of the exception
+  declare @ErrMsg nvarchar(4000), @ErrSeverity int
+  select @ErrMsg = ERROR_MESSAGE(),
+         @ErrSeverity = ERROR_SEVERITY()
+  raiserror(@ErrMsg, @ErrSeverity, 1)
+
+end catch
+
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

@@ -1,0 +1,142 @@
+﻿<PageDefinitionSpec
+    xmlns="bb_appfx_pagedefinition"
+    xmlns:common="bb_appfx_commontypes"
+    ID="8fee7f1d-49d5-453f-b8f8-a23060c6e72d"
+    Name="Child Interactions Extension Page"
+    Description="Used to view interactions related to a child"
+    Author="Cary Mayeda"
+    ContextRecordType="Sponsorship opportunity"
+	ExpressionDataFormID="2c5e91ff-ec60-4f8a-9361-9eae6549aa69" > <!-- Sponsorship Opportunity Detail View Form -->
+
+	<!-- 
+	Remarks:    Currently displays interactions that are in the categories: Child Field Memo and Child Letters
+
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+	10-Oct-2012		CMayeda			Updated the name to be consistent with Blackbaud's Consituent Interactions page (plural intead of singular)
+
+	-->
+
+	<ResourceFile AssemblyName="Blackbaud.AppFx.Constituent.Catalog.dll" ClassName="Blackbaud.AppFx.Constituent.Catalog.Interactions.Page" />
+
+	<!-- define how the page header should appear -->
+	<PageHeader Caption="=String.Format(Me.Globals.GetResourceString(&quot;Name-Interactions&quot;), Page.Fields!NAME)" ImageKey="catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.interactions.png" />
+
+	<SummarySection ID="29F3912B-2EEF-4443-8574-75D0D94314DA" Caption="Profile" HideCaption="true" CaptionResourceKey="$$profile">
+		<DataForm ID="1f4fea31-5779-44db-bcce-ec5afa36d82b" />
+	</SummarySection>
+
+	<!-- define the tabs for the page - note that if only one tab is present, then that tab's sections are promoted to the page level (ie., the tab
+	itself isn't shown -->
+	<Tabs>
+		<Tab ID="e064a70a-15a7-49fb-98ab-02ea1fda2b70" Caption="Interactions">
+			<Sections>
+				<Section ID="47216C30-4172-432E-ACF4-63DEACBAE72B" Caption="Interactions" Visible="true" CaptionResourceKey="$$interactions">
+					<DataList ID="e4e47479-83ce-46fc-9aee-d8f65afab31f">
+						<RenderStyle>
+							<StandardView>
+								<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
+							</StandardView>
+						</RenderStyle>
+					</DataList>
+					<Actions>
+						<Action ID="BF8825C3-6A6E-4773-A9B4-DFA26218B378" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+							<ActionGroup>
+								<Actions>
+									<Action ID="FD1011FF-E0B1-4529-B8E7-D0AF64403AC5" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+										<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+									</Action>
+									<Action ID="A354120D-C5F7-4F5F-ABB6-A0DF265AE750" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="OWNER" CaptionResourceKey="$$owner">
+										<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>OWNERID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+									</Action>
+								</Actions>
+							</ActionGroup>
+						</Action>
+						<Action ID="021FA881-717C-4DEB-8183-2ACDF2707414" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+							<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<PageContextID />
+								</ActionContext>
+								<PostActionEvent>
+									<RefreshPage/>
+								</PostActionEvent>
+							</ShowAddDataForm>
+							<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+						</Action>
+						<Action ID="D3DF1725-6E69-4B5A-8F42-39DA98C78998" Caption="Edit" ImageKey="RES:Edit" CaptionResourceKey="$$edit">
+							<ActionGroup>
+								<Actions>
+									<Action ID="DEE965C1-DB6D-4E06-BC05-60828B14E383" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
+										<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+											<PostActionEvent>
+												<RefreshPage/>
+											</PostActionEvent>
+										</ShowDataForm>
+										<HelpKey>CRMEditConstInteractions.html</HelpKey>
+									</Action>
+									<Action ID="A4220C61-A1F8-40A8-B99D-9EFFE70FBBA6" Caption="Responses" ImageKey="RES:Edit" CaptionResourceKey="$$responses">
+										<ShowDataForm DataFormID="ddb74740-0698-46cd-bb8e-77605fcdf7de" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+											<PostActionEvent>
+												<RefreshPage/>
+											</PostActionEvent>
+										</ShowDataForm>
+										<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+									</Action>
+								</Actions>
+							</ActionGroup>
+						</Action>
+						<Action ID="149E43DB-09A1-4CA9-9E99-659CC8256324" Caption="Delete" ImageKey="RES:Delete" CaptionResourceKey="$$delete">
+							<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+								<PostActionEvent>
+									<RefreshPage/>
+								</PostActionEvent>
+							</ExecuteRecordOperation>
+							<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+						</Action>
+					</Actions>
+					<HelpKey>CRMInteractions.html</HelpKey>
+				</Section>
+			</Sections>
+		</Tab>
+	</Tabs>
+
+	<!-- define page-level actions groups which appear in the explorer bar area of the shell -->
+	<PageActionGroups>
+		<PageActionGroup ID="8e3974aa-6ce0-4cc7-9cee-d3420560fef4" Caption="View as">
+			<Actions>
+				<Action ID="315177a8-3fb0-4d09-a264-d8ab1308a009" Caption="Child">
+					<ShowPage PageID="0f392d71-5884-4363-b6e3-a75755f8402a" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+				</Action>
+			</Actions>
+		</PageActionGroup>
+	</PageActionGroups>
+
+	<PageExpressionForms>
+		<PageExpressionForm DataFormInstanceID="4c5654c6-93b2-494d-862b-5887bc96f972" />
+		<!-- Child Extension Page Expression -->
+	</PageExpressionForms>
+</PageDefinitionSpec>

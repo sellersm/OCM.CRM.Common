@@ -1,0 +1,52 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes"
+	ID="e3e181f0-ccd3-490b-83ef-5c21e344f2a2"
+	Name="USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT"
+	Description="Get the number of children associated with an interaction in text for 1-10"
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT"
+	>
+
+	<!-- 
+	Remarks:    This only counts the kids in the table USR_INTERACTIONEXTENSIONCHILDREN.
+				It does not include those in the fields in the table USR_INTERACTIONEXTENSION (e.g. DEPARTUREHCHILDID, TRANSFERCHILDID, ...)
+				This is text for one - ten and then numeric for everything greather than 10.
+
+	History:
+	Date            Modified By     Comments
+	31-Oct-2012		CMayeda			Initial Version
+	-->
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT(
+	@interactionID uniqueidentifier = null
+)
+returns nvarchar(10)
+with execute as caller
+as begin
+	declare @childCountText nvarchar(10) = ''
+	declare @childCount int = 0
+	select @childCount = count(SPONSORSHIPOPPORTUNITYCHILDID) from dbo.USR_INTERACTIONEXTENSIONCHILDREN where INTERACTIONID=@interactionID
+	if @childCount is not null
+		set @childCountText = case @childCount 
+								when 1 then 'one'
+								when 2 then 'two'
+								when 3 then 'three'
+								when 4 then 'four'
+								when 5 then 'five'
+								when 6 then 'six'
+								when 7 then 'seven'
+								when 8 then 'eight'
+								when 9 then 'nine'
+								when 10 then 'ten'
+								else cast(@childCount as nvarchar(10))
+							 end
+														
+	return @childCountText
+end
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

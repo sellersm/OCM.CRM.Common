@@ -1,0 +1,34 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="648a9f85-ad22-48bd-87d1-579e41f56266"
+	Name="USR_UFN_SMARTFIELD_GETTABLENAME"
+	Description="Returns the table name for a smart field"
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_SMARTFIELD_GETTABLENAME"
+	>
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_SMARTFIELD_GETTABLENAME (
+	@smartFieldID uniqueidentifier,
+	@smartFieldName nvarchar(100)
+)
+returns nvarchar(128)
+as begin				
+
+	declare @tableName nvarchar(128);
+	
+	select @tableName = replace(upper('SMARTFIELD' + convert(nvarchar(36), TABLECATALOGID)), '-', '')
+	from dbo.SMARTFIELD
+	where SMARTFIELDCATALOGID=@smartFieldID
+	  and lower(NAME) = lower (@smartFieldName);
+				
+	return @tableName;
+				
+end
+		
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>
