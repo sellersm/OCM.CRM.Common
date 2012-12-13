@@ -67,9 +67,10 @@
 			<OutputField Name="SPONSORLOOKUPID" Caption="Sponsor Lookup ID" DataType="String" />
 			<OutputField Name="COMMITMENTNAME" Caption="Commitment Name" DataType="String" />
 			<OutputField Name="COMMITMENTID" Caption="Commitment Lookup ID" DataType="String" />
+			<OutputField Name="COMMITMENTAMOUNT" Caption="Commitment Amount" DataType="Money" />
 			<OutputField Name="COMMITMENTFREQUENCY" Caption="Commitment Frequency" DataType="String" />
-			<OutputField Name="ISEFT" Caption="Is EFT" DataType="Boolean" />
 			<OutputField Name="CCOMMITMENTTYPE" Caption="Commitment Type" DataType="String" />
+			<OutputField Name="ISEFT" Caption="Is EFT" DataType="Boolean" />
 		</OutputFields>
 	</Output>
 
