@@ -36,6 +36,7 @@
 									ViewScannerLogDataList.Task.xml
 	10-Dec-2012		CMayeda			Added InteractionExtension.SponsorshipFulfillmentChildInfo.Query.xml
 	12-Dec-2012		CMayeda			Added SponsorCommitments.Query.xml
+	13-Dec-2012		Memphis			Added AddBatchNumberToPostToGL.Query.xml
 	-->
 
 
@@ -169,7 +170,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorshipFulfillmentChildInfo.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorCommitments.Query.xml" />
-		
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddBatchNumberToPostToGL.Query.xml" />
+
 		<!-- Global Changes -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Delete.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.GlobalChange.xml" />
