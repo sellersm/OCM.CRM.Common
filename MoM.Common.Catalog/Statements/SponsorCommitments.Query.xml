@@ -15,8 +15,9 @@
 	<ViewImplementation ViewName="USR_V_QUERY_SPONSORCOMMITMENTS">
 		<ViewSQL>
 			<![CDATA[
-	select 	sponsor.ID as SPONSORID,
+		select sponsor.ID as SPONSORID,
 			sponsor.LOOKUPID as SPONSORLOOKUPID,
+			f_trans.CALCULATEDUSERDEFINEDID as REVENUEID,
 			case 
 				when so_child.NAME is null then ltrim (replace (desig.NAME,desig.USERID, ''))
 				else so_child.NAME
@@ -26,6 +27,12 @@
 				else so.LOOKUPID 
 			end as COMMITMENTID, 
 			f_trans.TRANSACTIONAMOUNT as COMMITMENTAMOUNT,
+			r_sch.NEXTTRANSACTIONDATE,
+			dbo.UFN_RECURRINGGIFT_GETPASTDUEAMOUNT (f_trans.ID, getdate()) as PASTDUEASOFTODAY,
+			dateadd (m, datediff (m, '1/1/2010', getdate()), '1/2/2010') as PASTDUECURRENTMONTHDATE,
+			dbo.UFN_RECURRINGGIFT_GETPASTDUEAMOUNT (f_trans.ID, dateadd (m, datediff (m, '1/1/2010', getdate()), '1/2/2010')) as PASTDUECURRENTMONTH,
+			dateadd(d, -1, dateadd (m, datediff (m, '1/1/2010', getdate()) + 1, '1/2/2010')) as AMOUNTDUENEXTMONTHDATE,
+			dbo.UFN_RECURRINGGIFT_GETPASTDUEAMOUNT (f_trans.ID, dateadd (m, datediff (m, '1/1/2010', getdate()) + 1, '1/2/2010')) as AMOUNTDUENEXTMONTH,			
 			case 
 				when r_sch.FREQUENCYCODE = 0 then 'yr'
 				when r_sch.FREQUENCYCODE = 1 then '6mo'
@@ -55,7 +62,7 @@
 
 	 where	f_trans.TYPECODE = 2	  -- recurring gift
 	   and	r_sch.STATUSCODE in (0,1) -- active, held
-	   
+   
 			]]>
 		</ViewSQL>
 	</ViewImplementation>
@@ -68,6 +75,12 @@
 			<OutputField Name="COMMITMENTNAME" Caption="Commitment Name" DataType="String" />
 			<OutputField Name="COMMITMENTID" Caption="Commitment Lookup ID" DataType="String" />
 			<OutputField Name="COMMITMENTAMOUNT" Caption="Commitment Amount" DataType="Money" />
+			<OutputField Name="NEXTTRANSACTIONDATE" Caption="Next Transaction Date" DataType="Date" />
+			<OutputField Name="PASTDUEASOFTODAY" Caption="Past Due as of Today" DataType="Money" />
+			<OutputField Name="PASTDUECURRENTMONTHDATE" Caption="Past Due Date for Current Month"  DataType="Date" />
+			<OutputField Name="PASTDUECURRENTMONTH" Caption="Past Due Amount for the Current Statement Month" DataType="Money" />
+			<OutputField Name="AMOUNTDUENEXTMONTHDATE" Caption="Amount Due Date for Next Statement Month"  DataType="Date" />
+			<OutputField Name="AMOUNTDUENEXTMONTH" Caption="Amount Due for the Next Statement Month" DataType="Money" />
 			<OutputField Name="COMMITMENTFREQUENCY" Caption="Commitment Frequency" DataType="String" />
 			<OutputField Name="CCOMMITMENTTYPE" Caption="Commitment Type" DataType="String" />
 			<OutputField Name="ISEFT" Caption="Is EFT" DataType="Boolean" />
