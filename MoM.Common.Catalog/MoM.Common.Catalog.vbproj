@@ -297,21 +297,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.Delete.GlobalChange.xml">
+    <EmbeddedResource Include="GlobalChanges\Interaction\Interaction.Delete.GlobalChange.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Interaction\GlobalChanges\Interaction.GlobalChange.xml">
+    <EmbeddedResource Include="GlobalChanges\Interaction\Interaction.GlobalChange.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Add.CodeTableBased.GlobalChange.xml" />
-    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Add.GlobalChange.xml" />
-    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />
-    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Change.GlobalChange.xml" />
-    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.Delete.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\InteractionAttribute.Add.CodeTableBased.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\InteractionAttribute.Add.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\InteractionAttribute.Change.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\InteractionAttribute.Delete.GlobalChange.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
-    <EmbeddedResource Include="Interaction\GlobalChanges\InteractionAttributesNonCodeTables.SimpleList.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\InteractionAttributesNonCodeTables.SimpleList.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="USR_UFN_CONVERTTEXTTOBOOLEAN.xml" />
@@ -414,6 +414,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Post to GL\AddBatchNumberToPostToGL.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoDateSent.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoHoldReasonCode.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoSentCode.GlobalChange.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

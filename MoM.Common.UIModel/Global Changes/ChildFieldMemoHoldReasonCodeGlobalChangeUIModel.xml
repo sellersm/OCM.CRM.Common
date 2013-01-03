@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>ChildFieldMemoHoldReasonCode.GlobalChange.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>ChildFieldMemoHoldReasonCodeGlobalChangeUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>ChildFieldMemoHoldReasonCodeGlobalChange.html</HtmlFile>
+    <HtmlFolder>htmlforms\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

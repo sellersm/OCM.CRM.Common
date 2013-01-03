@@ -115,6 +115,12 @@
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.CodeGen.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.CodeGen.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.CodeGen.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.vb" />
     <Compile Include="Interaction\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
     </Compile>
@@ -154,8 +160,14 @@
   <ItemGroup>
     <Content Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.xml" />
     <Content Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.xml" />
+    <Content Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.xml" />
+    <Content Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.xml" />
+    <Content Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.xml" />
     <Content Include="htmlforms\BarCodeAddDataForm.html" />
     <Content Include="ChildLetterScanner\BarCodeAddDataFormUIModel.xml" />
+    <Content Include="htmlforms\ChildFieldMemoDateSentGlobalChange.html" />
+    <Content Include="htmlforms\ChildFieldMemoHoldReasonCodeGlobalChange.html" />
+    <Content Include="htmlforms\ChildFieldMemoSentCodeGlobalChange.html" />
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
