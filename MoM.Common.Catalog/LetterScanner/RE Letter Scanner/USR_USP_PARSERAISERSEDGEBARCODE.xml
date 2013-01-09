@@ -13,6 +13,8 @@
   History:
     Date            Modified By     Comments
     09-30-2012      BElfstrom       Created
+	09-Jan-2013		Memphis			Fogbugz Case 957: change the parser to use “Child Welcome Letter” 
+									instead of “Welcome Child Originated Letter” 	
     
    Notes:
    If The exception message is blank, the parse was successful.
@@ -75,7 +77,7 @@ else
 				select @LetterFullName = 
 					case
 						when @LetterTypeCode = 'L1' then 'Child Letter 1'
-						when @LetterTypeCode = 'WL' then 'Welcome Child Originated Letter'
+						when @LetterTypeCode = 'WL' then 'Child Welcome Letter'
 						when @LetterTypeCode = 'C1' then 'Child Holiday Letter'
 						when @LetterTypeCode = 'AL' then 'Child Acknowledgement Letter'
 						when @LetterTypeCode = 'SL' then 'Sponsor Letter'
@@ -91,7 +93,7 @@ else
 				set @LetterFullName = 'Child Letter 1'
 			else
 				if @LetterTypeCode = 'WL'
-					set @LetterFullName = 'Welcome Child Originated Letter'
+					set @LetterFullName = 'Child Welcome Letter'
 				else	
 					if @LetterTypeCode = 'C1'
 						set @LetterFullName = 'Child Holiday Letter'

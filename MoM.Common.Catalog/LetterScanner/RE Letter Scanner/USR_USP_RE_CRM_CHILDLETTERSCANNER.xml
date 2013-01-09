@@ -14,6 +14,9 @@
 	History:
 	Date            Modified By     Comments
 	05-Dec-2012		CMayeda			Changed sponsorship interaction subcategory to 'Send Child Correspondence'
+	09-Jan-2013		Memphis			Added check for the sponsor when checking if cancelled or not. Fogbugz Case 958.
+									Fogbugz Case 957: change the letter scanner to look for “Child Welcome Letter” 
+									instead of “Welcome Child Originated Letter” 
 	-->
 
 	<CreateProcedureSQL>
@@ -63,7 +66,7 @@ set @ChangeAgentID = null;
 /*
 Letters processed in old RE scanner:
 "Child Letter 1"
-"Welcome Child Originated Letter"
+"Child Welcome Letter"
 "Child Letter"
 "Child Acknowledgement Letter"
 "Child Holiday Letter"
@@ -71,7 +74,7 @@ Letters processed in old RE scanner:
 
 
 if @LetterFullname <> 'Child Letter 1' and
-	@LetterFullname <> 'Welcome Child Originated Letter' and
+	@LetterFullname <> 'Child Welcome Letter' and
 	@LetterFullname <> 'Child Letter' and
 	@LetterFullname <> 'Child Acknowledgement Letter' and
 	@LetterFullname <> 'Child Holiday Letter'
@@ -428,7 +431,9 @@ else
 	from dbo.SPONSORSHIP as sp
 	join dbo.SPONSORSHIPTRANSACTION as st on sp.ID = st.CONTEXTSPONSORSHIPID
 	join SPONSORSHIPREASON as sr on st.SPONSORSHIPREASONID = sr.ID
-	where sp.statuscode = 2 and sp.SPONSORSHIPOPPORTUNITYID = @ChildID 
+	where sp.statuscode = 2 
+	and sp.SPONSORSHIPOPPORTUNITYID = @ChildID 
+	and sp.CONSTITUENTID = @SponsorID   -- must include the constituentid of the sponsor from the bar code!
 
 	if @DateSponsorshipCancelled is not null		
 		Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship is currently cancelled.  '
