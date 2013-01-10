@@ -8,6 +8,15 @@
 	SPName="USR_USP_SPONSORLETTERSCANNER_CRM"
 	>
 
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	09-Jan-2013		Memphis			Added check for the sponsor when checking if cancelled or not. Fogbugz Case 958.
+	
+	-->	
+	
 	<CreateProcedureSQL>
 		<![CDATA[
 create procedure dbo.USR_USP_SPONSORLETTERSCANNER_CRM
@@ -360,7 +369,9 @@ else  -- exception
 		from dbo.SPONSORSHIP as sp
 		join dbo.SPONSORSHIPTRANSACTION as st on sp.ID = st.CONTEXTSPONSORSHIPID
 		join SPONSORSHIPREASON as sr on st.SPONSORSHIPREASONID = sr.ID
-		where sp.statuscode = 2 and sp.SPONSORSHIPOPPORTUNITYID = @ChildID 
+		where sp.statuscode = 2 
+		and sp.SPONSORSHIPOPPORTUNITYID = @ChildID 
+		and sp.CONSTITUENTID = @SponsorID   -- must include the constituentid of the sponsor from the bar code!
 
 		if @DateSponsorshipCancelled is not null		
 			Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship was cancelled.  '
