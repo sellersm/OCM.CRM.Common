@@ -420,6 +420,15 @@
     <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoHoldReasonCode.GlobalChange.xml" />
     <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoSentCode.GlobalChange.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.ProfileStatus.GlobalChange.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.DepartureFormReceivedDate.GlobalChange.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GlobalChanges\Child\Child.PendingReasons.GlobalChange.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
