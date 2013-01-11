@@ -115,12 +115,24 @@
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.vb" />
+    <Compile Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.CodeGen.vb">
+      <DependentUpon>ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildExtensionProfileStatusGlobalChangeUIModel.CodeGen.vb">
+      <DependentUpon>ChildExtensionProfileStatusGlobalChangeUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Global Changes\ChildExtensionProfileStatusGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.CodeGen.vb" />
     <Compile Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.CodeGen.vb" />
     <Compile Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.CodeGen.vb" />
     <Compile Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.CodeGen.vb">
+      <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.vb" />
     <Compile Include="Interaction\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
     </Compile>
@@ -158,16 +170,37 @@
     <None Include="postbuild.bat" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\MoM.Common.Catalog\GlobalChanges\Child Extension\ChildExtension.ProfileStatus.xml">
+      <Link>LinkedSpecs\ChildExtension.ProfileStatus.xml</Link>
+    </None>
+    <None Include="..\MoM.Common.Catalog\GlobalChanges\Child Extension\ChildExtension.DepartureFormReceivedDate.xml">
+      <Link>LinkedSpecs\ChildExtension.DepartureFormReceivedDate.xml</Link>
+    </None>
+    <None Include="..\MoM.Common.Catalog\GlobalChanges\Child\Child.PendingReasons.GlobalChange.xml">
+      <Link>LinkedSpecs\Child.PendingReasons.GlobalChange.xml</Link>
+    </None>
     <Content Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.xml" />
     <Content Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.xml" />
+    <Content Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.xml">
+      <DependentUpon>ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb</DependentUpon>
+    </Content>
+    <Content Include="Global Changes\ChildExtensionProfileStatusGlobalChangeUIModel.xml">
+      <DependentUpon>ChildExtensionProfileStatusGlobalChangeUIModel.vb</DependentUpon>
+    </Content>
     <Content Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.xml" />
     <Content Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.xml" />
     <Content Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.xml" />
+    <Content Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.xml">
+      <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
+    </Content>
     <Content Include="htmlforms\BarCodeAddDataForm.html" />
     <Content Include="ChildLetterScanner\BarCodeAddDataFormUIModel.xml" />
+    <Content Include="htmlforms\ChildExtensionDepartureFormReceivedDateGlobalChange.html" />
+    <Content Include="htmlforms\ChildExtensionProfileStatusGlobalChange.html" />
     <Content Include="htmlforms\ChildFieldMemoDateSentGlobalChange.html" />
     <Content Include="htmlforms\ChildFieldMemoHoldReasonCodeGlobalChange.html" />
     <Content Include="htmlforms\ChildFieldMemoSentCodeGlobalChange.html" />
+    <Content Include="htmlforms\ChildPendingReasonsGlobalChange.html" />
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
