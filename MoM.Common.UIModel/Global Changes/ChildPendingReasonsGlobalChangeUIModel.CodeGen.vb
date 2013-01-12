@@ -122,137 +122,137 @@ Partial Public Class [ChildPendingReasonsGlobalChangeUIModel]
         '_replacependingreasonvalue
         '
         _replacependingreasonvalue.Name = "REPLACEPENDINGREASONVALUE"
-        _replacependingreasonvalue.Caption = "Replace profile status value of"
-        _replacependingreasonvalue.SimpleDataListID = New Guid("c8d3128e-a2eb-4413-b0b4-1585ad5bf001")
-        _replacependingreasonvalue.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("TYPE", "PARENT.Fields!REASONTYPE"))
-        Me.Fields.Add(_replacependingreasonvalue)
-        '
-        '_replacependingreasonwithvalue
-        '
-        _replacependingreasonwithvalue.Name = "REPLACEPENDINGREASONWITHVALUE"
-        _replacependingreasonwithvalue.Caption = "Replace profile status with"
-        _replacependingreasonwithvalue.SimpleDataListID = New Guid("c8d3128e-a2eb-4413-b0b4-1585ad5bf001")
-        _replacependingreasonwithvalue.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("TYPE", "PARENT.Fields!REASONTYPE"))
-        Me.Fields.Add(_replacependingreasonwithvalue)
-        '
-        '_deletependingreasonvalue
-        '
-        _deletependingreasonvalue.Name = "DELETEPENDINGREASONVALUE"
-        _deletependingreasonvalue.Caption = "Delete profile status value"
-        _deletependingreasonvalue.SimpleDataListID = New Guid("c8d3128e-a2eb-4413-b0b4-1585ad5bf001")
-        _deletependingreasonvalue.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("TYPE", "PARENT.Fields!REASONTYPE"))
-        Me.Fields.Add(_deletependingreasonvalue)
-        '
-        '_deleteallvalues
-        '
-        _deleteallvalues.Name = "DELETEALLVALUES"
-        _deleteallvalues.Caption = "Delete all profile status values"
-        Me.Fields.Add(_deleteallvalues)
+		_replacependingreasonvalue.Caption = "Replace pending reason value of"
+		_replacependingreasonvalue.SimpleDataListId = New Guid("c8d3128e-a2eb-4413-b0b4-1585ad5bf001")
+		_replacependingreasonvalue.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("TYPE", "PARENT.Fields!REASONTYPE"))
+		Me.Fields.Add(_replacependingreasonvalue)
+		'
+		'_replacependingreasonwithvalue
+		'
+		_replacependingreasonwithvalue.Name = "REPLACEPENDINGREASONWITHVALUE"
+		_replacependingreasonwithvalue.Caption = "Replace pending reason with"
+		_replacependingreasonwithvalue.SimpleDataListId = New Guid("c8d3128e-a2eb-4413-b0b4-1585ad5bf001")
+		_replacependingreasonwithvalue.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("TYPE", "PARENT.Fields!REASONTYPE"))
+		Me.Fields.Add(_replacependingreasonwithvalue)
+		'
+		'_deletependingreasonvalue
+		'
+		_deletependingreasonvalue.Name = "DELETEPENDINGREASONVALUE"
+		_deletependingreasonvalue.Caption = "Delete pending reason value"
+		_deletependingreasonvalue.SimpleDataListId = New Guid("c8d3128e-a2eb-4413-b0b4-1585ad5bf001")
+		_deletependingreasonvalue.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("TYPE", "PARENT.Fields!REASONTYPE"))
+		Me.Fields.Add(_deletependingreasonvalue)
+		'
+		'_deleteallvalues
+		'
+		_deleteallvalues.Name = "DELETEALLVALUES"
+		_deleteallvalues.Caption = "Delete all pending reason values"
+		Me.Fields.Add(_deleteallvalues)
 
 		OnCreated()
 
-    End Sub
-    
-    ''' <summary>
-    ''' Selection
-    ''' </summary>
-    <System.ComponentModel.Description("Selection")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [IDSETREGISTERID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
-        Get
-            Return _idsetregisterid
-        End Get
-    End Property
-    
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [RECORDTYPEID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
-        Get
-            Return _recordtypeid
-        End Get
-    End Property
-    
-    ''' <summary>
-    ''' Operation
-    ''' </summary>
-    <System.ComponentModel.Description("Operation")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [OPERATION]() As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of OPERATIONS))
-        Get
-            Return _operation
-        End Get
-    End Property
-    
-    ''' <summary>
-    ''' Pending reason
-    ''' </summary>
-    <System.ComponentModel.Description("Pending reason")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [ADDPENDINGREASONVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
-        Get
-            Return _addpendingreasonvalue
-        End Get
-    End Property
-    
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [REASONTYPE]() As Global.Blackbaud.AppFx.UIModeling.Core.TinyIntField
-        Get
-            Return _reasontype
-        End Get
-    End Property
-    
-    ''' <summary>
-    ''' Overwrite existing value
-    ''' </summary>
-    <System.ComponentModel.Description("Overwrite existing value")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [OVERWRITEEXISTINGVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
-        Get
-            Return _overwriteexistingvalue
-        End Get
-    End Property
-    
-    ''' <summary>
-    ''' Replace profile status value of
-    ''' </summary>
-    <System.ComponentModel.Description("Replace profile status value of")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [REPLACEPENDINGREASONVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
-        Get
-            Return _replacependingreasonvalue
-        End Get
-    End Property
-    
-    ''' <summary>
-    ''' Replace profile status with
-    ''' </summary>
-    <System.ComponentModel.Description("Replace profile status with")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [REPLACEPENDINGREASONWITHVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
-        Get
-            Return _replacependingreasonwithvalue
-        End Get
-    End Property
-    
-    ''' <summary>
-    ''' Delete profile status value
-    ''' </summary>
-    <System.ComponentModel.Description("Delete profile status value")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [DELETEPENDINGREASONVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
-        Get
-            Return _deletependingreasonvalue
-        End Get
-    End Property
-    
-    ''' <summary>
-    ''' Delete all profile status values
-    ''' </summary>
-    <System.ComponentModel.Description("Delete all profile status values")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [DELETEALLVALUES]() As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
-        Get
-            Return _deleteallvalues
-        End Get
-    End Property
+	End Sub
+
+	''' <summary>
+	''' Selection
+	''' </summary>
+	<System.ComponentModel.Description("Selection")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [IDSETREGISTERID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+		Get
+			Return _idsetregisterid
+		End Get
+	End Property
+
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [RECORDTYPEID]() As Global.Blackbaud.AppFx.UIModeling.Core.GuidField
+		Get
+			Return _recordtypeid
+		End Get
+	End Property
+
+	''' <summary>
+	''' Operation
+	''' </summary>
+	<System.ComponentModel.Description("Operation")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [OPERATION]() As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of OPERATIONS))
+		Get
+			Return _operation
+		End Get
+	End Property
+
+	''' <summary>
+	''' Pending reason
+	''' </summary>
+	<System.ComponentModel.Description("Pending reason")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [ADDPENDINGREASONVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+		Get
+			Return _addpendingreasonvalue
+		End Get
+	End Property
+
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [REASONTYPE]() As Global.Blackbaud.AppFx.UIModeling.Core.TinyIntField
+		Get
+			Return _reasontype
+		End Get
+	End Property
+
+	''' <summary>
+	''' Overwrite existing value
+	''' </summary>
+	<System.ComponentModel.Description("Overwrite existing value")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [OVERWRITEEXISTINGVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+		Get
+			Return _overwriteexistingvalue
+		End Get
+	End Property
+
+	''' <summary>
+	''' Replace pending reason value of
+	''' </summary>
+	<System.ComponentModel.Description("Replace pending reason value of")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [REPLACEPENDINGREASONVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+		Get
+			Return _replacependingreasonvalue
+		End Get
+	End Property
+
+	''' <summary>
+	''' Replace pending reason with
+	''' </summary>
+	<System.ComponentModel.Description("Replace pending reason with")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [REPLACEPENDINGREASONWITHVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+		Get
+			Return _replacependingreasonwithvalue
+		End Get
+	End Property
+
+	''' <summary>
+	''' Delete pending reason value
+	''' </summary>
+	<System.ComponentModel.Description("Delete pending reason value")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [DELETEPENDINGREASONVALUE]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+		Get
+			Return _deletependingreasonvalue
+		End Get
+	End Property
+
+	''' <summary>
+	''' Delete all pending reason values
+	''' </summary>
+	<System.ComponentModel.Description("Delete all pending reason values")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [DELETEALLVALUES]() As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+		Get
+			Return _deleteallvalues
+		End Get
+	End Property
     
 End Class

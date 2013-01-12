@@ -171,7 +171,7 @@ as
 
 
 				<FormField FieldID="OVERWRITEEXISTINGVALUE" Caption="Overwrite existing value" DataType="Boolean" />
-				<FormField FieldID="REPLACEPENDINGREASONVALUE" Caption="Replace profile status value of" DataType="Guid">
+				<FormField FieldID="REPLACEPENDINGREASONVALUE" Caption="Replace pending reason value of" DataType="Guid">
 					<SimpleDataList SimpleDataListID="c8d3128e-a2eb-4413-b0b4-1585ad5bf001">
 						<Params>
 							<Param ID="TYPE">
@@ -180,7 +180,7 @@ as
 						</Params>
 					</SimpleDataList>
 				</FormField>
-				<FormField FieldID="REPLACEPENDINGREASONWITHVALUE" Caption="Replace profile status with" DataType="Guid">
+				<FormField FieldID="REPLACEPENDINGREASONWITHVALUE" Caption="Replace pending reason with" DataType="Guid">
 					<SimpleDataList SimpleDataListID="c8d3128e-a2eb-4413-b0b4-1585ad5bf001">
 						<Params>
 							<Param ID="TYPE">
@@ -189,7 +189,7 @@ as
 						</Params>
 					</SimpleDataList>
 				</FormField>
-				<FormField FieldID="DELETEPENDINGREASONVALUE" Caption="Delete profile status value" DataType="Guid">
+				<FormField FieldID="DELETEPENDINGREASONVALUE" Caption="Delete pending reason value" DataType="Guid">
 					<SimpleDataList SimpleDataListID="c8d3128e-a2eb-4413-b0b4-1585ad5bf001">
 						<Params>
 							<Param ID="TYPE">
@@ -198,7 +198,7 @@ as
 						</Params>
 					</SimpleDataList>
 				</FormField>
-				<FormField FieldID="DELETEALLVALUES" Caption="Delete all profile status values" DataType="Boolean" />
+				<FormField FieldID="DELETEALLVALUES" Caption="Delete all pending reason values" DataType="Boolean" />
 			</FormFields>
 
         <WebUIComponent>
