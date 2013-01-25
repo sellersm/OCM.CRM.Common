@@ -37,6 +37,14 @@
 	10-Dec-2012		CMayeda			Added InteractionExtension.SponsorshipFulfillmentChildInfo.Query.xml
 	12-Dec-2012		CMayeda			Added SponsorCommitments.Query.xml
 	13-Dec-2012		Memphis			Added AddBatchNumberToPostToGL.Query.xml
+	25-Jan-2013		Memphis			Added the new Global Changes:
+									Child.PendingReasons.GlobalChange.xml
+									ChildExtension.DepartureFormReceivedDate.GlobalChange.xml
+									ChildExtension.ProfileStatus.GlobalChange.xml
+									AddChildrenToInteraction.GlobalChange.xml
+									ChildFieldMemoDateSent.GlobalChange.xml
+									ChildFieldMemoHoldReasonCode.GlobalChange.xml
+									ChildFieldMemoSentCode.GlobalChange.xml
 	-->
 
 
@@ -180,7 +188,15 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttribute.Change.CodeTableBased.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttribute.Change.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttribute.Delete.GlobalChange.xml" />
-		
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Child.PendingReasons.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildExtension.DepartureFormReceivedDate.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildExtension.ProfileStatus.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddChildrenToInteraction.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildFieldMemoDateSent.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildFieldMemoHoldReasonCode.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildFieldMemoSentCode.GlobalChange.xml" />
+
+
 		<!-- Pages -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.Page.xml" />
 		<!-- Removed because this wasn't working and the go to actions were added manually - Need to review -->
