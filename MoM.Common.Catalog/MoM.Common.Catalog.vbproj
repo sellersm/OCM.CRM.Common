@@ -416,9 +416,9 @@
     <EmbeddedResource Include="Post to GL\AddBatchNumberToPostToGL.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoDateSent.GlobalChange.xml" />
-    <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoHoldReasonCode.GlobalChange.xml" />
-    <EmbeddedResource Include="GlobalChanges\Interaction\ChildFieldMemoSentCode.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Child\ChildFieldMemoDateSent.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Child\ChildFieldMemoHoldReasonCode.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Child\ChildFieldMemoSentCode.GlobalChange.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.ProfileStatus.GlobalChange.xml" />
