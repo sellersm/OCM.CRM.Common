@@ -17,6 +17,7 @@
     Date            Modified By     Comments
     24-Jan-2013     Memphis			Initial version.
 	25-Jan-2013		Memphis			Added delete statement to 'clear out' the child list.
+									Fixed the order of loading the child list for the sponsor...
 -->	
 
 	<!-- describe the SP that performs the global change operation -->
@@ -72,11 +73,6 @@ as
 
 				fetch next from sponsorCursor into @sponsorId
 
-				-- get the actively sponsored children for this sponsor associated with this interaction
-				insert @childIDList 
-				select *
-				from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
-
 				while @@FETCH_STATUS = 0
 				begin
 					-- 'inner' cursor loop:  this cursor holds all the interaction id values from the global change selection for this sponsor:
@@ -90,7 +86,12 @@ as
 		
 					open interactionCursor
 					fetch next from interactionCursor into @interactionId
-		
+
+					-- get the actively sponsored children for this sponsor associated with this interaction
+					insert @childIDList 
+					select *
+					from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
+
 					while @@FETCH_STATUS = 0
 					begin
 						-- first check if there's a row in dbo.USR_INTERACTIONEXTENSION for this interaction ID
