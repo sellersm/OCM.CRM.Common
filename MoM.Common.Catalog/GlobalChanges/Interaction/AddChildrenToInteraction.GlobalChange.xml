@@ -16,6 +16,7 @@
 	History:
     Date            Modified By     Comments
     24-Jan-2013     Memphis			Initial version.
+	25-Jan-2013		Memphis			Added delete statement to 'clear out' the child list.
 -->	
 
 	<!-- describe the SP that performs the global change operation -->
@@ -129,7 +130,9 @@ as
 					deallocate interactionCursor		
 
 					fetch next from sponsorCursor into @sponsorId
-	
+					-- clear out the list of children:
+					delete @childIDList;
+					
 				end  -- outer cursor loop
 
 				close sponsorCursor
