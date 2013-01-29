@@ -14,6 +14,7 @@
 	History:
 	Date            Modified By     Comments
 	09-Jan-2013		Memphis			Added check for the sponsor when checking if cancelled or not. Fogbugz Case 958.
+	28-Jan-2013		Memphis			Fixed the expected date of the completed sponsor interaction that gets created.
 	
 	-->
 	
@@ -307,7 +308,7 @@ if @ExceptionOccurred = 0
 		@NewID,
 		@SponsorID,
 		@InteractionTypeCode,
-		@expectedDate,
+		@Date,
 		@Date,
 		@StatusCodeCompleted,
 		@InteractionSubcategoryID,

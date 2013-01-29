@@ -17,6 +17,7 @@
 	09-Jan-2013		Memphis			Added check for the sponsor when checking if cancelled or not. Fogbugz Case 958.
 									Fogbugz Case 957: change the letter scanner to look for “Child Welcome Letter” 
 									instead of “Welcome Child Originated Letter” 
+	28-Jan-2013		Memphis			Fogbugz Case ???:  expected date for the sponsor interaction should be today.
 	-->
 
 	<CreateProcedureSQL>
@@ -319,7 +320,7 @@ if @ExceptionOccurred = 0
 		@NewID,
 		@SponsorID,
 		@InteractionTypeCode,
-		@expectedDate,
+		@Date,  -- CHANGE TO @Date!
 		@Date,
 		@StatusCodeCompleted,
 		@InteractionSubcategoryID,
