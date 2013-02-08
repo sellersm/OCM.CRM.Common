@@ -45,6 +45,8 @@
 									ChildFieldMemoDateSent.GlobalChange.xml
 									ChildFieldMemoHoldReasonCode.GlobalChange.xml
 									ChildFieldMemoSentCode.GlobalChange.xml
+	07-Feb-2013		Memphis			Added new global changes: AddChildInteractions.GlobalChange.xml
+									AddSponsorToChildInteractions.GlobalChange.xml
 	-->
 
 
@@ -195,6 +197,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildFieldMemoDateSent.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildFieldMemoHoldReasonCode.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildFieldMemoSentCode.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddChildInteractions.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddSponsorToChildInteractions.GlobalChange.xml" />
 
 
 		<!-- Pages -->
