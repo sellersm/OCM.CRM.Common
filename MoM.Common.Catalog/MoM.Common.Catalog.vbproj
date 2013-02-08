@@ -434,6 +434,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="GlobalChanges\Interaction\AddChildInteractions.GlobalChange.xml" />
+    <Content Include="GlobalChanges\Interaction\AddSponsorToChildInteractions.GlobalChange.xml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
