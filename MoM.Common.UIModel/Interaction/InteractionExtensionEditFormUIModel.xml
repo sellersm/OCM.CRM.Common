@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>InteractionExtension.Edit.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>InteractionExtensionEditFormUIModel</ClassName>
+  <HtmlInfo GenerateHtml="false">
+    <HtmlFile>InteractionExtension.EditForm.html</HtmlFile>
+    <HtmlFolder>Interaction\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

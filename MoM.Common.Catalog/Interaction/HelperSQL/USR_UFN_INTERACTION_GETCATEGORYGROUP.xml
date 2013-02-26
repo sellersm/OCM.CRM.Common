@@ -1,0 +1,52 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes"
+	ID="92c13398-0e66-4a81-8136-795a6a8900bb"
+	Name="USR_UFN_INTERACTION_GETCATEGORYGROUP"
+	Description="Used to retrieve a table of the interaction categories for a specific view (child, sponsor, sponsorship, ...)"
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_INTERACTION_GETCATEGORYGROUP" >
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_INTERACTION_GETCATEGORYGROUP (
+	@categoryGroup nvarchar(50)
+)
+returns @interactioncategories table (
+		interactionCategoryID uniqueidentifier
+		)
+with execute as caller
+as begin
+	if lower(@categoryGroup) = 'sponsor'
+		insert @interactioncategories 
+		select	ID as interactionCategoryID
+			from	dbo.INTERACTIONCATEGORY
+			where	lower(NAME) in 
+					('child change notifications', 
+						'child correspondence',
+						'misc processing',
+						'project sponsorship',
+						'prospect welcome',
+						'sponsor welcome',
+						'sponsorship cancellation',
+						'sponsorship delinquency',
+						'sponsorship rate increase',
+						'sponsorship retention',
+						'sponsorship transfers',
+						'sympathy and cancellation' )
+
+					
+	else
+		if lower(@categoryGroup) = 'child'
+			insert @interactioncategories 
+			select	ID as interactionCategoryID
+			  from	dbo.INTERACTIONCATEGORY
+			 where	lower(NAME) in 
+						('child field memo', 'child letters')
+		
+	return 
+end
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

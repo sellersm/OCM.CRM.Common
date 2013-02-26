@@ -1,0 +1,150 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="cb31d719-5661-4a3d-9b5b-a51f5ba54944"
+	Name="USR_USP_INTERACTION_FIELDMEMO_ADD"
+	Description="Used to add a field memo type of interaction"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_FIELDMEMO_ADD"
+	GrantServiceRolePermission="true" >
+
+	<!-- 
+	Remarks:    This wraps the oob Blackbaud sproc USP_DATAFORMTEMPLATE_ADD_INTERACTION and inserts a row in the USR_INTERACTIONEXTENSION table
+				This takes descriptions in for the code table values and looks them up (case insensitive). If any of the lookups fail, it raises an error				
+				No other validation is handled other than the standard check for @changeAgentID. This relies on the oob Blackbaud sproc in terms of validation.
+				
+				Note:	The subcategoryid lookup uses both 'Child Field Memo' for the category name and @subcategoryName
+						Currently assumes that all added Field Memo interactions have a status of Pending
+						
+	History:
+	Date            Modified By     Comments
+	11-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_FIELDMEMO_ADD (
+	@id uniqueidentifier output,								-- This returns the ID of the interaction created
+	@sponsorshipOpportunityChildID uniqueidentifier = null,		-- The child to attach the field memo to
+	@summary nvarchar(100) = '',								-- The summary / objective of the interaction	
+	@subcategoryName nvarchar(100) = '',						-- Name of the Child Field Memo interaction subcategory (not the guid)
+	@expectedDate date = null,									-- Expected Date of the interaction
+	@owner uniqueidentifier = null,								-- Owner / Fundraiser assigned to the interaction 
+	@fieldMemoDateSent date = null,								-- Date the field memo was sent (extension field)
+	@fieldMemoSentDesc nvarchar(100) = '',						-- The type of field memo sent (extension field)
+	@holdReasonDesc nvarchar(100) = '',							-- Hold reason (extension field)
+	@unusableDesc nvarchar(100) = '',							-- Unusable reason (extension field)
+	@contactMethodDesc nvarchar(100) = '',						-- Email, Event, Mail, Phone, Task
+	@comment nvarchar(max) = '',								-- Comment
+	@changeAgentID uniqueidentifier = null						-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	-- Constants 
+	declare @categoryName_FieldMemo nvarchar(100) = 'Child Field Memo'
+	declare @eftBrochureCodeNo tinyint = 0
+	declare @resendCodeNo tinyint = 0
+
+	-- Note: only @statusCodePending is used.  Just thought it would be nice to see all the possible values.
+	declare @statusCode_Planned tinyint = 0
+	declare @statusCode_Pending tinyint = 1
+	declare @statusCode_Completed tinyint = 2
+	declare @statusCode_Unsuccessful tinyint = 3
+	declare @statusCode_Cancelled tinyint = 4
+	declare @statusCode_Declined tinyint = 5
+
+	declare @raiseErrorIfNotFound_True bit = 1
+	
+	-- Vars used for code/guid values
+	declare @subcategoryID uniqueidentifier = null
+	
+	declare @constituentID uniqueidentifier = null
+	
+	declare @fieldMemoSentCodeID uniqueidentifier = null
+	declare @fieldMemoSentError nvarchar(255) = ' Could not find the field memo sent code = "' + @fieldMemoSentDesc + '"'
+	
+	declare @holdReasonCodeID uniqueidentifier = null
+	declare @holdReasonCodeError nvarchar(255) = ' Could not find the field memo hold reason code = "' + @holdReasonDesc + '"'
+	
+	declare @unusableCodeID uniqueidentifier = null
+	declare @unusableCodeError nvarchar(255) = ' Could not find the field memo hold reason code = "' + @unusableDesc + '"'
+
+
+	declare @contactMethodID uniqueidentifier = null
+	declare @contactMethodError nvarchar(255) = ' Could not find the contact method = "' + @contactMethodDesc + '"'
+	
+	
+	set @id = null
+	
+	-- Get ChangeAgent if none was passed into the sproc
+  	if @changeAgentID is null  
+	    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+	
+	begin try
+		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName_FieldMemo, @subcategoryName, @raiseErrorIfNotFound_True
+		
+		select @contactMethodID = ID from dbo.INTERACTIONTYPECODE where DESCRIPTION = lower (@contactMethodDesc)
+		if @contactMethodID is null 
+			RAISERROR 1000000 @contactMethodError
+
+		if @fieldmemoSentDesc <> ''
+		begin
+			select @fieldMemoSentCodeID = ID from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where DESCRIPTION = lower (@fieldMemoSentDesc)
+			if @fieldMemoSentCodeID is null 
+				RAISERROR 1000000 @fieldMemoSentError
+		end
+		
+		if @holdReasonDesc <> ''
+		begin
+			select @holdReasonCodeID = ID from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where DESCRIPTION = lower (@holdReasonDesc)
+			if @holdReasonCodeID is null 
+				RAISERROR 1000000 @holdReasonCodeError
+		end
+					
+		if @unusableDesc <> ''
+		begin
+			select @unusableCodeID = ID from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where DESCRIPTION = lower (@unusableDesc)
+			if @unusableCodeID is null 
+				RAISERROR 1000000 @unusableCodeError
+		end
+		
+		select @constituentID = CONSTITUENTID from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = @sponsorshipOpportunityChildID
+		if @constituentID is null 
+			RAISERROR 1000000 'No interaction was created - couldn''t find the Constituent Record for the child.'
+
+		-- Use Blackbaud's add sproc - the null parm is @actualdate.  This is requried if the statuscode is set to Completed
+		exec USP_DATAFORMTEMPLATE_ADD_INTERACTION @id output, @changeAgentID, @constituentID,  @expectedDate, null,  @owner, @contactMethodID, @summary, @statusCode_Pending, @comment
+
+		if @id is null
+			RAISERROR 1000000 'No ID was returned when creating the interaction.'
+		else
+		begin
+			-- Blackbaud's basic add sproc does not include the subcategoryid, so we need to do that manually
+			update	dbo.INTERACTION
+			   set	INTERACTIONSUBCATEGORYID = @subcategoryID
+			 where  ID = @id			 
+			 
+			-- create extension row
+			insert dbo.USR_INTERACTIONEXTENSION 
+				(ID, FIELDMEMODATESENT, FIELDMEMOSENTCODEID, HOLDREASONCODEID, UNUSABLECODEID, EFTBROCHURECODE, RESENDCODE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+				values (@id, @fieldMemoDateSent, @fieldMemoSentCodeID, @holdReasonCodeID, @unusableCodeID, @eftBrochureCodeNo, @resendCodeNo, @changeAgentID, @changeAgentID, @currentDate, @currentDate)
+
+		end
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+	
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

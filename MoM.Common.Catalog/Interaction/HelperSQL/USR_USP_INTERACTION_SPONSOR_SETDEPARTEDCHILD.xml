@@ -1,0 +1,60 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="4bfa956c-9012-495c-a1db-2e4a98f9fa25"
+	Name="USR_USP_INTERACTION_SPONSOR_SETDEPARTEDCHILD"
+	Description="Used to set the DEPARTEDCHILDID on a sponsor type of interaction extension"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_SETDEPARTEDCHILD"
+	GrantServiceRolePermission="true" >
+	
+	<!-- 
+	Remarks:    This is used to set the DEPARTEDCHILDID on an existing interaction extension.
+				Use USR_USP_INTERACTION_SPONSOR_ADD_PENDING, USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED, or USR_USP_INTERACTION_SPONSOR_ADD first to create the row in 
+				the INTERACTION and USR_INTERACTIONEXTENSION tables
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+	22-Sep-2012		CMayeda			Added check for null @interactionID
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_SETDEPARTEDCHILD (
+	@interactionID uniqueidentifier = null,							-- Interaction ID of the interaction to add the departed child to
+	@sponsorshipOpportunityChildID uniqueidentifier = null,			-- Departed child ID
+	@changeAgentID uniqueidentifier = null							-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+
+)
+as
+begin
+	begin try
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+		
+		if @interactionID is null
+			RAISERROR 1000000 'Interaction ID cannot be null'
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+	
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+
+	
+	update	dbo.USR_INTERACTIONEXTENSION
+	   set	DEPARTEDCHILDID = @sponsorshipOpportunityChildID,
+			CHANGEDBYID = @changeAgentID,
+			DATECHANGED = @currentDate
+	 where	ID = @interactionID
+	
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

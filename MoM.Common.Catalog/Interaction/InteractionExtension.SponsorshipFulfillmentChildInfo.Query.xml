@@ -1,0 +1,90 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="e58a73a3-ef65-4915-9a3d-4e2b2dde0699"
+	Name="Interaction Extension Children Query including Transfer Children"
+	Description="Used to query the children attached to an Interaction Extension includes Transfer children"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Interaction Child List"
+	common:SecurityUIFolder="Interaction Extension" >
+
+	<!-- 
+	Remarks:    This is linked to the OOB Interaction query
+				Note: this displays the project id with the child's lookup id.  To query the actual child id, use the related query view
+
+	History:
+	Date            Modified By     Comments
+	05-Oct-2012		CMayeda			Initial Version
+	05-Dec-2012		CMayeda			Removed USR_INTERACTIONEXTENSIONCHILDREN ID field.
+	-->
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_INTERACTIONEXTENSIONSPONSORSHIPFULFILLMENTCHILDREN">
+		<ViewSQL>
+			<![CDATA[
+	select	int_children.INTERACTIONID as ID,
+			int.SEQUENCEID,
+			int_children.SPONSORSHIPOPPORTUNITYCHILDID,
+			proj_const.LOOKUPID as PROJECTLOOKUPID,
+			so.LOOKUPID as CHILDLOOKUPID,
+			so_child.NAME as CHILDNAME
+			
+	  from	dbo.USR_INTERACTIONEXTENSIONCHILDREN	int_children
+	  join	dbo.INTERACTION int on int_children.INTERACTIONID = int.ID
+ left join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
+				int_children.SPONSORSHIPOPPORTUNITYCHILDID = so_child.ID				
+ left join	dbo.SPONSORSHIPOPPORTUNITY so on
+				int_children.SPONSORSHIPOPPORTUNITYCHILDID = so.ID
+ left join	dbo.SPONSORSHIPLOCATION slocation on
+				so.SPONSORSHIPLOCATIONID = slocation.ID 	
+ left join	dbo.CONSTITUENT proj_const on
+				proj_const.ID = slocation.FIELDOFFICEID
+	
+	union all
+
+	select	int_ext.ID as ID,
+			int.SEQUENCEID,
+			int_ext.TRANSFERCHILDID ,
+			proj_const.LOOKUPID as PROJECTLOOKUPID,
+			so.LOOKUPID as CHILDLOOKUPID,
+			so_child.NAME as CHILDNAME
+			
+	  from	dbo.USR_INTERACTIONEXTENSION int_ext
+	  join	dbo.INTERACTION int on int_ext.ID = int.ID
+ left join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on
+				int_ext.TRANSFERCHILDID = so_child.ID				
+ left join	dbo.SPONSORSHIPOPPORTUNITY so on
+				int_ext.TRANSFERCHILDID = so.ID
+ left join	dbo.SPONSORSHIPLOCATION slocation on
+				so.SPONSORSHIPLOCATIONID = slocation.ID 	
+ left join	dbo.CONSTITUENT proj_const on
+				proj_const.ID = slocation.FIELDOFFICEID
+	 where	int_ext.TRANSFERCHILDID is not null
+	 			
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="ID" Caption="Interaction System Record" Category="System Fields" DataType="Guid"  IsHidden="true"/>
+			<OutputField Name="SEQUENCEID" Caption="Sequence ID" DataType="Integer" />
+			<OutputField Name="SPONSORSHIPOPPORTUNITYCHILDID" Caption="Child System Record"  Category="Sponsorship Opportunity Child Record" DataType="Guid" />
+			<OutputField Name="CHILDLOOKUPID" Caption="Child ID" Category="Fields" DataType="String" />
+			<OutputField Name="CHILDNAME" Caption="Child Name" Category="Fields" DataType="String" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<!--AddToParentView Field="INTERACTIONID" ParentView="V_QUERY_INTERACTION" ParentViewRelatedField="ID" PathAlias="Children"/>-->
+		<!--<AddToParentView Field="INTERACTIONID" ParentView="V_QUERY_INTERACTIONALL" ParentViewRelatedField="ID" PathAlias="Children"/>-->
+		<AddRelatedView Field ="SPONSORSHIPOPPORTUNITYCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Sponsorship Opportunity" />
+		<AddRelatedView Field="ID" RelatedView="V_QUERY_INTERACTION" RelatedField="ID" PathAlias="Interactions"/>
+
+	</RelationshipOperations>
+
+</QueryViewSpec>
+

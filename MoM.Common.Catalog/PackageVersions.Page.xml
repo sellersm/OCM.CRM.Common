@@ -1,0 +1,172 @@
+﻿<PageDefinitionSpec 
+    xmlns="bb_appfx_pagedefinition" 
+    xmlns:common="bb_appfx_commontypes"
+    ID="bdfe2149-c4a5-44bc-8d98-f4fec9990aaa"
+    Name="Package Versions Page"
+    Description="This is used to display the versions of packages, ui model assemblies, and html files that have been loaded"
+    Author="Cary Mayeda" >
+
+	<!-- 
+	Remarks:    This doesn't actually pull version numbers from the assemblies. Automated Build Studio replaces #VersionNumber# in 
+				specific data lists, ui model vb classes, and html files that are displayed on this page.
+
+	History:
+	Date            Modified By     Comments
+	17-Jul-2012		CMayeda			Initial Version
+	20-Oct-2012		CMayeda			Added Child Photo	
+	-->
+
+	<!-- define how the page header should appear -->
+	<PageHeader Caption="Version Check" ImageKey="CATALOG:Blackbaud.AppFx.DevSpace.Catalog,Blackbaud.AppFx.DevSpace.Catalog.Upload.png" />
+
+	<Tabs>
+		<!-- Catalog Assemblies Packages-->
+		<Tab ID="28ce9f39-ab32-4aa0-93f7-c5a005cc34a4" Caption="Catalog Packages">
+			<Sections>
+				<Section ID="E67196FD-8463-49AC-BA8A-1E68341C357B" Caption="Common">
+					<DataList ID="5378e0fb-50de-4ed1-8931-2f9df35b2fbf"> <!-- Common -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="059D321B-A37C-42A4-93C9-345E4DD51676" Caption="Sponsorship">
+					<DataList ID="cc5cc4c8-6190-4127-a952-557c0eddc2ac">	<!-- Sponsorship -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="397F5EF7-4FEF-4D63-9DCE-64F55FAD6AD4" Caption="Child">
+					<DataList ID="b72a2008-44a0-4808-8447-5071e5d75f9d">	<!-- Child Customizations -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="DA5CF9DC-DA58-4522-892B-EE9D4B139FFF" HideCaption="True">
+					<DataList ID="80e7ed94-7b28-4cb3-8c86-04f0fdc133c2">	<!-- Child Customizations Pages and Tasks -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="4EDF4107-0595-452B-8EE0-D42C538B7374" HideCaption="True" > 
+					<DataList ID="1b1f40a0-9ed3-4a41-8f5b-a8f1e6ece585">	<!-- Child Extension Batch -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="04b97e89-086d-4ab4-9b45-0403160c961f" HideCaption="True" >
+					<DataList ID="c1199cc6-5a8e-4ed1-a060-365db9b7e294">	<!-- Child Quota -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+
+				</Section>
+				<Section ID="53C5E982-8F98-4D11-BE9E-1817760F26CB" HideCaption="True" >  
+					<DataList ID="3db0165b-41c6-400c-b8aa-fd2f99a4dfaa">	<!-- Child Eligibility Check -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="F3A1A5F5-5FE2-4541-AAC6-06E3827DA50C" HideCaption="True" >
+					<DataList ID="5e770cd1-b0db-4b08-b365-9047a3973a35">	<!-- Child Bio -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="0C3BAA7E-37A5-4E67-BA4A-DC88F9182D75" HideCaption="True" >
+					<DataList ID="EA9E4C55-A3DD-46E7-8CC8-5E5CBC601B20">  <!-- Child Photo -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="5A0E4CF7-2BC2-4B3B-9488-BE6681DFB459" HideCaption="True" >
+					<DataList ID="0cb2f31d-c5f5-4b5c-ae4e-ac5bd8e6842f">	<!-- Child Utilites -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="0C7AE4EC-5408-4DA1-B351-E02F55BD99B5" Caption="Child Project">
+					<DataList ID="4c5b2122-1013-4b9b-b898-7992f10edeee">	<!-- Child Project -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="BCE9381B-BF0A-4453-8576-2E3931C095F7" Caption="Constituent">
+					<DataList ID="99c9bf75-48e5-4175-b4b4-debe23bf4569">
+						<!-- Constituent -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<Section ID="2587278B-9F02-4B2A-800C-8E0E687BABBC" Caption="Country">
+					<DataList ID="50599970-0299-422b-a3d9-df1c4708bdf3">	<!-- Country -->
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>
+				<!--<Section ID="B4066789-CB29-4544-B32B-719A1045C425" Caption="SponsorshipOpportunityTest">
+					<DataList ID="46a88aa5-7ff5-4fab-b0cd-f57bda68bdf8">	<Test Sponsorship This can be removed when this page works>
+						<RenderStyle>
+							<StandardView AutoSize="true" />
+						</RenderStyle>
+					</DataList>
+				</Section>-->
+			</Sections>			
+
+		</Tab>
+		
+		<!-- UI Model Assemblies and HTML tab -->
+		<Tab ID="6791DE1A-96D9-4D23-801F-E5F80BD59081" Caption="UIModel Assemblies">
+			<Sections>
+				<Section ID="14C8C544-7F03-41FB-8625-85FB6B3F0C09" Caption="Common">
+					<DataForm ID="555C9B42-9D55-498A-8F31-FDECCB9D0CFE" ShowBorder="false" />
+					<SectionContext>
+						<common:Expression>=Globals.CurrentAppUserID</common:Expression>
+					</SectionContext>
+				</Section>
+
+				
+				<Section ID="B162E10C-36A6-47D9-B4FF-5EBB8C0E4FF6" Caption="Sponsorship">
+					<DataForm ID="6277e024-cccd-4b4e-ba53-4fed4b2133e9" ShowBorder="false" />
+					<SectionContext>
+						<common:Expression>=Globals.CurrentAppUserID</common:Expression>
+					</SectionContext>
+				</Section>
+				<Section ID="5403A529-D806-4B6E-9AC2-D0DCE603690A" Caption="Child">
+					<DataForm ID="238619d4-7f2b-4441-a7d1-36908e9e5300" ShowBorder="false" />
+					<SectionContext>
+						<common:Expression>=Globals.CurrentAppUserID</common:Expression>
+					</SectionContext>
+				</Section>
+
+				<Section ID="2CC3D8E4-EEBD-49A6-A899-E49180AC7265" Caption="Child Project">
+					<DataForm ID="c1a25251-2943-46c9-bdb3-837690cd6b98" ShowBorder="false" />
+					<SectionContext>
+						<common:Expression>=Globals.CurrentAppUserID</common:Expression>
+					</SectionContext>
+				</Section>
+
+				<Section ID="901A6511-22E6-41F8-AF02-BECD11380028" Caption="Country">
+					<DataForm ID="F3AEFEAB-72C9-49AA-AAD2-910FD18956DF" ShowBorder="false" />
+					<SectionContext>
+						<common:Expression>=Globals.CurrentAppUserID</common:Expression>
+					</SectionContext>
+				</Section>
+			</Sections>
+		</Tab>
+	</Tabs>
+
+	
+</PageDefinitionSpec>

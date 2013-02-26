@@ -1,0 +1,146 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="d08696d7-2ca4-4658-91da-d8b6089761bf"
+	Name="USR_USP_PARSERAISERSEDGEBARCODE"
+	Description="Parse a Raisers Edge barcode"
+	Author="Bill Elfstrom"
+	SPName="USR_USP_PARSERAISERSEDGEBARCODE"
+	GrantServiceRolePermission="true"
+	>
+  <!-- 
+ 
+  History:
+    Date            Modified By     Comments
+    09-30-2012      BElfstrom       Created
+	09-Jan-2013		Memphis			Fogbugz Case 957: change the parser to use “Child Welcome Letter” 
+									instead of “Welcome Child Originated Letter” 	
+    
+   Notes:
+   If The exception message is blank, the parse was successful.
+   Otherwise an exception occured.
+    
+-->
+	<CreateProcedureSQL>
+		<![CDATA[
+
+create procedure dbo.USR_USP_PARSERAISERSEDGEBARCODE
+@BarcodeString nvarchar(15) = '',
+@SponsorLookupID nvarchar(6) OUTPUT,
+@ChildLookupID nvarchar(7) OUTPUT,
+@LetterFullname nvarchar(100) OUTPUT,
+@ExceptionMessage nvarchar(1000) = '' OUTPUT,
+@ScanOutcome nvarchar(100) OUTPUT
+
+as
+
+begin
+
+begin try		
+
+declare @LetterTypeCode as nvarchar(2)
+set @ExceptionMessage = '';
+
+if LEN(LTRIM(RTRIM(@BarcodeString))) <> 15
+      Set @ExceptionMessage = 'The barcode cannot be read - Some characters are not present.   '
+else
+	begin
+		-- Sponsor ID
+		set @SponsorLookupID = LEFT(@BarcodeString,6)
+		if ISNUMERIC(@SponsorLookupID) = 0
+		   Set @ExceptionMessage = @ExceptionMessage + 'The scanner cannot read the RE Sponsor ID - It is not formatted correctly.   '	
+		else
+			if @SponsorLookupID = ''
+				Set @ExceptionMessage = @ExceptionMessage + 'The scanner cannot read the RE Sponsor ID - The ID is blank.   '	
+				
+		-- Child ID
+		set @ChildLookupID = SUBSTRING(@BarcodeString,7,7)
+		if ISNUMERIC(SUBSTRING(@ChildLookupID,2,6)) = 0
+			Set @ExceptionMessage = @ExceptionMessage + 'The scanner cannot read the RE Child ID.   '
+		else
+			if not SUBSTRING(@ChildLookupID,1,1) = 'C' 
+				Set @ExceptionMessage = @ExceptionMessage + 'The scanner cannot read the RE Child ID.   '
+			else
+				if @ChildLookupID = ''
+					Set @ExceptionMessage = @ExceptionMessage + 'The scanner cannot read the RE Child ID - The ID is blank.   '
+
+		-- Letter Type Code
+		set @LetterTypeCode = RIGHT(@BarcodeString,2)
+		--print @LetterTypeCode
+		if @LetterTypeCode = ''
+			Set @ExceptionMessage = @ExceptionMessage + 'The scanner cannot read the RE Letter Type Code - The Code is blank.   '
+		else
+			begin
+				-- Box 1.2
+				-- get full name of the letters and check for allowed letter codes
+				-- Use a CASE statement instead of all the IF statements:
+				select @LetterFullName = 
+					case
+						when @LetterTypeCode = 'L1' then 'Child Letter 1'
+						when @LetterTypeCode = 'WL' then 'Child Welcome Letter'
+						when @LetterTypeCode = 'C1' then 'Child Holiday Letter'
+						when @LetterTypeCode = 'AL' then 'Child Acknowledgement Letter'
+						when @LetterTypeCode = 'SL' then 'Sponsor Letter'
+						else NULL
+					end
+
+				If @LetterFullName is null
+					set @ExceptionMessage = @ExceptionMessage + 'The Letter Type ' + @LetterTypeCode + ' cannot be processed by this scanner.'
+			end
+
+/*
+			If @LetterTypeCode = 'L1'
+				set @LetterFullName = 'Child Letter 1'
+			else
+				if @LetterTypeCode = 'WL'
+					set @LetterFullName = 'Child Welcome Letter'
+				else	
+					if @LetterTypeCode = 'C1'
+						set @LetterFullName = 'Child Holiday Letter'
+					else		
+						if @LetterTypeCode = 'AL'
+							set @LetterFullName = 'Child Acknowledgement Letter'
+						else
+							if @LetterTypeCode = 'SL'
+								set @LetterFullname = 'Sponsor Letter'
+							else
+								set @ExceptionMessage = @ExceptionMessage + 'The Letter Type ' + @LetterTypeCode + ' cannot be processed by this scanner.'
+			end
+*/
+	end
+		
+
+
+if @ExceptionMessage <> ''
+	begin
+		set @ExceptionMessage = RTRIM(LTRIM(@ExceptionMessage))
+		set @ScanOutcome = 'Place the letter in the exception stack.'
+		--RAISERROR 100000 @ExceptionMessage;
+	end
+else
+	set @ScanOutcome = 'No exceptions, please continue...'
+	
+return 0;
+
+end try
+
+begin catch
+
+/*   11/1/12: Memphis commented out
+  -- Raise an error with the details of the exception
+  declare @ErrMsg nvarchar(4000), @ErrSeverity int
+  select @ErrMsg = ERROR_MESSAGE(),
+         @ErrSeverity = ERROR_SEVERITY()
+  raiserror(@ErrMsg, @ErrSeverity, 1)
+*/
+
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+
+end catch
+
+end
+
+		]]>
+	</CreateProcedureSQL>
+</SQLStoredProcedureSpec>

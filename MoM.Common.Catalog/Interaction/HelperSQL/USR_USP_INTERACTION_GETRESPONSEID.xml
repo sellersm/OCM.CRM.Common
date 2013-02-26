@@ -1,0 +1,60 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="98f88589-202a-436c-b41f-328863d15ba8"
+	Name="USR_USP_INTERACTION_GETRESPONSEID"
+	Description="Used to find the Interaction Response ID"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_GETRESPONSEID"
+	>
+
+	<!-- 
+	Remarks:    This is used to find the subcategoryid based on the combination of Category Name and Response.
+				It is case insensitive.
+				@raiseErrorIfNotFound controls whether an error is raised if the Category Name / Response cannot be found.
+
+	History:
+	Date            Modified By     Comments
+	03-Sep-2012		CMayeda			Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_GETRESPONSEID (
+	@responseID uniqueidentifier output,			-- The response id found
+	@responseCategoryName nvarchar(100) = '',		-- Response Category Name to search for (case insensitive)
+	@response nvarchar(100) = '',					-- Response to search for (case insensitive)
+	@raiseErrorIfNotFound bit = 1					-- When this is set to 1 an error is raised if the category name / response cannot be found
+													-- If this is 0, then a null responseID is passed back through the output parm
+)
+as
+begin
+	declare @errorMsg nvarchar(255) = ''
+	set @errorMsg = 'Couldn''t find Category=' + @responseCategoryName + ', Response=' + @response
+	
+	begin try
+		set @responseID = null
+	
+		select	@responseID = resp.ID	
+		  from	dbo.RESPONSE resp
+		  join	dbo.RESPONSECATEGORY respcat on 
+					resp.RESPONSECATEGORYID = respcat.ID		
+		 where	lower (respcat.NAME) = lower (@responseCategoryName)
+		   and	lower (resp.RESPONSE) = lower (@response)
+
+		if 	@responseID is null and @raiseErrorIfNotFound = 1
+			RAISERROR 1000000 @errorMsg
+
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

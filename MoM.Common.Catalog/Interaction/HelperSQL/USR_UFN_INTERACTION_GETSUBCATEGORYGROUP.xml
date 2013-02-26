@@ -1,0 +1,35 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="8d357b04-77d6-452b-af0a-20192a97fcfc"
+	Name="USR_UFN_INTERACTION_GETSUBCATEGORYGROUP"
+	Description="Used to retrieve a table of the interaction categories and subcategories used for a sponsor"
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_INTERACTION_GETSUBCATEGORYGROUP"
+	>
+	
+	<CreateFunctionSQL>
+			<![CDATA[
+			
+create function dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP (
+	@categoryGroup nvarchar(50)
+)
+returns @interactionsubcategories table (
+		interactionCategoryID uniqueidentifier,
+		interactionSubcategoryID uniqueidentifier		
+		)
+with execute as caller
+as begin
+	insert	@interactionsubcategories
+	select	cat.interactionCategoryID,
+			subcat.ID as interactionSubcategoryID
+	  from	dbo.USR_UFN_INTERACTION_GETCATEGORYGROUP (@categoryGroup) cat
+	  join	dbo.INTERACTIONSUBCATEGORY subcat on
+				subcat.INTERACTIONCATEGORYID = cat.interactionCategoryID
+		
+	return 
+end
+		]]>
+		</CreateFunctionSQL>
+
+</SQLFunctionSpec>

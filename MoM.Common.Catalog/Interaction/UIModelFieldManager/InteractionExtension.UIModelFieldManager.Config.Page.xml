@@ -1,0 +1,96 @@
+﻿<PageDefinitionSpec 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	ID="d6ca346d-8195-4b94-a8a1-ef6e21c9d081" 
+	Name="Interaction Extension UI Model Field Manager" 
+	Description="Used to manage which pages are visible and/or required on the Interaction Extension ui model forms" 
+	Author="Cary Mayeda" 
+	ExpressionDataFormID="00000000-0000-0000-0000-000000000000" 
+	ContextRecordType="Interaction subcategory" 
+	xmlns="bb_appfx_pagedefinition" >
+
+	<!-- 
+	Remarks:    This also contains an Alter Page for the Interactions Subcategory config page to create the go to action to navigate to this page
+				** Not sure if changes to the page will load if the Alter Page script has already been run, because that produces a warning **
+
+	History:
+	Date            Modified By     Comments
+	05-Aug-2012		CMayeda			Initial Version
+	-->
+	
+	<PageHeader Caption="UI Model Field Manager" />
+	<SummarySection ID="5ee2f2cd-a2b4-458b-81e2-cc7f0c5bce28" Caption="Category / Subcategory">
+		<DataForm ID="1c91ef06-14c1-4034-ac2a-30beb1ca5d22" />
+	</SummarySection>
+	<Tabs>
+		<Tab Caption="Field List" ID="c570d9ca-3795-44e5-a143-3aed59319a36">
+			<Sections>
+				<Section ID="5b2a94b3-1711-4b75-8820-00ffae1155be" Caption="Field List">
+					<DataList ID="b158abd4-2a79-41a2-a6bb-f74630377d7e">
+						<RenderStyle>
+							<StandardView />
+						</RenderStyle>
+					</DataList>
+					<Actions>
+						<Action ID="832b73c8-6e93-4fdb-b16b-d3e0e967957f" Caption="Add" ImageKey="RES:NewItem">
+							<ShowAddDataForm DataFormID="b6eba6fe-7d0a-499d-9112-5a6ccd8fd12b" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<PageContextID />
+								</ActionContext>
+								<PostActionEvent>
+									<RefreshSection />
+								</PostActionEvent>
+							</ShowAddDataForm>
+						</Action>
+						<Action ID="0bbb932b-1697-49a9-b153-0840e1033814" Caption="Edit" ImageKey="RES:Edit">
+							<ShowDataForm DataFormID="a52f4aa8-e611-4fa7-9cc3-984844d46363" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+								<PostActionEvent>
+									<RefreshSection />
+								</PostActionEvent>
+							</ShowDataForm>
+						</Action>
+						<Action ID="3c0a6809-b56b-4a48-9be1-b84fac5d54d1" Caption="Delete" ImageKey="RES:Delete">
+							<ExecuteRecordOperation RecordOperationID="e4158e20-75ac-4e03-b8b1-9cab84888aec" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+								<PostActionEvent>
+									<RefreshSection />
+								</PostActionEvent>
+							</ExecuteRecordOperation>
+						</Action>
+					</Actions>
+				</Section>
+			</Sections>
+		</Tab>
+	</Tabs>
+	
+	<AlterExistingPages>
+		<AlterPages>
+			<AlterPage PageID="a9b522e1-5e84-41a3-8aa9-c9cc25f48f55">
+				<AlterTabs>
+					<AlterTab TabID="9a8419a1-5812-47b6-a028-902e3522e4cb">
+						<AlterSections>
+							<AlterDataListSection SectionID="45056da7-1d8b-4708-9302-947e2a47b5dc" DataListID="9d3674fd-3766-4eb7-8167-bfacd698b0b2">
+								<AlterActions>
+									<AddAction Sequence="1000">
+										<Action ID="83C5E633-12C6-4681-92BB-39B661DD0B74" Caption="Go to ui model field manager" ImageKey="RES:goto_round">
+											<ShowPage PageID="d6ca346d-8195-4b94-a8a1-ef6e21c9d081" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+												<ActionContext>
+													<SectionField>ID</SectionField>
+												</ActionContext>
+											</ShowPage>
+										</Action>
+									</AddAction>
+								</AlterActions>
+							</AlterDataListSection>
+						</AlterSections>
+					</AlterTab>
+				</AlterTabs>					   
+			</AlterPage>
+		</AlterPages>
+	</AlterExistingPages>
+</PageDefinitionSpec>

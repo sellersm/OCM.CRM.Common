@@ -1,0 +1,184 @@
+﻿<GlobalChangeSpec 
+    xmlns="bb_appfx_globalchange"
+    xmlns:common="bb_appfx_commontypes"
+    ID="0b11157a-5f15-4949-bbe1-7cbe50f0aee0"
+    Name="Child Field Memo Sent Code Global Change"
+    Description="Child field memo sent code global change"
+    Author="Memphis Sellers"
+    DisplayName="Child field memo Sent Code global change"
+    GlobalChangeFolder="Interaction"
+    SPName="USR_USP_GLOBALCHANGE_CHILDFIELDMEMO_SENTCODE_GLOBALCHANGE"
+    >
+
+	<!-- describe the SP that performs the global change operation -->
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_GLOBALCHANGE_CHILDFIELDMEMO_SENTCODE_GLOBALCHANGE
+(
+	@IDSETREGISTERID uniqueidentifier = null,
+	@CHANGEAGENTID uniqueidentifier = null,
+	@ASOF as datetime = null,
+	@NUMBERADDED int = 0 output,
+	@NUMBEREDITED int = 0 output,
+	@NUMBERDELETED int = 0 output,
+	@OPERATION int,
+	@ADDSENTCODEVALUE uniqueidentifier = null,
+	@OVERWRITEEXISTINGVALUE bit,
+	@REPLACESENTCODEVALUE uniqueidentifier,
+	@REPLACESENTCODEWITHVALUE uniqueidentifier,
+	@DELETESENTCODEVALUE uniqueidentifier,
+	@DELETEALLSENTCODEVALUES bit
+)
+as			
+	set nocount off;
+	
+	if @IDSETREGISTERID is null
+		raiserror ('IDSETREGISTERID is required',13,1);	
+
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate();
+	set @NUMBERADDED = 0;
+	set @NUMBEREDITED = 0;
+	set @NUMBERDELETED = 0; 
+	
+	if @CHANGEAGENTID is null
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+					
+	begin try
+		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate
+		
+		-- perform the Add
+		if @OPERATION = 1
+			begin  
+				-- use the @ADDSENTCODEVALUE as the new value
+				-- check the @OVERWRITEEXISTINGVALUE flag, if set then just do a big update with the @ADDSENTCODEVALUE
+				if @OVERWRITEEXISTINGVALUE = 1
+					begin
+						update dbo.USR_INTERACTIONEXTENSION
+						set FIELDMEMOSENTCODEID = @ADDSENTCODEVALUE,
+						    DATECHANGED = @CURRENTDATE, 
+							CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						select @NUMBERADDED = @@ROWCOUNT						
+					end
+				else
+					begin
+						-- only update where the current value is null
+						update dbo.USR_INTERACTIONEXTENSION
+						set FIELDMEMOSENTCODEID = @ADDSENTCODEVALUE,
+						    DATECHANGED = @CURRENTDATE, 
+							CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						and FIELDMEMOSENTCODEID is null						
+						select @NUMBERADDED = @@ROWCOUNT 
+					end
+			end
+		
+		-- perform the replace
+		if @OPERATION = 2
+			begin  
+				update dbo.USR_INTERACTIONEXTENSION
+				set FIELDMEMOSENTCODEID = @REPLACESENTCODEWITHVALUE,
+					DATECHANGED = @CURRENTDATE, 
+					CHANGEDBYID = @CHANGEAGENTID				
+				where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+				and FIELDMEMOSENTCODEID = @REPLACESENTCODEVALUE
+				set @NUMBEREDITED = @@ROWCOUNT;
+			end
+			
+			
+		-- perform the delete
+		if @OPERATION = 3
+			begin  
+				-- check the flag: if not set, only update the matching rows
+				if @DELETEALLSENTCODEVALUES = 0
+					begin
+						update dbo.USR_INTERACTIONEXTENSION
+						set FIELDMEMOSENTCODEID = NULL,
+						    DATECHANGED = @CURRENTDATE, 
+							CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						and FIELDMEMOSENTCODEID = @DELETESENTCODEVALUE
+						set @NUMBERDELETED = @@ROWCOUNT;
+					end
+				else
+					-- update all values to NULL
+					begin
+						update dbo.USR_INTERACTIONEXTENSION
+						set FIELDMEMOSENTCODEID = NULL,
+						    DATECHANGED = @CURRENTDATE, 
+							CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						set @NUMBERDELETED = @@ROWCOUNT;					
+					end
+			end
+	
+	end try
+
+	
+	begin catch
+		exec dbo.USP_RAISE_ERROR;
+		return 1;
+	end catch
+		]]>
+	</CreateProcedureSQL>
+
+	<ParametersFormMetaData>
+
+		<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
+		<FormMetaData xmlns="bb_appfx_commontypes">
+			<FormFields>
+				<FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+					<SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+						<FormFieldOverrides>
+							<FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+						</FormFieldOverrides>
+					</SearchList>
+				</FormField>
+				<FormField FieldID="RECORDTYPEID" DataType="Guid" ReadOnly="true" Hidden="true" />
+				<FormField FieldID="OPERATION" Caption="Operation" DataType="TinyInt">
+					<ValueList>
+						<Items>
+							<Item>
+								<Value>1</Value>
+								<Label>Add</Label>
+							</Item>
+							<Item>
+								<Value>2</Value>
+								<Label>Replace</Label>
+							</Item>
+							<Item>
+								<Value>3</Value>
+								<Label>Delete</Label>
+							</Item>
+						</Items>
+					</ValueList>
+				</FormField>
+				<FormField FieldID="ADDSENTCODEVALUE" DataType="Guid" Caption="Sent code value to add">
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
+				</FormField>
+				<FormField FieldID="OVERWRITEEXISTINGVALUE" Caption="Overwrite existing value" DataType="Boolean" />
+				<FormField FieldID="REPLACESENTCODEVALUE" Caption="Replace sent code value of" DataType="Guid">
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
+				</FormField>
+				<FormField FieldID="REPLACESENTCODEWITHVALUE" Caption="With" DataType="Guid">
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
+				</FormField>
+				<FormField FieldID="DELETESENTCODEVALUE" Caption="Delete sent code value of" DataType="Guid">
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE" />
+				</FormField>
+				<FormField FieldID="DELETEALLSENTCODEVALUES" Caption="Delete all sent code values" DataType="Boolean" />
+			</FormFields>
+
+        <WebUIComponent>
+            <UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.ChildFieldMemoSentCodeGlobalChangeUIModel" />
+            <WebUI>
+                <ExternalResource Url="browser/htmlforms/custom/ChildFieldMemoSentCodeGlobalChange.html" />
+            </WebUI>
+        </WebUIComponent>
+
+		</FormMetaData>
+	</ParametersFormMetaData>
+	
+</GlobalChangeSpec>

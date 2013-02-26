@@ -1,0 +1,101 @@
+<AddDataFormTemplateSpec 
+    xmlns="bb_appfx_adddataformtemplate"
+    xmlns:common="bb_appfx_commontypes"
+    ID="7e6dd243-cc25-4e04-ae85-d86ec7003184"
+    Name="CRM Sponsor letter scanner add data form"
+    Description="Add data form for CRM sponsor letter scanner."
+    Author="Memphis Sellers"
+    DataFormInstanceID="3c59e129-a487-432a-bc41-f9f85c127858"
+    RecordType="Bar Code"
+    common:SecurityUIFolder="Bar Code"
+	FormHeader="CRM Sponsor Letter Scanner"
+    >
+
+	<SPDataForm>
+		<!-- describe the preload SP (if applicable), which should be used to fetch field default values from the database.  If no
+		preload is needed, then this section can be removed -->
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_CRM_SPONSORLETTERSCANNER">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_CRM_SPONSORLETTERSCANNER
+(
+    @ID uniqueidentifier = null output,
+    @CHANGEAGENTID uniqueidentifier = null,
+	  @BARCODE nvarchar(20) = '',
+	  @BARCODEELEMENTS xml = null, 
+    @SUBMIT bit = 0,
+	@ITEMSENCLOSEDCODEID uniqueidentifier = null
+)
+as
+
+set nocount on;
+
+if @ID is null
+    set @ID = newid()
+
+if @CHANGEAGENTID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+declare @CURRENTDATE datetime
+set @CURRENTDATE = getdate()
+
+begin try
+	-- handle inserting the data
+	declare @foobar table (ID uniqueidentifier)
+   
+	insert into @foobar
+    select newid()
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+return 0				
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+  <!--Context ContextRecordType="REPLACE_WITH_RECORDTYPE" RecordIDParameter="CONTEXTID"/-->
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="false">
+		<common:FormFields>
+			<common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+
+      <common:FormField FieldID="BARCODEELEMENTS" Caption="Scan Results" DataType="XML">
+        <common:Collection EnablePaging="true">
+          <common:Fields>
+            <common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+            <common:FormField FieldID="SCANSTATUS" Caption="Scan status" DataType="String" MaxLength="1000" />
+            <common:FormField FieldID="FIELD1" Caption="Field 1" DataType="String" MaxLength="100" />
+            <common:FormField FieldID="FIELD2" Caption="Field 2" DataType="String" MaxLength="100" />
+            <common:FormField FieldID="FIELD3" Caption="Field 3" DataType="String" MaxLength="100" />
+          </common:Fields>
+        </common:Collection>
+      </common:FormField>
+      <common:FormField FieldID="SUBMIT" Caption="Save results" DataType="Boolean" />
+	<common:FormField FieldID="ITEMSENCLOSEDCODEID" DataType="Guid" Caption="Items enclosed" Required="false">
+		<common:CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE" />
+	</common:FormField>			
+      
+		</common:FormFields>
+
+        <common:WebUIComponent>
+            <common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.CRMSponsorLetterScannerAddDataFormUIModel" />
+            <common:WebUI>
+				<common:ExternalResource Url="browser/htmlforms/custom/CRMSponsorLetterScannerAddDataForm.html"/>
+            </common:WebUI>
+        </common:WebUIComponent>
+
+        
+
+        
+  </common:FormMetaData>
+
+</AddDataFormTemplateSpec>

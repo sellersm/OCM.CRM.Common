@@ -1,0 +1,22 @@
+﻿<TaskSpec
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	ID="1402f379-9ba5-4058-a019-b0e08e13cf31" 
+	Name="Package Versions" 
+	Description="Package Versions" 
+	Author="Cary Mayeda" 
+	FunctionalAreaID="64bbf407-7062-4f63-bc7c-e947f3eef6aa" 
+	Sequence="0" 
+	xmlns="bb_appfx_task" >
+
+	<!-- 
+	Remarks:    Created in UI and copied xml
+
+	History:
+	Date            Modified By     Comments
+	20-Jul-2012		CMayeda			Initial Version
+
+-->
+	
+	<ShowPage PageID="bdfe2149-c4a5-44bc-8d98-f4fec9990aaa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes" />
+</TaskSpec>

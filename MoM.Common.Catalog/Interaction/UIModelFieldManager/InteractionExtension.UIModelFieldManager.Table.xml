@@ -1,0 +1,33 @@
+﻿<TableSpec
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes"
+	ID="4d9b7aa5-f407-4eb4-ae02-692eee2c75ae"
+	Name="Interaction Extension UI Model Field Manager"
+	Description="Used to make the visible and required properties of a ui model field data driven"
+	Author="Cary Mayeda"
+	Tablename="USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER" >
+	
+	<!-- 
+	Remarks:    Index is used to uniqueness of interaction sub category and ui model field combinations.
+
+	History:
+	Date            Modified By     Comments
+	05-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<!-- define fields on the table -->
+	<Fields>
+		<ForeignKeyField Name="INTERACTIONSUBCATEGORYID" Description="Classification of the interaction type." ForeignTable="INTERACTIONSUBCATEGORY" Required="true"/>
+		<CodeTableField Name="UIMODELFIELDCODEID" Description="Field Code " CodeTable="USR_INTERACTIONEXTENSIONUIMODELFIELDCODE" Required="true" />
+		<BooleanField Name="ISVISIBLE" Description="Display the field if this is true" DefaultValue="false" />
+		<BooleanField Name="ISREQUIRED" Description="Set the field to be required if this is true" DefaultValue="false"/>
+	</Fields>
+	<Indexes>
+		<Index IsUnique="true">
+			<IndexFields>
+				<IndexField Name="INTERACTIONSUBCATEGORYID"/>
+				<IndexField Name="UIMODELFIELDCODEID"/>
+			</IndexFields>
+		</Index>
+	</Indexes>
+</TableSpec>

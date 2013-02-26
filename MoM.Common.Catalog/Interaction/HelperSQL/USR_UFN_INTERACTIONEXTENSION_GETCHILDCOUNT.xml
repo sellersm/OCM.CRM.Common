@@ -1,0 +1,36 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="64e50f10-131c-4120-903c-09ed48bad143"
+	Name="USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT"
+	Description="Get the number of children associated with an interaction"
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT"
+	>
+
+	<!-- 
+	Remarks:    This only counts the kids in the table USR_INTERACTIONEXTENSIONCHILDREN.
+				It does not include those in the fields in the table USR_INTERACTIONEXTENSION (e.g. DEPARTUREHCHILDID, TRANSFERCHILDID, ...)
+
+	History:
+	Date            Modified By     Comments
+	07-Aug-2012		CMayeda			Initial Version
+	-->
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT(
+	@interactionID uniqueidentifier = null
+)
+returns int
+with execute as caller
+as begin
+	declare @childCount int = 0
+	select @childCount = count(SPONSORSHIPOPPORTUNITYCHILDID) from dbo.USR_INTERACTIONEXTENSIONCHILDREN where INTERACTIONID=@interactionID
+	
+	return @childCount
+end
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

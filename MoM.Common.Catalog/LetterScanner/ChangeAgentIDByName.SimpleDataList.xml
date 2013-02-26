@@ -1,0 +1,23 @@
+﻿<SimpleDataListSpec
+	xmlns="bb_appfx_simpledatalist"
+	xmlns:common="bb_appfx_commontypes"
+	ID="79ae05d1-0c68-4bd3-8047-e7cf0e0712aa"
+	Name="Change Agent ID By Name - Simple Data List"
+	Description="Change Agents by Name return ID"
+	Author="Bill Elfstrom"
+  TranslationFunctionID="681d1cd8-caed-42e1-82b3-b874b93df6a1"
+  >
+  
+	<SPSimpleList SPName="USR_USP_CHANGEAGENTIDBYNAME">
+		<common:CreateProcedureSQL >
+			<![CDATA[
+create procedure dbo.USR_USP_CHANGEAGENTIDBYNAME 
+as
+         
+	select CHANGEAGENT.ID AS VALUE, CHANGEAGENT.USERNAME as LABEL
+	from dbo.CHANGEAGENT order by CHANGEAGENT.USERNAME
+
+			]]>
+		</common:CreateProcedureSQL>
+	</SPSimpleList>
+</SimpleDataListSpec>
