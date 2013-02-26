@@ -14,6 +14,7 @@
 	Date            Modified By     Comments
 	17-Jul-2012		CMayeda			Initial Version
 	20-Oct-2012		CMayeda			Added Child Photo	
+  21-Feb-2013   JFoster     Added several missing packages
 	-->
 
 	<!-- define how the page header should appear -->
@@ -30,14 +31,42 @@
 						</RenderStyle>
 					</DataList>
 				</Section>
-				<Section ID="059D321B-A37C-42A4-93C9-345E4DD51676" Caption="Sponsorship">
+        <Section ID="DB684E1D-D270-4BE2-85B8-6E84FCF86457" HideCaption="True">
+          <DataList ID="6B605C90-2C22-4600-AFCB-4A82F3873EF1"> <!-- Common Package Versions -->
+            <RenderStyle>
+              <StandardView AutoSize="true" />
+            </RenderStyle>
+          </DataList>
+        </Section>
+        <Section ID="03365384-E080-4BFC-A722-E5E451C1DF1A" HideCaption="True">
+          <DataList ID="03365384-E080-4BFC-A722-E5E451C1DF1A"> <!-- Common LetterScanner -->
+            <RenderStyle>
+              <StandardView AutoSize="true" />
+            </RenderStyle>
+          </DataList>
+        </Section>
+        <Section ID="059D321B-A37C-42A4-93C9-345E4DD51676" Caption="Sponsorship">
 					<DataList ID="cc5cc4c8-6190-4127-a952-557c0eddc2ac">	<!-- Sponsorship -->
 						<RenderStyle>
 							<StandardView AutoSize="true" />
 						</RenderStyle>
 					</DataList>
 				</Section>
-				<Section ID="397F5EF7-4FEF-4D63-9DCE-64F55FAD6AD4" Caption="Child">
+        <Section ID="efa31880-20b1-4a47-b15a-fa4aa40a2f57" HideCaption="True">
+          <DataList ID="efa31880-20b1-4a47-b15a-fa4aa40a2f57"> <!-- Sponsorship Form AddIns-->
+            <RenderStyle>
+              <StandardView AutoSize="true" />
+            </RenderStyle>
+          </DataList>
+        </Section>
+        <Section ID="2e637e84-077b-4154-9cac-8fa5827bb195" HideCaption="True">
+          <DataList ID="2e637e84-077b-4154-9cac-8fa5827bb195"> <!-- Sponsorship ConversionUtilites -->
+            <RenderStyle>
+              <StandardView AutoSize="true" />
+            </RenderStyle>
+          </DataList>
+        </Section>
+        <Section ID="397F5EF7-4FEF-4D63-9DCE-64F55FAD6AD4" Caption="Child">
 					<DataList ID="b72a2008-44a0-4808-8447-5071e5d75f9d">	<!-- Child Customizations -->
 						<RenderStyle>
 							<StandardView AutoSize="true" />
@@ -94,7 +123,22 @@
 						</RenderStyle>
 					</DataList>
 				</Section>
-				<Section ID="0C7AE4EC-5408-4DA1-B351-E02F55BD99B5" Caption="Child Project">
+        <Section ID="0b8833bf-e189-4375-9926-b3870fd3d169" HideCaption="True" >
+          <DataList ID="0b8833bf-e189-4375-9926-b3870fd3d169"> <!-- Child CCH Only Batch -->
+            <RenderStyle>
+              <StandardView AutoSize="true" />
+            </RenderStyle>
+          </DataList>
+        </Section>
+        <Section ID="bcb4220c-f15b-4bda-aea0-ea2bf6574e85" HideCaption="True" >
+          <DataList ID="bcb4220c-f15b-4bda-aea0-ea2bf6574e85">
+            <!-- Child CCH Only Batch -->
+            <RenderStyle>
+              <StandardView AutoSize="true" />
+            </RenderStyle>
+          </DataList>
+        </Section>
+        <Section ID="0C7AE4EC-5408-4DA1-B351-E02F55BD99B5" Caption="Child Project">
 					<DataList ID="4c5b2122-1013-4b9b-b898-7992f10edeee">	<!-- Child Project -->
 						<RenderStyle>
 							<StandardView AutoSize="true" />
