@@ -34,6 +34,7 @@
 										USR_USP_SPONSORLETTERSCANNER_CRM.xml
 										CRM_ChildLetterBarcode.Task.xml
 										CRM_SponsorLetterBarcode.Task.xml
+  21-Feb-2013   JFoster     Added datalist for package version
 	-->	
 	
 
@@ -44,7 +45,7 @@
 
 		<!-- Sprocs -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_PARSERAISERSEDGEBARCODE.xml" />
-        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILDLETTERSCANNER_CRM.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORLETTERSCANNER_CRM.xml" />
