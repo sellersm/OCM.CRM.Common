@@ -22,6 +22,7 @@
 	03-Oct-2012		CMayeda			Added SEQUENCEID from INTERACTION table
 	05-Dec-2012		CMayeda			Fixed Sponsored Project fields
 	10-Dec-2012		CMayeda			Added Letter Scanner fields
+	25-Feb-2013		CMayeda			Fixed DEPARTUREREASONCODE to use the correct code table - USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE FogBugz Case 1010
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -137,7 +138,7 @@
 			<OutputField Name="DEPARTEDCHILDNAME" Caption="Departed Child Name" DataType="String" />
 			<OutputField Name="DEPARTUREREASONCODE" Caption="Departure Reason" DataType="String">
 				<LookupInfo>
-					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE" />
 				</LookupInfo>
 			</OutputField>
 			<OutputField Name="DEPARTUREREASONOTHERDESCRIPTION" Caption="Departure Reason Other Description" DataType="String" />
