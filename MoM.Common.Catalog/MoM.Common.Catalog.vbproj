@@ -435,6 +435,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="PackageVersions.PackageVersion.DataList.xml" />
+    <EmbeddedResource Include="LetterScanner\LetterScanner.PackageVersion.DataList.xml" />
     <Content Include="GlobalChanges\Interaction\AddChildInteractions.GlobalChange.xml" />
     <Content Include="GlobalChanges\Interaction\AddSponsorToChildInteractions.GlobalChange.xml">
       <SubType>Designer</SubType>
