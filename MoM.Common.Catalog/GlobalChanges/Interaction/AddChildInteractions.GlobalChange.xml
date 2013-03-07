@@ -153,6 +153,19 @@ create procedure dbo.USR_USP_GLOBALCHANGE_ADDCHILDINTERACTIONS
 					exec dbo.USP_CONSTITUENTINTERACTION_GETSITES_ADDFROMXML @INTERACTIONID, @SITES, @CHANGEAGENTID, @CURRENTDATE;											
 					exec dbo.USP_INTERACTION_PARTICIPANTS_ADDFROMXML @INTERACTIONID, @PARTICIPANTS, @CHANGEAGENTID;
 					
+					--Fogbugz Case 1009:  add a call to insert usr_interactionextension row...
+					-- create the interaction extension row:
+					insert into dbo.USR_INTERACTIONEXTENSION
+						(ID
+						,ADDEDBYID
+						,CHANGEDBYID
+						)
+					values
+						(@INTERACTIONID
+						,@CHANGEAGENTID
+						,@CHANGEAGENTID
+						)
+						
 					fetch next from IDSETCURSOR into @INTERACTIONID;
 				end
 				
