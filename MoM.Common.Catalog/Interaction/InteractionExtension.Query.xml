@@ -23,6 +23,7 @@
 	05-Dec-2012		CMayeda			Fixed Sponsored Project fields
 	10-Dec-2012		CMayeda			Added Letter Scanner fields
 	25-Feb-2013		CMayeda			Fixed DEPARTUREREASONCODE to use the correct code table - USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE FogBugz Case 1010
+	08-Mar-2013		CMayeda			Added Sponsor ID - related it to V_QUERY_SPONSOR FogBugz Case 1020
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -97,7 +98,9 @@
 			(select	NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = int_ext.CHILDID) as CHILDNAME,
 			int_ext.CHILDPROJECTID,
 			childproj.LOOKUPID as CHILDPROJECTLOOKUPID,
-			childproj.NAME as CHILDPROJECTNAME
+			childproj.NAME as CHILDPROJECTNAME,
+			
+			int_ext.SPONSORID
 
 	  from	dbo.USR_INTERACTIONEXTENSION int_ext
 	  join	dbo.INTERACTION on int_ext.ID = INTERACTION.ID
@@ -284,7 +287,7 @@
 		<AddRelatedView Field ="DOUBLESPONSOREDCHILDID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Double Sponsored Child" />
 		<AddRelatedView Field ="PREVIOUSCHILDPROJECTID" RelatedView="USR_V_QUERY_CHILDPROJECTEXTENSION" RelatedField="ID" PathAlias="Previous Child Project"/>
 		<AddRelatedView Field ="TRANSFERCHILDPROJECTID" RelatedView="USR_V_QUERY_CHILDPROJECTEXTENSION" RelatedField="ID" PathAlias="Transfer Child Project"/>
-
+		<AddRelatedView Field="SPONSORID" RelatedView="V_QUERY_SPONSOR" RelatedField="ID" PathAlias="Sponsor"/>
 	</RelationshipOperations>
 
 </QueryViewSpec>
