@@ -34,7 +34,7 @@
 										USR_USP_SPONSORLETTERSCANNER_CRM.xml
 										CRM_ChildLetterBarcode.Task.xml
 										CRM_SponsorLetterBarcode.Task.xml
-  21-Feb-2013   JFoster     Added datalist for package version
+  21-Feb-2013   JFoster     Added datalist for package version (redone on 3/8/2013)
 	-->	
 	
 
@@ -69,6 +69,10 @@
 
 		<!-- Query -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.Query.xml" />
-	</common:DependencyList>
+
+    <!-- Package Versions -->
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.LetterScanner.PackageVersion.DataList.xml" />
+
+  </common:DependencyList>
 
 </PackageSpec>
