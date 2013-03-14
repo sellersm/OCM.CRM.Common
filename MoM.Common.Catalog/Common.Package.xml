@@ -47,6 +47,7 @@
 									ChildFieldMemoSentCode.GlobalChange.xml
 	07-Feb-2013		Memphis			Added new global changes: AddChildInteractions.GlobalChange.xml
 									AddSponsorToChildInteractions.GlobalChange.xml
+	14-Mar-2013		Memphis			Added for Fogbugz Case 1028: UpdateChildInteractions.GlobalChange.xml
 	-->
 
 
@@ -120,8 +121,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
-		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_SMARTFIELD_GETTABLENAME.xml" />
-		
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_SMARTFIELD_GETTABLENAME.xml" />		
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_ADDVALUETOCODETABLE.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETCODETABLEITEMID.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_GETIDSETCOUNT.xml" />
@@ -158,7 +158,6 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorshipInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ChildInteractionList.DataList.xml" />
-
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttributesNonCodeTables.SimpleList.xml" />
 
@@ -199,6 +198,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildFieldMemoSentCode.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddChildInteractions.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddSponsorToChildInteractions.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteractions.GlobalChange.xml" />
 
 
 		<!-- Pages -->
