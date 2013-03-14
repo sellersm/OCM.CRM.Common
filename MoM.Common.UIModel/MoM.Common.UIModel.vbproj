@@ -159,6 +159,10 @@
     <Compile Include="ChildLetterScanner\BarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="ChildLetterScanner\BarCodeAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="ChildLetterScanner\BarCodeAddDataFormUIModel.vb" />
+    <Compile Include="Interaction\UpdateChildInteractionsGlobalChangeUIModel.CodeGen.vb">
+      <DependentUpon>UpdateChildInteractionsGlobalChangeUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Interaction\UpdateChildInteractionsGlobalChangeUIModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.CodeGen.vb" />
@@ -178,6 +182,9 @@
     </None>
     <None Include="..\MoM.Common.Catalog\GlobalChanges\Child\Child.PendingReasons.GlobalChange.xml">
       <Link>LinkedSpecs\Child.PendingReasons.GlobalChange.xml</Link>
+    </None>
+    <None Include="..\MoM.Common.Catalog\GlobalChanges\Interaction\UpdateChildInteractions.GlobalChange.xml">
+      <Link>LinkedSpecs\UpdateChildInteractions.GlobalChange.xml</Link>
     </None>
     <Content Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.xml" />
     <Content Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.xml" />
@@ -204,6 +211,10 @@
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
+    <Content Include="htmlforms\UpdateChildInteractionsGlobalChange.html" />
+    <Content Include="Interaction\UpdateChildInteractionsGlobalChangeUIModel.xml">
+      <DependentUpon>UpdateChildInteractionsGlobalChangeUIModel.vb</DependentUpon>
+    </Content>
     <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
       <Link>LinkedSpecs\Interaction Extension.View.xml</Link>

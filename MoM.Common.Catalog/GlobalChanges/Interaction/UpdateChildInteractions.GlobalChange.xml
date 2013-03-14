@@ -1,0 +1,157 @@
+﻿<GlobalChangeSpec 
+    xmlns="bb_appfx_globalchange"
+    xmlns:common="bb_appfx_commontypes"
+    ID="953c2f2f-668d-446b-a7d1-71c8efd3bf9f"
+    Name="Update Child Interactions Global Change"
+    Description="Updates child interactions Status, ActualDate, Comment fields."
+    Author="Memphis Sellers"
+    DisplayName="Update child interactions global change"
+    GlobalChangeFolder="Interaction"
+    SPName="USP_GLOBALCHANGE_UPDATE_CHILDINTERACTIONS"
+    >
+
+	<!-- 
+	Remarks:  Updates the Status, ActualDate and Comment fields on the interaction record for a Child record in a selection of Child Interactions.
+  
+	History:
+	Date            Modified By     Comments
+	14-Mar-2013     Memphis			Initial version.
+-->
+
+
+
+	<!-- describe the SP that performs the global change operation -->
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USP_GLOBALCHANGE_UPDATE_CHILDINTERACTIONS
+(
+	@IDSETREGISTERID uniqueidentifier = null,
+	@CHANGEAGENTID uniqueidentifier = null,
+	@ASOF as datetime = null,
+	@NUMBERADDED int = 0 output,
+	@NUMBEREDITED int = 0 output,
+	@NUMBERDELETED int = 0 output,
+	@OPERATION int,
+	--@REPLACESTATUSCODEVALUE uniqueidentifier,
+	@REPLACESTATUSCODEWITHVALUE tinyint,
+	@ACTUALDATE datetime = null,
+	@COMMENT nvarchar(max) = ''
+)
+as			
+	set nocount off;
+	
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate();
+	set @NUMBERADDED = 0;
+	set @NUMBEREDITED = 0;
+	set @NUMBERDELETED = 0; 
+	
+	if @CHANGEAGENTID is null
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+					
+	begin try
+		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate
+		-- NOTE: This form ONLY performs a Replace operation.  There is no add or delete...
+		
+		-- perform the Replace
+		if @OPERATION = 2
+			begin  		
+				update dbo.INTERACTION
+				set 
+					STATUSCODE = @REPLACESTATUSCODEWITHVALUE,
+					ACTUALDATE = (case when @ACTUALDATE is null then ACTUALDATE else @ACTUALDATE end),
+					COMMENT = (case when NULLIF(@COMMENT, '') is null then COMMENT else @COMMENT end),
+					DATECHANGED = @CURRENTDATE,
+					CHANGEDBYID = @CHANGEAGENTID		
+				where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+				--and STATUSCODE = @REPLACESTATUSCODEVALUE
+			end
+
+			set @NUMBERADDED = @@ROWCOUNT;
+			
+		return 0;
+	end try
+	
+	begin catch
+		exec dbo.USP_RAISE_ERROR;
+		return 1;
+	end catch
+		]]>
+	</CreateProcedureSQL>
+
+	<ParametersFormMetaData>
+
+		<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
+		<FormMetaData xmlns="bb_appfx_commontypes">
+			<FormFields>
+				<FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+					<SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+						<FormFieldOverrides>
+							<FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+						</FormFieldOverrides>
+					</SearchList>
+				</FormField>
+				<FormField FieldID="RECORDTYPEID" DataType="Guid" ReadOnly="true" Hidden="true" />
+				<FormField FieldID="OPERATION" Caption="Operation" DataType="TinyInt" DefaultValueText="2">
+					<ValueList>
+						<Items>
+							<Item>
+								<Value>2</Value>
+								<Label>Replace</Label>
+							</Item>
+						</Items>
+					</ValueList>
+				</FormField>
+				<FormField FieldID="ACTUALDATE" Caption="Actual date" DataType="Date" />
+				<FormField FieldID="COMMENT" Caption="Comment" DataType="String" />
+				<!--<FormField FieldID="REPLACESTATUSCODEVALUE" Caption="Replace Status code value of" DataType="TinyInt" Required="true" DefaultValueText="0" CaptionResourceKey="$$status">
+					<common:ValueList>
+						<common:Items>
+							<common:Item>
+								<common:Value>1</common:Value>
+								<common:Label>Pending</common:Label>
+							</common:Item>
+							<common:Item>
+								<common:Value>2</common:Value>
+								<common:Label>Completed</common:Label>
+							</common:Item>
+							<common:Item>
+								<common:Value>4</common:Value>
+								<common:Label>Cancelled</common:Label>
+							</common:Item>
+						</common:Items>
+					</common:ValueList>
+				</FormField>-->
+				<FormField FieldID="REPLACESTATUSCODEWITHVALUE" Caption="Replace status code with" DataType="TinyInt" Required="true" DefaultValueText="1" CaptionResourceKey="$$status">
+					<ValueList>
+						<Items>
+							<Item>
+								<Value>1</Value>
+								<Label>Pending</Label>
+							</Item>
+							<Item>
+								<Value>2</Value>
+								<Label>Completed</Label>
+							</Item>
+							<Item>
+								<Value>4</Value>
+								<Label>Cancelled</Label>
+							</Item>
+						</Items>
+					</ValueList>
+				</FormField>
+
+			</FormFields>
+
+        <WebUIComponent>
+            <UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.UpdateChildInteractionsGlobalChangeUIModel" />
+            <WebUI>
+                <ExternalResource Url="browser/htmlforms/custom/UpdateChildInteractionsGlobalChange.html" />
+            </WebUI>
+        </WebUIComponent>
+
+		</FormMetaData>
+	</ParametersFormMetaData>
+
+</GlobalChangeSpec>

@@ -424,7 +424,9 @@
     <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.ProfileStatus.GlobalChange.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.DepartureFormReceivedDate.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.DepartureFormReceivedDate.GlobalChange.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GlobalChanges\Child\Child.PendingReasons.GlobalChange.xml" />
@@ -441,6 +443,9 @@
     <EmbeddedResource Include="GlobalChanges\Interaction\AddSponsorToChildInteractions.GlobalChange.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GlobalChanges\Interaction\UpdateChildInteractions.GlobalChange.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
