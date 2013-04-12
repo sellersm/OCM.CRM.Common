@@ -6,6 +6,7 @@
 	Description="Does the work for CRM Sponsor letter scanner."
 	Author="Memphis Sellers"
 	SPName="USR_USP_SPONSORLETTERSCANNER_CRM"
+	GrantServiceRolePermission="true"	
 	>
 
 	<!-- 
@@ -22,8 +23,8 @@
 create procedure dbo.USR_USP_SPONSORLETTERSCANNER_CRM
 @SponsorLookupID nvarchar(6),		-- **CHANGE TO 6 WHEN DONE TESTING**
 @ChildLookupID nvarchar(7),		-- **CHANGE TO 7 WHEN DONE TESTING**
-@ChildProjectLookupID nvarchar(6), -- **CHANGE TO 6 WHEN DONE TESTING**
-@InteractionSequenceId int,
+--@ChildProjectLookupID nvarchar(6), -- **CHANGE TO 6 WHEN DONE TESTING**
+--@InteractionSequenceId int,
 @ChangeAgentID uniqueidentifier,
 @ItemsEnclosedCode as uniqueidentifier,
 @ScanSession nvarchar(68),
@@ -41,7 +42,7 @@ declare @OriginalInteractionID as uniqueidentifier
 declare @OriginalLetterSequenceID as int
 declare @OriginalLetterSubcategoryID as uniqueidentifier
 declare @CurrentChildProjectID as uniqueidentifier		-- holds the current project id of the child, used to compare if child changed projects
-declare @BarcodeChildProjectID uniqueidentifier			-- holds the projectId of the child based on the @ChildProjectLookupID parameter passed in
+--declare @BarcodeChildProjectID uniqueidentifier			-- holds the projectId of the child based on the @ChildProjectLookupID parameter passed in
 declare @ConstituentID uniqueidentifier
 declare @CurrentDate as datetime
 declare @Date as datetime
@@ -58,8 +59,8 @@ declare @SponsorLetterSequenceID as int
 declare @SponsorLetterSubcategoryID as uniqueidentifier
 declare @StatusCodeCompleted as tinyint
 declare @StatusCodePending as tinyint
---declare @TempTable TABLE(SponsorLetterSequenceID int)
-declare @TempTable TABLE(InteractionID uniqueidentifier, OriginalLetterSequenceID int)
+declare @TempTable TABLE(SponsorLetterSequenceID int)
+--declare @TempTable TABLE(InteractionID uniqueidentifier, OriginalLetterSequenceID int)
 --Expected Date is last day of month, 3 months in advance
 declare @expectedDate date = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);
 
@@ -74,7 +75,7 @@ if @ChangeAgentID is null
 	exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @ChangeAgentID output;
 
 
--- Sponsor ID
+-- validate Sponsor ID
 if @ExceptionOccurred = 0
 	begin
 		set @SponsorID = (select ID from dbo.CONSTITUENT where LOOKUPID = @SponsorLookupID)
@@ -85,8 +86,8 @@ if @ExceptionOccurred = 0
 			end
 	end
 	
+-- validate Child ID
 if @ExceptionOccurred = 0
--- Child ID
 	begin
 		set @ChildID = (select ID from dbo.SPONSORSHIPOPPORTUNITY where LOOKUPID = @ChildLookupID)
 		If @ChildID is null
@@ -96,20 +97,28 @@ if @ExceptionOccurred = 0
 			end
 	end
 
--- get the Child Project ID	
+
+--get the child's project id so we can populate it in the interactionextension:
 if @ExceptionOccurred = 0
 	begin
-		-- get the Child Project ID
-		set @BarcodeChildProjectID = (select ID from dbo.SPONSORSHIPLOCATION where LOOKUPID = @ChildProjectLookupID)
-		if @BarcodeChildProjectID is null
-			begin
-				set @ExceptionOccurred = 1
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Project ID not found.'
-			end
-	end	
+		set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+	end
+
+-- get the Child Project ID	
+--if @ExceptionOccurred = 0
+--	begin
+--		-- get the Child Project ID
+--		set @BarcodeChildProjectID = (select ID from dbo.SPONSORSHIPLOCATION where LOOKUPID = @ChildProjectLookupID)
+--		if @BarcodeChildProjectID is null
+--			begin
+--				set @ExceptionOccurred = 1
+--				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Project ID not found.'
+--			end
+--	end	
 
 
--- Get the CRM Subcategory IDs				
+-- Get the CRM Subcategory IDs used later when creating the interactions.
+-- Sponsor Letter type:
 if @ExceptionOccurred = 0
 	begin
 		set @SponsorLetterSubcategoryID = (select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = 'sponsor letter')
@@ -120,6 +129,7 @@ if @ExceptionOccurred = 0
 			end
 	end
 
+-- Child Acknowledgement Letter type
 if @ExceptionOccurred = 0
 	begin
 		set @ChildAcknowledgementLetterSubcategoryID = (select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = 'child acknowledgement letter')
@@ -139,29 +149,85 @@ if @ExceptionOccurred = 0
 		-- Get type code of 'Mail'
 		set @InteractionTypeCode = (select ID from dbo.INTERACTIONTYPECODE where LOWER(DESCRIPTION) = 'mail')
 			
-		-- 1.1 Update the interaction row for the given sequence id value.
-		update dbo.INTERACTION
-		set STATUSCODE = @StatusCodeCompleted,
-			ACTUALDATE = CONVERT(date, getdate()) 
-			OUTPUT inserted.ID, inserted.SEQUENCEID
-			INTO @TempTable
-		from (select TOP 1 ID, SEQUENCEID
-		from dbo.INTERACTION 
-		where SEQUENCEID = @InteractionSequenceId
-		order by EXPECTEDDATE ASC) as ib
-		where INTERACTION.ID = ib.ID			
+		-- 1.1 Create "Sponsor Letter" interaction for Sponsor
+		-- Original Letter Sequence and subcategory ID do not apply in this case since no interaction to link to
+		set @Date = CONVERT(DATE,GETDATE())
+		
+		set @NewID = NEWID()
+		-- Insert and save the just created sequence ID for the Acknowledgement Letter creation
 
-		select TOP 1 
-				@OriginalInteractionID = InteractionID, 
-				@OriginalLetterSequenceID =  OriginalLetterSequenceID 
-		from @TempTable
+		INSERT INTO dbo.INTERACTION(
+			ID
+			,CONSTITUENTID
+			,INTERACTIONTYPECODEID
+			,EXPECTEDDATE
+			,ACTUALDATE
+			,STATUSCODE
+			,INTERACTIONSUBCATEGORYID
+			,OBJECTIVE
+			,ADDEDBYID
+			,CHANGEDBYID
+			,DATEADDED
+			,DATECHANGED)
+			OUTPUT INSERTED.SEQUENCEID INTO @TempTable
+		VALUES(
+			@NewID
+			,@SponsorID
+			,@InteractionTypeCode
+			,@Date
+			,@Date
+			,@StatusCodeCompleted
+			,@SponsorLetterSubcategoryID
+			,'Sponsor Letter'
+			,@ChangeAgentID
+			,@ChangeAgentID
+			,GETDATE()
+			,GETDATE()
+			)
 
-		-- update the interaction extension row for this interaction:
-		Update dbo.USR_INTERACTIONEXTENSION
-		set COMPLETEDBYID = @ChangeAgentID,
-			SCANSESSION = @ScanSession,
-			SPONSORID = @SponsorID
-		where ID = @OriginalInteractionID
+		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+			ID
+			,COMPLETEDBYID
+			,CHILDID
+			,SCANSESSION
+			,ORIGINALLETTERSUBCATEGORYID
+			,ORIGINALLETTERSEQUENCEID
+			,CHILDPROJECTID
+			,ITEMSENCLOSEDCODEID
+			,ADDEDBYID
+			,CHANGEDBYID
+			,DATEADDED
+			,DATECHANGED
+			)
+		VALUES (
+			@NewID
+			,@ChangeAgentID
+			,@ChildID
+			,@ScanSession
+			,NULL
+			,0
+			,@CurrentChildProjectID
+			,@ItemsEnclosedCode
+			,@ChangeAgentID
+			,@ChangeAgentID
+			,GETDATE()
+			,GETDATE()
+			)
+
+		-- call 'add child to interaction sproc' from Cary here, to get the child info in this interaction:
+		-- get the sponsorshipopportunitychildid for the given childLookupId
+
+		if @ChildID is not null
+		begin
+			exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
+				@interactionID = @NewID,
+				@sponsorshipOpportunityChildID = @ChildID,
+				@changeAgentID = @ChangeAgentID
+		end
+
+		-- @SponsorLetterSequenceID used in Child Acknowledgement Letter creation
+		select TOP 1 @SponsorLetterSequenceID = SponsorLetterSequenceID
+		from @TempTable	
 	
 		Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor Letter interaction completed.  '
 	end
@@ -170,56 +236,57 @@ if @ExceptionOccurred = 0
 if @ExceptionOccurred = 0
 	-- Child Acknowledgement Letter creation pre-check
 	begin
-	set @ConstituentID = (select CONSTITUENTID from dbo.SPONSORSHIP where SPONSORSHIPOPPORTUNITYID = @ChildID and STATUSCODE = 1)
-	If @ConstituentID is null
-		begin
-			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child not currently sponsored.'
-			set @ExceptionOccurred = 1
-		end
-	else
-		-- Child check for change of sponsor
-		If @ConstituentID <> @SponsorID -- scanned sponsor ID
+		-- note: we have to check for a not null REVENUESPLITID value to eliminate the possiblity of the 'duplicate' sponsorship data conversion issue!
+		set @ConstituentID = (select CONSTITUENTID from dbo.SPONSORSHIP where SPONSORSHIPOPPORTUNITYID = @ChildID and STATUSCODE = 1 and REVENUESPLITID is not NULL)
+		If @ConstituentID is null
 			begin
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current sponsor is not the same as the barcoded sponsor'
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child not currently sponsored.'
 				set @ExceptionOccurred = 1
 			end
-		else
-			-- Child departed (ineligible)
-			--	when 0 then 'Pending', when 1 then 'Eligible',	when 2 then 'Ineligible'	
-			if exists (select * from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
-				begin
-					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child currently ineligible status.'
-				end
+		--else
+		--	-- Child check for change of sponsor
+		--	If @ConstituentID <> @SponsorID -- scanned sponsor ID
+		--		begin
+		--			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current sponsor is not the same as the barcoded sponsor'
+		--			set @ExceptionOccurred = 1
+		--		end
+		--	else
+		--		-- Child departed (ineligible)
+		--		--	when 0 then 'Pending', when 1 then 'Eligible',	when 2 then 'Ineligible'	
+		--		if exists (select * from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
+		--			begin
+		--				set @ExceptionOccurred = 1
+		--				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child currently ineligible status.'
+		--			end
 				
-	--   3.4 Does the Child Project on the barcode match the child’s current Project?
-	--   If NO:  alert current Project not match barcode project, goto 3A exception processing
-	if @ExceptionOccurred = 0
-		begin
-			-- get the Child Project ID
-			set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
-			if @CurrentChildProjectID <> @BarcodeChildProjectID
-				begin
-					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current Child Project ID does not match barcode Project ID.'						
-				end
-		end
-
+		--   3.4 Does the Child Project on the barcode match the child’s current Project?
+		--   If NO:  alert current Project not match barcode project, goto 3A exception processing
+		--if @ExceptionOccurred = 0
+		--	begin
+		--		-- get the Child Project ID
+		--		-- set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+		--		--if @CurrentChildProjectID <> @BarcodeChildProjectID
+		--		--	begin
+		--		--		set @ExceptionOccurred = 1
+		--		--		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current Child Project ID does not match barcode Project ID.'						
+		--		--	end
+		--	end
 	end
 
 
 -- Child Acknowledgement Letter - check for pending interactions
 if @ExceptionOccurred = 0
 	begin
-		-- 2.1 Any Child Acknowledgement Letters in current month?
+		-- 2.1 Any Child Acknowledgement Letters in the expected month, based on the expected date variable set above?
 		if exists(select ID 
 			from dbo.INTERACTION 
-			where YEAR(GETDATE()) = YEAR(EXPECTEDDATE) and  MONTH(GETDATE()) = MONTH(EXPECTEDDATE)
+			where (YEAR(@expectedDate) = YEAR(EXPECTEDDATE) and  MONTH(@expectedDate) = MONTH(EXPECTEDDATE))
 			and @ChildID = CONSTITUENTID 
-			and INTERACTIONSUBCATEGORYID = @ChildAcknowledgementLetterSubcategoryID)
+			and INTERACTIONSUBCATEGORYID = @ChildAcknowledgementLetterSubcategoryID
+			and STATUSCODE = @StatusCodePending)
 			begin
 				set @ExtraLetter = 1
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Child Acknowledgement Letter interaction exists in the current month.  No Child Acknowledgement Letter interaction was created.  '
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Child Acknowledgement Letter interaction exists in the expected month.  No Child Acknowledgement Letter interaction was created.  '
 				set @ScanOutcome = coalesce(@ScanOutcome, '') + 'Place letter in the Extra Letter stack.'
 				set @ExceptionOccurred = 1
 			end
@@ -233,38 +300,39 @@ if @ExceptionOccurred = 0
 		set @NewID = NEWID()
 
 		INSERT INTO dbo.INTERACTION(
-		ID
-		,CONSTITUENTID
-		,INTERACTIONTYPECODEID
-		,EXPECTEDDATE
-		,ACTUALDATE
-		,STATUSCODE
-		,INTERACTIONSUBCATEGORYID
-		,OBJECTIVE
-		,ADDEDBYID
-		,CHANGEDBYID
-		,DATEADDED
-		,DATECHANGED
-		)
+			ID
+			,CONSTITUENTID
+			,INTERACTIONTYPECODEID
+			,EXPECTEDDATE
+			,ACTUALDATE
+			,STATUSCODE
+			,INTERACTIONSUBCATEGORYID
+			,OBJECTIVE
+			,ADDEDBYID
+			,CHANGEDBYID
+			,DATEADDED
+			,DATECHANGED
+			)
 		VALUES(
-		@NewID
-		,@ChildID
-		,@InteractionTypeCode
-		,@expectedDate
-		,NULL
-		,@StatusCodePending
-		,@ChildAcknowledgementLetterSubcategoryID
-		,'Child Acknowledgement Letter'
-		,@ChangeAgentID
-		,@ChangeAgentID
-		,GETDATE()
-		,GETDATE()
-		)
+			@NewID
+			,@ChildID
+			,@InteractionTypeCode
+			,@expectedDate
+			,NULL
+			,@StatusCodePending
+			,@ChildAcknowledgementLetterSubcategoryID
+			,'Child Acknowledgement Letter'
+			,@ChangeAgentID
+			,@ChangeAgentID
+			,GETDATE()
+			,GETDATE()
+			)
 
 		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
 		ID, 
-		COMPLETEDBYID, 
-		CHILDID, 
+		COMPLETEDBYID, 	
+		CHILDID,
+		SPONSORID, 
 		SCANSESSION, 
 		ORIGINALLETTERSUBCATEGORYID, 
 		ORIGINALLETTERSEQUENCEID, 
@@ -277,11 +345,12 @@ if @ExceptionOccurred = 0
 		VALUES (
 		@NewID, 
 		@ChangeAgentID, 
-		@ChildID, 
+		@ChildID,
+		@SponsorID,
 		@ScanSession, 
-		@OriginalLetterSubcategoryID, 
-		@OriginalLetterSequenceID, 
-		@BarcodeChildProjectID, 
+		@SponsorLetterSubcategoryID,	--@OriginalLetterSubcategoryID, 
+		@SponsorLetterSequenceID,		-- @OriginalLetterSequenceID, 
+		@CurrentChildProjectID, 
 		@ChangeAgentID, 
 		@ChangeAgentID, 
 		GETDATE(), 
@@ -291,13 +360,13 @@ if @ExceptionOccurred = 0
 		-- call 'add child to interaction sproc' from Cary here, to get the child info in this interaction:
 		-- get the sponsorshipopportunitychildid for the given childLookupId
 
-		if @ChildID is not null
-		begin
-			exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
-				@interactionID = @NewID,
-				@sponsorshipOpportunityChildID = @ChildID,
-				@changeAgentID = @ChangeAgentID
-		end
+		--if @ChildID is not null
+		--begin
+		--	exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
+		--		@interactionID = @NewID,
+		--		@sponsorshipOpportunityChildID = @ChildID,
+		--		@changeAgentID = @ChangeAgentID
+		--end
 		
 		
 		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Child Acknowledgement Letter interaction was created on the child account.  '
@@ -307,6 +376,10 @@ if @ExceptionOccurred = 0
 
 -- SCAN LOG
 -- Success
+set @SponsorLetterSequenceID = coalesce(@SponsorLetterSequenceID,0)
+set @Scannermessage = RTRIM(@ScannerMessage)
+set @OriginalLetterSequenceID = coalesce(@OriginalLetterSequenceID, 0)
+
 if @ExceptionOccurred = 0
 	begin
 		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The scan was a success.'
@@ -339,7 +412,7 @@ if @ExceptionOccurred = 0
 		,@Scanoutcome
 		,@ChildID
 		,@SponsorID
-		,@BarcodeChildProjectID
+		,@CurrentChildProjectID
 		,@SponsorLetterSubcategoryID
 		,@DateSponsorshipCancelled
 		,@NumberOfDaysSponsored
@@ -378,9 +451,9 @@ else  -- exception
 		
 		set @NumberOfDaysSponsored = coalesce(@NumberOfDaysSponsored, 0)
 		set @CancellationReason = coalesce(@CancellationReason,'')
-		set @SponsorLetterSequenceID = coalesce(@SponsorLetterSequenceID,0)
-		set @Scannermessage = RTRIM(@ScannerMessage)
-		set @OriginalLetterSequenceID = coalesce(@OriginalLetterSequenceID, 0)
+		--set @SponsorLetterSequenceID = coalesce(@SponsorLetterSequenceID,0)
+		--set @Scannermessage = RTRIM(@ScannerMessage)
+		--set @OriginalLetterSequenceID = coalesce(@OriginalLetterSequenceID, 0)
 		
 		insert into dbo.USR_LETTERSCANNERLOG(
 				LOGTYPECODE
@@ -406,7 +479,7 @@ else  -- exception
 				,@Scanoutcome
 				,@ChildID
 				,@SponsorID
-				,@BarcodeChildProjectID
+				,@CurrentChildProjectID
 				,@SponsorLetterSubcategoryID
 				,@DateSponsorshipCancelled
 				,@NumberOfDaysSponsored
