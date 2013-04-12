@@ -28,7 +28,7 @@ Partial Public Class [CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel]
 	Private WithEvents _scanstatus As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _sponsorlookupid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _childlookupid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
-	Private WithEvents _childProjectLookupId As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+	Private WithEvents _letterType As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _resultsok As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 	Private WithEvents _scanmessage As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _exception As Global.Blackbaud.AppFx.UIModeling.Core.StringField
@@ -44,7 +44,7 @@ Partial Public Class [CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel]
 		_scanstatus = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_sponsorlookupid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_childlookupid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
-		_childProjectLookupId = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		_letterType = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_resultsok = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 		_scanmessage = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_exception = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
@@ -105,10 +105,10 @@ Partial Public Class [CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel]
 		'
 		'_lettername
 		'
-		_childProjectLookupId.Name = "CHILDPROJECTLOOKUPID"
-		_childProjectLookupId.Caption = "Project ID"
-		_childProjectLookupId.MaxLength = 100
-		Me.Fields.Add(_childProjectLookupId)
+		_letterType.Name = "LETTERTYPE"
+		_letterType.Caption = "Letter Type"
+		_letterType.MaxLength = 2
+		Me.Fields.Add(_letterType)
 		'
 		'_barcode
 		'
@@ -225,11 +225,11 @@ Partial Public Class [CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel]
 	''' <summary>
 	''' Project ID
 	''' </summary>
-	<System.ComponentModel.Description("Project ID")> _
-	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-	Public ReadOnly Property [CHILDPROJECTLOOKUPID]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+	<System.ComponentModel.Description("Letter Type")> _
+ <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+ Public ReadOnly Property [LETTERTYPE]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		Get
-			Return _childProjectLookupId
+			Return _letterType
 		End Get
 	End Property
 

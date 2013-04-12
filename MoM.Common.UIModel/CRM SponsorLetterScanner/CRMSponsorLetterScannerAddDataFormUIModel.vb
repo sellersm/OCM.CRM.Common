@@ -11,16 +11,19 @@ Public Class CRMSponsorLetterScannerAddDataFormUIModel
 	Private _scannerMessage As String
 	Private _exceptionOccurred As Boolean
 	Private _interactionSequenceId As Integer
-	Private _childProjectLookupId As String
+	Private _letterType As String
+
+	Private Const LETTERTYPEVALUE As String = "SL"
 
 	' using these variables to make testing easier
 	'************** CHANGE VALUES BACK AFTER TESTING! ***************
 	Private _ISTESTING As Boolean = False
 	Private _sponsorIdLength As Integer = 6
 	Private _childIdLength As Integer = 7
-	Private _projectIdLength As Integer = 6
-	Private _interactionIdLength As Integer = 8	 ' 8
-	Private _barCodeLength As Integer = _sponsorIdLength + _childIdLength + _projectIdLength + _interactionIdLength
+	Private _letterTypeLength As Integer = 2
+	' Memphis 4/12/13: no longer used interactionId in the barcode
+	'Private _interactionIdLength As Integer = 8	 ' 8   
+	Private _barCodeLength As Integer = _sponsorIdLength + _childIdLength + _letterTypeLength ' + _interactionIdLength
 
 
 	Private Sub BarCodeAddDataFormUIModel_Loaded(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.LoadedEventArgs) Handles Me.Loaded
@@ -94,7 +97,7 @@ Public Class CRMSponsorLetterScannerAddDataFormUIModel
 				element.SCANMESSAGE.Value = _scannerMessage
 				element.SPONSORLOOKUPID.Value = _sponsorLookupId
 				element.CHILDLOOKUPID.Value = _childLookupId
-				element.CHILDPROJECTLOOKUPID.Value = _childProjectLookupId
+				element.LETTERTYPE.Value = _letterType
 
 				'clear out the barcode field:
 				Me.BARCODE.Value = String.Empty
@@ -118,7 +121,7 @@ Public Class CRMSponsorLetterScannerAddDataFormUIModel
 				element.CHILDLOOKUPID.Value = _childLookupId
 				element.EXCEPTION.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.BadImageAndText
 				element.EXCEPTION.Value = _exceptionMessage.ToString()
-				element.CHILDPROJECTLOOKUPID.Value = _childProjectLookupId
+				element.LETTERTYPE.Value = _letterType
 			End If
 
 		Else
@@ -156,8 +159,11 @@ Public Class CRMSponsorLetterScannerAddDataFormUIModel
 		'
 		'assign output variable values here:
 
+		' Memphis 4/12/13 - Bar code has changed to be just Sponsor Lookup ID + Child Lookup ID + “SL”, i.e.;  4156922C226009SL
+
+
 		If Not String.IsNullOrEmpty(sBarCode) Then
-			'Sponsor should be 6 characters, child 7 characters, child project 6 characters, interaction sequence 10 digits
+			'Sponsor should be 6 characters, child 7 characters, "SL" letter type code which is 2 characters
 			_sponsorLookupId = sBarCode.Substring(0, _sponsorIdLength)
 			If (Not _ISTESTING) AndAlso (Not IsNumeric(_sponsorLookupId)) Then
 				errorMessage = errorMessage + "Sponsor Lookup Id isn't a number."
@@ -168,16 +174,16 @@ Public Class CRMSponsorLetterScannerAddDataFormUIModel
 				errorMessage = errorMessage + "Child Lookup Id isn't a number."
 			End If
 
-			_childProjectLookupId = sBarCode.Substring(_sponsorIdLength + _childIdLength, _projectIdLength)
-			If (Not _ISTESTING) AndAlso (Not IsNumeric(_childProjectLookupId)) Then
-				errorMessage = errorMessage + "Child Proejct Lookup Id isn't a number."
+			_letterType = sBarCode.Substring(_sponsorIdLength + _childIdLength, _letterTypeLength)
+			If (Not _ISTESTING) AndAlso (Not _letterType.ToString().ToUpper.Equals(LETTERTYPEVALUE)) Then
+				errorMessage = errorMessage + "Sponsor Letter Type is invalid. Should be SL."
 			End If
 
-			If Not Integer.TryParse(sBarCode.Substring(_sponsorIdLength + _childIdLength + _projectIdLength, _interactionIdLength), _interactionSequenceId) Then
-				'interaction sequence is actually an INT so it must be a number, even in testing.
-				'If (Not IsNumeric(_interactionSequenceId)) Then
-				errorMessage = errorMessage + "Interaction Sequence Id isn't a number."
-			End If
+			'If Not Integer.TryParse(sBarCode.Substring(_sponsorIdLength + _childIdLength + _letterTypeLength, _interactionIdLength), _interactionSequenceId) Then
+			'	'interaction sequence is actually an INT so it must be a number, even in testing.
+			'	'If (Not IsNumeric(_interactionSequenceId)) Then
+			'	errorMessage = errorMessage + "Interaction Sequence Id isn't a number."
+			'End If
 
 			_scanOutcome = ""
 		Else
@@ -186,7 +192,7 @@ Public Class CRMSponsorLetterScannerAddDataFormUIModel
 
 		If Not errorMessage.Equals(String.Empty) Then
 			'we must have something wrong
-			_exceptionMessage = "Bar code not formatted correct: " + errorMessage
+			_exceptionMessage = "Bar code not formatted correctly: " + errorMessage
 		End If
 
 	End Sub
@@ -208,8 +214,8 @@ Public Class CRMSponsorLetterScannerAddDataFormUIModel
 
 			cmd.Parameters.AddWithValue("@SponsorLookupID", _sponsorLookupId)
 			cmd.Parameters.AddWithValue("@ChildLookupID", _childLookupId)
-			cmd.Parameters.AddWithValue("@ChildProjectLookupID", _childProjectLookupId)
-			cmd.Parameters.AddWithValue("@InteractionSequenceId", _interactionSequenceId)
+			'cmd.Parameters.AddWithValue("@ChildProjectLookupID", _letterType)
+			'cmd.Parameters.AddWithValue("@InteractionSequenceId", _interactionSequenceId)
 			cmd.Parameters.AddWithValue("@ScanSession", _scannerSession)
 			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
 
