@@ -15,7 +15,7 @@
 	History:
 	Date            Modified By     Comments
 	09-Jan-2013		Memphis			Added check for the sponsor when checking if cancelled or not. Fogbugz Case 958.
-	
+	15-Apr-2013		Memphis			Fogbugz Case 1055. 	
 	-->	
 	
 	<CreateProcedureSQL>
@@ -144,18 +144,15 @@ if @ExceptionOccurred = 0
 begin try
 begin tran
 
+-- 1.1 Create "Sponsor Letter" interaction for Sponsor, no matter what, if we have a valid sponsorId value:
 if @ExceptionOccurred = 0
 	begin
 		-- Get type code of 'Mail'
 		set @InteractionTypeCode = (select ID from dbo.INTERACTIONTYPECODE where LOWER(DESCRIPTION) = 'mail')
-			
-		-- 1.1 Create "Sponsor Letter" interaction for Sponsor
-		-- Original Letter Sequence and subcategory ID do not apply in this case since no interaction to link to
-		set @Date = CONVERT(DATE,GETDATE())
-		
+		set @Date = CONVERT(DATE,GETDATE())		
 		set @NewID = NEWID()
+		
 		-- Insert and save the just created sequence ID for the Acknowledgement Letter creation
-
 		INSERT INTO dbo.INTERACTION(
 			ID
 			,CONSTITUENTID
@@ -215,8 +212,6 @@ if @ExceptionOccurred = 0
 			)
 
 		-- call 'add child to interaction sproc' from Cary here, to get the child info in this interaction:
-		-- get the sponsorshipopportunitychildid for the given childLookupId
-
 		if @ChildID is not null
 		begin
 			exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
@@ -233,8 +228,8 @@ if @ExceptionOccurred = 0
 	end
 
 
+-- Child Acknowledgement Letter creation pre-check
 if @ExceptionOccurred = 0
-	-- Child Acknowledgement Letter creation pre-check
 	begin
 		-- note: we have to check for a not null REVENUESPLITID value to eliminate the possiblity of the 'duplicate' sponsorship data conversion issue!
 		set @ConstituentID = (select CONSTITUENTID from dbo.SPONSORSHIP where SPONSORSHIPOPPORTUNITYID = @ChildID and STATUSCODE = 1 and REVENUESPLITID is not NULL)
@@ -243,24 +238,24 @@ if @ExceptionOccurred = 0
 				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child not currently sponsored.'
 				set @ExceptionOccurred = 1
 			end
-		--else
-		--	-- Child check for change of sponsor
-		--	If @ConstituentID <> @SponsorID -- scanned sponsor ID
-		--		begin
-		--			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current sponsor is not the same as the barcoded sponsor'
-		--			set @ExceptionOccurred = 1
-		--		end
-		--	else
-		--		-- Child departed (ineligible)
-		--		--	when 0 then 'Pending', when 1 then 'Eligible',	when 2 then 'Ineligible'	
-		--		if exists (select * from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
-		--			begin
-		--				set @ExceptionOccurred = 1
-		--				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child currently ineligible status.'
-		--			end
+		else
+			-- Child check for change of sponsor
+			If @ConstituentID <> @SponsorID -- scanned sponsor ID
+				begin
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current sponsor is not the same as the barcoded sponsor'
+					set @ExceptionOccurred = 1
+				end
+			else
+				-- Child departed (ineligible)
+				--	when 0 then 'Pending', when 1 then 'Eligible',	when 2 then 'Ineligible'	
+				if exists (select * from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
+					begin
+						set @ExceptionOccurred = 1
+						set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child currently ineligible status.'
+					end
 				
-		--   3.4 Does the Child Project on the barcode match the child’s current Project?
-		--   If NO:  alert current Project not match barcode project, goto 3A exception processing
+		----3.4 Does the Child Project on the barcode match the child’s current Project?
+		----If NO:  alert current Project not match barcode project, goto 3A exception processing
 		--if @ExceptionOccurred = 0
 		--	begin
 		--		-- get the Child Project ID
@@ -293,8 +288,8 @@ if @ExceptionOccurred = 0
 	end
 
 
+-- Create Child Acknowledgement Letter
 if @ExceptionOccurred = 0
-	-- Create Child Acknowledgement Letter
 	begin
 		set @Date = CONVERT(DATE,GETDATE())
 		set @NewID = NEWID()
@@ -357,18 +352,6 @@ if @ExceptionOccurred = 0
 		GETDATE()
 		)
 
-		-- call 'add child to interaction sproc' from Cary here, to get the child info in this interaction:
-		-- get the sponsorshipopportunitychildid for the given childLookupId
-
-		--if @ChildID is not null
-		--begin
-		--	exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
-		--		@interactionID = @NewID,
-		--		@sponsorshipOpportunityChildID = @ChildID,
-		--		@changeAgentID = @ChangeAgentID
-		--end
-		
-		
 		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Child Acknowledgement Letter interaction was created on the child account.  '
 	end
 
