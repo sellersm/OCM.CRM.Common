@@ -25,6 +25,7 @@
 	25-Feb-2013		CMayeda			Fixed DEPARTUREREASONCODE to use the correct code table - USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE FogBugz Case 1010
 	08-Mar-2013		CMayeda			Added Sponsor ID - related it to V_QUERY_SPONSOR FogBugz Case 1020
     14-Mar-2013		CMayeda			Added Assigned child - related to V_QUERY_SPONSORSHIPOPPORTUNITY - FogBugz Case 1041
+	16-Apr-2013		Memphis			Added ITEMSENCLOSED.  Fogbugz Case 1059.
 	-->
 	
 	<!-- define the view used to return data for the query -->
