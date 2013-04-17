@@ -102,7 +102,8 @@
 			childproj.NAME as CHILDPROJECTNAME,
 			
 			int_ext.SPONSORID,
-			so_child.ID as CHILDASSIGNED
+			so_child.ID as CHILDASSIGNED,
+			(select [DESCRIPTION] from dbo.USR_ITEMSENCLOSEDCODE where ID = int_ext.ITEMSENCLOSEDCODEID) as ITEMSENCLOSED
 
 	  from	dbo.USR_INTERACTIONEXTENSION int_ext
 	  join	dbo.INTERACTION on int_ext.ID = INTERACTION.ID
@@ -276,6 +277,12 @@
 					</SimpleDataList>
 				</LookupInfo>
 			</OutputField>
+			<OutputField Name="ITEMSENCLOSED" Caption="Items Enclosed" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE" />
+				</LookupInfo>
+			</OutputField>
+			
 
 		</OutputFields>
 	</Output>
