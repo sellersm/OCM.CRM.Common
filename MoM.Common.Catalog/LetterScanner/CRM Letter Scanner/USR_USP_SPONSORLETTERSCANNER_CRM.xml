@@ -15,7 +15,7 @@
 	History:
 	Date            Modified By     Comments
 	09-Jan-2013		Memphis			Added check for the sponsor when checking if cancelled or not. Fogbugz Case 958.
-	15-Apr-2013		Memphis			Fogbugz Case 1055. 	
+	15-Apr-2013		Memphis			Fogbugz Case 1055. 	Fogbugz Case 1063.  Fogbugz Case 1062.
 	-->	
 	
 	<CreateProcedureSQL>
@@ -81,7 +81,7 @@ if @ExceptionOccurred = 0
 		set @SponsorID = (select ID from dbo.CONSTITUENT where LOOKUPID = @SponsorLookupID)
 		if @SponsorID is null
 			begin
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor ID not found.'
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Sponsor ID not found.'
 				set @ExceptionOccurred = 1
 			end
 	end
@@ -92,7 +92,7 @@ if @ExceptionOccurred = 0
 		set @ChildID = (select ID from dbo.SPONSORSHIPOPPORTUNITY where LOOKUPID = @ChildLookupID)
 		If @ChildID is null
 			begin
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child ID not found.'
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child ID not found.'
 				set @ExceptionOccurred = 1
 			end
 	end
@@ -112,7 +112,7 @@ if @ExceptionOccurred = 0
 --		if @BarcodeChildProjectID is null
 --			begin
 --				set @ExceptionOccurred = 1
---				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Project ID not found.'
+--				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child Project ID not found.'
 --			end
 --	end	
 
@@ -124,7 +124,7 @@ if @ExceptionOccurred = 0
 		set @SponsorLetterSubcategoryID = (select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = 'sponsor letter')
 		if @SponsorLetterSubcategoryID is null
 			begin
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor Letter Type not found.'
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Sponsor Letter Type not found.'
 				set @ExceptionOccurred = 1
 			end
 	end
@@ -136,7 +136,7 @@ if @ExceptionOccurred = 0
 		if @ChildAcknowledgementLetterSubcategoryID is null
 			begin
 				set @ExceptionOccurred = 1
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Acknowledgement Letter not found.'
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child Acknowledgement Letter not found.'
 			end
 	end
 
@@ -224,7 +224,7 @@ if @ExceptionOccurred = 0
 		select TOP 1 @SponsorLetterSequenceID = SponsorLetterSequenceID
 		from @TempTable	
 	
-		Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor Letter interaction completed.  '
+		Set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Sponsor Letter interaction completed.  '
 	end
 
 
@@ -235,14 +235,14 @@ if @ExceptionOccurred = 0
 		set @ConstituentID = (select CONSTITUENTID from dbo.SPONSORSHIP where SPONSORSHIPOPPORTUNITYID = @ChildID and STATUSCODE = 1 and REVENUESPLITID is not NULL)
 		If @ConstituentID is null
 			begin
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child not currently sponsored.'
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child not currently sponsored.'
 				set @ExceptionOccurred = 1
 			end
 		else
 			-- Child check for change of sponsor
 			If @ConstituentID <> @SponsorID -- scanned sponsor ID
 				begin
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current sponsor is not the same as the barcoded sponsor'
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Current sponsor is not the same as the barcoded sponsor'
 					set @ExceptionOccurred = 1
 				end
 			else
@@ -251,7 +251,7 @@ if @ExceptionOccurred = 0
 				if exists (select * from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
 					begin
 						set @ExceptionOccurred = 1
-						set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child currently ineligible status.'
+						set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child currently ineligible status.'
 					end
 				
 		----3.4 Does the Child Project on the barcode match the child’s current Project?
@@ -263,7 +263,7 @@ if @ExceptionOccurred = 0
 		--		--if @CurrentChildProjectID <> @BarcodeChildProjectID
 		--		--	begin
 		--		--		set @ExceptionOccurred = 1
-		--		--		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current Child Project ID does not match barcode Project ID.'						
+		--		--		set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Current Child Project ID does not match barcode Project ID.'						
 		--		--	end
 		--	end
 	end
@@ -365,9 +365,11 @@ set @OriginalLetterSequenceID = coalesce(@OriginalLetterSequenceID, 0)
 
 if @ExceptionOccurred = 0
 	begin
-		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The scan was a success.'
+		-- Fogbugz Case 1063: shorten the successful message.
+		-- set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The scan was a success.'
+		set @ScannerMessage = 'The scan was a success. '
 		set @LogTypeCode = 1 -- Success
-		Set @ScanOutcome = 'Place letter on successful scan stack.'
+		Set @ScanOutcome = 'Place letter on successful scan stack. '
 		Set @NumberOfDaysSponsored = 0
 		Set @CancellationReason = ''	
 		
@@ -410,12 +412,12 @@ else  -- exception
 		if @ExtraLetter = 0
 			begin
 				set @LogTypeCode = 0
-				set @ScanOutcome = 'Place letter in exception stack'
+				set @ScanOutcome = 'Place letter in exception stack. '
 			end
 		else -- extra letter exists
 			begin
 				set @LogTypeCode = 2
-				Set @ScanOutcome = 'Place letter in Extra Letter stack'		
+				Set @ScanOutcome = 'Place letter in Extra Letter stack. '		
 			end
 		
 		-- Check for cancelled sponsorship
@@ -430,7 +432,7 @@ else  -- exception
 		and sp.CONSTITUENTID = @SponsorID   -- must include the constituentid of the sponsor from the bar code!
 
 		if @DateSponsorshipCancelled is not null		
-			Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship was cancelled.  '
+			Set @ScannerMessage = coalesce(@ScannerMessage, '') + '. The sponsorship was cancelled.  '
 		
 		set @NumberOfDaysSponsored = coalesce(@NumberOfDaysSponsored, 0)
 		set @CancellationReason = coalesce(@CancellationReason,'')
