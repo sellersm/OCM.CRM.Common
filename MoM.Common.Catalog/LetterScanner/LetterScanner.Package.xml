@@ -35,6 +35,7 @@
 										CRM_ChildLetterBarcode.Task.xml
 										CRM_SponsorLetterBarcode.Task.xml
   21-Feb-2013   JFoster     Added datalist for package version (redone on 3/8/2013)
+	18-Apr-2013		Memphis			Added LetterScannerLog.Query.xml
 	-->	
 	
 
@@ -69,8 +70,9 @@
 
 		<!-- Query -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.Query.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.LetterScannerLog.Query.xml" />
 
-    <!-- Package Versions -->
+		<!-- Package Versions -->
     <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.LetterScanner.PackageVersion.DataList.xml" />
 
   </common:DependencyList>
