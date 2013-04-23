@@ -18,6 +18,7 @@
     24-Jan-2013     Memphis			Initial version.
 	25-Jan-2013		Memphis			Added delete statement to 'clear out' the child list.
 									Fixed the order of loading the child list for the sponsor...
+	22-Apr-2013		Memphis			Fogbugz Case 1067: get active financial commitments as well.
 -->	
 
 	<!-- describe the SP that performs the global change operation -->
@@ -91,6 +92,12 @@ as
 					insert @childIDList 
 					select *
 					from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
+					
+					-- Fogbugz Case 1067 get the active financial commitments for this sponsor as well:
+					insert @childIDList 
+					select * 
+					from dbo.USR_UFN_GETACTIVE_FINANCIALCOMMITMENTS_BYSPONSOR(@sponsorId)
+
 
 					while @@FETCH_STATUS = 0
 					begin
