@@ -22,13 +22,12 @@ SELECT [ID]
       ,[ORIGINALSEQUENCEID]
       ,[DESCRIPTION]
       ,[SCANOUTCOME]
-      --, (select NAME from dbo.CONSTITUENT where ID = CHILDID) as Child
-      , dbo.UFN_SPONSORSHIPOPPORTUNITY_TRANSLATIONFUNCTION(CHILDID) as Child
+      ,(select so.LOOKUPID from dbo.SPONSORSHIPOPPORTUNITY so where so.ID = CHILDID) as Child
+      --, dbo.UFN_SPONSORSHIPOPPORTUNITY_TRANSLATIONFUNCTION(CHILDID) as Child
       --,[CHILDID]
-      --, (select NAME from dbo.CONSTITUENT where ID = SPONSORID) as Sponsor
-      , dbo.UFN_SPONSORSHIPOPPORTUNITY_TRANSLATIONFUNCTION(SPONSORID) as Sponsor
-      --,[SPONSORID]
-      , dbo.UFN_SPONSORSHIPLOCATION_GETFULLNAME(CHILDPROJECTID) as Project
+      ,(select NAME from dbo.CONSTITUENT where ID = SPONSORID) as Sponsor
+      ,(select LOOKUPID from dbo.CONSTITUENT where ID = SPONSORID) as SPONSORID
+      , (select LOOKUPID from dbo.SPONSORSHIPLOCATION where ID = CHILDPROJECTID) as Project
       --,[CHILDPROJECTID]
       , (select NAME from dbo.INTERACTIONSUBCATEGORY where ID = USR_LETTERSCANNERLOG.LETTERSUBCATEGORYID) as LETTER
       ,[LETTERSUBCATEGORYID]
@@ -36,7 +35,6 @@ SELECT [ID]
       ,[NUMBEROFDAYSSPONSORED]
       ,[CANCELLATIONREASON]
       ,[SEQUENCEID]
-      ,[LOOKUPID]
       ,[ADDEDBYID]
       ,[DATEADDED]
   FROM [dbo].[USR_LETTERSCANNERLOG]
@@ -65,8 +63,9 @@ SELECT [ID]
 			<OutputField Name="ORIGINALSEQUENCEID" Caption="Original Sequence Id" DataType="Integer" />
 			<OutputField Name="DESCRIPTION" Caption="Description" DataType="String" />
 			<OutputField Name="SCANOUTCOME" Caption="Scan Results" DataType="String" />
-			<OutputField Name="Child" Caption="Child" DataType="String" />
+			<OutputField Name="CHILD" Caption="Child Id" DataType="String" />
 			<OutputField Name="Sponsor" Caption="Sponsor" DataType="String" />
+			<OutputField Name="SPONSORID" Caption="Sponsor Id" DataType="String" />
 			<OutputField Name="Project" Caption="Project" DataType="String" />
 			<OutputField Name="LETTER" Caption="Letter" DataType="String" >
 				<LookupInfo>
@@ -94,7 +93,6 @@ SELECT [ID]
 			<OutputField Name="NUMBEROFDAYSSPONSORED" Caption="Number Days Sponsored" DataType="Integer" />
 			<OutputField Name="CANCELLATIONREASON" Caption="Cancellation Reason" DataType="String" />
 			<OutputField Name="SEQUENCEID" Caption="Sequence Id" DataType="Integer" />
-			<OutputField Name="LOOKUPID" Caption="Lookup Id" DataType="String" />
 		</OutputFields>
 	</Output>
 
