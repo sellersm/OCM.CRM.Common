@@ -18,7 +18,7 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 	Private _ISTESTING As Boolean = False
 	Private _sponsorIdLength As Integer = 6
 	Private _childIdLength As Integer = 7
-	Private _projectIdLength As Integer = 6
+	Private _projectIdLength As Integer = 5
 	Private _interactionIdLength As Integer = 8	 ' 8
 	Private _barCodeLength As Integer = _sponsorIdLength + _childIdLength + _projectIdLength + _interactionIdLength
 
@@ -169,9 +169,9 @@ Public Class CRMChildLetterScannerAddDataFormUIModel
 			End If
 
 			_childProjectLookupId = sBarCode.Substring(_sponsorIdLength + _childIdLength, _projectIdLength)
-			If (Not _ISTESTING) AndAlso (Not IsNumeric(_childProjectLookupId)) Then
-				errorMessage = errorMessage + "Child Proejct Lookup Id isn't a number."
-			End If
+			'If (Not _ISTESTING) AndAlso (Not IsNumeric(_childProjectLookupId)) Then
+			'	errorMessage = errorMessage + "Child Proejct Lookup Id isn't a number."
+			'End If
 
 			If Not Integer.TryParse(sBarCode.Substring(_sponsorIdLength + _childIdLength + _projectIdLength, _interactionIdLength), _interactionSequenceId) Then
 				'interaction sequence is actually an INT so it must be a number, even in testing.
