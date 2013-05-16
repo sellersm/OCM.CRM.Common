@@ -88,13 +88,12 @@ as
 					-- get the actively sponsored children for this sponsor associated with this interaction
 					insert @childIDList 
 					select *
-					from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
+					from dbo.USR_UFN_SPONSORSHIP_GETUNPAID_SPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
 					
 					-- Fogbugz Case 1067 get the active financial commitments for this sponsor as well:
 					insert @childIDList 
 					select * 
-					from dbo.USR_UFN_GETACTIVE_FINANCIALCOMMITMENTS_BYSPONSOR(@sponsorId)
-
+					from dbo.USR_UFN_GET_UNPAIDSPONSORED_FINANCIALCOMMITMENTS_BYSPONSOR(@sponsorId)
 
 					while @@FETCH_STATUS = 0
 					begin
