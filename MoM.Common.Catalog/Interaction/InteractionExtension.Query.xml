@@ -26,6 +26,7 @@
 	08-Mar-2013		CMayeda			Added Sponsor ID - related it to V_QUERY_SPONSOR FogBugz Case 1020
     14-Mar-2013		CMayeda			Added Assigned child - related to V_QUERY_SPONSORSHIPOPPORTUNITY - FogBugz Case 1041
 	16-Apr-2013		Memphis			Added ITEMSENCLOSED.  Fogbugz Case 1059.
+	14-May-2013		Memphis			Added PRINTBLACKOUTLABEL.
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -104,7 +105,8 @@
 			
 			int_ext.SPONSORID,
 			so_child.ID as CHILDASSIGNED,
-			(select [DESCRIPTION] from dbo.USR_ITEMSENCLOSEDCODE where ID = int_ext.ITEMSENCLOSEDCODEID) as ITEMSENCLOSED
+			(select [DESCRIPTION] from dbo.USR_ITEMSENCLOSEDCODE where ID = int_ext.ITEMSENCLOSEDCODEID) as ITEMSENCLOSED,
+			int_ext.PRINTBLACKOUTLABEL
 
 	  from	dbo.USR_INTERACTIONEXTENSION int_ext
 	  join	dbo.INTERACTION on int_ext.ID = INTERACTION.ID
@@ -283,6 +285,7 @@
 					<CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE" />
 				</LookupInfo>
 			</OutputField>
+			<OutputField Name="PRINTBLACKOUTLABEL" Caption="Print Blackout Label" DataType="Boolean" />
 			
 
 		</OutputFields>

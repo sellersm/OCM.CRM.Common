@@ -27,6 +27,7 @@
 	27-Oct-2012		CMayeda			Fixed trigger
 	31-Oct-2012		CMayeda			Added indexes, another trigger fix
 	09-Nov-2012		Memphis			Added the fields for Letter Scanner feature
+	14-May-2013		Memphis			Added the new PRINTBLACKOUTLABEL field for letter scanner.
 	-->
 
 
@@ -95,7 +96,7 @@
 		<ForeignKeyField Name="CHILDPROJECTID" Description="Child Project ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPLOCATION" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
 		<NumberField Name="ORIGINALLETTERSEQUENCEID" Description="Sequence ID of original scanned letter" Type="int" />
 		<GuidField Name="APPEALID" Description="Appeal ID"/>
-
+		<BooleanField DefaultValue="false" Name="PRINTBLACKOUTLABEL" Description="Print blackout label" />
 
 	</Fields>
 	<Indexes>

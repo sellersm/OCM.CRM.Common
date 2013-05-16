@@ -163,6 +163,9 @@
       <DependentUpon>UpdateChildInteractionsGlobalChangeUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="Interaction\UpdateChildInteractionsGlobalChangeUIModel.vb" />
+    <Compile Include="Learning Letter Scanner\ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="Learning Letter Scanner\ChildLearningLetterLetterScannerAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="Learning Letter Scanner\ChildLearningLetterLetterScannerAddDataFormUIModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.CodeGen.vb" />
@@ -207,6 +210,7 @@
     <Content Include="htmlforms\ChildFieldMemoDateSentGlobalChange.html" />
     <Content Include="htmlforms\ChildFieldMemoHoldReasonCodeGlobalChange.html" />
     <Content Include="htmlforms\ChildFieldMemoSentCodeGlobalChange.html" />
+    <Content Include="htmlforms\ChildLearningLetterLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\ChildPendingReasonsGlobalChange.html" />
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
@@ -215,6 +219,7 @@
     <Content Include="Interaction\UpdateChildInteractionsGlobalChangeUIModel.xml">
       <DependentUpon>UpdateChildInteractionsGlobalChangeUIModel.vb</DependentUpon>
     </Content>
+    <Content Include="Learning Letter Scanner\ChildLearningLetterLetterScannerAddDataFormUIModel.xml" />
     <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
       <Link>LinkedSpecs\Interaction Extension.View.xml</Link>

@@ -36,6 +36,10 @@
 										CRM_SponsorLetterBarcode.Task.xml
   21-Feb-2013   JFoster     Added datalist for package version (redone on 3/8/2013)
 	18-Apr-2013		Memphis			Added LetterScannerLog.Query.xml
+	15-May-2013		Memphis			Added new files for Learning Letter Scanner, Fogbugz Case 1069:
+									ChildLearningLetterLetterScanner.Task.xml
+									ChildLearningLetterScanner.Add.xml
+									USR_USP_CHILD_EDUCATION_LETTERSCANNER.xml
 	-->	
 	
 
@@ -46,16 +50,18 @@
 
 		<!-- Sprocs -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_PARSERAISERSEDGEBARCODE.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_CHILDLETTERSCANNER.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RE_CRM_SPONSORLETTERSCANNER.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILDLETTERSCANNER_CRM.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORLETTERSCANNER_CRM.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILD_EDUCATION_LETTERSCANNER.xml" />
 
 		<!-- forms-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarCode.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorLetterBarCode.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_ChildLetterBarCode.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_SponsorLetterBarCode.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLearningLetterScanner.Add.xml" />
 
 		<!-- DataLists-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.DataList.xml" />
@@ -67,6 +73,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ViewScannerLog.Page.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_ChildLetterBarcode.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_SponsorLetterBarcode.Task.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLearningLetterLetterScanner.Task.xml" />
 
 		<!-- Query -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.Query.xml" />
