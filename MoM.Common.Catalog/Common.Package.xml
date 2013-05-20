@@ -48,6 +48,7 @@
 	07-Feb-2013		Memphis			Added new global changes: AddChildInteractions.GlobalChange.xml
 									AddSponsorToChildInteractions.GlobalChange.xml
 	14-Mar-2013		Memphis			Added for Fogbugz Case 1028: UpdateChildInteractions.GlobalChange.xml
+	20-May-2013		Memphis			Added for Fogbugz Case 1077:  UpdateChildInteraction.ExpectedDate.GlobalChange.xml
 	-->
 
 
@@ -199,6 +200,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddChildInteractions.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddSponsorToChildInteractions.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteractions.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteraction.ExpectedDate.GlobalChange.xml" />
 
 
 		<!-- Pages -->
