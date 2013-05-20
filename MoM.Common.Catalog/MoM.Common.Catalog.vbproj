@@ -454,6 +454,7 @@
     <EmbeddedResource Include="GlobalChanges\Interaction\AddUnpaidSponsoredChildrenToInteraction.GlobalChange.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GlobalChanges\Interaction\UpdateChildInteraction.ExpectedDate.GlobalChange.xml" />
     <Content Include="LetterScanner\Learning Letter Scanner\ChildLearningLetterLetterScanner.Task.xml" />
     <Content Include="LetterScanner\Learning Letter Scanner\ChildLearningLetterScanner.Add.xml" />
     <Content Include="LetterScanner\Learning Letter Scanner\USR_USP_CHILD_EDUCATION_LETTERSCANNER.xml" />
