@@ -454,10 +454,10 @@
     <EmbeddedResource Include="GlobalChanges\Interaction\AddUnpaidSponsoredChildrenToInteraction.GlobalChange.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="GlobalChanges\Interaction\UpdateChildInteraction.ExpectedDate.GlobalChange.xml" />
-    <Content Include="LetterScanner\Learning Letter Scanner\ChildLearningLetterLetterScanner.Task.xml" />
-    <Content Include="LetterScanner\Learning Letter Scanner\ChildLearningLetterScanner.Add.xml" />
-    <Content Include="LetterScanner\Learning Letter Scanner\USR_USP_CHILD_EDUCATION_LETTERSCANNER.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\UpdateChildInteraction.ExpectedDate.GlobalChange.xml" />
+    <EmbeddedResource Include="LetterScanner\Learning Letter Scanner\ChildLearningLetterLetterScanner.Task.xml" />
+    <EmbeddedResource Include="LetterScanner\Learning Letter Scanner\ChildLearningLetterScanner.Add.xml" />
+    <EmbeddedResource Include="LetterScanner\Learning Letter Scanner\USR_USP_CHILD_EDUCATION_LETTERSCANNER.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
