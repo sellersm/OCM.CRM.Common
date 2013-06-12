@@ -29,7 +29,8 @@ create procedure dbo.USR_USP_CHILD_EDUCATION_LETTERSCANNER
 	@ScanSession nvarchar(68),
 	@ScannerMessage nvarchar(1000) OUTPUT,
 	@ScanOutcome nvarchar(1000) OUTPUT,
-	@ExceptionOccurred bit OUTPUT
+	@ExceptionOccurred bit OUTPUT,
+	@setPrintBlackoutLabel bit OUTPUT
 
 as
 begin
@@ -61,7 +62,7 @@ begin
 	declare @possibleInteractionCount int = 0;		-- counter used to help locate the child letter interaction when  not using the sequence id
 	declare @isInteractionFound bit = 0;			-- flag to identify if we found the child letter interaction
 	declare @childInteractionId uniqueidentifier = null;	-- holds the child interaction id when found by searching, not sequence id
-	declare @childInteractionSummary nvarchar(100) = 'Annual Letter – Educational';    -- used to locate the child interaction if not found by sequence id
+	declare @childInteractionSummary nvarchar(100) = 'Annual Letter - Educational';    -- used to locate the child interaction if not found by sequence id
 
 	declare @foundSubCategoryId uniqueidentifier;
 	declare @foundExpectedDate date;
@@ -69,7 +70,8 @@ begin
 
 	declare @ignoreSponsorCheck bit = 0;            -- flag used to skip checking for matching/valid sponsor, set if sponsorlookupid = 000000
 	declare @noChildCorrespondence bit = 0;         -- flag used to skip creating sponsor interaction
-	declare @setPrintBlackoutLabel bit = 0;         -- flag to indicate if we should set the PRINT_BLACKOUT_LABEL field in the interactionextension table.
+	--declare @setPrintBlackoutLabel bit = 0;         -- flag to indicate if we should set the PRINT_BLACKOUT_LABEL field in the interactionextension table.:  6/12/13 passed in now to the form as parameter
+	set @setPrintBlackoutLabel = 0;					-- default to False to avoid any conversion errors in the UIModel class.
 
 	declare @interactionSponsorId uniqueidentifier;
 
@@ -116,6 +118,11 @@ begin
 	select @childLetterSubCategoryId = ID
 	from dbo.INTERACTIONSUBCATEGORY
 	where lower(NAME) = LOWER('Child Letter 1');
+	
+	-- 6/12/13 Memphis per Pamela, need to to populate the “Original Letter Subcategory” extension field in the sponsor’s 
+	-- Send Child Correspondence interaction with Child Letter 1.  That way we can query on only the learning letters that were scanned for that day.
+	set @OriginalLetterSubcategoryID = @childLetterSubCategoryId
+	
 
 	begin try
 		if @childLetterSubCategoryId is null
@@ -406,7 +413,7 @@ begin
 								-- set the sponsorid that will be used for creating the Sponsor Interaction to the current sponsor of this child
 								set @interactionSponsorId = @ConstituentID;
     							--set @ExceptionOccurred = 1
-    							--set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor not the same as barcode.  '
+    							set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Blackout label needed.  '
     						end
 						else
 							begin
@@ -563,7 +570,8 @@ begin
 						@changeAgentID = @ChangeAgentID
 				end
 		
-			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Send Child Correspondence interaction created.  '
+			-- 6/12/13 Memphis took this out to unclutter the dialog box message that the user sees.
+			--set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Send Child Correspondence interaction created.  '
 
 		end
 

@@ -10,6 +10,7 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 	Private _scannerSession As String
 	Private _scannerMessage As String
 	Private _exceptionOccurred As Boolean
+	Private _setPrintBlackoutLabel As Boolean
 	Private _interactionSequenceId As Integer
 	Private _childProjectLookupId As String
 
@@ -48,6 +49,7 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 		'_interactionSequenceId = 0
 		_childProjectLookupId = String.Empty
 		_exceptionOccurred = False
+		_setPrintBlackoutLabel = False
 
 		Dim element As ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel = New ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel()
 		element.RESULTSOK.Enabled = False
@@ -98,6 +100,7 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 				element.SPONSORLOOKUPID.Value = _sponsorLookupId
 				element.CHILDLOOKUPID.Value = _childLookupId
 				element.CHILDPROJECTLOOKUPID.Value = _childProjectLookupId
+				element.SETPRINTBLACKOUTLABEL.Value = _setPrintBlackoutLabel
 
 				'clear out the barcode field:
 				Me.BARCODE.Value = String.Empty
@@ -231,12 +234,18 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 			exceptionOccurred.SqlDbType = SqlDbType.Bit
 			cmd.Parameters.Add(exceptionOccurred)
 
+			Dim setPrintBlackoutLabel As SqlParameter = New SqlParameter("@setPrintBlackoutLabel", 0)
+			setPrintBlackoutLabel.Direction = ParameterDirection.Output
+			setPrintBlackoutLabel.SqlDbType = SqlDbType.Bit
+			cmd.Parameters.Add(setPrintBlackoutLabel)
+
 			cmd.ExecuteNonQuery()
 
 			'assign output variable values here:
 			_scannerMessage = cmd.Parameters("@ScannerMessage").Value.ToString()
 			_scanOutcome = cmd.Parameters("@ScanOutcome").Value.ToString()
 			_exceptionOccurred = CBool(cmd.Parameters("@ExceptionOccurred").Value)
+			_setPrintBlackoutLabel = CBool(cmd.Parameters("@setPrintBlackoutLabel").Value)
 
 		End Using
 
