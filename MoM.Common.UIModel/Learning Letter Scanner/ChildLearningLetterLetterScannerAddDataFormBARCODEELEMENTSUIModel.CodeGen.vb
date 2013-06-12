@@ -18,7 +18,6 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 	Inherits Global.Blackbaud.AppFx.UIModeling.Core.UIModel
 
 #Region "Extensibility methods"
-
 	Partial Private Sub OnCreated()
 	End Sub
 
@@ -32,6 +31,8 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 	Private WithEvents _resultsok As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 	Private WithEvents _scanmessage As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _exception As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+	Private WithEvents _setPrintBlackoutLabel As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+
 	'Add a column for letter stack:
 	Private WithEvents _letterstack As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
@@ -49,6 +50,7 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 		_scanmessage = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_exception = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_letterstack = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		_setPrintBlackoutLabel = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 
 		'
 		'_letterstack
@@ -126,6 +128,15 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 		_barcode.Visible = False
 		_barcode.MaxLength = 20
 		Me.Fields.Add(_barcode)
+
+		'
+		' _setPrintBlackoutLabel
+		'
+		' 6/12/13 Memphis added to tell user to print blackout labels or not
+		_setPrintBlackoutLabel.Name = "SETPRINTBLACKOUTLABEL"
+		_setPrintBlackoutLabel.Caption = "Blackout Label"
+		_setPrintBlackoutLabel.Visible = True
+		Me.Fields.Add(_setPrintBlackoutLabel)
 
 		OnCreated()
 
@@ -230,5 +241,17 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 			Return _childProjectLookupId
 		End Get
 	End Property
+
+	''' <summary>
+	''' SETPRINTBLACKOUTLABEL
+	''' </summary>
+	<System.ComponentModel.Description("SETPRINTBLACKOUTLABEL")> _
+ <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+ Public ReadOnly Property [SETPRINTBLACKOUTLABEL]() As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+		Get
+			Return _setPrintBlackoutLabel
+		End Get
+	End Property
+
 
 End Class
