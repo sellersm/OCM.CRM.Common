@@ -437,7 +437,7 @@ begin
 				begin 
 					--set @noChildCorrespondence = 1;
 					set @ExceptionOccurred = 1;
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor has No Child Correspondence solicitor code.  ';
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor has No Child Correspondence solicit code.  ';
 				end
 		end
 
