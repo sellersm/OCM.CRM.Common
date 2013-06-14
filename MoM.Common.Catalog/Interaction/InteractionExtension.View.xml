@@ -25,8 +25,9 @@
 	Date            Modified By     Comments
 	03-Sep-2012		CMayeda			Initial Version
 	25-Sep-2012		CMayeda			Modified Child fields to display name instead of ID
-	26-Sep-2012		CMayeda			Added SponsorID
+	26-Sep-2012		CMayeda			Added SponsorID	
 	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
+	13-Jun-2013		CMayeda			Added PRINTBLACKOUTLABEL, COMPLETEDAFTERCANCELLATIONCODE
 	-->
 
 	<SPDataForm SPName="USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION">
@@ -70,6 +71,9 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
 	@ADDRESSBLOCK nvarchar(150) = null output,
 	@CITY nvarchar(50) = null output,
 	@STATEID uniqueidentifier = null output,
+	@COMPLETEDAFTERCANCELLATIONCODE tinyint = null output,
+	@PRINTBLACKOUTLABEL tinyint = null output,	
+	
 	@CHILDREN xml = null output
 )
 as
@@ -117,7 +121,9 @@ as
 			@ADDRESSBLOCK = ADDRESSBLOCK,
 			@CITY = CITY,
 			@STATEID = STATEID,
-			
+			@COMPLETEDAFTERCANCELLATIONCODE = COMPLETEDAFTERCANCELLATIONCODE,
+			@PRINTBLACKOUTLABEL = PRINTBLACKOUTLABEL,
+	
 			@CHILDREN = dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN_TOITEMLISTXML(@ID)
 	  from	dbo.USR_INTERACTIONEXTENSION int_ext
 	  join	dbo.INTERACTION on INTERACTION.ID = int_ext.ID
@@ -162,7 +168,8 @@ as
                     </c:Items>
                 </c:ValueList>
             </c:FormField>
-            <c:FormField FieldID="UNAVAILABLECHILDID" DataType="String" Caption="Unavailable child" />
+
+			<c:FormField FieldID="UNAVAILABLECHILDID" DataType="String" Caption="Unavailable child" />
             <c:FormField FieldID="TRANSFERCHILDID" DataType="String" Caption="Transfer child" />
             <c:FormField FieldID="DEPARTEDCHILDID" DataType="String" Caption="Departed child" />
             <c:FormField FieldID="DEPARTUREREASONCODEID" DataType="String" MaxLength="100" Caption="Departure reason" />
@@ -188,21 +195,52 @@ as
 			<c:FormField FieldID="ITEMSENCLOSEDCODEID" Caption="Items enclosed" DataType="Guid">
 				<c:CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE"/>
 			</c:FormField>
-			<c:FormField FieldID="ORIGINALLETTERSUBCATEGORYID" Caption="Original Letter Subcategory" DataType="Guid">
+			<c:FormField FieldID="ORIGINALLETTERSUBCATEGORYID" Caption="Original letter subcategory" DataType="Guid">
 				<c:SimpleDataList SimpleDataListID="0eacc39b-07d1-4641-8774-e319559535a7" />
 			</c:FormField>
-			
+
+			<c:FormField FieldID="COMPLETEDAFTERCANCELLATIONCODE" Caption="Completed after cancellation">
+				<c:ValueList>
+					<c:Items>
+						<c:Item>
+							<c:Value>0</c:Value>
+							<c:Label>No</c:Label>
+						</c:Item>
+						<c:Item>
+							<c:Value>1</c:Value>
+							<c:Label>Yes</c:Label>
+						</c:Item>
+					</c:Items>
+				</c:ValueList>
+			</c:FormField>
+			<c:FormField FieldID="PRINTBLACKOUTLABEL" DataType="TinyInt" Caption="Print blackout label" DefaultValueText="0">
+				<c:ValueList>
+					<c:Items>
+						<c:Item>
+							<c:Value>0</c:Value>
+							<c:Label>No</c:Label>
+						</c:Item>
+						<c:Item>
+							<c:Value>1</c:Value>
+							<c:Label>Yes</c:Label>
+						</c:Item>
+					</c:Items>
+				</c:ValueList>
+			</c:FormField>
+
 			<c:FormField FieldID="RESERVATIONREQREPCODE" Caption="Rep code" DataType="String" MaxLength="100" />
 			<c:FormField FieldID="RESERVATIONREQNUMBEROFPROFILES" Caption="Number of profiles" DataType="SmallInt" />
 			<c:FormField FieldID="RESERVATIONREQDISPLAYRACKS" Caption="Display racks" DataType="SmallInt" />
 			<c:FormField FieldID="RESERVATIONREQBROCHURES" Caption="Brochures" DataType="SmallInt" />
 			<c:FormField FieldID="RESERVATIONREQEXPECTEDDATETYPECODEID" Caption="Expected date type" DataType="String" MaxLength="100" />
+			
 			<c:FormField FieldID="ADDRESSBLOCK" MaxLength="150" Caption="Address" DefaultValueText="" Multiline="true" />
 			<c:FormField FieldID="CITY" MaxLength="50" Caption="City" DefaultValueText=""  />
 			<c:FormField FieldID="STATEID" DataType="Guid" Caption="State" >
 				<c:SimpleDataList SimpleDataListID="b46d36d1-d3ed-4f6e-91da-89b6c88ca0c6" ShowDescription="true" />
 			</c:FormField>
 			<c:FormField FieldID="POSTCODE" MaxLength="12" Caption="ZIP" DefaultValueText=""  />
+			
 			<c:FormField FieldID="CHILDREN" Caption="Children">
 				<c:Collection>
 					<c:Fields>
