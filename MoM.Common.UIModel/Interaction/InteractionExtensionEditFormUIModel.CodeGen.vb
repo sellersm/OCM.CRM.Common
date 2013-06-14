@@ -38,6 +38,24 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         [Yes] = 1
     End Enum
 
+    ''' <summary>
+    ''' Enumerated values for use with the COMPLETEDAFTERCANCELLATIONCODE property
+    ''' </summary>
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public Enum COMPLETEDAFTERCANCELLATIONCODES As Integer
+        [No] = 0
+        [Yes] = 1
+    End Enum
+
+    ''' <summary>
+    ''' Enumerated values for use with the PRINTBLACKOUTLABEL property
+    ''' </summary>
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public Enum PRINTBLACKOUTLABELS As Integer
+        [No] = 0
+        [Yes] = 1
+    End Enum
+
 #End Region
 
 #Region "Extensibility methods"
@@ -70,6 +88,8 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     Private WithEvents _sponsorid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _itemsenclosedcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _originallettersubcategoryid As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+    Private WithEvents _completedaftercancellationcode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of COMPLETEDAFTERCANCELLATIONCODES))
+    Private WithEvents _printblackoutlabel As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of PRINTBLACKOUTLABELS))
     Private WithEvents _reservationreqrepcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _reservationreqnumberofprofiles As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
     Private WithEvents _reservationreqdisplayracks As Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
@@ -108,6 +128,8 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _sponsorid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
         _itemsenclosedcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _originallettersubcategoryid = New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+        _completedaftercancellationcode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of COMPLETEDAFTERCANCELLATIONCODES))
+        _printblackoutlabel = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of PRINTBLACKOUTLABELS))
         _reservationreqrepcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _reservationreqnumberofprofiles = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
         _reservationreqdisplayracks = New Global.Blackbaud.AppFx.UIModeling.Core.SmallIntField
@@ -125,7 +147,7 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         MyBase.RecordType = "Constituent Interaction"
         MyBase.FixedDialog = True
         MyBase.ExtensionTabCaption = "Additional Info"
-        MyBase.UserInterfaceUrl = "browser/htmlforms/Interaction/InteractionExtension.EditForm.html"
+        MyBase.UserInterfaceUrl = "browser/htmlforms/custom/InteractionExtension.EditForm.html"
 
         '
         '_childcountletterversioncodeid
@@ -288,6 +310,22 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
         _originallettersubcategoryid.Caption = "Original Letter Subcategory"
         _originallettersubcategoryid.SimpleDataListID = New Guid("0eacc39b-07d1-4641-8774-e319559535a7")
         Me.Fields.Add(_originallettersubcategoryid)
+        '
+        '_completedaftercancellationcode
+        '
+        _completedaftercancellationcode.Name = "COMPLETEDAFTERCANCELLATIONCODE"
+        _completedaftercancellationcode.Caption = "Completed after cancellation"
+        _completedaftercancellationcode.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of COMPLETEDAFTERCANCELLATIONCODES)) With {.Value = COMPLETEDAFTERCANCELLATIONCODES.[No], .Translation = "No"})
+        _completedaftercancellationcode.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of COMPLETEDAFTERCANCELLATIONCODES)) With {.Value = COMPLETEDAFTERCANCELLATIONCODES.[Yes], .Translation = "Yes"})
+        Me.Fields.Add(_completedaftercancellationcode)
+        '
+        '_printblackoutlabel
+        '
+        _printblackoutlabel.Name = "PRINTBLACKOUTLABEL"
+        _printblackoutlabel.Caption = "Print blackout label"
+        _printblackoutlabel.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of PRINTBLACKOUTLABELS)) With {.Value = PRINTBLACKOUTLABELS.[No], .Translation = "No"})
+        _printblackoutlabel.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of Nullable(Of PRINTBLACKOUTLABELS)) With {.Value = PRINTBLACKOUTLABELS.[Yes], .Translation = "Yes"})
+        Me.Fields.Add(_printblackoutlabel)
         '
         '_reservationreqrepcode
         '
@@ -611,6 +649,28 @@ Partial Public Class [InteractionExtensionEditFormUIModel]
     Public ReadOnly Property [ORIGINALLETTERSUBCATEGORYID]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
         Get
             Return _originallettersubcategoryid
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Completed after cancellation
+    ''' </summary>
+    <System.ComponentModel.Description("Completed after cancellation")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [COMPLETEDAFTERCANCELLATIONCODE]() As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of COMPLETEDAFTERCANCELLATIONCODES))
+        Get
+            Return _completedaftercancellationcode
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Print blackout label
+    ''' </summary>
+    <System.ComponentModel.Description("Print blackout label")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [PRINTBLACKOUTLABEL]() As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of PRINTBLACKOUTLABELS))
+        Get
+            Return _printblackoutlabel
         End Get
     End Property
     

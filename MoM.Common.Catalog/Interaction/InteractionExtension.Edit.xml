@@ -66,7 +66,9 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
 	@ADDRESSBLOCK nvarchar(150) = null output,
 	@CITY nvarchar(50) = null output,
 	@POSTCODE nvarchar(12) = null output,
-	
+	@COMPLETEDAFTERCANCELLATIONCODE tinyint = null output,
+	@PRINTBLACKOUTLABEL tinyint = null output,	
+
 	@CHILDREN xml = null output
 		
 )
@@ -117,6 +119,8 @@ as
 		@ADDRESSBLOCK = ADDRESSBLOCK,
 		@CITY = CITY,
 		@POSTCODE = POSTCODE,
+		@COMPLETEDAFTERCANCELLATIONCODE = COMPLETEDAFTERCANCELLATIONCODE,
+		@PRINTBLACKOUTLABEL = PRINTBLACKOUTLABEL,
 
 		@CHILDREN= dbo.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN_TOITEMLISTXML(@ID)
 	from dbo.USR_INTERACTIONEXTENSION
@@ -165,6 +169,8 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
 	@ADDRESSBLOCK nvarchar(150),
 	@CITY nvarchar(50),
 	@POSTCODE nvarchar(12),
+	@COMPLETEDAFTERCANCELLATIONCODE tinyint,
+	@PRINTBLACKOUTLABEL tinyint,	
 
 	@CHILDREN xml
 )
@@ -210,6 +216,8 @@ as begin
 			ADDRESSBLOCK = @ADDRESSBLOCK,
 			CITY = @CITY,
 			POSTCODE = @POSTCODE,
+			COMPLETEDAFTERCANCELLATIONCODE = @COMPLETEDAFTERCANCELLATIONCODE,
+			PRINTBLACKOUTLABEL = @PRINTBLACKOUTLABEL,
 			
 			CHANGEDBYID = @CHANGEAGENTID,
 			DATECHANGED = getdate()
@@ -284,6 +292,7 @@ end
 					</c:Items>
 				</c:ValueList>
 			</c:FormField>
+
 			<c:FormField FieldID="UNAVAILABLECHILDID" DataType="Guid" Caption="Unavailable child">
 				<c:SearchList SearchListID="AB076868-114A-4696-AFE9-8D590677708C" />
 			</c:FormField>
@@ -303,7 +312,7 @@ end
 			<c:FormField FieldID="PREVIOUSCHILDPROJECTID" DataType="Guid" Caption="Previous child project">
 				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
 			</c:FormField>
-			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Tranfer child project">
+			<c:FormField FieldID="TRANSFERCHILDPROJECTID" DataType="Guid" Caption="Transfer child project">
 				<c:SearchList SearchListID="a62848b0-d378-4c5f-886d-aa791a59fe55" />
 			</c:FormField>
 			<c:FormField FieldID="PREVIOUSBIRTHDATE" DataType="Date" Caption="Previous birthdate" />
@@ -332,6 +341,35 @@ end
 				<c:SimpleDataList SimpleDataListID="0eacc39b-07d1-4641-8774-e319559535a7" />
 			</c:FormField>
 
+			<c:FormField FieldID="COMPLETEDAFTERCANCELLATIONCODE" Caption="Completed after cancellation">
+				<c:ValueList>
+					<c:Items>
+						<c:Item>
+							<c:Value>0</c:Value>
+							<c:Label>No</c:Label>
+						</c:Item>
+						<c:Item>
+							<c:Value>1</c:Value>
+							<c:Label>Yes</c:Label>
+						</c:Item>
+					</c:Items>
+				</c:ValueList>
+			</c:FormField>
+			<c:FormField FieldID="PRINTBLACKOUTLABEL" DataType="TinyInt" Caption="Print blackout label" DefaultValueText="0">
+				<c:ValueList>
+					<c:Items>
+						<c:Item>
+							<c:Value>0</c:Value>
+							<c:Label>No</c:Label>
+						</c:Item>
+						<c:Item>
+							<c:Value>1</c:Value>
+							<c:Label>Yes</c:Label>
+						</c:Item>
+					</c:Items>
+				</c:ValueList>
+			</c:FormField>
+			
 			<c:FormField FieldID="RESERVATIONREQREPCODE" Caption="Rep code" DataType="String" MaxLength="100" />
 			<c:FormField FieldID="RESERVATIONREQNUMBEROFPROFILES" Caption="Number of profiles" DataType="SmallInt" />
 			<c:FormField FieldID="RESERVATIONREQDISPLAYRACKS" Caption="Display racks" DataType="SmallInt" />
@@ -339,6 +377,7 @@ end
 			<c:FormField FieldID="RESERVATIONREQEXPECTEDDATETYPECODEID" DataType="Guid" Caption="Expected date type">
 				<c:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE" />
 			</c:FormField>
+			
 			<c:FormField FieldID="ADDRESSBLOCK" MaxLength="150" Caption="Address" DefaultValueText="" Multiline="true" />
 			<c:FormField FieldID="CITY" MaxLength="50" Caption="City" DefaultValueText=""  />
 			<c:FormField FieldID="STATEID" DataType="Guid" Caption="State" >
