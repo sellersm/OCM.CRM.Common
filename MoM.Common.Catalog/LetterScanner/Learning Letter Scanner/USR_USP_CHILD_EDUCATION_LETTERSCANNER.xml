@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	23-Apr-2013		Memphis			Initial Version.  Fogbugz Case 1069
+	17-Jun-2013		Memphis			Fixing error message and check for Primary address that has do not mail code.
 	-->	
 	
 	<CreateProcedureSQL>
@@ -265,7 +266,7 @@ begin
 			if @newInteractionStatus = 'EXCEPTION'
 				begin
 					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Letter interaction is not pending. '
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Letter interaction is already Completed. '
 				end
 		end			
 
@@ -387,7 +388,7 @@ begin
 	--   IF YES:  alert child is ineligible, goto exception processing
 	if @ExceptionOccurred = 0
 		begin
-    		if exists (select * from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
+    		if exists (select 1 from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
     			begin
     				set @ExceptionOccurred = 1
     				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child ineligible.  '
@@ -447,16 +448,16 @@ begin
 	--   IF NO: alert that sponsor address is invalid, goto 3A exception processing
 	if @ExceptionOccurred = 0
 	begin	
-		if not exists (SELECT * FROM dbo.ADDRESS where constituentID = @interactionSponsorId and HISTORICALENDDATE is null)
+		if not exists (SELECT 1 FROM dbo.ADDRESS where constituentID = @interactionSponsorId and HISTORICALENDDATE is null)
 			begin
 				set @ExceptionOccurred = 1
-				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No active addresses exist for sponsor. '
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No active addresses exist for Sponsor. '
 			end
 		else
-			if exists (SELECT * FROM dbo.ADDRESS where constituentID = @interactionSponsorId and HISTORICALENDDATE is null and DONOTMAIL = 1)
+			if exists (SELECT 1 FROM dbo.ADDRESS where (constituentID = @interactionSponsorId and HISTORICALENDDATE is null and DONOTMAIL = 1 and ISPRIMARY = 1))
 				begin
 					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'An active address had a do not mail flag. '
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Primary address has a do not mail flag. '
 				end
 	end
 
@@ -699,7 +700,6 @@ begin
 
 
 end
-
 ]]>
 	</CreateProcedureSQL>
 
