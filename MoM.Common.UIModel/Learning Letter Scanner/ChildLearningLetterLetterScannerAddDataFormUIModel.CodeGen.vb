@@ -62,6 +62,7 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormUIModel]
 		_barcodeelements.AllowDelete = False
 		_barcodeelements.EnablePaging = True
 		_barcodeelements.ItemsPerPage = 10
+		_barcodeelements.AllowColumnMove = True
 		Me.Fields.Add(_barcodeelements)
 		'
 		'_submit

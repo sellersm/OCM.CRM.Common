@@ -32,6 +32,8 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 	Private WithEvents _scanmessage As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _exception As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _setPrintBlackoutLabel As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+	Private WithEvents _sponsorName As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+	Private WithEvents _sponsorSalutation As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
 	'Add a column for letter stack:
 	Private WithEvents _letterstack As Global.Blackbaud.AppFx.UIModeling.Core.StringField
@@ -51,6 +53,8 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 		_exception = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_letterstack = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_setPrintBlackoutLabel = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+		_sponsorName = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		_sponsorSalutation = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
 		'
 		'_letterstack
@@ -137,6 +141,25 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 		_setPrintBlackoutLabel.Caption = "Blackout Label"
 		_setPrintBlackoutLabel.Visible = True
 		Me.Fields.Add(_setPrintBlackoutLabel)
+
+		'6/19/13 Memphis added these for the sponsor name & salutation
+		'
+		'_sponsorName
+		'
+		_sponsorName.Name = "SPONSORNAME"
+		_sponsorName.Caption = "Sponsor Name"
+		_sponsorName.MaxLength = 154
+		Me.Fields.Add(_sponsorName)
+
+		'6/19/13 Memphis added these for the sponsor name & salutation
+		'
+		'_sponsorSalutation
+		'
+		_sponsorSalutation.Name = "SPONSORSALUTATION"
+		_sponsorSalutation.Caption = "Sponsor Salutation"
+		_sponsorSalutation.MaxLength = 700
+		Me.Fields.Add(_sponsorSalutation)
+
 
 		OnCreated()
 
@@ -253,5 +276,26 @@ Partial Public Class [ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTS
 		End Get
 	End Property
 
+	''' <summary>
+	''' Sponsor Name
+	''' </summary>
+	<System.ComponentModel.Description("Sponsor Name")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [SPONSORNAME]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		Get
+			Return _sponsorName
+		End Get
+	End Property
+
+	''' <summary>
+	''' Sponsor Salutation
+	''' </summary>
+	<System.ComponentModel.Description("Sponsor Salutation")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [SPONSORSALUTATION]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		Get
+			Return _sponsorSalutation
+		End Get
+	End Property
 
 End Class
