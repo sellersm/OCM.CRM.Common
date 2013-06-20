@@ -13,6 +13,8 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 	Private _setPrintBlackoutLabel As Boolean
 	Private _interactionSequenceId As Integer
 	Private _childProjectLookupId As String
+	Private _sponsorName As String
+	Private _sponsorSalutation As String
 
 	' using these variables to make testing easier
 	'************** CHANGE VALUES BACK AFTER TESTING! ***************
@@ -50,6 +52,8 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 		_childProjectLookupId = String.Empty
 		_exceptionOccurred = False
 		_setPrintBlackoutLabel = False
+		_sponsorName = String.Empty
+		_sponsorSalutation = String.Empty
 
 		Dim element As ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel = New ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel()
 		element.RESULTSOK.Enabled = False
@@ -101,6 +105,8 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 				element.CHILDLOOKUPID.Value = _childLookupId
 				element.CHILDPROJECTLOOKUPID.Value = _childProjectLookupId
 				element.SETPRINTBLACKOUTLABEL.Value = _setPrintBlackoutLabel
+				element.SPONSORNAME.Value = _sponsorName
+				element.SPONSORSALUTATION.Value = _sponsorSalutation
 
 				'clear out the barcode field:
 				Me.BARCODE.Value = String.Empty
@@ -116,6 +122,9 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 				element.EXCEPTION.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.BadImageAndText
 				element.EXCEPTION.Value = _exceptionMessage.ToString()
 				element.CHILDPROJECTLOOKUPID.Value = _childProjectLookupId
+				element.SPONSORNAME.Value = _sponsorName
+				element.SPONSORSALUTATION.Value = _sponsorSalutation
+
 				'figure out which Letter Stack this letter should go into:
 				element.LETTERSTACK.Value = GetLetterStack(_scanOutcome)
 				If element.LETTERSTACK.Value.ToString().ToLower().Contains("exception") Then
@@ -239,6 +248,19 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 			setPrintBlackoutLabel.SqlDbType = SqlDbType.Bit
 			cmd.Parameters.Add(setPrintBlackoutLabel)
 
+			Dim sponsorName As SqlParameter = New SqlParameter("@SponsorName", String.Empty)
+			sponsorName.Direction = ParameterDirection.Output
+			sponsorName.SqlDbType = SqlDbType.NVarChar
+			sponsorName.Size = 154
+			cmd.Parameters.Add(sponsorName)
+
+			Dim sponsorSalutation As SqlParameter = New SqlParameter("@SponsorSalutation", String.Empty)
+			sponsorSalutation.Direction = ParameterDirection.Output
+			sponsorSalutation.SqlDbType = SqlDbType.NVarChar
+			sponsorSalutation.Size = 700
+			cmd.Parameters.Add(sponsorSalutation)
+
+
 			cmd.ExecuteNonQuery()
 
 			'assign output variable values here:
@@ -246,6 +268,8 @@ Public Class ChildLearningLetterLetterScannerAddDataFormUIModel
 			_scanOutcome = cmd.Parameters("@ScanOutcome").Value.ToString()
 			_exceptionOccurred = CBool(cmd.Parameters("@ExceptionOccurred").Value)
 			_setPrintBlackoutLabel = CBool(cmd.Parameters("@setPrintBlackoutLabel").Value)
+			_sponsorName = cmd.Parameters("@SponsorName").Value.ToString()
+			_sponsorSalutation = cmd.Parameters("@SponsorSalutation").Value.ToString()
 
 		End Using
 
