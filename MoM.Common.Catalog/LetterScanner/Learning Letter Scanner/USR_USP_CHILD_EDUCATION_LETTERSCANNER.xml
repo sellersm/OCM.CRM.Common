@@ -20,6 +20,7 @@
 	18-Jun-2013		Memphis			Fixed bug need to search for cancelled interactions when not found by sequence id.
 	19-Jun-2013		Memphis			Added new output parms: SponsorName and SponsorSalutation, check for attribute that identifies an incorrect salutation
 	                                & sets flag to print blackout label.
+	27-Jun-2013		Memphis			Various fixes for Pamela...
 	-->	
 	
 	<CreateProcedureSQL>
@@ -523,7 +524,7 @@ begin
   select @SponsorName = [NAME],
          @isOrgRecord = ISORGANIZATION
   from dbo.CONSTITUENT
-  where ID = @SponsorID;
+  where ID = @interactionSponsorId;  -- use this if you want the current sponsor of the child: @interactionSponsorId
 
   -- just make the salutation the same as the NAME in case this is an ORG, if not it'll get set below
   set @SponsorSalutation = @SponsorName
@@ -533,8 +534,8 @@ begin
       -- this is NOT an ORG, so get the sponsor salutation
       select @SponsorSalutation = FORMATTEDNAME
       from dbo.NAMEFORMAT
-      where PRIMARYADDRESSEE = 1
-      and CONSTITUENTID = @SponsorID;
+      where PRIMARYSALUTATION = 1
+      and CONSTITUENTID = @interactionSponsorId;  -- use this if you want the current sponsor of the child: @interactionSponsorId
     end
 
 
@@ -635,7 +636,7 @@ begin
 	if @ExceptionOccurred = 0
 		begin
 		set @LogTypeCode = 1 -- Success
-		Set @ScanOutcome = 'Place the letter on successful scan stack'
+		Set @ScanOutcome = 'Place the letter on successful scan stack. '
 		Set @NumberOfDaysSponsored = 0
 		Set @CancellationReason = ''
 		set @Scannermessage = RTRIM(@ScannerMessage)

@@ -40,6 +40,10 @@
 									ChildLearningLetterLetterScanner.Task.xml
 									ChildLearningLetterScanner.Add.xml
 									USR_USP_CHILD_EDUCATION_LETTERSCANNER.xml
+	02-Jul-2013		Memphis			Added these for the new Sponsor Appeal Letter Scanner:
+									USR_USP_SPONSORAPPEAL_LETTERSCANNER.xml
+									SponsorAppealLetterScanner.Task.xml
+									SponsorAppealLetterScanner.Add.xml
 	-->	
 	
 
@@ -55,6 +59,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILDLETTERSCANNER_CRM.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORLETTERSCANNER_CRM.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILD_EDUCATION_LETTERSCANNER.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORAPPEAL_LETTERSCANNER.xml" />
 
 		<!-- forms-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarCode.Add.xml" />
@@ -62,6 +67,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_ChildLetterBarCode.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_SponsorLetterBarCode.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLearningLetterScanner.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorAppealLetterScanner.Add.xml" />
+		
 
 		<!-- DataLists-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.DataList.xml" />
@@ -74,6 +81,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_ChildLetterBarcode.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_SponsorLetterBarcode.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLearningLetterLetterScanner.Task.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorAppealLetterScanner.Task.xml" />
 
 		<!-- Query -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.Query.xml" />
