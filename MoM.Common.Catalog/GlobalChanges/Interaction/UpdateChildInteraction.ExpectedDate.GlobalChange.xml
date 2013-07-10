@@ -2,10 +2,10 @@
     xmlns="bb_appfx_globalchange"
     xmlns:common="bb_appfx_commontypes"
     ID="3ee3b705-633e-425d-aa5b-cbe719d77297"
-    Name="Update Child Interaction Expected Date Global Change"
+    Name="Child Interaction Expected Date"
     Description="Update child interaction expected date global change"
     Author="Memphis Sellers"
-    DisplayName="Update child interaction expected date global change"
+    DisplayName="Child interaction expected date"
     GlobalChangeFolder="Interaction"
     SPName="USR_USP_GLOBALCHANGE_CHILDINTERACTION_EXPECTEDDATE"
     >
@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	20-May-2013     Memphis			Initial version. Fogbugz Case 1077
+	10-Jul-2013		Memphis			Changed the display name as per Pamela: Update child interaction expected date global change –> Child Interaction Expected Date
 	-->
 
 

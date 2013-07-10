@@ -127,8 +127,8 @@
     <Compile Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.CodeGen.vb" />
     <Compile Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.vb" />
-    <Compile Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.CodeGen.vb" />
-    <Compile Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoDateSentGlobalChangeUIModel.CodeGen.vb" />
+    <Compile Include="Global Changes\ChildFieldMemoDateSentGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.CodeGen.vb">
       <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
     </Compile>
@@ -202,7 +202,7 @@
     </Content>
     <Content Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.xml" />
     <Content Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.xml" />
-    <Content Include="Global Changes\ChildFieldMemoStartDateGlobalChangeUIModel.xml" />
+    <Content Include="Global Changes\ChildFieldMemoDateSentGlobalChangeUIModel.xml" />
     <Content Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.xml">
       <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
     </Content>

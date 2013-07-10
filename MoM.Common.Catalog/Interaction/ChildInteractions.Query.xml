@@ -18,6 +18,12 @@
 	Date            Modified By     Comments
 	17-Jun-2013		Memphis			Initial Version
 	02-Jul-2013		Memphis			Fixed joins so it doesn't return multiple interactions for the child.
+	10-Jul-2013		Memphis			Some changes as per Pamela's email:
+									Add the Field memo interaction extension fields
+									Make the Interaction Subcategory a user-selectable dropdown choice
+									Rename Interaction.Objective field to "Interaction Summary"
+									Add Interaction Contact Method field to query
+									Move Departure Comments and Departure Type to 'Departure' category
 	-->	
 	
 	
@@ -25,7 +31,7 @@
 	<ViewImplementation ViewName="USR_V_QUERY_CHILDINTERACTIONS">
 		<ViewSQL>
 			<![CDATA[
-select distinct
+select distinct 
     dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (soc.ID, 1) as CHILDLOOKUPID
     , dbo.SPONSORSHIPLOCATION.LOOKUPID as LOCATIONLOOKUPID
     , uce.CURRENTPROGRAMCOMPLETIONDATE
@@ -121,16 +127,22 @@ select distinct
     , dbo.INTERACTION.STATUS
     , dbo.INTERACTION.SEQUENCEID
     , dbo.INTERACTION.LOOKUPID
-	  , SPONSORSHIPOPPORTUNITY.ID as OPPORTUNITYID
+	, SPONSORSHIPOPPORTUNITY.ID as OPPORTUNITYID
+    , dbo.USR_INTERACTIONEXTENSION.FIELDMEMODATESENT
+    , (select [DESCRIPTION] from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = dbo.USR_INTERACTIONEXTENSION.HOLDREASONCODEID) as HOLDREASON
+    , (select [DESCRIPTION] from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = dbo.USR_INTERACTIONEXTENSION.UNUSABLECODEID) as UNUSABLEITEM
+    , (select [DESCRIPTION] from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = dbo.USR_INTERACTIONEXTENSION.FIELDMEMOSENTCODEID) as SENTCODE
 from dbo.INTERACTION
 join dbo.CONSTITUENT ON dbo.CONSTITUENT.ID = dbo.INTERACTION.CONSTITUENTID
 join dbo.SPONSORSHIPOPPORTUNITYCHILD soc on dbo.INTERACTION.CONSTITUENTID = soc.CONSTITUENTID
 join dbo.SPONSORSHIPOPPORTUNITY ON dbo.SPONSORSHIPOPPORTUNITY.ID = soc.ID
 join dbo.SPONSORSHIPLOCATION ON dbo.SPONSORSHIPLOCATION.ID = dbo.SPONSORSHIPOPPORTUNITY.SPONSORSHIPLOCATIONID 
+left join dbo.USR_INTERACTIONEXTENSION ON dbo.USR_INTERACTIONEXTENSION.ID = dbo.INTERACTION.ID
 left join ( select u.ID, u.SPONSORSHIPOPPORTUNITYCHILDID, u.SIBLINGSID, u.BIRTHDATEACCURACYCODEID, u.CURRENTPROGRAMCOMPLETIONDATE, u.CHILDNAMESUFFIXCODEID, u.CHILDLIVESWITHCODEID, u.FATHERWORKSASCODEID, u.FATHERWORKSASOTHER, u.MOTHERWORKSASCODEID, u.MOTHERWORKSASOTHER, u.CAREGIVERRELATIONCODEID, u.CAREGIVERRELATIONOTHER, u.CAREGIVERWORKSASCODEID, u.CAREGIVERWORKSASOTHER, u.CAREGIVERREASONCODEID, u.REASONFORCAREGIVEROTHER, u.NUMBEROFSISTERS, u.NUMBEROFBROTHERS, u.HOUSINGWALLWOOD, u.HOUSINGWALLMUD, u.HOUSINGWALLBAMBOO, u.HOUSINGWALLBLOCK, u.HOUSINGWALLOTHER, u.ROOFINGTIN, u.ROOFINGGRASSLEAVES, u.ROOFINGWOOD, u.ROOFINGTILE, u.ROOFINGOTHER, u.WATERSOURCEINDOOR, u.WATERSOURCECOMMUNITYTAP, u.WATERSOURCEBOREHOLEWELL, u.WATERSOURCERIVER, u.WATERSOURCEOTHER, u.COOKINGSOURCEWOODFIRE, u.COOKINGSOURCEELECTRICSTOVE, u.COOKINGSOURCEGASSTOVE, u.COOKINGSOURCEOTHER, u.LIGHTSOURCEELECTRICITY, u.LIGHTSOURCEOILLAMP, u.LIGHTSOURCEGENERATOR, u.LIGHTSOURCENONE, u.LIGHTSOURCEOTHER, u.AREADESCRIPTION, u.MYFAVORITETHINGTODO, u.WHENIPLAYWITHFRIENDSWE, u.WHENATHOMEIHELPOUTBY, u.WHENITALKTOGODIASKHIM, u.SOMEDAYI, u.TWOMOSTFAVORITETHINGS, u.OTHERTHINGSTHECHILDENJOYS, u.CHILDPERSONALITY, u.CHILDHEALTH, u.SPIRITUALDEVELOPMENT, u.ATTENDINGSCHOOL, u.REASONNOTATTENDINGSCHOOL, u.CLASSLEVEL, u.FAVORITESUBJECT, u.VOCATIONALSKILLS, u.ADDITIONALCHILDINFORMATION, u.CCHENTEREDBY, u.CCHTEMPID, u.CURRENTPHOTODATE, u.PHOTOSTORED, u.CHILDPROFILESTATUSCODEID, u.CHILDPROFILEUPDATECODEID, u.PROFILEUPDATENOTIFICATION, u.FUNDED, u.BATCHNUMBER, u.REGISTRATIONDATE, u.ORIGINALPROGRAMCOMPLETIONDATE, u.ADDEDBYID, u.CHANGEDBYID, u.DATEADDED, u.DATECHANGED, u.TS, u.TSLONG, u.CCHVALIDATED, u.CHILDNICKNAME, u.DEPARTUREFORMRECEIVED, u.CCHZIPFILENAME, u.CURRENTCHILDSPONSORSHIPSTATUSCODEID, u.TERMINATEHOLDSTARTDATE 
             from dbo.USR_CHILDEXTENSION u
             join dbo.SPONSORSHIPOPPORTUNITYCHILD soc2 ON u.SPONSORSHIPOPPORTUNITYCHILDID = soc2.ID ) uce on uce.SPONSORSHIPOPPORTUNITYCHILDID = dbo.INTERACTION.CONSTITUENTID
 left join dbo.USR_CHILDDEPARTURE ON dbo.USR_CHILDDEPARTURE.SPONSORSHIPOPPORTUNITYCHILDID = soc.ID and dbo.USR_CHILDDEPARTURE.ISCURRENTDEPARTURECODE = 1
+
 			
 			]]>
 		</ViewSQL>
@@ -262,10 +274,10 @@ left join dbo.USR_CHILDDEPARTURE ON dbo.USR_CHILDDEPARTURE.SPONSORSHIPOPPORTUNIT
 			<OutputField Name="SKILLS_LIFE" Caption="Life Skills" DataType="Boolean" Category="Departure" />			
 			<OutputField Name="SKILLS_VOCATIONALTECHNICAL" Caption="Vocation Technical Skills" DataType="Boolean" Category="Departure" />
 			<OutputField Name="SKILLS_OTHER" Caption="Other Skills" DataType="String" Category="Departure" />
-			<OutputField Name="GENERALCOMMENTS" Caption="Departure Comments" DataType="String" Category="Interaction" />
-			<OutputField Name="DEPARTURETYPE" Caption="Departure Type" DataType="String" Category="Interaction" />
-			<OutputField Name="OBJECTIVE" Caption="Interaction Objective" DataType="String" Category="Interaction" />
-			<OutputField Name="INTERACTIONTYPEDESCRIPTION" Caption="Interaction Type" DataType="String" Category="Interaction" >
+			<OutputField Name="GENERALCOMMENTS" Caption="Departure Comments" DataType="String" Category="Departure" />
+			<OutputField Name="DEPARTURETYPE" Caption="Departure Type" DataType="String" Category="Departure" />
+			<OutputField Name="OBJECTIVE" Caption="Interaction Summary" DataType="String" Category="Interaction" />
+			<OutputField Name="INTERACTIONTYPEDESCRIPTION" Caption="Interaction Contact Method" DataType="String" Category="Interaction" >
 				<LookupInfo>
 					<CodeTable CodeTableName="INTERACTIONTYPECODE"/>
 				</LookupInfo>
@@ -274,11 +286,37 @@ left join dbo.USR_CHILDDEPARTURE ON dbo.USR_CHILDDEPARTURE.SPONSORSHIPOPPORTUNIT
 			<OutputField Name="ACTUALDATE" Caption="Actual Date" DataType="Date" Category="Interaction" />
 			<OutputField Name="INTERACTIONDATE" Caption="Interaction Date" DataType="Date" Category="Interaction" />
 			<OutputField Name="COMMENT" Caption="Interaction Comment" DataType="String" Category="Interaction" />
-			<OutputField Name="INTERACTIONSUBCATEGORYDESCRIPTION" Caption="Interaction SubCategory" DataType="String" Category="Interaction" />
+			<OutputField Name="INTERACTIONSUBCATEGORYDESCRIPTION" Caption="Interaction SubCategory" DataType="String" Category="Interaction" >
+				<LookupInfo>
+					<SimpleDataList SimpleDataListID="0EACC39B-07D1-4641-8774-E319559535A7">
+						<common:Params>
+							<common:Param ID="INCLUDEINACTIVE">
+								<common:Value>1</common:Value>
+							</common:Param>
+						</common:Params>
+					</SimpleDataList>
+				</LookupInfo>
+			</OutputField>
 			<OutputField Name="STATUS" Caption="Interaction Status" DataType="String" Category="Interaction" />
 			<OutputField Name="SEQUENCEID" Caption="Sequence ID" DataType="Integer" Category="Interaction" />
 			<OutputField Name="LOOKUPID" Caption="Interaction LookupID" DataType="String" Category="Interaction" />
 			<OutputField Name="OPPORTUNITYID" Caption="OPPORTUNITYID" DataType="Guid" Category="System Record ID" IsHidden="true" />
+			<OutputField Name="FIELDMEMODATESENT" Caption="Field Memo Date Sent" DataType="Date" Category="Field Memo Interaction Extension" />
+			<OutputField Name="HOLDREASON" Caption="Hold Reason" DataType="String" Category="Field Memo Interaction Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONHOLDREASONCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="UNUSABLEITEM" Caption="Unusable" DataType="String" Category="Field Memo Interaction Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="SENTCODE" Caption="Field Memo Sent" DataType="String" Category="Field Memo Interaction Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE"/>
+				</LookupInfo>
+			</OutputField>
 		</OutputFields>
 	</Output>
 

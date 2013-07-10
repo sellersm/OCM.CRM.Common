@@ -3,7 +3,7 @@
   <Namespace></Namespace>
   <ClassName>ChildFieldMemoDateSentGlobalChangeUIModel</ClassName>
   <HtmlInfo GenerateHtml="true">
-    <HtmlFile>ChildFieldMemoStartDateGlobalChange.html</HtmlFile>
+    <HtmlFile>ChildFieldMemoDateSentGlobalChange.html</HtmlFile>
     <HtmlFolder>htmlforms\</HtmlFolder>
   </HtmlInfo>
   <GenerateFromDatabase>true</GenerateFromDatabase>
