@@ -49,7 +49,7 @@ Partial Public Class [ChildFieldMemoDateSentGlobalChangeUIModel]
 		_deletedatesentvalue = New Global.Blackbaud.AppFx.UIModeling.Core.DateField
 		_deletealldatesentvalues = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 
-		MyBase.UserInterfaceUrl = "browser/htmlforms/custom/ChildFieldMemoStartDateGlobalChange.html"
+		MyBase.UserInterfaceUrl = "browser/htmlforms/custom/ChildFieldMemoDateSentGlobalChange.html"
 
 		'
 		'_idsetregisterid

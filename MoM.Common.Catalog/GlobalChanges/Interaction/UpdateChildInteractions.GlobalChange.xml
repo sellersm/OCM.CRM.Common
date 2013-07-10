@@ -2,10 +2,10 @@
     xmlns="bb_appfx_globalchange"
     xmlns:common="bb_appfx_commontypes"
     ID="953c2f2f-668d-446b-a7d1-71c8efd3bf9f"
-    Name="Update Child Interactions Global Change"
+    Name="Child Interaction Status Change"
     Description="Updates child interactions Status, ActualDate, Comment fields."
     Author="Memphis Sellers"
-    DisplayName="Update child interactions global change"
+    DisplayName="Child interaction status change"
     GlobalChangeFolder="Interaction"
     SPName="USP_GLOBALCHANGE_UPDATE_CHILDINTERACTIONS"
     >
@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	14-Mar-2013     Memphis			Initial version.
+	10-Jul-2013		Memphis			Renamed as per Pamela:  Update child interaction global change – Child Interaction Status Change
 -->
 
 
