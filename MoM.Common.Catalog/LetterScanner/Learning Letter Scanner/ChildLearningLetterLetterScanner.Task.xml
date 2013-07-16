@@ -3,7 +3,7 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="f5ea5827-fd20-41af-a657-04efd57f3b63"
 	Name="Scan Child Learning letters"
-	Description="Launch RE child learning letter scanner."
+	Description="Launch child learning letter scanner."
 	Author="Memphis Sellers"
 	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
 	Sequence="0"
