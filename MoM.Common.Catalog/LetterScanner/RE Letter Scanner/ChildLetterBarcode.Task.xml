@@ -1,7 +1,7 @@
 ﻿<TaskSpec
 	xmlns="bb_appfx_task"
 	xmlns:common="bb_appfx_commontypes" 
-	ID="f5ea5827-fd20-41af-a657-04efd57f3b63"
+	ID="bf3e83b8-d8ca-4eed-8689-abb41c839021"
 	Name="Scan RE child letters"
 	Description="Launch RE child letter scanner."
 	Author="Memphis Sellers"
