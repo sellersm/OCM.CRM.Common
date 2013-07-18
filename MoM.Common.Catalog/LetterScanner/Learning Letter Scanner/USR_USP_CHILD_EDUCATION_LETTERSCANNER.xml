@@ -517,6 +517,7 @@ begin
       if exists (select 1 from dbo.ATTRIBUTE8CBD724EE4DF4C539467FED50781835A where CONSTITUENTID = @SponsorID and COMMENT = @ChildLookupID)
         begin
           set @setPrintBlackoutLabel = 1;
+		  set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Blackout label needed.  '
         end      
     end
     
