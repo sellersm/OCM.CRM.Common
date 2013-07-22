@@ -20,6 +20,16 @@
 									 - Major donor should be in a specific segment...
 								   - It's possible that the Finder Number can be "empty", will have a -1 value in it,
 									 if it does, then use the Appeal ID value
+	22-Jul-2013		Memphis			TK-01031 related to Defect D-01079, and TK-01030 (D-01080): 
+									Create an results message for sponsors in segment 2 or 3 (11+ kids): "Major Donor sponsor: copy letters for XX sponsored children"
+									For a child that is ineligible or no longer sponsored, the interaction is created, however the interaction status is "Cancelled" instead of "Completed" 
+									as well as a note in the Comments field indicating the reason:
+										Ineligible - child is ineligible
+										Cancelled - child is no longer sponsored.
+									AND
+									Create exception results message for ineligible and cancelled sponsorship to say:
+										"Child is ineligible -  do not send letter to field."
+										"Child is not longer sponsored - do not send letter to field." 
 
 	-->	
 	
@@ -39,7 +49,7 @@ create procedure dbo.USR_USP_SPONSORAPPEAL_LETTERSCANNER
 as
 begin
 
-  declare @CancellationReason as nvarchar(100)
+    declare @CancellationReason as nvarchar(100)
   declare @ChildEducationalAppealResponseSubcategoryID as uniqueidentifier
   declare @ChildID as uniqueidentifier
   declare @OriginalInteractionID as uniqueidentifier
@@ -61,7 +71,7 @@ begin
   declare @SponsorLetterSequenceID as int
   declare @SponsorLetterSubcategoryID as uniqueidentifier
   declare @StatusCodeCompleted as tinyint
-  declare @StatusCodePending as tinyint
+  declare @StatusCodeCancelled as tinyint
   declare @TempTable TABLE(SponsorLetterSequenceID int)
   declare @isMajorDonor bit = 0;   -- flag that identifies if this is a major donor appeal letter, if so then won't have child id and need to find all its sponsored kids
   declare @appealId uniqueidentifier;
@@ -70,7 +80,10 @@ begin
   declare @Over20ChildrenMktsegmentId uniqueidentifier;
   declare @childIDList dbo.USR_UDT_CHILDIDLIST;
   declare @constituentAppealId uniqueidentifier;
-
+  declare @sponsoredChildCount int = 0;
+  declare @interactionComment nvarchar(100) = 'from Sponsor Appeal scanner';
+  declare @isCancelledSponsorship bit = 0;
+  
   --   the RESPONSECATEGORY will be whatever they want to use for each Response,
   --   the RESPONSEID will point to the Response of "Yes" or whatever it is for the given RESPONSECATEGORY
   declare @RESPONSECATEGORYID uniqueidentifier;
@@ -93,8 +106,8 @@ begin
   set @InteractionTypeCode = (select ID from dbo.INTERACTIONTYPECODE where LOWER(DESCRIPTION) = 'mail')
 
   -- Set constants
-  set @StatusCodeCompleted = 2
-  set @StatusCodePending = 1
+  set @StatusCodeCompleted = 2;
+  set @StatusCodeCancelled = 4;
 
   set @ExtraLetter = 0
   set @ExceptionOccurred = 0
@@ -257,16 +270,36 @@ begin
     end
         
   -- child Educational Appeal Response interaction creation pre-check
-  -- only care about ineligible children, nothing else matters...
+  -- only care about ineligible children & cancelled sponsorships: nothing else matters...
   if @ExceptionOccurred = 0
   	begin
     	-- Child departed (ineligible)
     	--	when 0 then 'Pending', when 1 then 'Eligible',	when 2 then 'Ineligible'	
-    	if exists (select * from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
+    	if exists (select 1 from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
     		begin
-    			set @ExceptionOccurred = 1
-    			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child currently ineligible. '
+    			set @ExceptionOccurred = 1;
+    			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is ineligible -  DO NOT SEND letter to field. ';
+          set @interactionComment = 'Ineligible - child is ineligible';
     		end
+        
+      -- check for a cancelled sponsorship for this child:
+      -- don't check for a cancelled sponsorship if the child's already ineligible
+      if @ExceptionOccurred = 0
+        begin
+          if exists (
+            select 1 
+            from dbo.SPONSORSHIP a
+            where a.ENDDATE = (select max(ENDDATE) from dbo.SPONSORSHIP b where a.ID = b.ID and STATUSCODE = 2 and SPONSORSHIPOPPORTUNITYID = @childId and CONSTITUENTID =@sponsorId)
+            and a.STATUSCODE = 2
+            and a.SPONSORSHIPOPPORTUNITYID = @childId
+            and a.CONSTITUENTID =@sponsorId)
+              begin
+          			set @ExceptionOccurred = 1;
+                set @isCancelledSponsorship = 1;
+          			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is no longer sponsored - DO NOT send letter to field. ';
+                set @interactionComment = 'Cancelled - child is no longer sponsored.';
+              end
+        end
 
   	end
 
@@ -279,6 +312,12 @@ begin
     begin
       if @isMajorDonor = 0
       	begin
+          declare @StatusCodeValue tinyint;
+          
+          if @isCancelledSponsorship = 1
+            set @StatusCodeValue = @StatusCodeCancelled;
+          else
+            set @StatusCodeValue = @StatusCodeCompleted;
 
       		INSERT INTO dbo.INTERACTION(
       			ID
@@ -289,7 +328,7 @@ begin
       			,STATUSCODE
       			,INTERACTIONSUBCATEGORYID
       			,OBJECTIVE
-				,COMMENT
+				    ,COMMENT
       			,ADDEDBYID
       			,CHANGEDBYID
       			,DATEADDED
@@ -301,10 +340,10 @@ begin
       			,@InteractionTypeCode
       			,@Date  --@expectedDate
       			,@Date
-      			,@StatusCodeCompleted
+      			,@StatusCodeValue
       			,@ChildEducationalAppealResponseSubcategoryID
       			,'Educational Appeal Response'
-				,'from Sponsor Appeal scanner'
+				    ,@interactionComment
       			,@ChangeAgentID
       			,@ChangeAgentID
       			,GETDATE()
@@ -318,7 +357,7 @@ begin
       		SPONSORID, 
       		SCANSESSION, 
       		CHILDPROJECTID, 
-			APPEALID,
+			    APPEALID,
       		ADDEDBYID, 
       		CHANGEDBYID, 
       		DATEADDED, 
@@ -331,7 +370,7 @@ begin
       		@SponsorID,
       		@ScanSession, 
       		@CurrentChildProjectID, 
-			@appealId,
+			    @appealId,
       		@ChangeAgentID, 
       		@ChangeAgentID, 
       		GETDATE(), 
@@ -348,6 +387,10 @@ begin
         insert @childIDList 
     		select *
     		from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
+        
+        -- get the number of sponsored children for use later in the scan results message:
+        select @sponsoredChildCount = count(*)
+        from @childIDList;
         
         -- loop through the child list to create the interaction & interaction extension records:
         declare ChildrenCursor cursor local fast_forward for
@@ -394,7 +437,7 @@ begin
       			,@StatusCodeCompleted
       			,@ChildEducationalAppealResponseSubcategoryID
       			,'Educational Appeal Response'
-            ,'from Sponsor Appeal scanner'
+            ,@interactionComment
       			,@ChangeAgentID
       			,@ChangeAgentID
       			,GETDATE()
@@ -408,7 +451,7 @@ begin
       		SPONSORID, 
       		SCANSESSION, 
       		CHILDPROJECTID, 
-			APPEALID,
+			    APPEALID,
       		ADDEDBYID, 
       		CHANGEDBYID, 
       		DATEADDED, 
@@ -421,7 +464,7 @@ begin
       		@SponsorID,
       		@ScanSession, 
       		@CurrentChildProjectID, 
-			@appealId,
+			    @appealId,
       		@ChangeAgentID, 
       		@ChangeAgentID, 
       		GETDATE(), 
@@ -452,6 +495,12 @@ begin
   if @ExceptionOccurred = 0
   	begin
   		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Scan successful. '
+      
+      if @isMajorDonor = 1
+        begin
+          set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Major Donor sponsor: copy letters for ' + Cast(@sponsoredChildCount as nvarchar(10)) + ' sponsored children '
+        end
+        
   		set @LogTypeCode = 1 -- Success
   		set @ScanOutcome = 'Place letter on successful scan stack. '
     end
