@@ -30,7 +30,7 @@
 									Create exception results message for ineligible and cancelled sponsorship to say:
 										"Child is ineligible -  do not send letter to field."
 										"Child is not longer sponsored - do not send letter to field." 
-
+	23-Jul-2013		Memphis			Set the status to Cancelled for ineligibilge children as well as cancelled kids.
 	-->	
 	
 	<CreateProcedureSQL>
@@ -83,6 +83,7 @@ begin
   declare @sponsoredChildCount int = 0;
   declare @interactionComment nvarchar(100) = 'from Sponsor Appeal scanner';
   declare @isCancelledSponsorship bit = 0;
+  declare @isChildIneligible bit = 0;
   
   --   the RESPONSECATEGORY will be whatever they want to use for each Response,
   --   the RESPONSEID will point to the Response of "Yes" or whatever it is for the given RESPONSECATEGORY
@@ -278,8 +279,9 @@ begin
     	if exists (select 1 from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
     		begin
     			set @ExceptionOccurred = 1;
+				set @isChildIneligible = 1;
     			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is ineligible -  DO NOT SEND letter to field. ';
-          set @interactionComment = 'Ineligible - child is ineligible';
+				set @interactionComment = 'Ineligible - child is ineligible';
     		end
         
       -- check for a cancelled sponsorship for this child:
@@ -295,9 +297,9 @@ begin
             and a.CONSTITUENTID =@sponsorId)
               begin
           			set @ExceptionOccurred = 1;
-                set @isCancelledSponsorship = 1;
+					set @isCancelledSponsorship = 1;
           			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is no longer sponsored - DO NOT send letter to field. ';
-                set @interactionComment = 'Cancelled - child is no longer sponsored.';
+					set @interactionComment = 'Cancelled - child is no longer sponsored.';
               end
         end
 
@@ -314,7 +316,7 @@ begin
       	begin
           declare @StatusCodeValue tinyint;
           
-          if @isCancelledSponsorship = 1
+          if (@isCancelledSponsorship = 1 or @isChildIneligible = 1)
             set @StatusCodeValue = @StatusCodeCancelled;
           else
             set @StatusCodeValue = @StatusCodeCompleted;
