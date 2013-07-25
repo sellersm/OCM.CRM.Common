@@ -50,6 +50,7 @@
 	14-Mar-2013		Memphis			Added for Fogbugz Case 1028: UpdateChildInteractions.GlobalChange.xml
 	20-May-2013		Memphis			Added for Fogbugz Case 1077:  UpdateChildInteraction.ExpectedDate.GlobalChange.xml
 	03-Jul-2013		CMayeda			Added ProspectFinancialSponsors.Query.xml
+	25-Jul-2013		Memphis			Added the missing ChildInteractions.Query.xml
 	-->
 
 
@@ -183,6 +184,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorCommitments.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ProspectFinancialSponsors.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddBatchNumberToPostToGL.Query.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildInteractions.Query.xml" />
 
 		<!-- Global Changes -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Delete.GlobalChange.xml" />
