@@ -31,6 +31,7 @@
 										"Child is ineligible -  do not send letter to field."
 										"Child is not longer sponsored - do not send letter to field." 
 	23-Jul-2013		Memphis			Set the status to Cancelled for ineligibilge children as well as cancelled kids.
+	29-Jul-2013		Memphis			D-01084:  check for an active sponsorship if there's a cancelled one...
 	-->	
 	
 	<CreateProcedureSQL>
@@ -296,10 +297,19 @@ begin
             and a.SPONSORSHIPOPPORTUNITYID = @childId
             and a.CONSTITUENTID =@sponsorId)
               begin
-          			set @ExceptionOccurred = 1;
-					set @isCancelledSponsorship = 1;
-          			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is no longer sponsored - DO NOT send letter to field. ';
-					set @interactionComment = 'Cancelled - child is no longer sponsored.';
+				-- if there is a cancelled sponsorship, then check for any active sponsorship for
+				-- the child/sponsor combination:
+				if not exists (select 1 
+					from dbo.SPONSORSHIP 
+					where (STATUSCODE = 1
+					and SPONSORSHIPOPPORTUNITYID = @childId
+					and CONSTITUENTID =@sponsorId))
+					begin
+          				set @ExceptionOccurred = 1;
+						set @isCancelledSponsorship = 1;
+          				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is no longer sponsored - DO NOT send letter to field. ';
+						set @interactionComment = 'Cancelled - child is no longer sponsored.';
+					end
               end
         end
 
