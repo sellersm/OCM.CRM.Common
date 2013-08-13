@@ -167,6 +167,8 @@
     <Compile Include="Learning Letter Scanner\ChildLearningLetterLetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="Learning Letter Scanner\ChildLearningLetterLetterScannerAddDataFormUIModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="Run SQL Command Utility\RunOurSqlCommandsEditDataFormUIModel.CodeGen.vb" />
+    <Compile Include="Run SQL Command Utility\RunOurSqlCommandsEditDataFormUIModel.vb" />
     <Compile Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormBARCODEELEMENTSUIModel.vb" />
     <Compile Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormUIModel.vb" />
@@ -217,6 +219,7 @@
     <Content Include="htmlforms\ChildPendingReasonsGlobalChange.html" />
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
+    <Content Include="htmlforms\RunOurSqlCommandsEditDataForm.html" />
     <Content Include="htmlforms\SponsorAppealLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
     <Content Include="htmlforms\UpdateChildInteractionsGlobalChange.html" />
@@ -224,6 +227,7 @@
       <DependentUpon>UpdateChildInteractionsGlobalChangeUIModel.vb</DependentUpon>
     </Content>
     <Content Include="Learning Letter Scanner\ChildLearningLetterLetterScannerAddDataFormUIModel.xml" />
+    <Content Include="Run SQL Command Utility\RunOurSqlCommandsEditDataFormUIModel.xml" />
     <Content Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormUIModel.xml" />
     <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">

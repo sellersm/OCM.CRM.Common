@@ -51,6 +51,8 @@
 	20-May-2013		Memphis			Added for Fogbugz Case 1077:  UpdateChildInteraction.ExpectedDate.GlobalChange.xml
 	03-Jul-2013		CMayeda			Added ProspectFinancialSponsors.Query.xml
 	25-Jul-2013		Memphis			Added the missing ChildInteractions.Query.xml
+	13-Aug-2013		Memphis			Added these two for the Run SQL Command Utility:
+									RunOurSqlCommands.Edit.xml
 	-->
 
 
@@ -172,6 +174,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Edit.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.View.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.CCHVerificationFailed.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RunOurSqlCommands.Edit.xml" />
 
 		<!-- ** THIS IS TEMPORARY FOR 0.3.4 DEPLOYMENT TO GOLD CONFIG BECAUSE InteractionExtension.Query.xml HAS A DEPENDCY ON THIS FROM CHILD PROEJCT **-->
 		<!--<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildProject.Extension.Query.xml" />-->
@@ -213,7 +216,9 @@
 		<!-- <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Alter.Page.xml" />-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ChildInteraction.Page.xml" />
 
-		
+		<!-- Tasks -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RunSQLCommand.Task.xml" />
+
 		<!-- Package Versions -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Common.PackageVersion.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Common.UIModelVersion.View.xml"/>
