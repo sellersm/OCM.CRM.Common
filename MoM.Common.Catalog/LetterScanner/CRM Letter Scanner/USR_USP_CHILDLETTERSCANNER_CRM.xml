@@ -17,6 +17,7 @@
 	09-Jan-2013		Memphis			Added check for the sponsor when checking if cancelled or not. Fogbugz Case 958.
 	28-Jan-2013		Memphis			Fixed the expected date of the completed sponsor interaction that gets created.
 	15-May-2013		Memphis			Fixed to match the workflow doc better: create child interaction no matter what
+	29-Aug-2013		Memphis			Further refactoring as per defect: D-01054
 	-->
 	
 	<CreateProcedureSQL>
@@ -269,10 +270,10 @@ begin
 				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No active addresses exist for sponsor. '
 			end
 		else
-			if exists (SELECT * FROM dbo.ADDRESS where constituentID = @SponsorID and HISTORICALENDDATE is null and DONOTMAIL = 1)
+			if exists (SELECT * FROM dbo.ADDRESS where constituentID = @SponsorID and HISTORICALENDDATE is null and DONOTMAIL = 1 and ISPRIMARY = 1)
 				begin
 					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'An active address had a do not mail flag. '
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Primary address has a do not mail flag. '
 				end
 	end
 
@@ -285,7 +286,7 @@ begin
 			if @CurrentChildProjectID <> @BarcodeChildProjectID
 				begin
 					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Project ID does not match barcode. '						
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current Child Project ID does not match barcode Project ID. '						
 				end
 		end
 
