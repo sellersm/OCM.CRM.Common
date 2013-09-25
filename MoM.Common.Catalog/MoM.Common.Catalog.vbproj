@@ -481,6 +481,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Run SQL Command Utility\RunSQLCommand.Task.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
