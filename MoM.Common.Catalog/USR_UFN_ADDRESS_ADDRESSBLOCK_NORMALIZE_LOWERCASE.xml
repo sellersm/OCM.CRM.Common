@@ -1,0 +1,85 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="78320dfc-72ce-4004-8c37-3efdab3b18dd"
+	Name="USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE" 
+    Description="Function returns a normalized address block in lowercase. Helpful when comparing addresses." 
+    Author="Blackbaud Product Development" 
+    DBFunctionName="USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE">
+
+	<!-- 
+	Remarks:    Copied from BB OOB UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.  Removed @SUBSTITUTIONS from the parm list.
+				This allows it to be called in a view.
+
+	History:
+	Date            Modified By     Comments
+	25-Sep-2013		CMayeda			Initial Version
+	-->
+	
+	<CreateFunctionSQL>
+	  	<![CDATA[
+		
+		create function dbo.USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE(
+				@ADDRESS nvarchar(150)
+		)
+		returns nvarchar(150)
+		with execute as caller
+		as begin
+			declare @SUBSTITUTIONS dbo.UDT_STRINGPAIR_100;
+			
+			set @ADDRESS = ' ' + lower(isnull(@ADDRESS,'')) + ' ';
+				
+			--Removing special characters
+			select @ADDRESS = replace(@ADDRESS,'*','')
+			select @ADDRESS = replace(@ADDRESS,'.','')
+			select @ADDRESS = replace(@ADDRESS,',','')
+			select @ADDRESS = replace(replace(@ADDRESS,'(',''),')','')
+			select @ADDRESS = replace(@ADDRESS,'"','')
+			select @ADDRESS = replace(@ADDRESS,';','')
+			select @ADDRESS = replace(@ADDRESS,':','')
+			select @ADDRESS = replace(@ADDRESS,'''','')
+			select @ADDRESS = replace(@ADDRESS,'-','')
+			select @ADDRESS = replace(@ADDRESS,'@','')
+			select @ADDRESS = replace(@ADDRESS,'&amp;','')
+				
+			--Removing whitespace
+			select @ADDRESS = replace(replace(replace(@ADDRESS, char(13), ' '), char(10), ' '), char(9), ' ')
+				
+			declare @REMOVEDWHITESPACE bit = 0
+			declare @TRIMMEDADDRESS nvarchar(150)
+			while @REMOVEDWHITESPACE = 0
+			begin
+				set @TRIMMEDADDRESS = replace(@ADDRESS, '  ', ' ')
+				if @TRIMMEDADDRESS <> @ADDRESS
+					set @ADDRESS = @TRIMMEDADDRESS
+				else
+					set @REMOVEDWHITESPACE = 1
+			end
+
+			if exists(select top 1 1 from @SUBSTITUTIONS)
+			begin
+				select @ADDRESS = replace(@ADDRESS, ' ' + [STRING1] + ' ', ' ' + [STRING2] + ' ')
+				from @SUBSTITUTIONS
+			end
+			else
+			begin
+				declare @ADDRESSSUBSTITUTIONS dbo.UDT_STRINGPAIR_100
+					
+				insert into @ADDRESSSUBSTITUTIONS
+				select 
+					[DESIGNATION],
+					[ABBREVIATION]
+				from dbo.UFN_ADDRESS_ADDRESSBLOCK_STANDARDUSABBREVIATIONS_LOWERCASE()
+					
+				select @ADDRESS = replace(@ADDRESS, ' ' + [STRING1] + ' ', ' ' + [STRING2] + ' ')
+				from @ADDRESSSUBSTITUTIONS
+			end
+				
+			select @ADDRESS = ltrim(rtrim(@ADDRESS))
+
+			return @ADDRESS;
+		end
+		
+		]]>
+	</CreateFunctionSQL>
+</SQLFunctionSpec>

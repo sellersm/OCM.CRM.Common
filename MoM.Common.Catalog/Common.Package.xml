@@ -53,6 +53,7 @@
 	25-Jul-2013		Memphis			Added the missing ChildInteractions.Query.xml
 	13-Aug-2013		Memphis			Added these two for the Run SQL Command Utility:
 									RunOurSqlCommands.Edit.xml
+	25-Sep-2013		CMayeda			Added USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.xml
 	-->
 
 
@@ -153,6 +154,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS_BYLOCATIONID.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_SETSPONSOREDPROJECTID.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_GETFIELDSTATUS.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.xml" />
 		
 		<!-- Record Operations -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Delete.RecordOperation.xml" />
