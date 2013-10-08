@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
+	08-Oct-2013		Memphis			Updated the errorMsg concatenation as the Category and/or Subcategory can come in empty/null.
 	-->
 	
 	<CreateProcedureSQL>
@@ -30,28 +31,28 @@ create procedure dbo.USR_USP_INTERACTION_GETSUBCATEGORYID (
 as
 begin
 	declare @errorMsg nvarchar(255) = ''
-	set @errorMsg = 'Couldn''t find Category=' + @categoryName + ', Subcategory=' + @subcategoryName
+	--set @errorMsg = 'Couldn''t find Category=' + @categoryName + ', Subcategory=' + @subcategoryName
+	set @errorMsg = 'Couldn''t find Category=' + COALESCE(@categoryName, 'EMPTY CATEGORY') + ', Subcategory=' + COALESCE(@subcategoryName, 'EMPTY SUBCATEGORY')	;
 	
 	begin try
-		set @subcategoryID = null
+		set @subcategoryID = null;
 	
 		select	@subcategoryID = subcat.ID	
-		  from	dbo.INTERACTIONSUBCATEGORY subcat
-	inner join	dbo.INTERACTIONCATEGORY cat on subcat.INTERACTIONCATEGORYID = cat.ID
+		from	dbo.INTERACTIONSUBCATEGORY subcat
+		inner join	dbo.INTERACTIONCATEGORY cat on subcat.INTERACTIONCATEGORYID = cat.ID
+		where lower (subcat.NAME) = lower (@subcategoryName)
+		and	lower (cat.NAME) = lower (@categoryName);
 
-		 where	lower (subcat.NAME) = lower (@subcategoryName)
-		   and	lower (cat.NAME) = lower (@categoryName)
-
-		if 	@subcategoryID is null and @raiseErrorIfNotFound = 1
-			RAISERROR 1000000 @errorMsg
-
+		if @subcategoryID is null and @raiseErrorIfNotFound = 1
+			RAISERROR 1000000 @errorMsg;
 	end try
+	
 	begin catch
-	    exec dbo.USP_RAISE_ERROR
-		return 1	
+	    exec dbo.USP_RAISE_ERROR;
+		return 1;
 	end catch
 
-   return 0
+   return 0;
 end
 
 		]]>
