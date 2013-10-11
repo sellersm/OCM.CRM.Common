@@ -101,6 +101,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
     Private WithEvents _city As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _stateid As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
     Private WithEvents _postcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+    Private WithEvents _originallettersequenceid As Global.Blackbaud.AppFx.UIModeling.Core.IntegerField
     Private WithEvents _children As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionViewFormCHILDRENUIModel)
 
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
@@ -143,6 +144,7 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         _city = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _stateid = New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
         _postcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+        _originallettersequenceid = New Global.Blackbaud.AppFx.UIModeling.Core.IntegerField
         _children = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of InteractionExtensionViewFormCHILDRENUIModel)
 
         MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.View
@@ -441,6 +443,14 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         _postcode.DBReadOnly = True
         _postcode.MaxLength = 12
         Me.Fields.Add(_postcode)
+        '
+        '_originallettersequenceid
+        '
+        _originallettersequenceid.Name = "ORIGINALLETTERSEQUENCEID"
+        _originallettersequenceid.Caption = "Original Letter Sequence ID"
+		_originallettersequenceid.DBReadOnly = True
+		_originallettersequenceid.DoNotApplyFormat = True
+        Me.Fields.Add(_originallettersequenceid)
         '
         '_children
         '
@@ -846,6 +856,17 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
     Public ReadOnly Property [POSTCODE]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
         Get
             Return _postcode
+        End Get
+    End Property
+    
+    ''' <summary>
+    ''' Original Letter Sequence ID
+    ''' </summary>
+    <System.ComponentModel.Description("Original Letter Sequence ID")> _
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+    Public ReadOnly Property [ORIGINALLETTERSEQUENCEID]() As Global.Blackbaud.AppFx.UIModeling.Core.IntegerField
+        Get
+            Return _originallettersequenceid
         End Get
     End Property
     

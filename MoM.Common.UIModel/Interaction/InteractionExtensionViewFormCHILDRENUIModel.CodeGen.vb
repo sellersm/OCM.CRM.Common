@@ -49,8 +49,7 @@ Partial Public Class [InteractionExtensionViewFormCHILDRENUIModel]
         '
         _childlookupid.Name = "CHILDLOOKUPID"
         _childlookupid.Caption = "Child ID"
-		_childlookupid.DBReadOnly = True
-		_childlookupid.Enabled = False
+        _childlookupid.DBReadOnly = True
         Me.Fields.Add(_childlookupid)
         '
         '_sponsorshipopportunitychildid
@@ -58,8 +57,7 @@ Partial Public Class [InteractionExtensionViewFormCHILDRENUIModel]
         _sponsorshipopportunitychildid.Name = "SPONSORSHIPOPPORTUNITYCHILDID"
         _sponsorshipopportunitychildid.Caption = "Child Name"
         _sponsorshipopportunitychildid.DBReadOnly = True
-		_sponsorshipopportunitychildid.SearchListId = New Guid("ab076868-114a-4696-afe9-8d590677708c")
-		_sponsorshipopportunitychildid.Enabled = False
+        _sponsorshipopportunitychildid.SearchListID = New Guid("ab076868-114a-4696-afe9-8d590677708c")
         Me.Fields.Add(_sponsorshipopportunitychildid)
 
 		OnCreated()
