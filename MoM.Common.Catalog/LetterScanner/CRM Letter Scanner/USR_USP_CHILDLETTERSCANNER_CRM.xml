@@ -18,6 +18,7 @@
 	28-Jan-2013		Memphis			Fixed the expected date of the completed sponsor interaction that gets created.
 	15-May-2013		Memphis			Fixed to match the workflow doc better: create child interaction no matter what
 	29-Aug-2013		Memphis			Further refactoring as per defect: D-01054
+	10-Oct-2013		Memphis			Fixing 3 defects:  D-01097, D-01098, D-01099
 	-->
 	
 	<CreateProcedureSQL>
@@ -58,7 +59,7 @@ begin
 	declare @newInteractionStatus nvarchar(100) = ''
 	declare @completedAfterCancellationCode bit = 0
 	declare @BarcodeChildProjectID uniqueidentifier			-- holds the projectId of the child based on the @ChildProjectLookupID parameter passed in
-
+  declare @interactionChildId uniqueidentifier;
 
 	-- Constants
 	set @StatusCodeCompleted = 2
@@ -71,44 +72,7 @@ begin
 		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @ChangeAgentID output;
 
 
-	-- 1.1 
-	-- is there a matching interaction (Sequence ID)?  if not, goto execption processing
-	-- is the interaction status one of these:
-	--   Pending?    If YES: set status to completed, then do Send Child Correspondence interaction precheck
-	--   Cancelled?  IF YES: set status to completed, set "Completed After Cancellation" to TRUE (1, it's a bit field).
-	--   Completed?  If YES: goto exception processing
-	--   not one of the above status, then goto exception processing
-	-- (case [COMPLETEDAFTERCANCELLATIONCODE] when (0) then N'False' when (1) then N'True'  end)
-
-	select @InteractionStatus = [STATUS] 
-	from dbo.INTERACTION 
-	where SEQUENCEID = @InteractionSequenceId;
-
-	if @InteractionStatus is not null
-		begin
-			if LOWER(@InteractionStatus) = 'cancelled'
-				set @completedAfterCancellationCode = 1;
-			
-			set @newInteractionStatus = case LOWER(@InteractionStatus) 
-				when 'pending' then 'Completed'
-				when 'cancelled' then 'Completed'
-				when 'completed' then 'EXCEPTION'
-				else 'EXCEPTION'
-				end
-		end
-	else
-		begin
-			set @ExceptionOccurred = 1
-			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Letter Interaction not found. '
-		end
-
-	if @newInteractionStatus = 'EXCEPTION'
-		begin
-			set @ExceptionOccurred = 1
-			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Letter interaction is not pending. '
-		end
-			
-
+  -- Do this FIRST cuz we need the ChildID value later on...
 	-- 1.2 check child lookup id, is the child id valid?  if not, goto exception processing
 	-- Child ID
 	if @ExceptionOccurred = 0
@@ -123,6 +87,61 @@ begin
 					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child ID not found. '
 				end
 		end
+
+
+	-- 1.1 
+	-- is there a matching interaction (Sequence ID)?  if not, goto execption processing
+	-- is the interaction status one of these:
+	--   Pending?    If YES: set status to completed, then do Send Child Correspondence interaction precheck
+	--   Cancelled?  IF YES: set status to completed, set "Completed After Cancellation" to TRUE (1, it's a bit field).
+	--   Completed?  If YES: goto exception processing
+	--   not one of the above status, then goto exception processing
+	-- (case [COMPLETEDAFTERCANCELLATIONCODE] when (0) then N'False' when (1) then N'True'  end)
+
+  -- Memphis per Pamela, D-01098 check that the sequenceId matches the given ChildID,
+  -- so we'll need to store the ConstituentId of the interaction that matches this sequenceId
+  -- and then compare it to the ChildId and see if they match or not:
+  -- we also need the interactionsubcategoryid value for later:
+	select @InteractionStatus = [STATUS],
+         @interactionChildId = CONSTITUENTID,
+         @OriginalLetterSubcategoryID = INTERACTIONSUBCATEGORYID,
+         @OriginalLetterSequenceID = SEQUENCEID
+	from dbo.INTERACTION 
+	where SEQUENCEID = @InteractionSequenceId;
+  
+  -- Memphis per Pamela, D-01098 check that the sequenceId matches the given ChildID,
+  if (@interactionChildId is not null) and (@interactionChildId <> @ChildID)
+    begin
+			set @ExceptionOccurred = 1
+			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sequence ID is not for the given Child. ';
+    end
+
+  if @ExceptionOccurred = 0
+    begin
+    	if @InteractionStatus is not null
+    		begin
+    			if LOWER(@InteractionStatus) = 'cancelled'
+    				set @completedAfterCancellationCode = 1;
+    			
+    			set @newInteractionStatus = case LOWER(@InteractionStatus) 
+    				when 'pending' then 'Completed'
+    				when 'cancelled' then 'Completed'
+    				when 'completed' then 'EXCEPTION'
+    				else 'EXCEPTION'
+    				end
+    		end
+    	else
+    		begin
+    			set @ExceptionOccurred = 1
+    			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Letter Interaction not found. '
+    		end
+
+    	if @newInteractionStatus = 'EXCEPTION'
+    		begin
+    			set @ExceptionOccurred = 1
+    			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Letter interaction is not pending. '
+    		end
+    end			
 
 	-- MEMPHIS: we need the sponsorid so try and get it here, will be validated down below
 	select @SponsorID = ID 
@@ -145,8 +164,8 @@ begin
 			where INTERACTION.ID = ib.ID			
 
 			select TOP 1 
-					@OriginalInteractionID = InteractionID, 
-					@OriginalLetterSequenceID =  OriginalLetterSequenceID 
+					@OriginalInteractionID = InteractionID
+					--@OriginalLetterSequenceID =  OriginalLetterSequenceID 
 			from @TempTable
 
 			-- 1.5
@@ -279,16 +298,17 @@ begin
 
 	--   2.4 Does the Child Project on the barcode match the child’s current Project?
 	--   If NO:  alert current Project not match barcode project, goto 3A exception processing
-	if @ExceptionOccurred = 0
-		begin
-			-- get the Child Project ID
-			set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
-			if @CurrentChildProjectID <> @BarcodeChildProjectID
-				begin
-					set @ExceptionOccurred = 1
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current Child Project ID does not match barcode Project ID. '						
-				end
-		end
+  -- Memphis: take this out per Pamela, D-01099
+--	if @ExceptionOccurred = 0
+--		begin
+--			-- get the Child Project ID
+--			set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+--			if @CurrentChildProjectID <> @BarcodeChildProjectID
+--				begin
+--					set @ExceptionOccurred = 1
+--					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current Child Project ID does not match barcode Project ID. '						
+--				end
+--		end
 
 
 
