@@ -56,34 +56,70 @@ as
 				-- check the @OVERWRITEEXISTINGVALUE flag, if set then just do a big update with the @ADDPENDINGREASONVALUE
 				if @OVERWRITEEXISTINGVALUE = 1
 					begin
-						update dbo.SPONSORSHIPOPPORTUNITY
+						update dbo.SPONSORSHIPOPPORTUNITYREASON
 						set SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE,
 						    DATECHANGED = @CURRENTDATE, 
 							CHANGEDBYID = @CHANGEAGENTID
-						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
 						select @NUMBERADDED = @@ROWCOUNT						
 					end
 				else
 					begin
-						-- only update where the current value is null
-						update dbo.SPONSORSHIPOPPORTUNITY
-						set SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE,
-						    DATECHANGED = @CURRENTDATE, 
-							CHANGEDBYID = @CHANGEAGENTID
-						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
-						and SPONSORSHIPREASONID is null						
-						select @NUMBERADDED = @@ROWCOUNT 
+						-- per Pamela, insert a new Pending Reason for this Child: but only if it doesn't already exist
+					declare @insertCounter int = 0;
+            
+					declare IDSETCURSOR cursor local fast_forward for
+					select ID
+					from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID);
+            
+					declare @ChildID uniqueidentifier;
+    				open IDSETCURSOR;
+    							
+    				fetch next from IDSETCURSOR into @ChildID;
+    		        
+    				while (@@FETCH_STATUS = 0)
+    				begin					
+					  -- check if this child already has this reason, only add if they do NOT have it or will cause an exception:
+					  if NOT EXISTS (select 1 from dbo.SPONSORSHIPOPPORTUNITYREASON where dbo.SPONSORSHIPOPPORTUNITYREASON.SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE and SPONSORSHIPOPPORTUNITYID = @ChildID)
+						begin
+						  -- do the insert
+						  insert dbo.SPONSORSHIPOPPORTUNITYREASON (ID, SPONSORSHIPOPPORTUNITYID, SPONSORSHIPREASONID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+      								values (newid(), @ChildID, @ADDPENDINGREASONVALUE, @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE);
+						  set @insertCounter = @insertCounter + 1;
+						end
+                
+    					fetch next from IDSETCURSOR into @ChildID;
+    				end
+    				
+    				close IDSETCURSOR;				
+                
+--            insert dbo.SPONSORSHIPOPPORTUNITYREASON (ID, SPONSORSHIPOPPORTUNITYID, SPONSORSHIPREASONID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+--						select 
+--							newid(), 
+--							selectionChildren.ID, 
+--							@ADDPENDINGREASONVALUE, 
+--							@CHANGEAGENTID, 
+--							@CHANGEAGENTID, 
+--							@CURRENTDATE, 
+--							@CURRENTDATE
+--						from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID) selectionChildren
+--						--join dbo.SPONSORSHIPOPPORTUNITYREASON on dbo.SPONSORSHIPOPPORTUNITYREASON.SPONSORSHIPOPPORTUNITYID = selectionChildren.ID
+--            where NOT EXISTS (select 1 from dbo.SPONSORSHIPOPPORTUNITYREASON where dbo.SPONSORSHIPOPPORTUNITYREASON.SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE);
+--						--where dbo.SPONSORSHIPOPPORTUNITYREASON.ID in (select ID from dbo.SPONSORSHIPOPPORTUNITYREASON where SPONSORSHIPREASONID <> @ADDPENDINGREASONVALUE)
+            
+						select @NUMBERADDED = @insertCounter; 
+
 					end
 			end
 		
 		-- perform the replace
 		if @OPERATION = 2
 			begin  
-				update dbo.SPONSORSHIPOPPORTUNITY
+				update dbo.SPONSORSHIPOPPORTUNITYREASON
 				set SPONSORSHIPREASONID = @REPLACEPENDINGREASONWITHVALUE,
 					DATECHANGED = @CURRENTDATE, 
 					CHANGEDBYID = @CHANGEAGENTID				
-				where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+				where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
 				and SPONSORSHIPREASONID = @REPLACEPENDINGREASONVALUE
 				set @NUMBEREDITED = @@ROWCOUNT;
 			end
@@ -95,23 +131,23 @@ as
 				-- check the flag: if not set, only update the matching rows
 				if @DELETEALLVALUES = 0
 					begin
-						update dbo.SPONSORSHIPOPPORTUNITY
-						set SPONSORSHIPREASONID = NULL,
-						    DATECHANGED = @CURRENTDATE, 
-							CHANGEDBYID = @CHANGEAGENTID
-						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						delete dbo.SPONSORSHIPOPPORTUNITYREASON
+--						set SPONSORSHIPREASONID = NULL,
+--						    DATECHANGED = @CURRENTDATE, 
+--							CHANGEDBYID = @CHANGEAGENTID
+						where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
 						and SPONSORSHIPREASONID = @DELETEPENDINGREASONVALUE
 						set @NUMBERDELETED = @@ROWCOUNT;
 					end
 				else
 					-- update all values to NULL
 					begin
-						update dbo.SPONSORSHIPOPPORTUNITY
-						set SPONSORSHIPREASONID = NULL,
-						    DATECHANGED = @CURRENTDATE, 
-							CHANGEDBYID = @CHANGEAGENTID
-						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
-						set @NUMBERDELETED = @@ROWCOUNT;					
+						delete dbo.SPONSORSHIPOPPORTUNITYREASON
+--						set SPONSORSHIPREASONID = NULL,
+--						    DATECHANGED = @CURRENTDATE, 
+--							CHANGEDBYID = @CHANGEAGENTID
+						where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						set @NUMBERDELETED = @@ROWCOUNT;									
 					end
 			end
 	
