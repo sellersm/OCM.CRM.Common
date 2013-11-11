@@ -10,6 +10,20 @@
     SPName="USR_USP_GLOBALCHANGE_CHILD_PENDINGREASONS_GLOBALCHANGE"
     >
 
+	<!-- 
+	Remarks:	Add/change Child Pending Reasons.
+				
+	History:
+	Date			Modified By		Comments
+    11-Jan-2013		Memphis			Initial Version
+	04-Nov-2013		Memphis			per Pamela (D-01102)
+					•Add - if the global change is adding (not override) a pending reason and it is the only one after the global change has been processed,
+					then it needs to update the child’s Eligibility status to Pending (2).
+					•Delete – if the global change is deleting or deleting all and there are no more pending reasons on the child’s record after the global
+					change has been processed, then it needs to update the child’s Eligibility status to Eligible (0).
+	-->
+
+
 	<!-- describe the SP that performs the global change operation -->
 	<CreateProcedureSQL>
 		<![CDATA[
@@ -47,69 +61,72 @@ as
 		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
 					
 	begin try
-		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate
-		
+		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate		
 		-- perform the Add
+    
+    declare @childIDList dbo.USR_UDT_CHILDIDLIST;
+    declare @deletedRows int = 0;
+    declare @insertedRows int = 0;
+    
 		if @OPERATION = 1
 			begin  
 				-- use the @ADDPENDINGREASONVALUE as the new value
 				-- check the @OVERWRITEEXISTINGVALUE flag, if set then just do a big update with the @ADDPENDINGREASONVALUE
 				if @OVERWRITEEXISTINGVALUE = 1
 					begin
-						update dbo.SPONSORSHIPOPPORTUNITYREASON
-						set SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE,
-						    DATECHANGED = @CURRENTDATE, 
-							CHANGEDBYID = @CHANGEAGENTID
-						where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
-						select @NUMBERADDED = @@ROWCOUNT						
+            -- overwrite should remove all existing pending reasons, and then add the one new reason the user selected:
+            delete dbo.SPONSORSHIPOPPORTUNITYREASON
+            where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID));
+            
+            -- now that all the reasons are deleted, insert just the one reason the user's selected:
+            insert dbo.SPONSORSHIPOPPORTUNITYREASON (ID, SPONSORSHIPOPPORTUNITYID, SPONSORSHIPREASONID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+						select 
+							newid(), 
+							selectionChildren.ID, 
+							@ADDPENDINGREASONVALUE, 
+							@CHANGEAGENTID, 
+							@CHANGEAGENTID, 
+							@CURRENTDATE, 
+							@CURRENTDATE
+						from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID) selectionChildren
+						
+            -- get the number of rows affected for the Process page:
+            select @NUMBERADDED = @@ROWCOUNT
 					end
 				else
 					begin
 						-- per Pamela, insert a new Pending Reason for this Child: but only if it doesn't already exist
-					declare @insertCounter int = 0;
-            
-					declare IDSETCURSOR cursor local fast_forward for
-					select ID
-					from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID);
-            
-					declare @ChildID uniqueidentifier;
+  					declare @insertCounter int = 0;
+              
+  					declare IDSETCURSOR cursor local fast_forward for
+  					select ID
+  					from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID);
+              
+  					declare @ChildID uniqueidentifier;
     				open IDSETCURSOR;
     							
     				fetch next from IDSETCURSOR into @ChildID;
     		        
     				while (@@FETCH_STATUS = 0)
-    				begin					
-					  -- check if this child already has this reason, only add if they do NOT have it or will cause an exception:
-					  if NOT EXISTS (select 1 from dbo.SPONSORSHIPOPPORTUNITYREASON where dbo.SPONSORSHIPOPPORTUNITYREASON.SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE and SPONSORSHIPOPPORTUNITYID = @ChildID)
-						begin
-						  -- do the insert
-						  insert dbo.SPONSORSHIPOPPORTUNITYREASON (ID, SPONSORSHIPOPPORTUNITYID, SPONSORSHIPREASONID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
-      								values (newid(), @ChildID, @ADDPENDINGREASONVALUE, @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE);
-						  set @insertCounter = @insertCounter + 1;
-						end
-                
-    					fetch next from IDSETCURSOR into @ChildID;
-    				end
+      				begin					
+    					  -- check if this child already has this reason, only add if they do NOT have it or will cause an exception:
+    					  if NOT EXISTS (select 1 from dbo.SPONSORSHIPOPPORTUNITYREASON where dbo.SPONSORSHIPOPPORTUNITYREASON.SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE and SPONSORSHIPOPPORTUNITYID = @ChildID)
+      						begin
+      						  -- do the insert
+      						  insert dbo.SPONSORSHIPOPPORTUNITYREASON (ID, SPONSORSHIPOPPORTUNITYID, SPONSORSHIPREASONID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+            				values (newid(), @ChildID, @ADDPENDINGREASONVALUE, @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE);
+      						  set @insertCounter = @insertCounter + 1;
+      						end
+                    
+        					fetch next from IDSETCURSOR into @ChildID;
+      				end
     				
     				close IDSETCURSOR;				
-                
---            insert dbo.SPONSORSHIPOPPORTUNITYREASON (ID, SPONSORSHIPOPPORTUNITYID, SPONSORSHIPREASONID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
---						select 
---							newid(), 
---							selectionChildren.ID, 
---							@ADDPENDINGREASONVALUE, 
---							@CHANGEAGENTID, 
---							@CHANGEAGENTID, 
---							@CURRENTDATE, 
---							@CURRENTDATE
---						from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID) selectionChildren
---						--join dbo.SPONSORSHIPOPPORTUNITYREASON on dbo.SPONSORSHIPOPPORTUNITYREASON.SPONSORSHIPOPPORTUNITYID = selectionChildren.ID
---            where NOT EXISTS (select 1 from dbo.SPONSORSHIPOPPORTUNITYREASON where dbo.SPONSORSHIPOPPORTUNITYREASON.SPONSORSHIPREASONID = @ADDPENDINGREASONVALUE);
---						--where dbo.SPONSORSHIPOPPORTUNITYREASON.ID in (select ID from dbo.SPONSORSHIPOPPORTUNITYREASON where SPONSORSHIPREASONID <> @ADDPENDINGREASONVALUE)
-            
+           
 						select @NUMBERADDED = @insertCounter; 
 
 					end
+          
 			end
 		
 		-- perform the replace
@@ -132,9 +149,6 @@ as
 				if @DELETEALLVALUES = 0
 					begin
 						delete dbo.SPONSORSHIPOPPORTUNITYREASON
---						set SPONSORSHIPREASONID = NULL,
---						    DATECHANGED = @CURRENTDATE, 
---							CHANGEDBYID = @CHANGEAGENTID
 						where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
 						and SPONSORSHIPREASONID = @DELETEPENDINGREASONVALUE
 						set @NUMBERDELETED = @@ROWCOUNT;
@@ -143,14 +157,26 @@ as
 					-- update all values to NULL
 					begin
 						delete dbo.SPONSORSHIPOPPORTUNITYREASON
---						set SPONSORSHIPREASONID = NULL,
---						    DATECHANGED = @CURRENTDATE, 
---							CHANGEDBYID = @CHANGEAGENTID
 						where SPONSORSHIPOPPORTUNITYID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
 						set @NUMBERDELETED = @@ROWCOUNT;									
 					end
 			end
 	
+
+      -- 11/4/13 **NEED to check Eligiblity after adding or deleting, no matter overwrite or not
+      if @OPERATION IN (1,3)
+        begin
+          insert @childIDList
+		  select ID
+		  from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID);
+          
+          exec dbo.USR_USP_SPONSORSHIPOPPORTUNITYELIGIBILITYCHECK
+          	@childIDList = @childIDList,
+          	@changeAgentID = @CHANGEAGENTID,				
+          	@deletedRows = @deletedRows,					
+          	@insertedRows  = @insertedRows;
+        end
+  
 
 	end try
 	
