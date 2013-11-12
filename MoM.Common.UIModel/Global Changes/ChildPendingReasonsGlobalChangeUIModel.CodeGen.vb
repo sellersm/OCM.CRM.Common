@@ -100,7 +100,7 @@ Partial Public Class [ChildPendingReasonsGlobalChangeUIModel]
         '
         _addpendingreasonvalue.Name = "ADDPENDINGREASONVALUE"
         _addpendingreasonvalue.Caption = "Pending reason"
-        _addpendingreasonvalue.Required = True
+		'_addpendingreasonvalue.Required = True
         _addpendingreasonvalue.SimpleDataListID = New Guid("c8d3128e-a2eb-4413-b0b4-1585ad5bf001")
         _addpendingreasonvalue.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("TYPE", "PARENT.Fields!REASONTYPE"))
         Me.Fields.Add(_addpendingreasonvalue)

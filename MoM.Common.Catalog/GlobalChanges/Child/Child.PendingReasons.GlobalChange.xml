@@ -220,7 +220,7 @@ as
 					</ValueList>
 				</FormField>
 
-				<FormField FieldID="ADDPENDINGREASONVALUE" DataType="Guid" Required="true" Caption="Pending reason" CaptionResourceKey="$$reason">
+				<FormField FieldID="ADDPENDINGREASONVALUE" DataType="Guid" Required="false" Caption="Pending reason" CaptionResourceKey="$$reason">
 					<SimpleDataList SimpleDataListID="c8d3128e-a2eb-4413-b0b4-1585ad5bf001">
 						<Params>
 							<Param ID="TYPE">
