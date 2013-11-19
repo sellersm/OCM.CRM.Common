@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>
     </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
@@ -119,6 +119,10 @@
       <DependentUpon>ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildExtensionFulfillmentStatusGlobalChangeUIModel.CodeGen.vb">
+      <DependentUpon>ChildExtensionFulfillmentStatusGlobalChangeUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Global Changes\ChildExtensionFulfillmentStatusGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildExtensionProfileStatusGlobalChangeUIModel.CodeGen.vb">
       <DependentUpon>ChildExtensionProfileStatusGlobalChangeUIModel.vb</DependentUpon>
     </Compile>
@@ -176,7 +180,9 @@
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.vb" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="htmlforms\custom\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="UIModel.ruleset" />
     <None Include="postbuild.bat" />
@@ -194,10 +200,16 @@
     <None Include="..\MoM.Common.Catalog\GlobalChanges\Interaction\UpdateChildInteractions.GlobalChange.xml">
       <Link>LinkedSpecs\UpdateChildInteractions.GlobalChange.xml</Link>
     </None>
+    <None Include="..\MoM.Common.Catalog\GlobalChanges\Child Extension\ChildExtension.FulfillmentStatus.GlobalChange.xml">
+      <Link>LinkedSpecs\ChildExtension.FulfillmentStatus.GlobalChange.xml</Link>
+    </None>
     <Content Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.xml" />
     <Content Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.xml" />
     <Content Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.xml">
       <DependentUpon>ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb</DependentUpon>
+    </Content>
+    <Content Include="Global Changes\ChildExtensionFulfillmentStatusGlobalChangeUIModel.xml">
+      <DependentUpon>ChildExtensionFulfillmentStatusGlobalChangeUIModel.vb</DependentUpon>
     </Content>
     <Content Include="Global Changes\ChildExtensionProfileStatusGlobalChangeUIModel.xml">
       <DependentUpon>ChildExtensionProfileStatusGlobalChangeUIModel.vb</DependentUpon>
@@ -219,6 +231,7 @@
     <Content Include="htmlforms\ChildPendingReasonsGlobalChange.html" />
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
+    <Content Include="htmlforms\ChildExtensionFulfillmentStatusGlobalChange.html" />
     <Content Include="htmlforms\RunOurSqlCommandsEditDataForm.html" />
     <Content Include="htmlforms\SponsorAppealLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />

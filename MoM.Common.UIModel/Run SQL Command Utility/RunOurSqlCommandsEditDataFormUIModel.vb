@@ -47,10 +47,10 @@ Public Class RunOurSqlCommandsEditDataFormUIModel
 				cmd.CommandType = CommandType.Text
 
 				'get the column list:
-				Dim columns As String()
+                Dim columns As New List(Of String)
 				Dim columnName As String
 				If Me.COLUMNLIST.HasValue Then
-					columns = Me.COLUMNLIST.Value.Split(New Char() {","c})
+                    columns = Me.COLUMNLIST.Value.Split(New Char() {","c}).ToList()
 				Else
 					If isUpdate = False Then
 						' don't need output columns for an update
