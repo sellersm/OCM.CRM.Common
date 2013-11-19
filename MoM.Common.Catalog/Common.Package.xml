@@ -54,6 +54,7 @@
 	13-Aug-2013		Memphis			Added these two for the Run SQL Command Utility:
 									RunOurSqlCommands.Edit.xml
 	25-Sep-2013		CMayeda			Added USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.xml
+  19-Nov-2013   TGupta      Added Global Change for Fulfillment Status on a child's sponsorshipopportunity
 	-->
 
 
@@ -210,6 +211,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddSponsorToChildInteractions.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteractions.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteraction.ExpectedDate.GlobalChange.xml" />
+    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildExtension.FulfillmentStatus.GlobalChange.xml" />
 
 
 		<!-- Pages -->
