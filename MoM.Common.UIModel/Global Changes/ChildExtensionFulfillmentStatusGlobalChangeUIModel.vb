@@ -1,6 +1,7 @@
 Public Class ChildExtensionFulfillmentStatusGlobalChangeUIModel
 
     Private Sub ChildExtensionFulfillmentStatusGlobalChangeUIModel_Loaded(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.LoadedEventArgs) Handles Me.Loaded
+        'Loading the appropriate fields
         Me.ADDFULFILLMENTSTATUSVALUE.Visible = False
         Me.DELETEFULFILLMENTSTATUSVALUE.Visible = False
         Me.REPLACEFULFILLMENTSTATUSVALUE.Visible = False
