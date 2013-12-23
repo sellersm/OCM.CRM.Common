@@ -27,6 +27,7 @@
     14-Mar-2013		CMayeda			Added Assigned child - related to V_QUERY_SPONSORSHIPOPPORTUNITY - FogBugz Case 1041
 	16-Apr-2013		Memphis			Added ITEMSENCLOSED.  Fogbugz Case 1059.
 	14-May-2013		Memphis			Added PRINTBLACKOUTLABEL.
+	23-Dec-2013		CMayeda			Added captions for SPONSORID, CHILDASSIGNED. They were used in the relationships with other views, but were not hidden, so I added captions.
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -123,6 +124,9 @@
 	<Output>
 		<OutputFields>
 			<OutputField Name="ID" Caption="Interaction record" Category="System Fields" DataType="Guid" IsHidden="true" />
+			<OutputField Name="SPONSORID" Caption="Sponsor ID" Category="System Fields" DataType="Guid" />
+			<OutputField Name="CHILDASSIGNED" Caption="Child Assigned ID" Category="System Fields" DataType="Guid" />
+
 			<OutputField Name="SEQUENCEID" Caption="Sequence ID" DataType="Integer" />
 			<OutputField Name="CHILDCOUNTLETTERVERSIONCODE" Caption="Child Count Letter Version" DataType="String">
 				<LookupInfo>
@@ -286,7 +290,6 @@
 				</LookupInfo>
 			</OutputField>
 			<OutputField Name="PRINTBLACKOUTLABEL" Caption="Print Blackout Label" DataType="Boolean" />
-			
 
 		</OutputFields>
 	</Output>
