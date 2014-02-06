@@ -492,6 +492,9 @@
   <ItemGroup>
     <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.FulfillmentStatus.GlobalChange.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GlobalChanges\Interaction\AddObjectiveToChildInteractions.GlobalChange.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
