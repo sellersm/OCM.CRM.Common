@@ -1,0 +1,48 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="5a91cf29-46b7-4e32-b146-a39951f83943"
+	Name="USR_UFN_RATECHANGE_RESPONSES_FROMITEMLISTXML"
+	Description="Returns the ratechange response data from Scanner XML output"
+	Author="Memphis Sellers"
+	DBFunctionName="USR_UFN_RATECHANGE_RESPONSES_FROMITEMLISTXML"
+	GrantServiceRolePermission="true"	
+	>
+
+	<!-- 
+	Remarks:    Gets the rate change response data from the XML produced by Rate Change Response scanner.
+
+	History:
+	Date            Modified By     Comments
+	31-Jan-2014		Memphis			Initial Version.
+	-->
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_RATECHANGE_RESPONSES_FROMITEMLISTXML(
+	@ITEMLISTXML xml = null
+)
+returns table
+as  
+	-- do work here and return a value
+	return (SELECT 
+		T.c.value('(RATEINCREASE)[1]','bit') AS 'RATEINCREASE',
+		T.c.value('(NEWRGAMOUNT)[1]','money') AS 'NEWRGAMOUNT',
+		T.c.value('(REVENUELOOKUPID)[1]','nvarchar(100)') AS 'REVENUELOOKUPID',
+		T.c.value('(CHILDLOOKUPID)[1]','nvarchar(100)') AS 'CHILDLOOKUPID',
+		T.c.value('(SPONSORLOOKUPID)[1]','nvarchar(100)') AS 'SPONSORLOOKUPID',
+		T.c.value('(SPONSORSHIPID)[1]','uniqueidentifier') AS 'SPONSORSHIPID',
+		T.c.value('(CURRENTRGAMOUNT)[1]','money') AS 'CURRENTRGAMOUNT',
+		T.c.value('(SPONSORID)[1]','uniqueidentifier') AS 'SPONSORID'
+		FROM @ITEMLISTXML.nodes('/RATECHANGE/ITEM') T(c)
+	)
+
+
+
+
+
+
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

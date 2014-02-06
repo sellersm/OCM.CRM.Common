@@ -495,6 +495,19 @@
   <ItemGroup>
     <EmbeddedResource Include="GlobalChanges\Interaction\AddObjectiveToChildInteractions.GlobalChange.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateChangeResponseLetterScanner.Add.xml" />
+    <EmbeddedResource Include="Rate Increase\RateChangeResponseLetterScanner.Task.xml" />
+    <EmbeddedResource Include="Rate Increase\USR_RATECHANGEIMPLEMENTEDDATE.Table.xml" />
+    <EmbeddedResource Include="Rate Increase\USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE.CodeTabe.xml" />
+    <EmbeddedResource Include="Rate Increase\USR_SPONSOR_RATECHANGE_SPONSORSHIPS.Table.xml" />
+    <EmbeddedResource Include="Rate Increase\USR_UFN_RATECHANGE_RESPONSES_FROMITEMLISTXML.xml" />
+    <EmbeddedResource Include="Rate Increase\USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.Package.xml" />
+    <EmbeddedResource Include="Rate Increase\USR_USP_RATECHANGE_RESPONSE_SCANNER.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
