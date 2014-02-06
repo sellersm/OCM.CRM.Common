@@ -1,0 +1,107 @@
+<AddDataFormTemplateSpec 
+    xmlns="bb_appfx_adddataformtemplate"
+    xmlns:common="bb_appfx_commontypes"
+    ID="918488ee-99d8-42b6-980e-458225d73172"
+    Name="Rate Change response scanner form"
+    Description="Form for rate change response scanner."
+    Author="Memphis Sellers"
+    DataFormInstanceID="4bc1e218-eda2-4478-a899-d80ef4675ef6"
+    RecordType="Letterscanner"
+    common:SecurityUIFolder="Letterscanner"
+    FormHeader="Rate Change Response Scanner"
+    >
+
+	<SPDataForm>
+		<!-- describe the preload SP (if applicable), which should be used to fetch field default values from the database.  If no
+		preload is needed, then this section can be removed -->
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_RATECHANGE_RESPONSESCANNER">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_RATECHANGE_RESPONSESCANNER
+(
+    @ID uniqueidentifier = null output,
+    @CHANGEAGENTID uniqueidentifier = null,
+	@BARCODE nvarchar(20) = '',
+	@BARCODEELEMENTS xml = null, 
+    @SUBMIT bit = 0,
+	@SPONSORLOOKUPID nvarchar(6) = '',
+	@SPONSORNAME nvarchar(500) = '',
+	@SCANSTATUS nvarchar(1000) = ''
+)
+as
+
+set nocount on;
+
+if @ID is null
+    set @ID = newid()
+
+if @CHANGEAGENTID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+declare @CURRENTDATE datetime
+set @CURRENTDATE = getdate()
+
+begin try
+	-- handle inserting the data
+	declare @foobar table (ID uniqueidentifier)
+   
+	insert into @foobar
+    select newid()
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+return 0				
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+	<!--Context ContextRecordType="REPLACE_WITH_RECORDTYPE" RecordIDParameter="CONTEXTID"/-->
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="false">
+		<common:FormFields>
+			<common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+			<common:FormField FieldID="SCANSTATUS" Caption="Scan status" DataType="String" MaxLength="1000" />
+
+			<common:FormField FieldID="BARCODEELEMENTS" Caption="Scan Results" DataType="XML">
+				<common:Collection EnablePaging="true">
+					<common:Fields>
+						<common:FormField FieldID="RATEINCREASE" Caption="Increase ?" DataType="Boolean" />
+						<common:FormField FieldID="SPONSORSHIPCOMMITMENTID" Caption="Commitment Id" DataType="String" ReadOnly="true" />
+						<common:FormField FieldID="CHILDLOOKUPID" Caption="Child Id" DataType="String" ReadOnly="true" />
+						<common:FormField FieldID="CHILDNAME" Caption="Child Name" DataType="String" ReadOnly="true" />
+						<common:FormField FieldID="CURRENTRGAMOUNT" Caption="Current Amount" DataType="Money" ReadOnly="true" />
+						<common:FormField FieldID="RGFREQUENCY" Caption="Gift Frequency" DataType="String" ReadOnly="true" />
+						<common:FormField FieldID="NEWRGAMOUNT" Caption="New Amount" DataType="Money" Required="true" />
+						<common:FormField FieldID="SPONSORLOOKUPID" Caption="Sponsor ID" DataType="String" />						
+						<common:FormField FieldID="SPONSORSHIPID" Caption="Sponsorship ID" DataType="Guid" />
+					</common:Fields>
+				</common:Collection>
+			</common:FormField>
+			<common:FormField FieldID="SUBMIT" Caption="Save results" DataType="Boolean" />
+			<common:FormField FieldID="SPONSORLOOKUPID" Caption="Sponsor Lookup ID" DataType="String" />
+			<common:FormField FieldID="SPONSORNAME" Caption="Sponsor Name" DataType="String" />
+		</common:FormFields>
+
+        <common:WebUIComponent>
+            <common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.RateChangeResponseScannerFormUIModel" />
+            <common:WebUI>
+                <common:ExternalResource Url="browser/htmlforms/custom/RateChangeResponseScannerForm.html" />
+            </common:WebUI>
+        </common:WebUIComponent>
+
+		<common:UIActions>
+			<common:UIAction ActionID="COMMITCHANGESBUTTON" Caption="Commit Changes" />
+		</common:UIActions>
+	</common:FormMetaData>
+
+	
+</AddDataFormTemplateSpec>

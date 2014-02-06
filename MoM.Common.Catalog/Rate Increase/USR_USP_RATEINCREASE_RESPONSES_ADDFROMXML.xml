@@ -1,0 +1,122 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="28f05715-417d-42fa-bc20-906ae361435d"
+	Name="USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML"
+	Description="Adds rows to USR_SPONSOR_RATECHANGE_SPONSORSHIPS table from rate change scanner."
+	Author="Memphis Sellers"
+	SPName="USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML"
+	GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+	Remarks:    Stored procedure that adds rows to the USR_SPONSOR_RATECHANGE_SPONSORSHIPS table from rate increase responses scanner
+
+	History:
+	Date            Modified By     Comments
+	03-Feb-2014		Memphis			Initial version.
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML 
+(
+  @SPONSORLOOKUPID nvarchar(100),
+  @XML xml,
+  @CHANGEAGENTID uniqueidentifier = null,
+  @DATEADDED datetime = null,
+  @CHANGEYEAR dbo.UDT_YEAR = null,
+  @RESPONSEDATE datetime = null,
+  @RESPONDAFTERRATECHANGEUPDATED bit = 0,
+  @RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID uniqueidentifier = null
+)
+
+as
+
+begin
+	set nocount on;
+
+	if @CHANGEAGENTID is null
+		exec USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+	if @DATEADDED is null
+		set @DATEADDED = getdate()
+	
+	-- build a temporary table containing the values from the XML
+	declare @TempTbl table (
+	   [CONSTITUENTID] uniqueidentifier,
+	   [ID] uniqueidentifier,
+		RATEINCREASE bit,
+		NEWRGAMOUNT money,
+		REVENUELOOKUPID nvarchar(100),
+		CHILDLOOKUPID nvarchar(100),
+		SPONSORLOOKUPID nvarchar(100),
+		SPONSORSHIPID uniqueidentifier,
+		CURRENTRGAMOUNT money
+		)
+
+	insert into @TempTbl select 
+		SPONSORID
+		, newid()
+		, RATEINCREASE
+		, NEWRGAMOUNT
+		, REVENUELOOKUPID
+		, CHILDLOOKUPID
+		, SPONSORLOOKUPID
+		, SPONSORSHIPID
+		, CURRENTRGAMOUNT
+	from dbo.USR_UFN_RATECHANGE_RESPONSES_FROMITEMLISTXML(@XML)
+	--join dbo.SPONSORSHIPOPPORTUNITY so on so.LOOKUPID = CHILDLOOKUPID
+	--join dbo.CONSTITUENT sponsor on SPONSORLOOKUPID = sponsor.LOOKUPID
+	--join dbo.REVENUE r on r.LOOKUPID = REVENUELOOKUPID
+
+	update @TempTbl set ID = newid() where (ID is null) or (ID = '00000000-0000-0000-0000-000000000000');
+
+	if @@Error <> 0
+		return 1;
+	
+	-- insert new items
+	INSERT INTO dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS(
+	   ID
+	  ,SPONSORID
+	  ,SPONSORSHIPID
+	  ,CHANGEYEAR
+	  ,INCREASERATE
+	  ,RESPONSEDATE
+	  ,RESPONDAFTERRATECHANGEUPDATED
+	  ,ORIGINALSPONSORSHIPGIFTAMOUNT
+	  ,UPDATEDSPONSORSHIPGIFTAMOUNT
+	  ,RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID
+	  ,REVENUELOOKUPID
+	  ,ADDEDBYID
+	  ,CHANGEDBYID
+	  ,DATEADDED
+	  ,DATECHANGED
+	) 
+	select 
+	   ID -- ID - uniqueidentifier
+	  ,CONSTITUENTID	 -- SPONSORID - uniqueidentifier
+	  ,SPONSORSHIPID	 -- SPONSORSHIPID - uniqueidentifier
+	  ,@CHANGEYEAR		 -- CHANGEYEAR - dbo.UDT_YEAR
+	  ,RATEINCREASE		 -- INCREASERATE - bit
+	  ,@RESPONSEDATE	 -- RESPONSEDATE - datetime
+	  ,@RESPONDAFTERRATECHANGEUPDATED              -- RESPONDAFTERRATECHANGEUPDATED - bit
+	  ,CURRENTRGAMOUNT   -- ORIGINALSPONSORSHIPGIFTAMOUNT - money
+	  ,NEWRGAMOUNT		 -- UPDATEDSPONSORSHIPGIFTAMOUNT - money
+	  ,@RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID -- RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID - uniqueidentifier
+	  ,REVENUELOOKUPID   -- REVENUELOOKUPID nvarchar(100)
+	  ,@CHANGEAGENTID	 -- ADDEDBYID - uniqueidentifier
+	  ,@CHANGEAGENTID	 -- CHANGEDBYID - uniqueidentifier
+	  ,@DATEADDED		 -- DATEADDED - datetime
+	  ,@DATEADDED		 -- DATECHANGED - datetime
+	from @TempTbl as [temp]
+
+	if @@Error <> 0
+		return 2;
+
+	return 0;
+end
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
