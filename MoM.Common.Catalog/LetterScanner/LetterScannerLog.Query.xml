@@ -1,0 +1,100 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="7d004e0c-5a1e-40c9-8490-45e49b246c4f"
+	Name="Letter Scanner Log Query"
+	Description="Query view to display data from letterscannerlog table."
+	Author="Memphis Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="LETTERSCANNERLOG"
+	common:SecurityUIFolder="Interactions"	
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_LETTERSCANNERLOG">
+		<ViewSQL>
+			<![CDATA[
+SELECT [ID]
+      ,[LOGTYPECODE]  -- (case [LOGTYPECODE] when (0) then N'EXCEPTION' when (1) then N'SUCCESS' when (2) then N'EXTRA LETTER'  end)
+      ,[LOGTYPE]
+      ,[SCANSESSION]
+      ,[ORIGINALSEQUENCEID]
+      ,[DESCRIPTION]
+      ,[SCANOUTCOME]
+      ,(select so.LOOKUPID from dbo.SPONSORSHIPOPPORTUNITY so where so.ID = CHILDID) as Child
+      --, dbo.UFN_SPONSORSHIPOPPORTUNITY_TRANSLATIONFUNCTION(CHILDID) as Child
+      --,[CHILDID]
+      ,(select NAME from dbo.CONSTITUENT where ID = SPONSORID) as Sponsor
+      ,(select LOOKUPID from dbo.CONSTITUENT where ID = SPONSORID) as SPONSORID
+      , (select LOOKUPID from dbo.SPONSORSHIPLOCATION where ID = CHILDPROJECTID) as Project
+      --,[CHILDPROJECTID]
+      , (select NAME from dbo.INTERACTIONSUBCATEGORY where ID = USR_LETTERSCANNERLOG.LETTERSUBCATEGORYID) as LETTER
+      ,[LETTERSUBCATEGORYID]
+      ,[DATESPONSORSHIPCANCELLED]
+      ,[NUMBEROFDAYSSPONSORED]
+      ,[CANCELLATIONREASON]
+      ,[SEQUENCEID]
+      ,[ADDEDBYID]
+      ,[DATEADDED]
+  FROM [dbo].[USR_LETTERSCANNERLOG]
+  
+ 			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="LOGTYPECODE" Caption="Log Type Code" DataType="TinyInt" IsHidden="true" />
+			<OutputField Name="LOGTYPE" Caption="Log Type" DataType="String" >
+				<LookupInfo>
+					<TranslationList>
+						<common:Options>
+							<common:TranslationListOption Value="EXCEPTION" />
+							<common:TranslationListOption Value="SUCCESS" />
+							<common:TranslationListOption Value="EXTRA LETTER" />
+						</common:Options>
+					</TranslationList>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="SCANSESSION" Caption="Scan Session" DataType="String" />
+			<OutputField Name="ORIGINALSEQUENCEID" Caption="Original Sequence Id" DataType="Integer" />
+			<OutputField Name="DESCRIPTION" Caption="Description" DataType="String" />
+			<OutputField Name="SCANOUTCOME" Caption="Scan Results" DataType="String" />
+			<OutputField Name="CHILD" Caption="Child Id" DataType="String" />
+			<OutputField Name="Sponsor" Caption="Sponsor" DataType="String" />
+			<OutputField Name="SPONSORID" Caption="Sponsor Id" DataType="String" />
+			<OutputField Name="Project" Caption="Project" DataType="String" />
+			<OutputField Name="LETTER" Caption="Letter" DataType="String" >
+				<LookupInfo>
+					<SimpleDataList SimpleDataListID="0EACC39B-07D1-4641-8774-E319559535A7">
+						<common:Params>
+							<common:Param ID="INCLUDEINACTIVE">
+								<common:Value>1</common:Value>
+							</common:Param>
+						</common:Params>
+					</SimpleDataList>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="LETTERSUBCATEGORYID" Caption="Letter Sub Category" Category="System Fields" >
+				<LookupInfo>
+					<SimpleDataList SimpleDataListID="0EACC39B-07D1-4641-8774-E319559535A7">
+						<common:Params>
+							<common:Param ID="INCLUDEINACTIVE">
+								<common:Value>1</common:Value>
+							</common:Param>
+						</common:Params>
+					</SimpleDataList>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="DATESPONSORSHIPCANCELLED" Caption="Date Cancelled" DataType="Date" />
+			<OutputField Name="NUMBEROFDAYSSPONSORED" Caption="Number Days Sponsored" DataType="Integer" />
+			<OutputField Name="CANCELLATIONREASON" Caption="Cancellation Reason" DataType="String" />
+			<OutputField Name="SEQUENCEID" Caption="Sequence Id" DataType="Integer" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+

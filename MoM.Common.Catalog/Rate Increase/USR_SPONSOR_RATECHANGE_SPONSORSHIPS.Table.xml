@@ -1,0 +1,56 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="619e62fe-6779-40c8-b71a-6e52ea036b37"
+	Name="USR_SPONSOR_RATECHANGE_SPONSORSHIPS"
+	Description="Holds active sponsorships for given sponsor and rate change response for each sponsorship for the given sponsor."
+	Author="Memphis Sellers"
+	Tablename="USR_SPONSOR_RATECHANGE_SPONSORSHIPS"		   
+	>
+
+	<!-- 
+	Remarks:    Holds active sponsorships for given sponsor and rate change response for each sponsorship for the given sponsor.
+
+	History:
+	Date            Modified By     Comments
+	22-Jan-2014		Memphis			Initial Version.
+	-->
+
+	<!-- define fields on the table -->
+	<Fields>
+		<GuidField Name="SPONSORID" Required="true"/>
+		<GuidField Name="SPONSORSHIPID" Required="true"/>
+		<YearField Name="CHANGEYEAR" Description="Year of the rate change" Required="true"/>
+		<BooleanField Name="INCREASERATE" Description="Response to rate change appeal for this sponsorship"/>
+		<DateField Name="RESPONSEDATE"/>
+		<BooleanField Name="RESPONDAFTERRATECHANGEUPDATED" Description="Was this received after rate change has been implemented?"/>
+		<MoneyField Name="ORIGINALSPONSORSHIPGIFTAMOUNT" Description="Sponsorship amount before rate change" />
+		<MoneyField Name="UPDATEDSPONSORSHIPGIFTAMOUNT" Description="Sponsorship amount selected by Sponsor after appeal" />
+		<CodeTableField Name="RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID" CodeTable="USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE" />
+		<TextField Name="REVENUELOOKUPID" Description="Revenue Lookup Id" Length="100" Required="true"/>
+		<DateField Name="NOAPPEALRESPONSEDATE" Description="No Appeal for Sponsor but reponse received on this date" Required="false"/>
+		<CodeTableField Name="NOAPPEALRESPONSECODEID" Description="Response code for Sponsor with no Appeal" CodeTable="USR_NO_RATEINCREASEAPPEAL_RESPONSECODE"/>
+	</Fields>
+
+	<!-- define any additional check constraints on the table -->
+	<!--<CheckConstraints>
+
+	</CheckConstraints>-->
+
+	<!-- define any indexes on the table -->
+	<Indexes>
+		<Index>
+			<IndexFields>
+				<IndexField Name="CHANGEYEAR"/>
+				<IndexField Name="SPONSORID"/>
+				<IndexField Name="SPONSORSHIPID"/>
+			</IndexFields>
+		</Index>
+	</Indexes>
+		
+	<!-- define any triggers on the table -->
+	<!--<Triggers>
+
+	</Triggers>-->
+
+</TableSpec>

@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>ChildExtension.FulfillmentStatus.GlobalChange.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>ChildExtensionFulfillmentStatusGlobalChangeUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>ChildExtensionFulfillmentStatusGlobalChange.html</HtmlFile>
+    <HtmlFolder>htmlforms\custom\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

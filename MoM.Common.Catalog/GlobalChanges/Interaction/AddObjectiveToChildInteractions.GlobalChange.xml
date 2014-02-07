@@ -1,0 +1,81 @@
+﻿<GlobalChangeSpec 
+	xmlns="bb_appfx_globalchange"  
+	xmlns:common="bb_appfx_commontypes"
+	ID="90f382fd-46ba-4b74-81f0-09505cb1be8d"
+	Name="Add Objective To Child Interactions Global Change"
+	Description="Add Objective To Child Interactions Global Change"
+	Author="Trucmai Gupta"
+	DisplayName="Add Objective To Child Interactions Global Change"
+	GlobalChangeFolder="Interaction"
+	SPName="USR_USP_GLOBALCHANGE_ADDOBJECTIVETOCHILDINTERACTIONS"
+>
+
+	<!-- describe the SP that performs the global change operation -->
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_GLOBALCHANGE_ADDOBJECTIVETOCHILDINTERACTIONS
+(
+	@IDSETREGISTERID uniqueidentifier = null,
+	@CHANGEAGENTID uniqueidentifier = null,
+	@ASOF as datetime = null,
+	@NUMBERADDED int = 0 output,
+  @NUMBEREDITED int = 0 output,
+	@NUMBERDELETED int = 0 output,
+	@ADDOBJECTIVEVALUE uniqueidentifier
+)
+as			
+	set nocount off;
+	
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate();
+	set @NUMBERADDED = 0;
+	
+  if @IDSETREGISTERID is null begin
+		raiserror ('IDSETREGISTERID is required',13,1);
+	end
+				
+	if @CHANGEAGENTID is null  
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+          
+	begin try
+		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate
+		
+    -- perform the Add
+		-- use the @ADDOBJECTIVEVALUE as the new value
+		
+			update dbo.INTERACTION
+			set OBJECTIVE = @ADDOBJECTIVEVALUE,
+					DATECHANGED = @CURRENTDATE, 
+					CHANGEDBYID = @CHANGEAGENTID
+						
+			select @NUMBERADDED = @@ROWCOUNT						
+			
+	end try
+	
+	begin catch
+		exec dbo.USP_RAISE_ERROR;
+		return 1;
+	end catch
+		]]>
+	</CreateProcedureSQL>
+
+	<ParametersFormMetaData>
+
+		<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED need not be listed. -->
+		<FormMetaData xmlns="bb_appfx_commontypes">
+			<FormFields>
+        <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection">
+          <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="RECORDTYPEID" DataType="Guid" ReadOnly="true" Hidden="true" />
+        <FormField FieldID="ADDOBJECTIVEVALUE" Caption="Objective" CaptionResourceKey="$$objective"/>
+			</FormFields>
+		</FormMetaData>
+	</ParametersFormMetaData>
+	
+</GlobalChangeSpec>

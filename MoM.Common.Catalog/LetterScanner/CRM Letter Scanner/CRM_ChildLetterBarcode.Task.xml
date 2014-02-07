@@ -1,0 +1,15 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="e7bc9116-1762-42b7-a23b-bdd42d629822"
+	Name="Scan CRM child letters"
+	Description="Launch CRM child letter scanner."
+	Author="Memphis Sellers"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="0"
+	>
+
+	<!-- indicate what this task should do (navigate to a page, show a form, etc. -->
+  <common:ShowAddDataForm DataFormID="d8fb582e-9a10-4945-a044-2b3b15b13b52" />
+
+</TaskSpec>

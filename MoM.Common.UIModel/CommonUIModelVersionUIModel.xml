@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>Common.UIModelVersion.View.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>CommonUIModelVersionUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>Common.UIModelVersion.ViewForm.html</HtmlFile>
+    <HtmlFolder></HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

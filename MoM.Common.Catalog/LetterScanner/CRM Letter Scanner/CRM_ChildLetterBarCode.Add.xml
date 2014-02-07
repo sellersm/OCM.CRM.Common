@@ -1,0 +1,98 @@
+<AddDataFormTemplateSpec 
+    xmlns="bb_appfx_adddataformtemplate"
+    xmlns:common="bb_appfx_commontypes"
+    ID="1ca12f92-794b-4130-99bc-47bf8b04e909"
+    Name="CRM child letter scanner add data form"
+    Description="Add data form for CRM Child letter scanner."
+    Author="Memphis Sellers"
+    DataFormInstanceID="d8fb582e-9a10-4945-a044-2b3b15b13b52"
+    RecordType="Bar Code"
+    common:SecurityUIFolder="Bar Code"
+	FormHeader="CRM Child Letter Scanner"
+    >
+
+	<SPDataForm>
+		<!-- describe the preload SP (if applicable), which should be used to fetch field default values from the database.  If no
+		preload is needed, then this section can be removed -->
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_CRM_CHILDLETTERSCANNER">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_CRM_CHILDLETTERSCANNER
+(
+    @ID uniqueidentifier = null output,
+    @CHANGEAGENTID uniqueidentifier = null,
+	  @BARCODE nvarchar(20) = '',
+	  @BARCODEELEMENTS xml = null, 
+    @SUBMIT bit = 0
+)
+as
+
+set nocount on;
+
+if @ID is null
+    set @ID = newid()
+
+if @CHANGEAGENTID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+declare @CURRENTDATE datetime
+set @CURRENTDATE = getdate()
+
+begin try
+	-- handle inserting the data
+	declare @foobar table (ID uniqueidentifier)
+   
+	insert into @foobar
+    select newid()
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+
+return 0				
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+  <!--Context ContextRecordType="REPLACE_WITH_RECORDTYPE" RecordIDParameter="CONTEXTID"/-->
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="false">
+		<common:FormFields>
+			<common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+
+      <common:FormField FieldID="BARCODEELEMENTS" Caption="Scan Results" DataType="XML">
+        <common:Collection EnablePaging="true">
+          <common:Fields>
+            <common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+            <common:FormField FieldID="SCANSTATUS" Caption="Scan status" DataType="String" MaxLength="1000" />
+            <common:FormField FieldID="FIELD1" Caption="Field 1" DataType="String" MaxLength="100" />
+            <common:FormField FieldID="FIELD2" Caption="Field 2" DataType="String" MaxLength="100" />
+            <common:FormField FieldID="FIELD3" Caption="Field 3" DataType="String" MaxLength="100" />
+          </common:Fields>
+        </common:Collection>
+      </common:FormField>
+      <common:FormField FieldID="SUBMIT" Caption="Save results" DataType="Boolean" />
+      
+		</common:FormFields>
+
+        <common:WebUIComponent>
+            <common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.CRMChildLetterScannerAddDataFormUIModel" />
+            <common:WebUI>
+				<common:ExternalResource Url="browser/htmlforms/custom/CRMChildLetterScannerAddDataForm.html"/>
+            </common:WebUI>
+        </common:WebUIComponent>
+
+        
+
+        
+  </common:FormMetaData>
+
+</AddDataFormTemplateSpec>

@@ -1,0 +1,11 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="e53f69ff-28c2-4483-9d34-4dfea50bde63" 
+	Name="USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE"
+	Description="Holds code table values for RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID field."
+	Author="Memphis Sellers"
+	DBTablename="USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE"
+	Category="Communication"
+	SortMethod="Alpha"
+/>

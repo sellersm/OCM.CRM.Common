@@ -1,0 +1,113 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="fc6720d8-f3a9-4276-ab6f-2c9e735942e9" 
+	Name="Installment Refund Issue Data List"
+	Description="Used to find constituents who have an installment with a balance that is has a later installment with a payment applied" 
+	Author="Cary Mayeda"
+	common:SecurityUIFolder="REPLACE_WITH_SECURITYUIFOLDER">
+
+	<!-- 
+	Remarks:    This is a temporary data list to be used for statements.  This will need to be replaced by a query view or something that performs better.
+				This is NOT in a package.
+
+	History:
+	Date            Modified By     Comments
+	09-Jul-2013		CMayeda			Initial Version
+
+	-->
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_INSTALLMENTREFUNDISSUE">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+			
+create procedure dbo.USR_USP_DATALIST_INSTALLMENTREFUNDISSUE(@CONTEXTID uniqueidentifier)
+as
+	set nocount on;
+
+;with InstallmentHistory (
+		ID,
+	    PARENTID,
+		ACTIVITYTYPE,
+		AMOUNT,
+		BALANCE,
+		INSTALLMENTDATE)
+as (							
+	select rgi.ID,
+		   rgi.REVENUEID as PARENTID,
+		   'Installment',
+		   TRANSACTIONAMOUNT,
+		   dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(rgi.ID),
+		   rgi.DATE
+    from dbo.RECURRINGGIFTINSTALLMENT rgi
+	join dbo.REVENUESCHEDULE r_sch on r_sch.ID = rgi.REVENUEID
+   where r_sch.STATUSCODE = 0
+),
+
+MinOpenInstallment (RGID, INSTALLMENTDATE)
+as (    select PARENTID, MIN(INSTALLMENTDATE) 
+          from InstallmentHistory  
+         where BALANCE > 0 
+      group by PARENTID 
+),
+   
+MaxIntallmentWithPayment (RGID, INSTALLMENTDATE)
+   as 
+   (   select PARENTID, max(INSTALLMENTDATE) 
+         from InstallmentHistory  
+        where BALANCE < AMOUNT  
+     group by PARENTID 
+   )
+
+
+ select	mininst.RGID as RECURRINGGIFTID, 
+		c.ID as CONSTITUENTID,
+		ft.CALCULATEDUSERDEFINEDID as REVENUELOOKUPID, 
+		mininst.INSTALLMENTDATE as MININSTALLMENTWITHBALANCE, 
+		maxinst.INSTALLMENTDATE as MAXINSTALLMENTWITHPAYMENT, 
+		r_sch.NEXTTRANSACTIONDATE,
+		c.LOOKUPID as CONSTITUENTLOOKUPID, 
+		c.NAME as CONSTITUENTNAME 
+   from MinOpenInstallment mininst 
+   join MaxIntallmentWithPayment maxinst on mininst.RGID = maxinst.RGID
+   join dbo.FINANCIALTRANSACTION ft on ft.ID = mininst.RGID
+   join dbo.REVENUESCHEDULE r_sch on r_sch.ID = ft.ID
+   join dbo.CONSTITUENT c on ft.CONSTITUENTID = c.ID
+   
+  where mininst.InstallmentDate < maxinst.InstallmentDate
+    and r_sch.NEXTTRANSACTIONDATE < maxinst.InstallmentDate
+   
+
+			]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable)-->
+	<Context ContextRecordType="REVENUE" RecordIDParameter="CONTEXTID"/>
+
+	<!-- describe any parameters (other than the context ID) defined on the SP
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>-->
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<OutputField FieldID="RECURRINGGIFTID" Caption="Recurring Gift ID" DataType="Guid" IsHidden="true" />
+			<OutputField FieldID="CONSTITUENTID" Caption="Constituent ID" DataType="Guid" IsHidden="true" />
+
+			<OutputField FieldID="REVENUELOOKUPID" Caption="Revenue Lookup ID" DataType="String" />
+			<OutputField FieldID="MININSTALLMENTWITHBALANCE" Caption="Earliest Installment with a Balanace" DataType="Date" />
+			<OutputField FieldID="MAXINSTALLMENTWITHPAYMENT" Caption="Latest Installment with a Payment" DataType="Date" />
+			<OutputField FieldID="NEXTTRANSACTIONDATE" Caption="Next Transaction Date" DataType="Date" />
+			<OutputField FieldID="CONSTITUENTLOOKUPID" Caption="Constituent Lookup ID" DataType="String" />
+			<OutputField FieldID="CONSTITUENTNAME" Caption="Constituent Name" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</DataListSpec>

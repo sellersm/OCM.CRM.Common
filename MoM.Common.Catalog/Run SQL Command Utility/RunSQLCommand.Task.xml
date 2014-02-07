@@ -1,0 +1,20 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="fd4ef03f-f5ce-4745-9e2d-1f95486d5ca4" 
+	Name="Run SQL Utility" 
+	Description="Run a SQL command" 
+	Author="Memphis Sellers" 
+	ImageKey="RES:sqlstoredprocedurespec" 
+	SmallImageKey="RES:sqlviewspec" 
+	FunctionalAreaID="64bbf407-7062-4f63-bc7c-e947f3eef6aa" 
+	TaskGroup="Administration" 
+	Sequence="0" 
+	>
+
+	<ShowDataForm DataFormID="278824d6-c5e0-48aa-bc58-7b837be2e519" xmlns="bb_appfx_commontypes">
+		<ActionContext>
+			<Expression>00000000-0000-0000-0000-000000000000</Expression>
+		</ActionContext>
+	</ShowDataForm>
+</TaskSpec>

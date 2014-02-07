@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>RateChangeResponseLetterScanner.Add.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>RateChangeResponseScannerFormUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>RateChangeResponseScannerForm.html</HtmlFile>
+    <HtmlFolder>htmlforms\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

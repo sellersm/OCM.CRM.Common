@@ -1,0 +1,128 @@
+﻿<SQLStoredProcedureSpec
+    xmlns="bb_appfx_sqlstoredprocedure"
+    xmlns:common="bb_appfx_commontypes" 
+    ID="b71087da-dc39-4f6b-98fe-9c0aa79182dd"
+    Name="BBIS Custom Part Registration"
+    Description="Registers a custom part in BBIS.  After running this script, the BBIS part is ready for use on a BBIS page."
+    Author="Blackbaud Professional Services"
+    SPName="USR_USP_REGISTER_BBIS_PART"
+    GrantServiceRolePermission="true"
+    >
+
+    <CreateProcedureSQL>
+        <![CDATA[
+CREATE PROCEDURE dbo.USR_USP_REGISTER_BBIS_PART
+(
+  @partname nvarchar(128)
+ ,@editpartpath nvarchar(256)
+ ,@viewpartpath nvarchar(256)
+ ,@description nvarchar(256)
+ ,@force bit = 0
+ --from this point forward, we will almost always want to accept the default values
+ ,@MobileSrc nvarchar(256) = 'MobileModules/SomeModule.ascx'
+ ,@ClassName nvarchar(256) = null
+ ,@ListControl nvarchar(256) = null
+ ,@Static bit = 0
+ ,@AutoInstall bit = 1
+ ,@Hidden bit = 0
+ ,@UniqueContent bit = 0
+ ,@RequiresSSL bit = 0
+ ,@CanCopy bit = 1
+ ,@Custom bit = 1
+ ,@IsReport bit = 0
+ ,@RealmTypeId bit = 0
+ ,@CustomPD bit = 0
+ ,@MailKey nvarchar(25) = null
+ ,@VersioningSupported bit = 0
+ ,@Deprecated bit = 0
+ ,@SupportsLimitedConnectivity bit = null
+ ,@Flag varbinary(max) = null
+)
+as
+
+/*
+This script will make a new part available to BBIS.
+Just change the values in the initial parameters, and run the script.
+These values correspond to the entries that would normally be made within BBIS on the Administration->Custom Parts->New custom Part page.
+
+Keep in mind that the "~/" paths use *forward* slashes, and they are referring to the part's location on the **server**.
+*/
+declare @part_already_registered integer = (select max(id) from ContentTypes where Name = @partname);
+declare @continue bit = 1;
+
+if 0 <  isnull(@part_already_registered,0) begin
+  if 1 = @force begin
+    delete ClientContentTypes where ContentTypesID = @part_already_registered;
+    delete ContentTypes where ID = @part_already_registered;
+  end
+  else begin
+    declare @msg nvarchar(1000) = N'A part with name "' + @partname + '" already exists.  Pass 1 as the @force parameter to delete and re-add this part.';
+    RAISERROR(@msg,11,1,N'number',5);
+    set @continue = 0;
+  end
+end
+
+declare @nextpartid int = (select isnull(case when MAX(id)<10001 then 10001 else MAX(id) + 1 end,10001) as next_id from ContentTypes);
+
+if 1=@continue begin
+  insert into ContentTypes(
+    ID
+   ,Name
+   ,DesktopSrc
+   ,MobileSrc
+   ,EditControl
+   ,ClassName
+   ,ListControl
+   ,Static
+   ,AutoInstall
+   ,Hidden
+   ,UniqueContent
+   ,RequiresSSL
+   ,Description
+   ,CanCopy
+   ,Custom
+   ,IsReport
+   ,RealmTypeId
+   ,CustomPD
+   ,MailKey
+   ,VersioningSupported
+   ,Deprecated
+   ,SupportsLimitedConnectivity
+   ,Flag
+  )
+  select
+    @nextpartid  --ID
+   ,@partname  --Name
+   ,@viewpartpath  --DesktopSrc
+   ,'MobileModules/SomeModule.ascx'  --mobilesrc
+   ,@editpartpath  --EditControl
+   ,@ClassName
+   ,@ListControl
+   ,@Static
+   ,@AutoInstall
+   ,@Hidden
+   ,@UniqueContent
+   ,@RequiresSSL
+   ,@description  --Description
+   ,@CanCopy
+   ,@Custom
+   ,@IsReport
+   ,@RealmTypeId
+   ,@CustomPD
+   ,@MailKey
+   ,@VersioningSupported
+   ,@Deprecated
+   ,@SupportsLimitedConnectivity
+   ,@Flag
+
+  insert into ClientContentTypes(
+    ClientsID
+   ,ContentTypesID
+  )
+  select
+    1
+   ,@nextpartid;
+end;
+]]>
+    </CreateProcedureSQL>
+</SQLStoredProcedureSpec>

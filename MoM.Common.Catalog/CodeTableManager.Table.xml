@@ -1,0 +1,141 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="998c6e2e-56ba-41cb-aa8e-6f57821905c0"
+	Name="Code Table Manager"
+	Description="Used to manage the problem with using code table descriptions in vb code behind"
+	Author="Cary Mayeda"
+	Tablename="USR_CODETABLEMANAGER"		   
+	>
+
+	<!-- 
+Remarks:    This is used to mitigate the issue with code table descriptions being changed, and having to use the descriptions in the code behind.
+	
+			The VBCONSTANT column should not be changed, because the CodeTableFields class relies on this value being constant.
+			
+			The Insert trigger will take care of looking up the guid in the code table specified in CODETABLENAME with the DESCRIPTION matching column CODETABLEITEMDESCRIPTION.
+			The description match is case insensitive.
+			If the guid is found, the STATUSCODE is set to "0" - "valid"
+			If the guid is not found, the STATUSCODE is set to "4" - "initial code table item not found"
+			
+			NOTE: Because the Insert trigger handles the population of the CODETABLEITEMID column, it should be set initially to NULL (on insert)
+			If the CODETABLEITEMID column is specified in the insert, it will also verify that the guid found in the code table matches the value CODETABLEITEMID.
+			If it doesn't match it sets the STATUSCODE to "3" - "initial codetableitemid does not match"
+			
+			The STATUSCODE enum values are ordered in severity from low to high.
+			
+			The function CRMHelper.GetCodeTableVars is used to retreive a guid for a particular VBCONSTANT.
+						
+
+History:
+Date            Modified By     Comments
+21-Apr-2012     CMayeda         Initial Version
+-->
+	
+	<!-- define fields on the table -->
+	<Fields>		
+		<TextField Name="VBCONSTANT" IsUnique="true" Required="true"  Description="This is the value used in VB code behind that will not change and will be used as the key to retreive the code table item id" Length="100"  />
+		<TextField Name="CODETABLENAME" Length="100" Required="true"/>
+		<TextField Name="CODETABLEITEMDESCRIPTION" Description="Last checked code table description value" Length="100" Required="true"/>
+		<GuidField Name="CODETABLEITEMID" Description="ID GUID of the code table entry to be used"/>
+		<EnumField Name="STATUSCODE" DefaultValue="2">
+			<EnumValues>
+				<EnumValue ID="0" Translation="valid"/>
+				<EnumValue ID="1" Translation="description modified in code table"/>
+				<EnumValue ID="2" Translation="not initialized"/>
+				<EnumValue ID="3" Translation="initial codetableitemid does not match"/>				
+				<EnumValue ID="4" Translation="initial code table item not found"/>
+				<EnumValue ID="5" Translation="code table not found"/>
+				<EnumValue ID="6" Translation="entry deleted" />
+			</EnumValues>
+		</EnumField>
+		<TextField Name="PREVIOUSCODETABLEITEMDESCRIPTION" Description="Previous code table description value.  Used to reset if modification was accidental" Length="100"/>
+
+	</Fields>
+
+		
+	<!-- define any triggers on the table 
+	on insert if codetableid is null, then find codetableid via codetablename and codetabledescription - not case sensitive-->
+	<Triggers>
+		<Trigger Name="USR_TR_CODETABLEMANAGER_INSERT" Description="Insert trigger to verify and populate the code table entry" Enabled="true">
+			<CreateTriggerSQL>
+				<![CDATA[
+create trigger dbo.USR_TR_CODETABLEMANAGER_INSERT on dbo.USR_CODETABLEMANAGER for insert not for replication
+AS 
+begin
+
+	declare @sql nvarchar(300) = null;						-- dynamic sql string, used because table names are in the CODETABLENAME column
+	declare @parms nvarchar(100) = null;					-- parameter string for dynamic sql
+	declare @ctmID uniqueidentifier	= null;					-- ID of inserted row being processed
+	declare @ctmCodeTableName nvarchar(100) = null;			-- CODETABLENAME of inserted row being processed
+	declare @ctmCodeTableID	uniqueidentifier = null;		-- CODETABLEID of inserted row being processed
+	declare @ctmCodeItemDescription nvarchar(100) = null;	-- CODETABLEITEMDESCRIPTION of inserted row being processed
+	declare @codeTableID uniqueidentifier = null;			-- ID found in the code table specified in CODETABLENAME of the item that matches CODETABLEITEMDESCRIPTION
+
+	-- Status Code constants
+	declare @statusValid tinyint = 0;
+	declare @statusItemNotFound tinyint = 4;
+	declare @statusInitialDoesNotMatch tinyint = 3;
+	declare @statusCodeTableNotFound tinyint = 5;
+	
+	set nocount on;
+
+	-- Cursor used because the trigger is only called once even if multiple rows were inserted,
+	-- and because the code table name needs to be specified through the Inserted table.
+	declare insertCursor cursor static local for
+	   select ID, CODETABLENAME, CODETABLEITEMDESCRIPTION, CODETABLEITEMID from INSERTED;
+
+	open insertCursor;
+	fetch insertCursor into @ctmID, @ctmCodeTableName, @ctmCodeItemDescription, @ctmCodeTableID;
+	while @@fetch_status = 0
+	begin
+		if exists(select object_id from sys.objects where type = 'U' and name = @ctmCodeTableName)
+		begin
+			set @codeTableID = null;
+			set @sql =	N' select @IDOUT = ID from dbo.' + @ctmCodeTableName +
+						N' where lower(DESCRIPTION) = ''' + replace(lower(@ctmCodeItemDescription),'''', '''''') + '''';			
+			set @parms = N'@idOut uniqueidentifier output';
+			
+			-- Get ID for the item that matches @ctmCodeItemDescription in @ctmCodeTableName
+			exec sp_executesql @sql, @parms, @idOut = @codeTableID output;
+		   
+			if @codeTableID is null
+				update dbo.USR_CODETABLEMANAGER
+				   set STATUSCODE = @statusItemNotFound
+				 where ID = @ctmID
+			else
+				if @ctmCodeTableID is null
+					--if CTMCODETABLEID wasn't specified for this inserted row, then update with the ID found in the code table
+					update dbo.USR_CODETABLEMANAGER
+					   set STATUSCODE = @statusValid, 
+						   CODETABLEITEMID = @codeTableID
+					 where ID = @ctmID
+				else
+					if @ctmCodeTableID = @codeTableID
+						update dbo.USR_CODETABLEMANAGER
+						   set STATUSCODE = @statusValid
+ 						 where ID = @ctmID
+					else
+						update dbo.USR_CODETABLEMANAGER
+							set STATUSCODE = @statusInitialDoesNotMatch -- inital codetableitemid does not match
+						  where ID = @ctmID;
+						end
+		else
+			update dbo.USR_CODETABLEMANAGER
+				set STATUSCODE = @statusCodeTableNotFound
+				where ID = @ctmID;
+		
+		fetch next from insertCursor into @ctmID, @ctmCodeTableName, @ctmCodeItemDescription, @ctmCodeTableID;
+
+	end
+	close insertCursor;
+    deallocate insertCursor;
+
+end		
+				]]>
+			</CreateTriggerSQL>
+
+</Trigger>
+		</Triggers>
+
+</TableSpec>

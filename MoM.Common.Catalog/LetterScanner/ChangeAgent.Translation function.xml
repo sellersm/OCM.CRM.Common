@@ -1,0 +1,29 @@
+﻿<TranslationFunctionSpec
+	xmlns="bb_appfx_translationfunction"
+	xmlns:common="bb_appfx_commontypes"
+	ID="681d1cd8-caed-42e1-82b3-b874b93df6a1"
+	Name="Change Agent Translation Function"
+	Description="Returns the Change Agent User Name"
+	Author="Bill Elfstrom"
+	RecordType="CHANGEAGENT"
+	>
+  <!-- 
+	Remarks:   
+	History:
+	Date            Modified By     Comments
+	Oct 10 2012     belfstrom       Created
+-->
+	<SQLTranslationFunction FNName="USR_UFN_CHANGEAGENTTRANSLATIONFUNCTION">
+		<common:CreateFunctionSQL>
+			<![CDATA[
+create function dbo.USR_UFN_CHANGEAGENTTRANSLATIONFUNCTION(@ID uniqueidentifier) returns nvarchar(128) 
+as
+begin
+	declare @s nvarchar(128);
+	select @s = USERNAME from dbo.CHANGEAGENT where ID = @ID;
+	return @s;
+end	
+			]]>
+		</common:CreateFunctionSQL>
+	</SQLTranslationFunction>
+</TranslationFunctionSpec>

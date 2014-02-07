@@ -1,0 +1,37 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="07f78aaf-4be4-4d90-b8c4-1c8c0f693970"
+	Name="USR_RATECHANGEIMPLEMENTEDDATE"
+	Description="Stores the year of each rate change implementation."
+	Author="Memphis Sellers"
+	Tablename="USR_RATECHANGEIMPLEMENTEDDATE"
+	>
+
+	<!-- define fields on the table -->
+	<Fields>
+		<YearField Name="CHANGEYEAR"  Required="true" Description="Year of the rate change."/>
+		<DateField Name="RATECHANGEIMPLEMENTATIONDATE" Required="true"/>
+		<MoneyField Name="SPONSORSHIPNEWRATEAMOUNT" Required="true"/>
+	</Fields>
+
+	<!-- define any additional check constraints on the table -->
+	<!--<CheckConstraints>
+
+	</CheckConstraints>-->
+
+	<!-- define any indexes on the table -->
+	<!--<Indexes>
+		<Index>
+			<IndexFields>
+				<IndexField Name="CHANGEYEAR"/>
+			</IndexFields>
+		</Index>
+	</Indexes>-->
+		
+	<!-- define any triggers on the table -->
+	<!--<Triggers>
+
+	</Triggers>-->
+
+</TableSpec>

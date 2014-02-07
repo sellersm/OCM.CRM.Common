@@ -1,0 +1,20 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="c042e54e-89a6-4406-8c09-1451d1ae6b64" 
+	Name="Interaction Extension Letter Child Version"
+	Description="Letter version of an interaction based on the number of children (one child, two children, multiple children)"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE"
+	Category="Interaction Extension"
+	SortMethod="UserDefined"
+/>
+
+<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	27-Jul-2012		CMayeda			Initial Version
+
+-->

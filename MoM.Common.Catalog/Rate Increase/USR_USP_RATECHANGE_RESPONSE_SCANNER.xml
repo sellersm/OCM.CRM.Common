@@ -1,0 +1,84 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="257606ad-a31a-4d36-8435-d990243dbe7d"
+	Name="USR_USP_RATECHANGE_RESPONSE_SCANNER"
+	Description="Retrieves the data for the given Sponsor during rate change response scanner process."
+	Author="Memphis Sellers"
+	SPName="USR_USP_RATECHANGE_RESPONSE_SCANNER"
+	GrantServiceRolePermission="true"
+	>
+
+<!--  
+		left join to constituent appeal to get the segment category: optin, optout, no increase...
+-->	
+	
+	
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_RATECHANGE_RESPONSE_SCANNER (
+	@LOOKUPID nvarchar(100) = null
+)
+as
+begin
+
+	declare @AppealId uniqueidentifier;
+	declare @SponsorId uniqueidentifier = null;
+
+	select @SponsorId = ID
+	from dbo.CONSTITUENT
+	where LOOKUPID = @LOOKUPID
+
+	if @SponsorId is null 
+	  begin
+		select 'Sponsor ID not found' as SponsorName		
+	  end
+	else
+	  begin
+		-- must get the appealid for the 2014 rate increase appeal: there are two, so get the right one
+		select @AppealId = ID
+		from dbo.APPEAL
+		where [NAME] like '%Rate Increase 2014%'
+		and [NAME] NOT like '%President%'
+
+		select 
+    		conSponsor.[NAME] 
+    		, soc.[NAME] 
+    		, sc.LOOKUPID 
+    		, so.LOOKUPID 
+    		, r.LOOKUPID 
+    		--r.TRANSACTIONTYPE, 
+    		, r.AMOUNT 
+    		, dbo.REVENUESCHEDULE.FREQUENCY
+    		, s.ID
+    		, conSponsor.ID as SPONSORID
+    		, ISNULL(dbo.MKTSEGMENTCATEGORYCODE.[DESCRIPTION], '') as SEGMENTCATEGORY
+    		, ISNULL(dbo.CONSTITUENTAPPEAL.ID,'00000000-0000-0000-0000-000000000000') as CONSTITUENTAPPEALID
+    		from dbo.SPONSORSHIP s
+    		join dbo.SPONSORSHIPCOMMITMENT sc ON sc.ID = s.SPONSORSHIPCOMMITMENTID
+    		join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = s.SPONSORSHIPOPPORTUNITYID
+    		join dbo.SPONSORSHIPOPPORTUNITYCHILD soc ON soc.ID = so.ID
+    		join dbo.REVENUESPLIT rs on rs.ID = s.REVENUESPLITID
+    		join dbo.REVENUE r on r.ID = rs.REVENUEID --ft.FINANCIALTRANSACTIONID = r.ID
+    		join dbo.CONSTITUENT conSponsor ON conSponsor.ID = r.CONSTITUENTID
+    		--join dbo.FINANCIALTRANSACTIONLINEITEM ft ON ft.ID = s.REVENUESPLITID  --ebf2dd6a-8377-47fb-a976-2e3b13cb7a18
+    		join dbo.REVENUESCHEDULE on r.ID = REVENUESCHEDULE.ID
+    		left join dbo.CONSTITUENTAPPEAL on dbo.CONSTITUENTAPPEAL.CONSTITUENTID = r.CONSTITUENTID
+    		left join dbo.MKTSEGMENTATIONSEGMENT ON dbo.MKTSEGMENTATIONSEGMENT.ID = dbo.CONSTITUENTAPPEAL.MKTSEGMENTATIONSEGMENTID
+    		left join dbo.MKTSEGMENTATION ON dbo.MKTSEGMENTATION.ID = dbo.MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
+    		left join dbo.MKTSEGMENT on dbo.MKTSEGMENT.ID = SEGMENTID
+    		left join dbo.MKTSEGMENTCATEGORYCODE on dbo.MKTSEGMENTCATEGORYCODE.ID = dbo.MKTSEGMENT.SEGMENTCATEGORYCODEID
+		where conSponsor.LOOKUPID = @LOOKUPID
+		and s.STATUSCODE = 1 -- Active
+		and r.TRANSACTIONTYPECODE = 2  -- recurring gift
+		and dbo.CONSTITUENTAPPEAL.APPEALID = @AppealId
+		order by sc.LOOKUPID   --, soc.[NAME]
+	  end
+
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

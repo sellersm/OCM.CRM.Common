@@ -1,0 +1,328 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="535c3e1b-ec52-48e7-9d6c-b93a918c54d9"
+	Name="Child Interactions Query"
+	Description="Query to allow searching for various Child Interactions used for Global Changes."
+	Author="Memphis Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Interaction"
+	common:SecurityUIFolder="Interactions"
+	>
+
+	<!-- 
+	Remarks:    Query to return Interactions for only Children, with many fields exposed for search criteria.  Useful for the Global Changes.
+						
+	History:
+	Date            Modified By     Comments
+	17-Jun-2013		Memphis			Initial Version
+	02-Jul-2013		Memphis			Fixed joins so it doesn't return multiple interactions for the child.
+	10-Jul-2013		Memphis			Some changes as per Pamela's email:
+									Add the Field memo interaction extension fields
+									Make the Interaction Subcategory a user-selectable dropdown choice
+									Rename Interaction.Objective field to "Interaction Summary"
+									Add Interaction Contact Method field to query
+									Move Departure Comments and Departure Type to 'Departure' category
+	-->	
+	
+	
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_CHILDINTERACTIONS">
+		<ViewSQL>
+			<![CDATA[
+select distinct 
+    dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (soc.ID, 1) as CHILDLOOKUPID
+    , dbo.SPONSORSHIPLOCATION.LOOKUPID as LOCATIONLOOKUPID
+    , uce.CURRENTPROGRAMCOMPLETIONDATE
+    , (select dbo.USR_CHILDLIVESWITHCODE.[DESCRIPTION] from dbo.USR_CHILDLIVESWITHCODE where ID = uce.CHILDLIVESWITHCODEID) as CHILDLIVESWITHDESCRIPTION
+    , (select dbo.USR_FATHERWORKSASCODE.[DESCRIPTION] from dbo.USR_FATHERWORKSASCODE where ID = uce.FATHERWORKSASCODEID) as FATHERWORKSASDESCRIPTION
+    , uce.FATHERWORKSASOTHER
+    , (select dbo.USR_MOTHERWORKSASCODE.[DESCRIPTION] from dbo.USR_MOTHERWORKSASCODE where ID = uce.MOTHERWORKSASCODEID) as MOTHERWORKSASDESCRIPTION
+    , uce.MOTHERWORKSASOTHER
+    , (select dbo.USR_CAREGIVERRELATIONCODE.[DESCRIPTION] from dbo.USR_CAREGIVERRELATIONCODE where ID = uce.CAREGIVERRELATIONCODEID) as CAREGIVERRELATIONDESCRIPTION
+    , uce.CAREGIVERRELATIONOTHER
+    , (select dbo.USR_CAREGIVERWORKSASCODE.[DESCRIPTION] from dbo.USR_CAREGIVERWORKSASCODE where ID = uce.CAREGIVERWORKSASCODEID) as CAREGIVERWORKSASDESCRIPTION
+    , uce.CAREGIVERWORKSASOTHER
+    , (select dbo.USR_CAREGIVERREASONCODE.[DESCRIPTION] from dbo.USR_CAREGIVERREASONCODE where ID = uce.CAREGIVERREASONCODEID) as CAREGIVERREASONDESCRIPTION
+    , uce.REASONFORCAREGIVEROTHER
+    , uce.NUMBEROFSISTERS
+    , uce.NUMBEROFBROTHERS
+    , uce.TERMINATEHOLDSTARTDATE
+    , uce.DEPARTUREFORMRECEIVED
+    , uce.CCHVALIDATED
+    , uce.REGISTRATIONDATE
+    , uce.BATCHNUMBER
+    , uce.FUNDED
+    , uce.PROFILEUPDATENOTIFICATION
+    , (select dbo.USR_CHILDPROFILEUPDATECODE.[DESCRIPTION] from dbo.USR_CHILDPROFILEUPDATECODE where ID = uce.CHILDPROFILEUPDATECODEID) as CHILDPROFILEUPDATEDESCRIPTION
+    , (select dbo.USR_CHILDPROFILESTATUSCODE.[DESCRIPTION] from dbo.USR_CHILDPROFILESTATUSCODE where ID = uce.CHILDPROFILESTATUSCODEID) as CHILDPROFILESTATUSDESCRIPTION
+    , uce.PHOTOSTORED
+    , uce.CURRENTPHOTODATE
+    , uce.CCHTEMPID
+    , uce.CCHENTEREDBY
+    , uce.ADDITIONALCHILDINFORMATION
+    , uce.CLASSLEVEL
+    , uce.ATTENDINGSCHOOL
+    , dbo.USR_CHILDDEPARTURE.NODEPARTUREFORM
+    , dbo.USR_CHILDDEPARTURE.RECEIVEDFAREWELLLETTER
+    , dbo.USR_CHILDDEPARTURE.DATEFORMCOMPLETED
+    , dbo.USR_CHILDDEPARTURE.FORMCOMPLETEDBY
+    , dbo.USR_CHILDDEPARTURE.DATEOFDEPARTURE
+    , dbo.USR_CHILDDEPARTURE.DATEPROCESSED
+    , (select dbo.USR_DEPARTURE_ADMINISTRATIVE_CODE.[DESCRIPTION] from dbo.USR_DEPARTURE_ADMINISTRATIVE_CODE where ID = dbo.USR_CHILDDEPARTURE.ADMINISTRATIVECODEID) as ADMINISTRATIVECODE
+    , dbo.USR_CHILDDEPARTURE.ADMINISTRATIVEEXPLANATION
+    , dbo.USR_CHILDDEPARTURE.ISDEPARTURE
+    , dbo.USR_CHILDDEPARTURE.ISPROGRAMCOMPLETION
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_LIVESWITHRELATIVES
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_FAMILYMOVED
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_FAMILYNOWPROVIDES
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_PROJECTTOOFAR
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_REMOVEDBYPARENTS
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_LACKOFINTEREST
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_NEEDEDATHOME
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_EMPLOYED
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_TRANSFERRED
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_FAILED
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_DEATHOFCHILD
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_ILLNESS
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_PREGNANCY
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_MARRIED
+    , dbo.USR_CHILDDEPARTURE.DEPARTURE_OTHER
+    , dbo.USR_CHILDDEPARTURE.DETAILEDEXPLANATION
+    , dbo.USR_CHILDDEPARTURE.DEPARTURENEWSITUATION
+    , dbo.USR_CHILDDEPARTURE.PROGRAMCOMPLETIONNEWSITUATION
+    , dbo.USR_CHILDDEPARTURE.ISCHILDCHRISTIAN
+    , dbo.USR_CHILDDEPARTURE.CHILDCHRISTIANCOMMENTS
+    , dbo.USR_CHILDDEPARTURE.DIDBECOMECHRISTIAN
+    , dbo.USR_CHILDDEPARTURE.SHOWSCHRISTIANKNOWLEDGE
+    , dbo.USR_CHILDDEPARTURE.PARTICIPATESCHRISTIANACTIVITIES
+    , dbo.USR_CHILDDEPARTURE.SHOWSCHRISTIANEVIDENCE
+    , dbo.USR_CHILDDEPARTURE.OWNSBIBLEMATERIALS
+    , dbo.USR_CHILDDEPARTURE.CHILDCHRISTIANEXPERIENCE
+    , dbo.USR_CHILDDEPARTURE.HEALTHCONDITIONS
+    , dbo.USR_CHILDDEPARTURE.CHILDMATURED
+    , dbo.USR_CHILDDEPARTURE.LEVELOFMATURITY
+    , (select dbo.USR_CHILDCLASSLEVEL_CODE.[DESCRIPTION] from dbo.USR_CHILDCLASSLEVEL_CODE where ID = dbo.USR_CHILDDEPARTURE.HIGHESTCLASSLEVELCODEID) as HIGHESTCLASSLEVELCODE
+    , dbo.USR_CHILDDEPARTURE.HIGHESTCLASSLEVELOTHER
+    , dbo.USR_CHILDDEPARTURE.COURSEOFSTUDY
+    , dbo.USR_CHILDDEPARTURE.SKILLS_BASICLITERACY
+    , dbo.USR_CHILDDEPARTURE.SKILLS_BASICNUMERACY
+    , dbo.USR_CHILDDEPARTURE.SKILLS_THINKINGPROBLEMSOLVING
+    , dbo.USR_CHILDDEPARTURE.SKILLS_SELFHELP
+    , dbo.USR_CHILDDEPARTURE.SKILLS_BUSINESS
+    , dbo.USR_CHILDDEPARTURE.SKILLS_LIFE
+    , dbo.USR_CHILDDEPARTURE.SKILLS_VOCATIONALTECHNICAL
+    , dbo.USR_CHILDDEPARTURE.SKILLS_OTHER
+    , dbo.USR_CHILDDEPARTURE.GENERALCOMMENTS
+    , dbo.USR_CHILDDEPARTURE.DEPARTURETYPE
+    , dbo.INTERACTION.ID
+    , dbo.INTERACTION.OBJECTIVE
+    , (select [DESCRIPTION] from dbo.INTERACTIONTYPECODE where ID = dbo.INTERACTION.INTERACTIONTYPECODEID) as INTERACTIONTYPEDESCRIPTION
+    , dbo.INTERACTION.EXPECTEDDATE
+    , dbo.INTERACTION.ACTUALDATE
+    , dbo.INTERACTION.[DATE] as INTERACTIONDATE
+    , dbo.INTERACTION.COMMENT
+    , (select [NAME] from dbo.INTERACTIONSUBCATEGORY where ID = dbo.INTERACTION.INTERACTIONSUBCATEGORYID) as INTERACTIONSUBCATEGORYDESCRIPTION
+    , dbo.INTERACTION.STATUS
+    , dbo.INTERACTION.SEQUENCEID
+    , dbo.INTERACTION.LOOKUPID
+	, SPONSORSHIPOPPORTUNITY.ID as OPPORTUNITYID
+    , dbo.USR_INTERACTIONEXTENSION.FIELDMEMODATESENT
+    , (select [DESCRIPTION] from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where ID = dbo.USR_INTERACTIONEXTENSION.HOLDREASONCODEID) as HOLDREASON
+    , (select [DESCRIPTION] from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = dbo.USR_INTERACTIONEXTENSION.UNUSABLECODEID) as UNUSABLEITEM
+    , (select [DESCRIPTION] from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where ID = dbo.USR_INTERACTIONEXTENSION.FIELDMEMOSENTCODEID) as SENTCODE
+from dbo.INTERACTION
+join dbo.CONSTITUENT ON dbo.CONSTITUENT.ID = dbo.INTERACTION.CONSTITUENTID
+join dbo.SPONSORSHIPOPPORTUNITYCHILD soc on dbo.INTERACTION.CONSTITUENTID = soc.CONSTITUENTID
+join dbo.SPONSORSHIPOPPORTUNITY ON dbo.SPONSORSHIPOPPORTUNITY.ID = soc.ID
+join dbo.SPONSORSHIPLOCATION ON dbo.SPONSORSHIPLOCATION.ID = dbo.SPONSORSHIPOPPORTUNITY.SPONSORSHIPLOCATIONID 
+left join dbo.USR_INTERACTIONEXTENSION ON dbo.USR_INTERACTIONEXTENSION.ID = dbo.INTERACTION.ID
+left join ( select u.ID, u.SPONSORSHIPOPPORTUNITYCHILDID, u.SIBLINGSID, u.BIRTHDATEACCURACYCODEID, u.CURRENTPROGRAMCOMPLETIONDATE, u.CHILDNAMESUFFIXCODEID, u.CHILDLIVESWITHCODEID, u.FATHERWORKSASCODEID, u.FATHERWORKSASOTHER, u.MOTHERWORKSASCODEID, u.MOTHERWORKSASOTHER, u.CAREGIVERRELATIONCODEID, u.CAREGIVERRELATIONOTHER, u.CAREGIVERWORKSASCODEID, u.CAREGIVERWORKSASOTHER, u.CAREGIVERREASONCODEID, u.REASONFORCAREGIVEROTHER, u.NUMBEROFSISTERS, u.NUMBEROFBROTHERS, u.HOUSINGWALLWOOD, u.HOUSINGWALLMUD, u.HOUSINGWALLBAMBOO, u.HOUSINGWALLBLOCK, u.HOUSINGWALLOTHER, u.ROOFINGTIN, u.ROOFINGGRASSLEAVES, u.ROOFINGWOOD, u.ROOFINGTILE, u.ROOFINGOTHER, u.WATERSOURCEINDOOR, u.WATERSOURCECOMMUNITYTAP, u.WATERSOURCEBOREHOLEWELL, u.WATERSOURCERIVER, u.WATERSOURCEOTHER, u.COOKINGSOURCEWOODFIRE, u.COOKINGSOURCEELECTRICSTOVE, u.COOKINGSOURCEGASSTOVE, u.COOKINGSOURCEOTHER, u.LIGHTSOURCEELECTRICITY, u.LIGHTSOURCEOILLAMP, u.LIGHTSOURCEGENERATOR, u.LIGHTSOURCENONE, u.LIGHTSOURCEOTHER, u.AREADESCRIPTION, u.MYFAVORITETHINGTODO, u.WHENIPLAYWITHFRIENDSWE, u.WHENATHOMEIHELPOUTBY, u.WHENITALKTOGODIASKHIM, u.SOMEDAYI, u.TWOMOSTFAVORITETHINGS, u.OTHERTHINGSTHECHILDENJOYS, u.CHILDPERSONALITY, u.CHILDHEALTH, u.SPIRITUALDEVELOPMENT, u.ATTENDINGSCHOOL, u.REASONNOTATTENDINGSCHOOL, u.CLASSLEVEL, u.FAVORITESUBJECT, u.VOCATIONALSKILLS, u.ADDITIONALCHILDINFORMATION, u.CCHENTEREDBY, u.CCHTEMPID, u.CURRENTPHOTODATE, u.PHOTOSTORED, u.CHILDPROFILESTATUSCODEID, u.CHILDPROFILEUPDATECODEID, u.PROFILEUPDATENOTIFICATION, u.FUNDED, u.BATCHNUMBER, u.REGISTRATIONDATE, u.ORIGINALPROGRAMCOMPLETIONDATE, u.ADDEDBYID, u.CHANGEDBYID, u.DATEADDED, u.DATECHANGED, u.TS, u.TSLONG, u.CCHVALIDATED, u.CHILDNICKNAME, u.DEPARTUREFORMRECEIVED, u.CCHZIPFILENAME, u.CURRENTCHILDSPONSORSHIPSTATUSCODEID, u.TERMINATEHOLDSTARTDATE 
+            from dbo.USR_CHILDEXTENSION u
+            join dbo.SPONSORSHIPOPPORTUNITYCHILD soc2 ON u.SPONSORSHIPOPPORTUNITYCHILDID = soc2.ID ) uce on uce.SPONSORSHIPOPPORTUNITYCHILDID = dbo.INTERACTION.CONSTITUENTID
+left join dbo.USR_CHILDDEPARTURE ON dbo.USR_CHILDDEPARTURE.SPONSORSHIPOPPORTUNITYCHILDID = soc.ID and dbo.USR_CHILDDEPARTURE.ISCURRENTDEPARTURECODE = 1
+
+			
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="CHILDLOOKUPID" Caption="Child Lookupid" DataType="String" Category="Child Extension" />
+			<OutputField Name="LOCATIONLOOKUPID" Caption="Location Lookupid" DataType="String" Category="Child Extension" />
+			<OutputField Name="CURRENTPROGRAMCOMPLETIONDATE" Caption="Program Completion Date" DataType="Date" Category="Child Extension" />
+			<OutputField Name="CHILDLIVESWITHDESCRIPTION" Caption="Child Lives With" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_CHILDLIVESWITHCODE" />
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="FATHERWORKSASDESCRIPTION" Caption="Father Works As" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_FATHERWORKSASCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="FATHERWORKSASOTHER" Caption="Father Works As Other" DataType="String" Category="Child Extension" />
+			<OutputField Name="MOTHERWORKSASDESCRIPTION" Caption="Mother Works As" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_MOTHERWORKSASCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="MOTHERWORKSASOTHER" Caption="Mother Works As Other" DataType="String" Category="Child Extension" />
+			<OutputField Name="CAREGIVERRELATIONDESCRIPTION" Caption="Caregiver Relation" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_CAREGIVERRELATIONCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="CAREGIVERRELATIONOTHER" Caption="Caregiver Relation Other" DataType="String" Category="Child Extension" />
+			<OutputField Name="CAREGIVERWORKSASDESCRIPTION" Caption="Caregiver Works As" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_CAREGIVERWORKSASCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="CAREGIVERWORKSASOTHER" Caption="Caregiver Works As Other" DataType="String" Category="Child Extension" />
+			<OutputField Name="CAREGIVERREASONDESCRIPTION" Caption="Caregiver Reason" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_CAREGIVERREASONCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="REASONFORCAREGIVEROTHER" Caption="Caregiver Reason Other" DataType="String" Category="Child Extension" />
+			<OutputField Name="NUMBEROFSISTERS" Caption="Number of Sisters" DataType="Integer" Category="Child Extension" />
+			<OutputField Name="NUMBEROFBROTHERS" Caption="Number of Brothers" DataType="Integer" Category="Child Extension" />
+			<OutputField Name="TERMINATEHOLDSTARTDATE" Caption="Terminate Hold Date" DataType="Date" Category="Child Extension" />
+			<OutputField Name="DEPARTUREFORMRECEIVED" Caption="Departure Form Received Date" DataType="Date" Category="Child Extension" />
+			<OutputField Name="CCHVALIDATED" Caption="CCH Validated" DataType="Boolean" Category="Child Extension" />
+			<OutputField Name="REGISTRATIONDATE" Caption="Registration Date" DataType="Date" Category="Child Extension" />
+			<OutputField Name="BATCHNUMBER" Caption="Import Batch Number" DataType="String" Category="Child Extension" />
+			<OutputField Name="FUNDED" Caption="Funded" DataType="Boolean" Category="Child Extension" />
+			<OutputField Name="PROFILEUPDATENOTIFICATION" Caption="Profile Update Notification" DataType="String" Category="Child Extension" />
+			<OutputField Name="CHILDPROFILEUPDATEDESCRIPTION" Caption="Profile Update" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_CHILDPROFILEUPDATECODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="CHILDPROFILESTATUSDESCRIPTION" Caption="Profile Status" DataType="String" Category="Child Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_CHILDPROFILESTATUSCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="PHOTOSTORED" Caption="Photo Stored" DataType="Boolean" Category="Child Extension" />
+			<OutputField Name="CURRENTPHOTODATE" Caption="Current Photo Date" DataType="Date" Category="Child Extension" />
+			<OutputField Name="CCHTEMPID" Caption="CCH Temp ID" DataType="String" Category="Child Extension" />
+			<OutputField Name="CCHENTEREDBY" Caption="CCH Entered By" DataType="String" Category="Child Extension" />
+			<OutputField Name="ADDITIONALCHILDINFORMATION" Caption="Additional Child Info" DataType="String" Category="Child Extension" />
+			<OutputField Name="CLASSLEVEL" Caption="Class Level" DataType="String" Category="Child Extension" />
+			<OutputField Name="ATTENDINGSCHOOL" Caption="Attending School" DataType="Boolean" Category="Child Extension" />
+			<OutputField Name="NODEPARTUREFORM" Caption="No Departure Form" DataType="Boolean" Category="Departure" />
+			<OutputField Name="RECEIVEDFAREWELLLETTER" Caption="Received Farewell Letter" DataType="String" Category="Departure" />
+			<OutputField Name="DATEFORMCOMPLETED" Caption="Departure Form Completed Date" DataType="Date" Category="Departure" />
+			<OutputField Name="FORMCOMPLETEDBY" Caption="Departure Form Completed By" DataType="String" Category="Departure" />
+			<OutputField Name="DATEOFDEPARTURE" Caption="Departure Date" DataType="Date" Category="Departure" />
+			<OutputField Name="DATEPROCESSED" Caption="Date Departure Form Processed" DataType="Date" Category="Departure" />
+			<OutputField Name="ADMINISTRATIVECODE" Caption="Administrative Departure Code" DataType="String" Category="Departure" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_DEPARTURE_ADMINISTRATIVE_CODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="ADMINISTRATIVEEXPLANATION" Caption="Departure Administration Explanation" DataType="String" Category="Departure" />
+			<OutputField Name="ISDEPARTURE" Caption="Is Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="ISPROGRAMCOMPLETION" Caption="Is Program Completion" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_LIVESWITHRELATIVES" Caption="Lives With Relatives Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_FAMILYMOVED" Caption="Family Moved Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_FAMILYNOWPROVIDES" Caption="Family Now Provides Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_PROJECTTOOFAR" Caption="Project Too Far Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_REMOVEDBYPARENTS" Caption="Removed By Parents Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_LACKOFINTEREST" Caption="Lack Of Interest Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_NEEDEDATHOME" Caption="Needed At Home Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_EMPLOYED" Caption="Now Employed Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_TRANSFERRED" Caption="Transferred Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_FAILED" Caption="Failed Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_DEATHOFCHILD" Caption="Death Of Child Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_ILLNESS" Caption="Illness Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_PREGNANCY" Caption="Pregnancy Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_MARRIED" Caption="Married Departure" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DEPARTURE_OTHER" Caption="Other Departure Reason" DataType="Boolean" Category="Departure" />
+			<OutputField Name="DETAILEDEXPLANATION" Caption="Departure Explanation" DataType="String" Category="Departure" />
+			<OutputField Name="DEPARTURENEWSITUATION" Caption="Departure New Situation" DataType="String" Category="Departure" />
+			<OutputField Name="PROGRAMCOMPLETIONNEWSITUATION" Caption="Program Completion New Situation" DataType="String" Category="Departure" />
+			<OutputField Name="ISCHILDCHRISTIAN" Caption="Is Child Christian" DataType="String" Category="Departure" />
+			<OutputField Name="CHILDCHRISTIANCOMMENTS" Caption="Child Christian Comments" DataType="String" Category="Departure" />
+			<OutputField Name="DIDBECOMECHRISTIAN" Caption="Child Became Christian In Program" DataType="String" Category="Departure" />
+			<OutputField Name="SHOWSCHRISTIANKNOWLEDGE" Caption="Child Demonstrates Christianity" DataType="Boolean" Category="Departure" />
+			<OutputField Name="PARTICIPATESCHRISTIANACTIVITIES" Caption="Child Participates In Christian Activities" DataType="Boolean" Category="Departure" />
+			<OutputField Name="SHOWSCHRISTIANEVIDENCE" Caption="Shows Christian Evidence" DataType="Boolean" Category="Departure" />
+			<OutputField Name="OWNSBIBLEMATERIALS" Caption="Has Bible Materials" DataType="Boolean" Category="Departure" />
+			<OutputField Name="CHILDCHRISTIANEXPERIENCE" Caption="Child Christian Experience" DataType="String" Category="Departure" />
+			<OutputField Name="HEALTHCONDITIONS" Caption="Health Conditions" DataType="String" Category="Departure" />
+			<OutputField Name="CHILDMATURED" Caption="Child Matured" DataType="String" Category="Departure" />
+			<OutputField Name="LEVELOFMATURITY" Caption="Level Of Maturity" DataType="String" Category="Departure" />
+			<OutputField Name="HIGHESTCLASSLEVELCODE" Caption="Highest Class Level" DataType="String" Category="Departure" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_CHILDCLASSLEVEL_CODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="HIGHESTCLASSLEVELOTHER" Caption="Highest Class Level Other" DataType="String" Category="Departure" />
+			<OutputField Name="COURSEOFSTUDY" Caption="Course Of Study" DataType="String" Category="Departure" />
+			<OutputField Name="SKILLS_BASICLITERACY" Caption="Basic Literacy Skills" DataType="Boolean" Category="Departure" />
+			<OutputField Name="SKILLS_BASICNUMERACY" Caption="Basic Numeracy Skills" DataType="Boolean" Category="Departure" />
+			<OutputField Name="SKILLS_THINKINGPROBLEMSOLVING" Caption="Problem Solving Skills" DataType="Boolean" Category="Departure" />
+			<OutputField Name="SKILLS_SELFHELP" Caption="Self Help Skills" DataType="Boolean" Category="Departure" />
+			<OutputField Name="SKILLS_BUSINESS" Caption="Business Skills" DataType="Boolean" Category="Departure" />
+			<OutputField Name="SKILLS_LIFE" Caption="Life Skills" DataType="Boolean" Category="Departure" />			
+			<OutputField Name="SKILLS_VOCATIONALTECHNICAL" Caption="Vocation Technical Skills" DataType="Boolean" Category="Departure" />
+			<OutputField Name="SKILLS_OTHER" Caption="Other Skills" DataType="String" Category="Departure" />
+			<OutputField Name="GENERALCOMMENTS" Caption="Departure Comments" DataType="String" Category="Departure" />
+			<OutputField Name="DEPARTURETYPE" Caption="Departure Type" DataType="String" Category="Departure" />
+			<OutputField Name="OBJECTIVE" Caption="Interaction Summary" DataType="String" Category="Interaction" />
+			<OutputField Name="INTERACTIONTYPEDESCRIPTION" Caption="Interaction Contact Method" DataType="String" Category="Interaction" >
+				<LookupInfo>
+					<CodeTable CodeTableName="INTERACTIONTYPECODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="EXPECTEDDATE" Caption="Expected Date" DataType="Date" Category="Interaction" />
+			<OutputField Name="ACTUALDATE" Caption="Actual Date" DataType="Date" Category="Interaction" />
+			<OutputField Name="INTERACTIONDATE" Caption="Interaction Date" DataType="Date" Category="Interaction" />
+			<OutputField Name="COMMENT" Caption="Interaction Comment" DataType="String" Category="Interaction" />
+			<OutputField Name="INTERACTIONSUBCATEGORYDESCRIPTION" Caption="Interaction SubCategory" DataType="String" Category="Interaction" >
+				<LookupInfo>
+					<SimpleDataList SimpleDataListID="0EACC39B-07D1-4641-8774-E319559535A7">
+						<common:Params>
+							<common:Param ID="INCLUDEINACTIVE">
+								<common:Value>1</common:Value>
+							</common:Param>
+						</common:Params>
+					</SimpleDataList>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="STATUS" Caption="Interaction Status" DataType="String" Category="Interaction" />
+			<OutputField Name="SEQUENCEID" Caption="Sequence ID" DataType="Integer" Category="Interaction" />
+			<OutputField Name="LOOKUPID" Caption="Interaction LookupID" DataType="String" Category="Interaction" />
+			<OutputField Name="OPPORTUNITYID" Caption="OPPORTUNITYID" DataType="Guid" Category="System Record ID" IsHidden="true" />
+			<OutputField Name="FIELDMEMODATESENT" Caption="Field Memo Date Sent" DataType="Date" Category="Field Memo Interaction Extension" />
+			<OutputField Name="HOLDREASON" Caption="Hold Reason" DataType="String" Category="Field Memo Interaction Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONHOLDREASONCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="UNUSABLEITEM" Caption="Unusable" DataType="String" Category="Field Memo Interaction Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="SENTCODE" Caption="Field Memo Sent" DataType="String" Category="Field Memo Interaction Extension" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE"/>
+				</LookupInfo>
+			</OutputField>
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView Field ="OPPORTUNITYID" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" Cardinality="OneToOne" PathAlias="Child" />
+	</RelationshipOperations>
+
+</QueryViewSpec>
+

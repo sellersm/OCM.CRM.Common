@@ -1,0 +1,48 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="b83a2f64-206b-46b9-a30e-64503413a515"
+	Name="USR_USP_INSERT_CONSTITUENTAPPEALRESPONSE"
+	Description="Insert a Constituent Appeal Response record."
+	Author="Memphis Sellers"
+	SPName="USR_USP_INSERT_CONSTITUENTAPPEALRESPONSE"
+	GrantServiceRolePermission="true"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INSERT_CONSTITUENTAPPEALRESPONSE (
+	@CONSTITUENTAPPEALID uniqueidentifier,
+	@RESPONSEID uniqueidentifier,
+	@CHANGEAGENTID uniqueidentifier = null
+)
+as
+begin
+	
+	if @CHANGEAGENTID is null
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+
+	-- insert the Response now for this Constituent:
+    insert into [CONSTITUENTAPPEALRESPONSE] 
+    (
+		[CONSTITUENTAPPEALID], 
+		[DATE],
+		--[ID],
+		[RESPONSEID],				
+		ADDEDBYID, 
+		CHANGEDBYID
+		)
+    values (
+		@CONSTITUENTAPPEALID, 
+		getdate(),
+		--[ID],
+		@RESPONSEID, 
+		@CHANGEAGENTID, 
+		@CHANGEAGENTID
+	)
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

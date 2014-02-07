@@ -1,0 +1,101 @@
+﻿<AddDataFormTemplateSpec 
+	xmlns="bb_appfx_adddataformtemplate"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="edc3d96e-bf32-4458-99ec-6e35f491c30b" 
+	Name="Interaction Extension UI Model Field Manager Config Field Add Data Form"
+	Description="Used to add a configuration item for a specific interaction subcategory to control a field in the UI Model Interaction Extension forms" 
+	Author="Cary Mayeda"
+	DataFormInstanceID="b6eba6fe-7d0a-499d-9112-5a6ccd8fd12b" 
+	RecordType="Interaction Extension UI Model Field Manager"
+	common:SecurityUIFolder="Interaction Extension" >
+	
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	05-Aug-2012		CMayeda			Initial Version
+
+	-->
+
+	<SPDataForm>
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_CONFIG">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+				
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_CONFIG
+(
+    @ID uniqueidentifier = null output,
+	@CONTEXTID uniqueidentifier,
+    @CHANGEAGENTID uniqueidentifier = null,
+	@UIMODELFIELDCODEID uniqueidentifier = null,
+	@ISVISIBLE bit = 0,
+	@ISREQUIRED bit = 0
+)
+as
+
+set nocount on;
+
+if @ID is null
+    set @ID = newid()
+
+if @changeAgentID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+
+declare @currentDate datetime
+set @currentDate = getdate()
+
+begin try
+	-- handle inserting the data
+	insert into dbo.USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER
+		(ID, INTERACTIONSUBCATEGORYID, UIMODELFIELDCODEID, ISVISIBLE, ISREQUIRED, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+    values
+		(@ID, @CONTEXTID, @UIMODELFIELDCODEID, @ISVISIBLE, @ISREQUIRED, @changeAgentID, @changeAgentID, @currentDate, @currentDate)
+	
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+return 0				
+				]]>
+			</common:CreateProcedureSQL>
+			<common:ExpectedDBExceptions>
+				<common:Constraints>
+					<common:Constraint Name="FK_USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_UIMODELFIELDCODEID" Field="UIMODELFIELDCODEID" Type="ForeignKey" />				
+				</common:Constraints>
+				<common:CustomExceptions>
+					<common:Exception ErrorCode="2601" Field="UIMODELFIELDCODEID" SearchText ="UIX_USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_INTERACTIONSUBCATEGORYID_UIMODELFIELDCODEID">
+						<common:CustomErrorMsg>A configuration already exists for this interaction subcategory and field</common:CustomErrorMsg>
+					</common:Exception>
+				</common:CustomExceptions>
+			</common:ExpectedDBExceptions>
+
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+	<Context ContextRecordType="Interaction subcategory" RecordIDParameter="CONTEXTID"/>
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="true">
+		<common:FormFields>
+			<common:FormField FieldID="UIMODELFIELDCODEID" Caption="UI Model Field ID" DataType="Guid" Required="true">
+				<common:CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUIMODELFIELDCODE" IncludeInactive="false"/>				
+			</common:FormField>
+			<common:FormField FieldID="ISVISIBLE" Caption="Is visible" DataType="Boolean" />
+			<common:FormField FieldID="ISREQUIRED" Caption="Is required" DataType="Boolean" />			
+		</common:FormFields>
+
+		<common:WebUIComponent>
+			<common:WebUI>
+				<common:DefaultWebUI/>
+			</common:WebUI>
+		</common:WebUIComponent>
+	</common:FormMetaData>
+
+</AddDataFormTemplateSpec>
