@@ -50,14 +50,20 @@
 	-->
 	
 	<common:DependencyList>
+		<!-- Tables -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE.CodeTabe.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_NO_RATEINCREASEAPPEAL_RESPONSECODE.CodeTable.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_RATECHANGEIMPLEMENTEDDATE.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_SPONSOR_RATECHANGE_SPONSORSHIPS.Table.xml" />
 
+		<!-- Sprocs, Functions-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_RATECHANGE_RESPONSES_FROMITEMLISTXML.xml" />
         <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RATECHANGE_RESPONSE_SCANNER.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INSERT_CONSTITUENTAPPEALRESPONSE.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SAVE_RATEINCREASE_APPEALRESPONSE.xml" />
 
+		<!-- Forms, tasks, pages, etc.-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateChangeResponseLetterScanner.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateChangeResponseLetterScanner.Task.xml" />
 	</common:DependencyList>

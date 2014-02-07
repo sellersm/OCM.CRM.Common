@@ -43,8 +43,15 @@ Public Class RateChangeResponseScannerFormUIModel
 	Private Sub RateChangeResponseScannerFormUIModel_Loaded(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.LoadedEventArgs) Handles Me.Loaded
 		Me.SUBMIT.Visible = False
 		Me.SUBMIT.Value = False
+
 		_commitStarted = False
 		_dataLoaded = False
+
+		Me.RESPONSEID.Enabled = False
+		Me.RESPONSEID.Visible = False
+
+		Me.SAVERESPONSEBUTTON.Enabled = False
+		Me.SAVERESPONSEBUTTON.Visible = False
 	End Sub
 
 	Private Sub RateChangeResponseScannerFormUIModel_BeginValidate(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.BeginValidateEventArgs) Handles Me.BeginValidate
@@ -52,6 +59,9 @@ Public Class RateChangeResponseScannerFormUIModel
 		If IsNothing(_barcode.Value) Then
 			_barcode.Value = ""
 		End If
+
+		'need to reset this so we process the new barcode value:
+		_exceptionMessage = String.Empty
 
 		'clear out the variables so they don't stack up:
 		_sponsorId = _barcode.Value
@@ -80,15 +90,17 @@ Public Class RateChangeResponseScannerFormUIModel
 				Me.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 
 				'Make the Scan Status be: "Success" or "Unsuccessful"
-				Me.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
+				If Not _scanOutcome Is Nothing Then
+					Me.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
+				End If
 				'element.BARCODE.Value = _barcode.Value.ToString()
 				Me.SPONSORLOOKUPID.Value = _sponsorId
 				'element.CHILDLOOKUPID.Value = _childId
-			End If
+				End If
 
 		Else
-			'set the scan outcome to something so it's displayed below for the invalid reason:
-			_scanOutcome = String.Format("Unable to read Bar Code: must be {0} characters long.", _barCodeLength)
+				'set the scan outcome to something so it's displayed below for the invalid reason:
+				_scanOutcome = String.Format("Unable to read Bar Code: must be {0} characters long.", _barCodeLength)
 		End If
 
 		' if SUBMIT checkbox is checked, we will actually safe the data and close the form (the validation status will be true in this case)
@@ -97,7 +109,11 @@ Public Class RateChangeResponseScannerFormUIModel
 		If Not e.Valid Then
 			' the user did not check the SUBMIT checkbox => we are not going to close the form yet
 			' so, we have to set e.InvalidReason to be a non-blank string
-			e.InvalidReason = "Results: " & _scanOutcome & " " & _scannerMessage & " " & _exceptionMessage	'_sponsorId & " " & _childId & " " & _letterFullname & " " & _exceptionMessage
+			If (Not String.IsNullOrEmpty(_scanOutcome)) AndAlso (Not String.IsNullOrEmpty(_scannerMessage)) AndAlso (Not String.IsNullOrEmpty(_exceptionMessage)) Then
+				e.InvalidReason = "Results: " & _scanOutcome & " " & _scannerMessage & " " & _exceptionMessage	'_sponsorId & " " & _childId & " " & _letterFullname & " " & _exceptionMessage
+			Else
+				e.InvalidReason = "Data retrieved"
+			End If
 		End If
 	End Sub
 
@@ -129,6 +145,8 @@ Public Class RateChangeResponseScannerFormUIModel
 		Dim sBarCode As String = _barcode.Value.ToString()
 		Dim sValidationStatus As String = ""
 
+		Me.SCANSTATUS.Value = String.Empty
+
 		'If there's an error, then theoretically:
 		'scanoutcome will have this value if there was an exception: 'Place the letter on the exception stack.'
 		'@ExceptionOccurred will have a value of 1
@@ -148,68 +166,91 @@ Public Class RateChangeResponseScannerFormUIModel
 
 			Dim increaseRate As Boolean = False	   'flag is set based on the segment category of this sponsor's appeal
 
-			For Each row As DataRow In rateChangeSponsorships.Rows
-				rateChangeRow = New RateChangeResponseScannerFormBARCODEELEMENTSUIModel()
-				Me.SPONSORNAME.Value = row(0)						'conSponsor.[NAME]
-				rateChangeRow.CHILDNAME.Value = row(1)				'soc.[NAME]
-				rateChangeRow.SPONSORSHIPCOMMITMENTID.Value = row(2)   'sc.LOOKUPID
-				rateChangeRow.CHILDLOOKUPID.Value = row(3)			'so.LOOKUPID
-				rateChangeRow.REVENUELOOKUPID.Value = row(4)		'r.LOOKUPID
-				rateChangeRow.CURRENTRGAMOUNT.Value = row(5)		'r.AMOUNT
-				rateChangeRow.RGFREQUENCY.Value = row(6)			'dbo.REVENUESCHEDULE.FREQUENCY
-				rateChangeRow.SPONSORLOOKUPID.Value = _sponsorId
-				rateChangeRow.SPONSORSHIPID.Value = row(7)			's.ID which is sponsorship id
-				rateChangeRow.SPONSORID.Value = row(8)				'SponsorId guid
-				rateChangeRow.SEGMENTCATEGORY.Value = row(9)		' SEGMENTCATEGORY
-				rateChangeRow.CONSTITUENTAPPEALID.Value = row(10)	' CONSTITUENTAPPEALID
-				'  *** TODO:  Need to figure out the new rate based on RG frequency and IncreaseRate boolean bit flag:
-				Select Case rateChangeRow.SEGMENTCATEGORY.Value.ToLower()
-					Case "rate increase - opt in"
-						increaseRate = True
-
-					Case "rate increase - opt out"
-						increaseRate = False
-
-					Case "rate increase - no increase letter"
-						increaseRate = True
-
-					Case Else
-						increaseRate = False
-				End Select
-
-				rateChangeRow.RATEINCREASE.Value = increaseRate
-
-				If increaseRate = True Then
-					Select Case rateChangeRow.RGFREQUENCY.Value.ToLower()
-						Case "monthly"
-							rateChangeRow.NEWRGAMOUNT.Value = 39.0
-
-						Case "annually"
-							rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 12)
-
-						Case "quarterly"
-							rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 4)
-
-						Case "semi-annually"
-							rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 6)
-
-						Case "semi-monthly"
-							rateChangeRow.NEWRGAMOUNT.Value = (39.0 / 2)
-
-						Case "bimonthly"
-							rateChangeRow.NEWRGAMOUNT.Value = (39 * 2)
-
-						Case Else
-							rateChangeRow.NEWRGAMOUNT.Value = 39.0
-
-					End Select
+			If Not rateChangeSponsorships.Rows Is Nothing Then
+				If rateChangeSponsorships.Rows.Count = 0 Then
+					_exceptionMessage = "Unable to locate any active sponsorships for this Sponsor.  Click Save Response button and enter appeal response."
+					'turn on the Response Drop Down field and Save Response button:
+					Me.RESPONSEID.Enabled = True
+					Me.RESPONSEID.Visible = True
+					Me.SAVERESPONSEBUTTON.Enabled = True
+					Me.SAVERESPONSEBUTTON.Visible = True
 				Else
-					rateChangeRow.NEWRGAMOUNT.Value = rateChangeRow.CURRENTRGAMOUNT.Value
-				End If
+					For Each row As DataRow In rateChangeSponsorships.Rows
+						rateChangeRow = New RateChangeResponseScannerFormBARCODEELEMENTSUIModel()
+						'check if this sponsorid is valid, by checking for a null SponsorName value:
+						If row(0) = "Sponsor ID not found" Then	'String.Empty OrElse row(0) Is DBNull.Value Then
+							_exceptionMessage = "Invalid Sponsor Id!"
+							Exit For
+						Else
+							Me.SPONSORNAME.Value = row(0)						'conSponsor.[NAME]
+							rateChangeRow.CHILDNAME.Value = row(1)				'soc.[NAME]
+							rateChangeRow.SPONSORSHIPCOMMITMENTID.Value = row(2)   'sc.LOOKUPID
+							rateChangeRow.CHILDLOOKUPID.Value = row(3)			'so.LOOKUPID
+							rateChangeRow.REVENUELOOKUPID.Value = row(4)		'r.LOOKUPID
+							rateChangeRow.CURRENTRGAMOUNT.Value = row(5)		'r.AMOUNT
+							rateChangeRow.RGFREQUENCY.Value = row(6)			'dbo.REVENUESCHEDULE.FREQUENCY
+							rateChangeRow.SPONSORLOOKUPID.Value = _sponsorId
+							rateChangeRow.SPONSORSHIPID.Value = row(7)			's.ID which is sponsorship id
+							rateChangeRow.SPONSORID.Value = row(8)				'SponsorId guid
+							rateChangeRow.SEGMENTCATEGORY.Value = row(9)		' SEGMENTCATEGORY
+							rateChangeRow.CONSTITUENTAPPEALID.Value = row(10)	' CONSTITUENTAPPEALID
+							'  *** TODO:  Need to figure out the new rate based on RG frequency and IncreaseRate boolean bit flag:
+							Select Case rateChangeRow.SEGMENTCATEGORY.Value.ToLower()
+								Case "rate increase - opt in"
+									increaseRate = True
 
-				BARCODEELEMENTS.Value.Add(rateChangeRow)
-			Next
+								Case "rate increase - opt out"
+									increaseRate = False
+
+								Case "rate increase - no increase letter"
+									increaseRate = True
+
+								Case Else
+									increaseRate = False
+							End Select
+
+							rateChangeRow.RATEINCREASE.Value = increaseRate
+
+							If increaseRate = True Then
+								Select Case rateChangeRow.RGFREQUENCY.Value.ToLower()
+									Case "monthly"
+										rateChangeRow.NEWRGAMOUNT.Value = 39.0
+
+									Case "annually"
+										rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 12)
+
+									Case "quarterly"
+										rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 4)
+
+									Case "semi-annually"
+										rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 6)
+
+									Case "semi-monthly"
+										rateChangeRow.NEWRGAMOUNT.Value = (39.0 / 2)
+
+									Case "bimonthly"
+										rateChangeRow.NEWRGAMOUNT.Value = (39 * 2)
+
+									Case Else
+										rateChangeRow.NEWRGAMOUNT.Value = 39.0
+
+								End Select
+							Else
+								rateChangeRow.NEWRGAMOUNT.Value = rateChangeRow.CURRENTRGAMOUNT.Value
+							End If
+
+							If rateChangeRow.CURRENTRGAMOUNT.Value > rateChangeRow.NEWRGAMOUNT.Value Then
+								rateChangeRow.NEWRGAMOUNT.Value = rateChangeRow.CURRENTRGAMOUNT.Value
+							End If
+
+							BARCODEELEMENTS.Value.Add(rateChangeRow)
+						End If
+					Next
+				End If
+			End If
+
 			_dataLoaded = True
+
 		End Using
 
 	End Sub
@@ -262,59 +303,111 @@ Public Class RateChangeResponseScannerFormUIModel
 		SaveRateIncreaseResponses()
 
 		'clear out fields, reset for next scan:
-		Me.SPONSORNAME.Value = String.Empty
-		Me.SPONSORLOOKUPID.Value = String.Empty
-		Me.BARCODEELEMENTS.Value.Clear()
+		'Me.SPONSORNAME.Value = String.Empty
+		'Me.SPONSORLOOKUPID.Value = String.Empty
+		'Me.BARCODEELEMENTS.Value.Clear()
 
 	End Sub
 
 	Private Sub SaveRateIncreaseResponses()
 		'add the code that gets the handle from the UI Thread to change the value:
 		If _commitStarted = True Then
+			Dim isValid As Boolean = True
+
 			'save the data
 			Dim val As DataFormItemArrayValue
 			val = Me.BARCODEELEMENTS.ToDataFormItemArrayValue(True)
 
-			Dim output As New StringBuilder()
-			Dim xmlWriter__1 As XmlWriter = XmlWriter.Create(output)
-			WriteRateIncreaseCollectionXml(xmlWriter__1, "RATECHANGE", val)
-			xmlWriter__1.Close()
-			Dim xmlString As String = output.ToString()
+			Dim isIncrease As Boolean
+			Dim currentAmount As Integer
+			Dim newAmount As Integer
+			Dim rateChangeRow = New RateChangeResponseScannerFormBARCODEELEMENTSUIModel()
 
-			_commitStarted = False
+			'validate the data:
+			For Each item In val.Items
+				isIncrease = item.Values(rateChangeRow.RATEINCREASE.Name.ToString()).Value
+				currentAmount = item.Values(rateChangeRow.CURRENTRGAMOUNT.Name.ToString()).Value
+				newAmount = item.Values(rateChangeRow.NEWRGAMOUNT.Name.ToString()).Value
+				If newAmount < currentAmount Then
+					DisplayPrompt("The new gift amount is less than the current amount! Please double-check the values. Data will NOT be saved.")
+					isValid = False
+					Exit For
+				End If
+				If (newAmount > currentAmount) AndAlso (isIncrease = False) Then
+					DisplayPrompt("The new gift amount is increased, but the Increase checkbox is NOT checked! Please double-check the values. Data will NOT be saved.")
+					isValid = False
+					Exit For
+				End If
+			Next
 
-			Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
-				Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
-				cmd.Connection = conn
-				cmd.CommandText = "dbo.USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML"
-				cmd.CommandType = CommandType.StoredProcedure
+			If isValid = True Then
+				Dim output As New StringBuilder()
+				Dim xmlWriter__1 As XmlWriter = XmlWriter.Create(output)
+				WriteRateIncreaseCollectionXml(xmlWriter__1, "RATECHANGE", val)
+				xmlWriter__1.Close()
+				Dim xmlString As String = output.ToString()
 
-				' @SPONSORLOOKUPID nvarchar(100),
-				' @XML xml,
-				' @CHANGEAGENTID uniqueidentifier = null,
-				' @DATEADDED datetime = null,
-				' @CHANGEYEAR dbo.UDT_YEAR = null,
-				' @RESPONSEDATE datetime = null,
-				' @RESPONDAFTERRATECHANGEUPDATED bit = 0,
-				' @RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID uniqueidentifier = null
-				cmd.Parameters.AddWithValue("@SPONSORLOOKUPID", _sponsorId)
-				cmd.Parameters.AddWithValue("@XML", xmlString)
-				cmd.Parameters.AddWithValue("@CHANGEAGENTID", DBNull.Value)
-				cmd.Parameters.AddWithValue("@DATEADDED", DateTime.Now)
-				cmd.Parameters.AddWithValue("@CHANGEYEAR", 2014)
-				cmd.Parameters.AddWithValue("@RESPONSEDATE", DateTime.Now)
-				cmd.Parameters.AddWithValue("@RESPONDAFTERRATECHANGEUPDATED", False)
-				cmd.Parameters.AddWithValue("@RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID", DBNull.Value)
+				_commitStarted = False
 
-				cmd.ExecuteNonQuery()
+				Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
+					Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
+					cmd.Connection = conn
+					cmd.CommandText = "dbo.USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML"
+					cmd.CommandType = CommandType.StoredProcedure
 
-				DisplayPrompt("Data saved...")
+					'  @SPONSORLOOKUPID nvarchar(100),
+					'  @XML xml,
+					'  @CHANGEAGENTID uniqueidentifier = null,
+					'  @DATEADDED datetime = null,
+					'  @CHANGEYEAR dbo.UDT_YEAR = null,
+					'  @RESPONSEDATE datetime = null,
+					'  @RESPONDAFTERRATECHANGEUPDATED bit = 0,
+					'  @RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID uniqueidentifier = null,
+					'  @RESPONSEALREADYEXISTS bit = 0 OUTPUT
 
-				Me.COMMITCHANGESBUTTON.Enabled = False
+					cmd.Parameters.AddWithValue("@SPONSORLOOKUPID", _sponsorId)
+					cmd.Parameters.AddWithValue("@XML", xmlString)
+					cmd.Parameters.AddWithValue("@CHANGEAGENTID", DBNull.Value)
+					cmd.Parameters.AddWithValue("@DATEADDED", DateTime.Now)
+					cmd.Parameters.AddWithValue("@CHANGEYEAR", 2014)
+					cmd.Parameters.AddWithValue("@RESPONSEDATE", DateTime.Now)
+					cmd.Parameters.AddWithValue("@RESPONDAFTERRATECHANGEUPDATED", False)
+					cmd.Parameters.AddWithValue("@RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID", DBNull.Value)
+
+					Dim doesResponseExist As SqlParameter = New SqlParameter("@RESPONSEALREADYEXISTS", False)
+					doesResponseExist.Direction = ParameterDirection.Output
+					doesResponseExist.SqlDbType = SqlDbType.Bit
+					cmd.Parameters.Add(doesResponseExist)
+
+					cmd.ExecuteNonQuery()
+
+					'check if the appeal response already exists:
+					Dim responseExists As Boolean = False
+					responseExists = cmd.Parameters("@RESPONSEALREADYEXISTS").Value
+
+					If responseExists = True Then
+						DisplayPrompt("An appeal response already exists for this Sponsor!")
+					Else
+						DisplayPrompt("Data saved...")
+					End If
+
+					'Me.SCANSTATUS.Value = "An appeal response already exists for this Sponsor!"
+
+					Me.COMMITCHANGESBUTTON.Enabled = False
+					Me.SaveButtonCaption = "Save"
+					EnableSaveButton(True)
+
+					'clear out for next run, but only if the data was saved!
+					Me.SPONSORNAME.Value = String.Empty
+					Me.SPONSORLOOKUPID.Value = String.Empty
+					Me.BARCODEELEMENTS.Value.Clear()
+
+				End Using
+			Else
+				Me.COMMITCHANGESBUTTON.Enabled = True
 				Me.SaveButtonCaption = "Save"
 				EnableSaveButton(True)
-
-			End Using
+			End If
 
 		End If
 
@@ -493,4 +586,83 @@ Public Class RateChangeResponseScannerFormUIModel
 	End Sub
 
 
+	Private Sub _saveresponsebutton_InvokeAction(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.InvokeActionEventArgs) Handles _saveresponsebutton.InvokeAction
+		'this will save the user appeal response value:
+		If Me.RESPONSEID.HasValue = False Then
+			DisplayPrompt("You must select an appeal Response value before trying to save the Response!")
+		Else
+			'save the response
+			Dim responseValue As String = Me.RESPONSEID.Value.ToString()
+			'the next value is hardcoded to be the Rate Increase Appeal response
+			Dim responseCategoryId As String = "CD350A82-B50C-44ED-B887-3FC5A326F96D"
+
+			Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
+				Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
+				cmd.Connection = conn
+				cmd.CommandText = "dbo.USR_USP_SAVE_RATEINCREASE_APPEALRESPONSE"
+				cmd.CommandType = CommandType.StoredProcedure
+
+				' these are the parameters for this sproc:
+				'@SPONSORLOOKUPID nvarchar(10),
+				'@RESPONSECATEGORYID uniqueidentifier,
+				'@RESPONSEID uniqueidentifier,
+				'@CHANGEAGENTID uniqueidentifier = null,
+				'@ScannerMessage nvarchar(1000) OUTPUT,
+				'--@ScanOutcome nvarchar(1000) OUTPUT,
+				'@ExceptionOccurred bit = 0 OUTPUT
+				cmd.Parameters.AddWithValue("@SPONSORLOOKUPID", _sponsorId)
+				cmd.Parameters.AddWithValue("@RESPONSECATEGORYID", responseCategoryId)
+				cmd.Parameters.AddWithValue("@RESPONSEID", responseValue)
+				cmd.Parameters.AddWithValue("@CHANGEAGENTID", DBNull.Value)
+
+				Dim scannerMessage As SqlParameter = New SqlParameter("@ScannerMessage", String.Empty)
+				scannerMessage.Direction = ParameterDirection.Output
+				scannerMessage.SqlDbType = SqlDbType.NVarChar
+				scannerMessage.Size = 1000
+				cmd.Parameters.Add(scannerMessage)
+
+				'ScanOutcome
+				'Dim scanOutcome As SqlParameter = New SqlParameter("@ScanOutcome", String.Empty)
+				'scanOutcome.Direction = ParameterDirection.Output
+				'scanOutcome.SqlDbType = SqlDbType.NVarChar
+				'scanOutcome.Size = 1000
+				'cmd.Parameters.Add(scanOutcome)
+
+				Dim exceptionOccurred As SqlParameter = New SqlParameter("@ExceptionOccurred", 0)
+				exceptionOccurred.Direction = ParameterDirection.Output
+				exceptionOccurred.SqlDbType = SqlDbType.Bit
+				cmd.Parameters.Add(exceptionOccurred)
+
+				cmd.ExecuteNonQuery()
+
+				'assign output variable values here:
+				_scannerMessage = cmd.Parameters("@ScannerMessage").Value.ToString()
+				'_scanOutcome = cmd.Parameters("@ScanOutcome").Value.ToString()
+				_exceptionOccurred = CBool(cmd.Parameters("@ExceptionOccurred").Value)
+
+				'cmd.ExecuteNonQuery()
+
+				' check the output parameters to make sure no errors happened:
+				If _exceptionOccurred = True Then
+					'DisplayPrompt(_scannerMessage)
+					Me.SCANSTATUS.Value = _scannerMessage
+				Else
+					DisplayPrompt("Appeal Response saved...")
+				End If
+
+				'turn off save response button
+				Me.SAVERESPONSEBUTTON.Enabled = False
+				Me.SAVERESPONSEBUTTON.Visible = False
+
+				'turn off the response field
+				Me.RESPONSEID.Visible = False
+
+				Me.COMMITCHANGESBUTTON.Enabled = False
+				Me.SaveButtonCaption = "Save"
+				EnableSaveButton(True)
+
+			End Using
+
+		End If
+	End Sub
 End Class

@@ -508,6 +508,15 @@
     <EmbeddedResource Include="Rate Increase\RateIncrease.Package.xml" />
     <EmbeddedResource Include="Rate Increase\USR_USP_RATECHANGE_RESPONSE_SCANNER.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\USR_USP_INSERT_CONSTITUENTAPPEALRESPONSE.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\USR_USP_SAVE_RATEINCREASE_APPEALRESPONSE.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\USR_NO_RATEINCREASEAPPEAL_RESPONSECODE.CodeTable.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

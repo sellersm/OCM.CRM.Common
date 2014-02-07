@@ -31,7 +31,10 @@ Partial Public Class [RateChangeResponseScannerFormUIModel]
     Private WithEvents _submit As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
 	Private WithEvents _sponsorlookupid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 	Private WithEvents _sponsorname As Global.Blackbaud.AppFx.UIModeling.Core.StringField
-    Private WithEvents _commitchangesbutton As Global.Blackbaud.AppFx.UIModeling.Core.GenericUIAction
+	Private WithEvents _commitchangesbutton As Global.Blackbaud.AppFx.UIModeling.Core.GenericUIAction
+	Private WithEvents _responseid As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+	Private WithEvents _saveresponsebutton As Global.Blackbaud.AppFx.UIModeling.Core.GenericUIAction
+
 
 	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
     Public Sub New()
@@ -44,6 +47,9 @@ Partial Public Class [RateChangeResponseScannerFormUIModel]
 		_sponsorlookupid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 		_sponsorname = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _commitchangesbutton = New Global.Blackbaud.AppFx.UIModeling.Core.GenericUIAction
+		_responseid = New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+		_saveresponsebutton = New Global.Blackbaud.AppFx.UIModeling.Core.GenericUIAction
+
 
         MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add
         MyBase.DataFormTemplateId = New Guid("918488ee-99d8-42b6-980e-458225d73172")
@@ -100,6 +106,21 @@ Partial Public Class [RateChangeResponseScannerFormUIModel]
         _commitchangesbutton.Name = "COMMITCHANGESBUTTON"
         _commitchangesbutton.Caption = "Commit Changes"
         Me.Actions.Add(_commitchangesbutton)
+		'
+		'_responseid
+		'
+		_responseid.Name = "RESPONSEID"
+		_responseid.Caption = "Response"
+		_responseid.Required = True
+		_responseid.SimpleDataListId = New Guid("e48745a4-b8cd-4e31-885a-3173d7374ea6")
+		_responseid.Parameters.Add(New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListParameter("RESPONSECATEGORYID", "CD350A82-B50C-44ED-B887-3FC5A326F96D"))
+		Me.Fields.Add(_responseid)
+		'
+		'_saveresponsebutton
+		'
+		_saveresponsebutton.Name = "SAVERESPONSEBUTTON"
+		_saveresponsebutton.Caption = "Save Response"
+		Me.Actions.Add(_saveresponsebutton)
 
 		OnCreated()
 
@@ -180,5 +201,27 @@ Partial Public Class [RateChangeResponseScannerFormUIModel]
             Return _commitchangesbutton
         End Get
     End Property
-    
+
+	''' <summary>
+	''' Response
+	''' </summary>
+	<System.ComponentModel.Description("Response")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [RESPONSEID]() As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
+		Get
+			Return _responseid
+		End Get
+	End Property
+
+	''' <summary>
+	''' Save Response
+	''' </summary>
+	<System.ComponentModel.Description("Save Response")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [SAVERESPONSEBUTTON]() As Global.Blackbaud.AppFx.UIModeling.Core.GenericUIAction
+		Get
+			Return _saveresponsebutton
+		End Get
+	End Property
+
 End Class

@@ -28,6 +28,8 @@
 		<MoneyField Name="UPDATEDSPONSORSHIPGIFTAMOUNT" Description="Sponsorship amount selected by Sponsor after appeal" />
 		<CodeTableField Name="RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID" CodeTable="USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE" />
 		<TextField Name="REVENUELOOKUPID" Description="Revenue Lookup Id" Length="100" Required="true"/>
+		<DateField Name="NOAPPEALRESPONSEDATE" Description="No Appeal for Sponsor but reponse received on this date" Required="false"/>
+		<CodeTableField Name="NOAPPEALRESPONSECODEID" Description="Response code for Sponsor with no Appeal" CodeTable="USR_NO_RATEINCREASEAPPEAL_RESPONSECODE"/>
 	</Fields>
 
 	<!-- define any additional check constraints on the table -->
