@@ -115,8 +115,8 @@ begin
       from dbo.CONSTITUENTAPPEAL
       where dbo.CONSTITUENTAPPEAL.APPEALID = (select ID
                                               from dbo.APPEAL
-                                              where [NAME] like '%Rate Increase 2014%'  --972448FA-7837-445C-832C-CE7D287E0564
-                                              and [NAME] NOT like '%President%')
+                                              where [NAME] like '%10555%'  --972448FA-7837-445C-832C-CE7D287E0564
+                                              )
       and CONSTITUENTID = @SponsorID;  
 
 

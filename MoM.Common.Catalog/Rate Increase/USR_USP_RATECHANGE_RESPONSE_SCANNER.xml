@@ -39,8 +39,8 @@ begin
 		-- must get the appealid for the 2014 rate increase appeal: there are two, so get the right one
 		select @AppealId = ID
 		from dbo.APPEAL
-		where [NAME] like '%Rate Increase 2014%'
-		and [NAME] NOT like '%President%'
+		where [NAME] like '%10555%'    --like '%Rate Increase 2014%'
+		--and [NAME] NOT like '%President%'
 
 		select 
     		conSponsor.[NAME] 

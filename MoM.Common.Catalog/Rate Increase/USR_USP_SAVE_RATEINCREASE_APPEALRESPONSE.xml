@@ -56,8 +56,7 @@ begin
 
 		select @appealCount = count(*)
 		from dbo.APPEAL
-		where [NAME] like '%Rate Increase 2014%'  
-		and [NAME] NOT like '%President%'
+		where [NAME] like '%10555%'  
 
 		if @appealCount <> 1
 		  begin
