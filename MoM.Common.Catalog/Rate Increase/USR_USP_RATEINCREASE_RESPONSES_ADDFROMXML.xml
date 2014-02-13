@@ -54,6 +54,7 @@ begin
         declare @RESPONSEID uniqueidentifier;
         declare @YesResponseID uniqueidentifier;
         declare @NoResponseID uniqueidentifier;
+		declare @PartialIncreaseResponseID uniqueidentifier;
         declare @constituentAppealId uniqueidentifier;
 		declare @ErrMsg nvarchar(4000);
 		declare @ErrSeverity int;
@@ -159,11 +160,22 @@ begin
       and lower(dbo.RESPONSE.RESPONSE) = lower('No - Increase')   
       and dbo.RESPONSE.ISINACTIVE = 0
 
-      
+      select @PartialIncreaseResponseID = ID
+      from dbo.RESPONSE
+      where dbo.RESPONSE.RESPONSECATEGORYID = @RESPONSECATEGORYID 
+      and lower(dbo.RESPONSE.RESPONSE) = lower('Partial - Increase')   
+      and dbo.RESPONSE.ISINACTIVE = 0
+
+
       -- get the ResponseID value based on whether or not sponsor is increasing or not:
-      if @IsAllIncreaseValuesYes = 1 or @IsSomeIncreaseValuesYes = 1
+      if @IsAllIncreaseValuesYes = 1
         begin
           set @RESPONSEID = @YesResponseID;
+        end
+
+      if @IsSomeIncreaseValuesYes = 1
+        begin
+          set @RESPONSEID = @PartialIncreaseResponseID;
         end
 
       if @IsAllIncreaseValuesNo = 1
