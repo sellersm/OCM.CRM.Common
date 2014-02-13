@@ -40,7 +40,6 @@ begin
 		select @AppealId = ID
 		from dbo.APPEAL
 		where [NAME] like '%10555%'    --like '%Rate Increase 2014%'
-		--and [NAME] NOT like '%President%'
 
 		select 
     		conSponsor.[NAME] 

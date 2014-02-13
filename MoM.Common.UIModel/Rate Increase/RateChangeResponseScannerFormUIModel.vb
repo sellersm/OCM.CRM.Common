@@ -338,6 +338,11 @@ Public Class RateChangeResponseScannerFormUIModel
 					isValid = False
 					Exit For
 				End If
+				If (isIncrease = True) AndAlso (newAmount <= currentAmount) Then
+					DisplayPrompt("The Increase checkbox is checked, but the new gift amount is not increased! Please double-check the values. Data will NOT be saved.")
+					isValid = False
+					Exit For
+				End If
 			Next
 
 			If isValid = True Then
@@ -386,7 +391,7 @@ Public Class RateChangeResponseScannerFormUIModel
 					responseExists = cmd.Parameters("@RESPONSEALREADYEXISTS").Value
 
 					If responseExists = True Then
-						DisplayPrompt("An appeal response already exists for this Sponsor!")
+						DisplayPrompt("Exception: Data was not saved! An appeal response already exists for this Sponsor!")
 					Else
 						DisplayPrompt("Data saved...")
 					End If
