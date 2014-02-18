@@ -152,6 +152,11 @@ Public Class RateChangeResponseScannerFormUIModel
 
 		Me.SCANSTATUS.Value = String.Empty
 
+		'make sure the save appeal response fields aren't displayed from last scan:
+		Me.RESPONSEID.Visible = False
+		Me.SAVERESPONSEBUTTON.Visible = False
+
+
 		'If there's an error, then theoretically:
 		'scanoutcome will have this value if there was an exception: 'Place the letter on the exception stack.'
 		'@ExceptionOccurred will have a value of 1
