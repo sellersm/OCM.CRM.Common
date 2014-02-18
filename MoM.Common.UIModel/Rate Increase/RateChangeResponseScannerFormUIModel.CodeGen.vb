@@ -70,7 +70,9 @@ Partial Public Class [RateChangeResponseScannerFormUIModel]
         '
         _scanstatus.Name = "SCANSTATUS"
         _scanstatus.Caption = "Scan status"
-        _scanstatus.MaxLength = 1000
+		_scanstatus.MaxLength = 1000
+		'Turn this field off, not used:
+		_scanstatus.Visible = False
         Me.Fields.Add(_scanstatus)
         '
         '_barcodeelements
@@ -92,8 +94,8 @@ Partial Public Class [RateChangeResponseScannerFormUIModel]
         '_sponsorlookupid
         '
         _sponsorlookupid.Name = "SPONSORLOOKUPID"
-        _sponsorlookupid.Caption = "Sponsor Lookup ID"
-        Me.Fields.Add(_sponsorlookupid)
+		_sponsorlookupid.Caption = "Sponsor Lookup ID"
+		Me.Fields.Add(_sponsorlookupid)
 		'
 		'_sponsorname
 		'
