@@ -25,6 +25,7 @@ begin
 
 	declare @AppealId uniqueidentifier;
 	declare @SponsorId uniqueidentifier = null;
+	declare @CONSTITUENTAPPEALID uniqueidentifier = null;
 
 	select @SponsorId = ID
 	from dbo.CONSTITUENT
@@ -41,40 +42,85 @@ begin
 		from dbo.APPEAL
 		where [NAME] like '%10555%'    --like '%Rate Increase 2014%'
 
-		select 
-    		conSponsor.[NAME] 
-    		, soc.[NAME] 
-    		, sc.LOOKUPID 
-    		, so.LOOKUPID 
-    		, r.LOOKUPID 
-    		--r.TRANSACTIONTYPE, 
-    		, r.AMOUNT 
-    		, dbo.REVENUESCHEDULE.FREQUENCY
-    		, s.ID
-    		, conSponsor.ID as SPONSORID
-    		, ISNULL(dbo.MKTSEGMENTCATEGORYCODE.[DESCRIPTION], '') as SEGMENTCATEGORY
-    		, ISNULL(dbo.CONSTITUENTAPPEAL.ID,'00000000-0000-0000-0000-000000000000') as CONSTITUENTAPPEALID
-    		from dbo.SPONSORSHIP s
-    		join dbo.SPONSORSHIPCOMMITMENT sc ON sc.ID = s.SPONSORSHIPCOMMITMENTID
-    		join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = s.SPONSORSHIPOPPORTUNITYID
-    		join dbo.SPONSORSHIPOPPORTUNITYCHILD soc ON soc.ID = so.ID
-    		join dbo.REVENUESPLIT rs on rs.ID = s.REVENUESPLITID
-    		join dbo.REVENUE r on r.ID = rs.REVENUEID --ft.FINANCIALTRANSACTIONID = r.ID
-    		join dbo.CONSTITUENT conSponsor ON conSponsor.ID = r.CONSTITUENTID
-    		--join dbo.FINANCIALTRANSACTIONLINEITEM ft ON ft.ID = s.REVENUESPLITID  --ebf2dd6a-8377-47fb-a976-2e3b13cb7a18
-    		join dbo.REVENUESCHEDULE on r.ID = REVENUESCHEDULE.ID
-    		left join dbo.CONSTITUENTAPPEAL on dbo.CONSTITUENTAPPEAL.CONSTITUENTID = r.CONSTITUENTID
-    		left join dbo.MKTSEGMENTATIONSEGMENT ON dbo.MKTSEGMENTATIONSEGMENT.ID = dbo.CONSTITUENTAPPEAL.MKTSEGMENTATIONSEGMENTID
-    		left join dbo.MKTSEGMENTATION ON dbo.MKTSEGMENTATION.ID = dbo.MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
-    		left join dbo.MKTSEGMENT on dbo.MKTSEGMENT.ID = SEGMENTID
-    		left join dbo.MKTSEGMENTCATEGORYCODE on dbo.MKTSEGMENTCATEGORYCODE.ID = dbo.MKTSEGMENT.SEGMENTCATEGORYCODEID
-		where conSponsor.LOOKUPID = @LOOKUPID
-		and s.STATUSCODE = 1 -- Active
-		and r.TRANSACTIONTYPECODE = 2  -- recurring gift
-		and dbo.CONSTITUENTAPPEAL.APPEALID = @AppealId
-		order by sc.LOOKUPID   --, soc.[NAME]
-	  end
+		-- first see if this sponsor has a Rate Increase Appeal
+		select @CONSTITUENTAPPEALID = ID
+		from dbo.CONSTITUENTAPPEAL
+		where dbo.CONSTITUENTAPPEAL.APPEALID = @AppealId
+		and CONSTITUENTID = @SponsorID;	
 
+		if @CONSTITUENTAPPEALID is null
+			begin
+				-- there will be no need to join to constituent appeal as this sponsor doesn't have one:
+				select 
+    				conSponsor.[NAME] 
+    				, soc.[NAME] 
+    				, sc.LOOKUPID 
+    				, so.LOOKUPID 
+    				, r.LOOKUPID 
+    				--r.TRANSACTIONTYPE, 
+    				, r.AMOUNT 
+    				, dbo.REVENUESCHEDULE.FREQUENCY
+    				, s.ID
+    				, conSponsor.ID as SPONSORID
+    				, ISNULL(dbo.MKTSEGMENTCATEGORYCODE.[DESCRIPTION], '') as SEGMENTCATEGORY
+    				, ISNULL(dbo.CONSTITUENTAPPEAL.ID,'00000000-0000-0000-0000-000000000000') as CONSTITUENTAPPEALID
+    				from dbo.SPONSORSHIP s
+    				join dbo.SPONSORSHIPCOMMITMENT sc ON sc.ID = s.SPONSORSHIPCOMMITMENTID
+    				join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = s.SPONSORSHIPOPPORTUNITYID
+    				join dbo.SPONSORSHIPOPPORTUNITYCHILD soc ON soc.ID = so.ID
+    				join dbo.REVENUESPLIT rs on rs.ID = s.REVENUESPLITID
+    				join dbo.REVENUE r on r.ID = rs.REVENUEID --ft.FINANCIALTRANSACTIONID = r.ID
+    				join dbo.CONSTITUENT conSponsor ON conSponsor.ID = r.CONSTITUENTID
+    				--join dbo.FINANCIALTRANSACTIONLINEITEM ft ON ft.ID = s.REVENUESPLITID  --ebf2dd6a-8377-47fb-a976-2e3b13cb7a18
+    				join dbo.REVENUESCHEDULE on r.ID = REVENUESCHEDULE.ID
+    				left join dbo.CONSTITUENTAPPEAL on dbo.CONSTITUENTAPPEAL.CONSTITUENTID = r.CONSTITUENTID
+    				left join dbo.MKTSEGMENTATIONSEGMENT ON dbo.MKTSEGMENTATIONSEGMENT.ID = dbo.CONSTITUENTAPPEAL.MKTSEGMENTATIONSEGMENTID
+    				left join dbo.MKTSEGMENTATION ON dbo.MKTSEGMENTATION.ID = dbo.MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
+    				left join dbo.MKTSEGMENT on dbo.MKTSEGMENT.ID = SEGMENTID
+    				left join dbo.MKTSEGMENTCATEGORYCODE on dbo.MKTSEGMENTCATEGORYCODE.ID = dbo.MKTSEGMENT.SEGMENTCATEGORYCODEID
+				where (conSponsor.LOOKUPID = @LOOKUPID
+				and s.STATUSCODE = 1 -- Active
+				and r.TRANSACTIONTYPECODE = 2  -- recurring gift
+				and (dbo.CONSTITUENTAPPEAL.APPEALID = @AppealId or dbo.CONSTITUENTAPPEAL.APPEALID is null))
+				order by sc.LOOKUPID   --, soc.[NAME]				
+			end
+		else
+			begin
+				select 
+    				conSponsor.[NAME] 
+    				, soc.[NAME] 
+    				, sc.LOOKUPID 
+    				, so.LOOKUPID 
+    				, r.LOOKUPID 
+    				--r.TRANSACTIONTYPE, 
+    				, r.AMOUNT 
+    				, dbo.REVENUESCHEDULE.FREQUENCY
+    				, s.ID
+    				, conSponsor.ID as SPONSORID
+    				, ISNULL(dbo.MKTSEGMENTCATEGORYCODE.[DESCRIPTION], '') as SEGMENTCATEGORY
+    				, ISNULL(dbo.CONSTITUENTAPPEAL.ID,'00000000-0000-0000-0000-000000000000') as CONSTITUENTAPPEALID
+    				from dbo.SPONSORSHIP s
+    				join dbo.SPONSORSHIPCOMMITMENT sc ON sc.ID = s.SPONSORSHIPCOMMITMENTID
+    				join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = s.SPONSORSHIPOPPORTUNITYID
+    				join dbo.SPONSORSHIPOPPORTUNITYCHILD soc ON soc.ID = so.ID
+    				join dbo.REVENUESPLIT rs on rs.ID = s.REVENUESPLITID
+    				join dbo.REVENUE r on r.ID = rs.REVENUEID --ft.FINANCIALTRANSACTIONID = r.ID
+    				join dbo.CONSTITUENT conSponsor ON conSponsor.ID = r.CONSTITUENTID
+    				--join dbo.FINANCIALTRANSACTIONLINEITEM ft ON ft.ID = s.REVENUESPLITID  --ebf2dd6a-8377-47fb-a976-2e3b13cb7a18
+    				join dbo.REVENUESCHEDULE on r.ID = REVENUESCHEDULE.ID
+    				left join dbo.CONSTITUENTAPPEAL on dbo.CONSTITUENTAPPEAL.CONSTITUENTID = r.CONSTITUENTID
+    				left join dbo.MKTSEGMENTATIONSEGMENT ON dbo.MKTSEGMENTATIONSEGMENT.ID = dbo.CONSTITUENTAPPEAL.MKTSEGMENTATIONSEGMENTID
+    				left join dbo.MKTSEGMENTATION ON dbo.MKTSEGMENTATION.ID = dbo.MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
+    				left join dbo.MKTSEGMENT on dbo.MKTSEGMENT.ID = SEGMENTID
+    				left join dbo.MKTSEGMENTCATEGORYCODE on dbo.MKTSEGMENTCATEGORYCODE.ID = dbo.MKTSEGMENT.SEGMENTCATEGORYCODEID
+				where (conSponsor.LOOKUPID = @LOOKUPID
+				and s.STATUSCODE = 1 -- Active
+				and r.TRANSACTIONTYPECODE = 2  -- recurring gift
+				and dbo.CONSTITUENTAPPEAL.APPEALID = @AppealId)
+				order by sc.LOOKUPID   --, soc.[NAME]
+			end
+	  end
+	  
 end
 
 		]]>

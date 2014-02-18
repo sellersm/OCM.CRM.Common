@@ -96,11 +96,11 @@ Public Class RateChangeResponseScannerFormUIModel
 				'element.BARCODE.Value = _barcode.Value.ToString()
 				Me.SPONSORLOOKUPID.Value = _sponsorId
 				'element.CHILDLOOKUPID.Value = _childId
-				End If
+			End If
 
 		Else
-				'set the scan outcome to something so it's displayed below for the invalid reason:
-				_scanOutcome = String.Format("Unable to read Bar Code: must be {0} characters long.", _barCodeLength)
+			'set the scan outcome to something so it's displayed below for the invalid reason:
+			_scanOutcome = String.Format("Unable to read Bar Code: must be {0} characters long.", _barCodeLength)
 		End If
 
 		' if SUBMIT checkbox is checked, we will actually safe the data and close the form (the validation status will be true in this case)
@@ -109,7 +109,7 @@ Public Class RateChangeResponseScannerFormUIModel
 		If Not e.Valid Then
 			' the user did not check the SUBMIT checkbox => we are not going to close the form yet
 			' so, we have to set e.InvalidReason to be a non-blank string
-			If (Not String.IsNullOrEmpty(_scanOutcome)) AndAlso (Not String.IsNullOrEmpty(_scannerMessage)) AndAlso (Not String.IsNullOrEmpty(_exceptionMessage)) Then
+			If (Not String.IsNullOrEmpty(_scanOutcome)) Or (Not String.IsNullOrEmpty(_scannerMessage)) Or (Not String.IsNullOrEmpty(_exceptionMessage)) Then
 				e.InvalidReason = "Results: " & _scanOutcome & " " & _scannerMessage & " " & _exceptionMessage	'_sponsorId & " " & _childId & " " & _letterFullname & " " & _exceptionMessage
 			Else
 				e.InvalidReason = "Data retrieved"
@@ -578,7 +578,9 @@ Public Class RateChangeResponseScannerFormUIModel
 					ElseIf TypeOf objectValue Is Single Then
 						str = XmlConvert.ToString(CSng(objectValue))
 					Else
-						str = objectValue.ToString()
+						If Not objectValue Is Nothing Then
+							str = objectValue.ToString()
+						End If
 					End If
 					xmlWriter.WriteElementString(fieldValue.ID, str)
 				Next
