@@ -52,6 +52,11 @@ Public Class RateChangeResponseScannerFormUIModel
 
 		Me.SAVERESPONSEBUTTON.Enabled = False
 		Me.SAVERESPONSEBUTTON.Visible = False
+
+		'user cannot enter data in this field:
+		Me.SPONSORLOOKUPID.Enabled = False
+		Me.SPONSORNAME.Enabled = False
+
 	End Sub
 
 	Private Sub RateChangeResponseScannerFormUIModel_BeginValidate(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.BeginValidateEventArgs) Handles Me.BeginValidate
@@ -87,12 +92,12 @@ Public Class RateChangeResponseScannerFormUIModel
 				Me.BARCODE.Value = String.Empty
 				_barcode.Value = String.Empty
 			Else
-				Me.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
+				'Me.SCANSTATUS.ValueDisplayStyle = Blackbaud.AppFx.UIModeling.Core.ValueDisplayStyle.WarningImageAndText
 
 				'Make the Scan Status be: "Success" or "Unsuccessful"
-				If Not _scanOutcome Is Nothing Then
-					Me.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
-				End If
+				'If Not _scanOutcome Is Nothing Then
+				'Me.SCANSTATUS.Value = IIf(_scanOutcome.Contains("successful"), "Success!", "Unsuccessful")	'  _scanOutcome
+				'End If
 				'element.BARCODE.Value = _barcode.Value.ToString()
 				Me.SPONSORLOOKUPID.Value = _sponsorId
 				'element.CHILDLOOKUPID.Value = _childId
@@ -168,7 +173,7 @@ Public Class RateChangeResponseScannerFormUIModel
 
 			If Not rateChangeSponsorships.Rows Is Nothing Then
 				If rateChangeSponsorships.Rows.Count = 0 Then
-					_exceptionMessage = "Unable to locate any active sponsorships for this Sponsor.  Click Save Response button and enter appeal response."
+					_exceptionMessage = "Unable to locate any active sponsorships for this Sponsor. Enter the Appeal Response then click the Save Response button."
 					'turn on the Response Drop Down field and Save Response button:
 					Me.RESPONSEID.Enabled = True
 					Me.RESPONSEID.Visible = True
@@ -652,7 +657,8 @@ Public Class RateChangeResponseScannerFormUIModel
 				' check the output parameters to make sure no errors happened:
 				If _exceptionOccurred = True Then
 					'DisplayPrompt(_scannerMessage)
-					Me.SCANSTATUS.Value = _scannerMessage
+					'Me.SCANSTATUS.Value = _scannerMessage
+					DisplayPrompt(_scannerMessage)
 				Else
 					DisplayPrompt("Appeal Response saved...")
 				End If
