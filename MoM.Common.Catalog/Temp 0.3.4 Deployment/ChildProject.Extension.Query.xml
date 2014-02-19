@@ -1,0 +1,42 @@
+<QueryViewSpec 
+    xmlns:c="bb_appfx_commontypes"
+    ID="29bb6d0d-0a5d-4102-b594-35ae3d463319"
+    Name="Child Project Extension Query"
+    Description="Provides support for querying on Child Project Extension information."
+    Author="Cary Mayeda"
+    PrimaryKeyField="ID"
+    RecordType="Child Project Extension"
+    IsRoot="true"
+	c:SecurityUIFolder="Sponsorship\Opportunity\Child Project"
+    xmlns="bb_appfx_queryview" >
+
+	<!-- 
+	Remarks:    
+
+**** THIS IS ONLY USED BECAUSE COMMON HAS A DEPENDENCY ON THIS QUERY VIEW FROM CHILD PROJECT ******
+	-->
+
+	<ViewImplementation ViewName="USR_V_QUERY_CHILDPROJECTEXTENSION">
+        <ViewSQL>
+<![CDATA[
+	select	cp_ext.ID,
+			(select LOOKUPID from CONSTITUENT WHERE ID = cp_ext.ID) as LOOKUPID,
+			proj_const.NAME
+	  from	dbo.USR_CHILDPROJECTEXTENSION cp_ext
+	  
+ left join	dbo.CONSTITUENT as proj_const on proj_const.ID = cp_ext.ID
+	
+]]>
+</ViewSQL>
+    </ViewImplementation>
+    <Output>
+        <OutputFields>
+            <OutputField Name="ID" Caption="System record ID" Category="System Fields" DataType="Guid" IsHidden="true"/>
+			<OutputField Name="LOOKUPID" Caption="Lookup ID" DataType="String" />
+			<OutputField Name="NAME" Caption="Name" IsDefaultOutput="true" />
+        </OutputFields>
+		
+    </Output>
+
+
+</QueryViewSpec>

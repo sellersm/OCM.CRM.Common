@@ -1,0 +1,95 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="f79746e5-6e07-456e-b085-385363a93b01"
+	Name="Prospect Financial Sponsors Query"
+	Description="Used to find the financial prospect sponsors that should not be converted."
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="FINANCIALSPONSORID"
+	RecordType="Constituent"
+	common:SecurityUIFolder="Statements"
+	>
+
+	<!-- 
+	Remarks:    Used for Prospect segments in statements
+
+	History:
+	Date            Modified By     Comments
+	03-Jul-2013		CMayeda			Initial Version
+	-->
+	
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_PROSPECTFINANCIALSPONSORS">
+		<ViewSQL>
+			<![CDATA[
+	 select	s.CONSTITUENTID as FINANCIALSPONSORID, 
+			c.LOOKUPID as FINANCIALSPONSORLOOKUPID, 
+			s.ID as SPONSORSHIPID,
+			s.STARTDATE, 
+			s.SPONSORSHIPOPPORTUNITYID,
+			case 
+				when so_child.ID is not null then 'Child'
+				else 'Project'
+			end as SPONSORSHIPTYPE,
+			so.LOOKUPID SPONSORSHIPOPPORTUNITYLOOKUPID,
+			(select min(STARTDATE) 
+			   from	dbo.SPONSORSHIP s2
+	           join dbo.REVENUESPLIT r_split2 on r_split2.ID = s2.REVENUESPLITID
+	           join dbo.FINANCIALTRANSACTION f_trans2 on  r_split2.REVENUEID = f_trans2.ID
+	           join	dbo.USR_SPONSORSHIPEXTENSION s_ext2 on s2.ID = s_ext2.ID
+			   join	dbo.USR_CURRENTOPPORTUNITYSPONSORSHIPSTATUSCODE s_code2 on s_ext2.CURRENTOPPORTUNITYSPONSORSHIPSTATUSCODEID = s_code2.ID
+			  where	s2.STATUSCODE = 1  --Active
+			    and	lower (s_code2.DESCRIPTION) = LOWER ('Prospect Sponsored')
+			    and f_trans2.CONSTITUENTID = c.ID) as EARLIESTACTIVEPROSPECTSPONSORSHIPSTARTDATE,
+
+			(select max (STARTDATE) 
+			   from	dbo.SPONSORSHIP s3
+	           join dbo.REVENUESPLIT r_split3 on r_split3.ID = s3.REVENUESPLITID
+	           join dbo.FINANCIALTRANSACTION f_trans3 on  r_split3.REVENUEID = f_trans3.ID
+	           join	dbo.USR_SPONSORSHIPEXTENSION s_ext3 on s3.ID = s_ext3.ID
+			   join	dbo.USR_CURRENTOPPORTUNITYSPONSORSHIPSTATUSCODE s_code3 on s_ext3.CURRENTOPPORTUNITYSPONSORSHIPSTATUSCODEID = s_code3.ID
+			  where	s3.STATUSCODE = 1  --Active
+			    and	lower (s_code3.DESCRIPTION) = LOWER ('Prospect Sponsored')
+			    and f_trans3.CONSTITUENTID = c.ID) as LATESTACTIVEPROSPECTSPONSORSHIPSTARTDATE
+			   
+	   from	dbo.SPONSORSHIP s
+	   join dbo.REVENUESPLIT r_split on r_split.ID = s.REVENUESPLITID
+	   join dbo.FINANCIALTRANSACTION f_trans on  r_split.REVENUEID = f_trans.ID
+	   join	dbo.CONSTITUENT c on f_trans.CONSTITUENTID = c.ID
+	   join	dbo.SPONSORSHIPOPPORTUNITY so on so.ID = s.SPONSORSHIPOPPORTUNITYID   
+	   join	dbo.USR_SPONSORSHIPEXTENSION s_ext on s.ID = s_ext.ID
+	   join	dbo.USR_CURRENTOPPORTUNITYSPONSORSHIPSTATUSCODE s_code on s_ext.CURRENTOPPORTUNITYSPONSORSHIPSTATUSCODEID = s_code.ID
+  left join dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on so.ID = so_child.ID
+   
+	  where	s.STATUSCODE = 1  --Active
+		and	lower (s_code.DESCRIPTION) = LOWER ('Prospect Sponsored')
+		and	s.CONSTITUENTID not in (select ID from USR_V_QUERY_PROSPECTSTOCONVERT)
+
+	
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="FINANCIALSPONSORID" />
+			<OutputField Name="FINANCIALSPONSORLOOKUPID" Caption="Financial Sponsor Lookup ID" DataType="String" />
+			<OutputField Name="SPONSORSHIPID" Caption="Sponsorship record ID" Category="System Fields" DataType="Guid" />
+			<OutputField Name="STARTDATE" Caption="Start Date" DataType="Date" />
+			<OutputField Name="SPONSORSHIPOPPORTUNITYID" Caption="Sponsorship Opportunity record ID" Category="System Fields" DataType="Guid" />
+			<OutputField Name="SPONSORSHIPOPPORTUNITYLOOKUPID" Caption="Sponsorship Opportunity Lookup ID" DataType="String" />
+			<OutputField Name="SPONSORSHIPTYPE" Caption="Sponsorship Type" DataType="String" />
+			<OutputField Name="EARLIESTACTIVEPROSPECTSPONSORSHIPSTARTDATE" Caption="Earliest Active Prospect Sponsorship Date" DataType="Date" />
+			<OutputField Name="LATESTACTIVEPROSPECTSPONSORSHIPSTARTDATE" Caption="Latest Prospect Sponsorship Date" DataType="Date" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView  RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="FINANCIALSPONSORID" PathAlias="Constituent"/>
+		<AddRelatedView  RelatedView="V_QUERY_SPONSORSHIP" RelatedField="ID" Field="SPONSORSHIPID" PathAlias="Sponsorship"/>
+	</RelationshipOperations>
+
+</QueryViewSpec>
+

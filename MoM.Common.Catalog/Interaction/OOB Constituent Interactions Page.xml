@@ -1,0 +1,845 @@
+﻿<PageDefinitionSpec xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="ede4cf10-a84d-4434-87ef-ae143c78eaaf" Name="Constituent Interactions Page" Description="Displays the constituent interactions." Author="Blackbaud Product Development" ExpressionDataFormID="4d667c74-48e0-4e20-9d5d-2806eac17c5f" ContextRecordType="Constituent" xmlns="bb_appfx_pagedefinition">
+	<InstalledProductList xmlns="bb_appfx_commontypes">
+		<InstalledProduct ID="3117d2c8-7f46-42f2-abeb-b654f2f63046" />
+		<InstalledProduct ID="42c15648-749e-4859-a56d-3a6474814cc7" />
+	</InstalledProductList>
+	<ResourceFile AssemblyName="Blackbaud.AppFx.Constituent.Catalog.dll" ClassName="Blackbaud.AppFx.Constituent.Catalog.Interactions.Page" />
+	<PageHeader Caption="=String.Format(Me.Globals.GetResourceString(&quot;Name-Interactions&quot;), Page.Fields!NAME)" ImageKey="catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.interactions.png" />
+	<SummarySection ID="de3d988a-99ed-4384-a357-7afabc7fdc4f" Caption="Profile" HideCaption="true" CaptionResourceKey="$$profile">
+		<DataForm ID="1f4fea31-5779-44db-bcce-ec5afa36d82b" />
+		<Actions>
+			<Action ID="de94790a-64a7-47c1-b025-aff8040dff1d" Caption="View related constituent" LinkFieldID="RELATEDCONSTITUENT" CaptionResourceKey="$$view_related_constituent">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>RELATEDCONSTITUENTID</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMRelationshipsTab.html</HelpKey>
+			</Action>
+			<Action ID="e2320024-d9e9-454c-9730-a340dc0cf91b" Caption="View primary business" LinkFieldID="PRIMARYBUSINESS" CaptionResourceKey="$$view_primary_business">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>PRIMARYBUSINESSID</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMRelationshipsTab.html</HelpKey>
+			</Action>
+			<Action ID="43b5ed13-6d20-42a7-b247-c1cec70a91d5" Caption="View household" LinkFieldID="HOUSEHOLDTEXT" CaptionResourceKey="$$view_household">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>HOUSEHOLDID</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMRelationshipsTab.html</HelpKey>
+			</Action>
+			<Action ID="45c776b9-10ec-4ced-8380-9096039bf72c" Caption="View as board member" LinkFieldID="BOARDMEMBERCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_board_member">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="134e17a8-1a79-4362-b284-c3f72c4c10e6" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMConstituenciesTab.html</HelpKey>
+			</Action>
+			<Action ID="0e548854-8474-439c-91f3-c756a2061477" Caption="View as committee" LinkFieldID="COMMITTEECONSTITUENCYTEXT" CaptionResourceKey="$$view_as_committee">
+				<ShowPage PageID="502d8e60-f3dd-46fa-b315-e8f4704e0d25" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+			</Action>
+			<Action ID="9b4cb799-ddcb-40f0-b30a-e09e25e40492" Caption="View as committee member" LinkFieldID="COMMITTEEMEMBERCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_committee_member">
+				<ShowPage PageID="66d33d4a-5345-48ac-8db8-503a61446d5c" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMCommitteeMemberPage.html</HelpKey>
+			</Action>
+			<Action ID="05b19da7-44c1-4534-8728-d4aada7546f8" Caption="View as relation" LinkFieldID="RELATIONCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_relation">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="bcd9ae35-b911-4eb5-bf9d-2e1a39e6a1a6" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMRelationshipsTab.html</HelpKey>
+			</Action>
+			<Action ID="456bbc7c-7836-46d2-88a6-ec5a9261c5b3" Caption="View as staff" LinkFieldID="STAFFCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_staff">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="134e17a8-1a79-4362-b284-c3f72c4c10e6" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMConstituenciesTab.html</HelpKey>
+			</Action>
+			<Action ID="db15f3bb-02b3-4f21-bc93-a5250fe8a3ed" Caption="View as alumni" LinkFieldID="ALUMNUSSTATUSTEXT" CaptionResourceKey="$$view_as_alumni">
+				<ShowPage PageID="f8cd98e0-e1ea-4513-972a-e40c24c2a99a" TabID="134e17a8-1a79-4362-b284-c3f72c4c10e6" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMAddEducationHistory.html</HelpKey>
+			</Action>
+			<Action ID="c0c6fd1d-0340-4852-93e3-3b5e40cba2bb" Caption="View as donor" LinkFieldID="DONORCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_donor">
+				<ShowPage PageID="77b53b34-4271-448d-980d-bba1fe8030ce" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMGivingInformation.html</HelpKey>
+			</Action>
+			<Action ID="8a583bca-e991-4370-b412-64d66b33bdf3" Caption="View as Loyal donor" LinkFieldID="LOYALDONORCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_loyal_donor">
+				<ShowPage PageID="77b53b34-4271-448d-980d-bba1fe8030ce" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMGivingInformation.html</HelpKey>
+			</Action>
+			<Action ID="2f725dfa-5718-4ecc-8bb6-169be7dbaf1f" Caption="View as Major donor" LinkFieldID="MAJORDONORCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_major_donor">
+				<ShowPage PageID="77b53b34-4271-448d-980d-bba1fe8030ce" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMGivingInformation.html</HelpKey>
+			</Action>
+			<Action ID="aebe5915-266c-4584-ac15-9e479c483252" Caption="View as Member" LinkFieldID="MEMBERCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_member">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="c0e15cdd-14e8-4ede-9867-60f7d787607c" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+			</Action>
+			<Action ID="bb468cbf-8ca3-499c-92a9-46671aef244b" Caption="View as Recognition" LinkFieldID="RECOGNITIONCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_recognition">
+				<ShowPage PageID="77b53b34-4271-448d-980d-bba1fe8030ce" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+			</Action>
+			<Action ID="23188e2d-e845-4155-8d0e-e0567d0c4454" Caption="View as fundraiser" LinkFieldID="FUNDRAISERCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_fundraiser">
+				<ShowPage PageID="baee8762-6727-43a7-9645-5dd776f6289a" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>MGFundraiser_Pg.html</HelpKey>
+			</Action>
+			<Action ID="2f059476-1200-436f-8613-93a73d1eb7d9" Caption="View as prospect" LinkFieldID="PROSPECTCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_prospect">
+				<ShowPage PageID="75a987f3-46f9-4b03-9af2-c3ccce89b3f4" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>MGProspectRecord.html</HelpKey>
+			</Action>
+			<Action ID="297ecb1f-7cb3-4501-9869-ed34e18744dc" Caption="View as volunteer" LinkFieldID="VOLUNTEERCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_volunteer">
+				<ShowPage PageID="ccf1af83-944d-4418-8e5c-1c9f18b1865f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>VOLVolunteerRecord.html</HelpKey>
+			</Action>
+			<Action ID="f2ea2683-7477-40af-85f0-a0f442ac323b" Caption="View user defined constituencies" LinkFieldID="USERDEFINEDCONSTITUENCYTEXT" CaptionResourceKey="$$view_user_defined_constituencies">
+				<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="134e17a8-1a79-4362-b284-c3f72c4c10e6" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMConstituenciesTab.html</HelpKey>
+			</Action>
+			<Action ID="0247d183-6029-495a-81bb-41b3004008b2" Caption="View as Registrant" LinkFieldID="REGISTRANTSTATUSTEXT" CaptionResourceKey="$$view_as_registrant">
+				<ShowPage PageID="f2e36b8d-28d9-4abc-8d58-229e67dd877a" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EVRegistrantView.html</HelpKey>
+			</Action>
+			<Action ID="c767a9db-9f30-4b18-b130-a8e37d2f339f" Caption="View as vendor" LinkFieldID="VENDORSTATUSTEXT" CaptionResourceKey="$$view_as_vendor">
+				<ShowPage PageID="eac45758-b64a-4bf1-8bc3-0fb9dca4373b" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>GLBEVVendorView.html</HelpKey>
+			</Action>
+			<Action ID="327fe11a-cc1a-428a-979d-1382e3e3536a" Caption="View as bank" LinkFieldID="BANKCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_bank">
+				<ShowPage PageID="2a7b7119-22c0-4cfb-872e-edb526abba25" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>BanksBankPage.html</HelpKey>
+			</Action>
+			<Action ID="08764c28-4e65-40f5-9038-e54d2d14037e" Caption="View primary education" LinkFieldID="PRIMARYEDUCATION" CaptionResourceKey="$$view_primary_education">
+				<ShowPage PageID="2d2143a4-d01d-470d-8df1-591867902c18" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>PRIMARYEDUCATIONID</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMGoEducationHistory.html</HelpKey>
+			</Action>
+			<Action ID="6d5b3891-ca3d-49e6-b0c7-2eea0c73bf7d" Caption="View planned gifts" LinkFieldID="PLANNEDGIVERCONSTITUENCYTEXT" CaptionResourceKey="$$view_planned_gifts">
+				<ShowPage PageID="77b53b34-4271-448d-980d-bba1fe8030ce" TabID="6a508a90-8377-49e4-baeb-aadc26e809cc" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CRMGivingInformation.html</HelpKey>
+			</Action>
+			<Action ID="6ca6c367-d4ae-4a09-8d8a-5d3d65fbd2d7" Caption="View as grantor" LinkFieldID="GRANTORCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_grantor">
+				<ShowPage PageID="79c461a6-fc60-4b3d-ae6e-4915e37d9e79" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>CFGrantors.html</HelpKey>
+			</Action>
+			<Action ID="b4a76421-b588-41ff-9e36-4b0d319c4e68" Caption="View as sponsor" LinkFieldID="SPONSORCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_sponsor">
+				<ShowPage PageID="35740996-3dbb-4414-903f-c992d7504afb" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+			</Action>
+			<Action ID="181222d0-ae6e-4c00-bc74-17cfa3605a3c" Caption="View as student" LinkFieldID="STUDENTCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_student">
+				<ShowPage PageID="30cf4d37-13a9-4249-b1ce-5922700ab8d6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEManageStudentRecord.html</HelpKey>
+			</Action>
+			<Action ID="749fc1fa-b5aa-43f0-8ae8-a301fea7fc52" Caption="View as faculty" LinkFieldID="FACULTYCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_faculty">
+				<ShowPage PageID="ef51f9bf-5a35-4485-867a-c1564389f502" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEManageFacultyRecord.html</HelpKey>
+			</Action>
+			<Action ID="a5cb3c37-826a-4188-b2fc-aaa759a3e7ac" Caption="View student enrollment" LinkFieldID="STUDENTCONSTITUENCYTEXT" CaptionResourceKey="$$view_student_enrollment">
+				<ShowPage PageID="6e92427f-02c3-45e4-934a-0a72bdb8b5a6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>STUDENTENROLLMENTID</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEEnrollmentRecord.html</HelpKey>
+			</Action>
+			<Action ID="d51c8fee-41d2-4cc6-9e8d-933844fa2492" Caption="View as faculty" LinkFieldID="FACULTYCONSTITUENCYTEXT" CaptionResourceKey="$$view_as_faculty">
+				<ShowPage PageID="ef51f9bf-5a35-4485-867a-c1564389f502" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEManageFacultyRecord.html</HelpKey>
+			</Action>
+			<Action ID="6d434aa7-ec36-4873-8209-85052278f2aa" Caption="View School" Visible="=(Products.ProductIsInstalled(InstalledProducts.BasicEducation))" LinkFieldID="CURRENTSCHOOL" CaptionResourceKey="$$view_school">
+				<ShowPage PageID="6e92427f-02c3-45e4-934a-0a72bdb8b5a6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>CURRENTENROLLMENTID</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEEnrollmentRecord.html</HelpKey>
+			</Action>
+			<Action ID="33e0acc0-0463-4919-9f3a-6ff641ac4595" Caption="View School2" Visible="=(Products.ProductIsInstalled(InstalledProducts.BasicEducation))" LinkFieldID="CURRENTSCHOOL2" CaptionResourceKey="$$view_school2">
+				<ShowPage PageID="6e92427f-02c3-45e4-934a-0a72bdb8b5a6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>CURRENTENROLLMENTID2</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEEnrollmentRecord.html</HelpKey>
+			</Action>
+			<Action ID="881518a1-ec9b-423b-a41f-08f4c27b0a01" Caption="View School3" Visible="=(Products.ProductIsInstalled(InstalledProducts.BasicEducation))" LinkFieldID="CURRENTSCHOOL3" CaptionResourceKey="$$view_school3">
+				<ShowPage PageID="6e92427f-02c3-45e4-934a-0a72bdb8b5a6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>CURRENTENROLLMENTID3</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEEnrollmentRecord.html</HelpKey>
+			</Action>
+			<Action ID="893d3b76-d08e-40d2-a98b-1235d904145a" Caption="View alumnus enrollment" LinkFieldID="ALUMNUSCONSTITUENCYTEXT" CaptionResourceKey="$$view_alumnus_enrollment">
+				<ShowPage PageID="6e92427f-02c3-45e4-934a-0a72bdb8b5a6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>ALUMNUSENROLLMENTID</SectionField>
+					</ActionContext>
+				</ShowPage>
+				<HelpKey>EEEnrollmentRecord.html</HelpKey>
+			</Action>
+			<Action ID="e0e09bda-f763-4466-96be-50e6c51ff310" Caption="Edit" ImageKey="res:editsmall" LinkFieldID="ADDRESS" CaptionResourceKey="$$edit">
+				<ShowDataForm DataFormID="9bef22ab-496f-48fd-98fe-5be72270ef30" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>ADDRESSID</SectionField>
+					</ActionContext>
+					<PostActionEvent>
+						<RefreshSection />
+					</PostActionEvent>
+				</ShowDataForm>
+			</Action>
+			<Action ID="fa9c69ba-921a-4d74-998c-579e4cd79c0f" Caption="Edit" ImageKey="res:editsmall" LinkFieldID="PHONENUMBER" CaptionResourceKey="$$edit">
+				<ShowDataForm DataFormID="debc671c-7089-4d3c-81e8-a49e32d3ed54" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>PHONENUMBERID</SectionField>
+					</ActionContext>
+					<PostActionEvent>
+						<RefreshSection />
+					</PostActionEvent>
+				</ShowDataForm>
+			</Action>
+			<Action ID="78a8cb6c-adc1-4258-b99b-858cbcfd97f7" Caption="Edit" ImageKey="res:editsmall" LinkFieldID="EMAILADDRESS" CaptionResourceKey="$$edit">
+				<ShowDataForm DataFormID="14c40226-2dab-49fe-b92f-c5200f0b59a9" xmlns="bb_appfx_commontypes">
+					<ActionContext>
+						<SectionField>EMAILADDRESSID</SectionField>
+					</ActionContext>
+					<PostActionEvent>
+						<RefreshSection />
+					</PostActionEvent>
+				</ShowDataForm>
+			</Action>
+			<Action ID="8fc2a72f-382a-425d-9acd-5cde26f6e8f2" Caption="Edit" ImageKey="res:editsmall" Visible="=Page.Fields!USER_GRANTED_CONSTITPERSONALINFO_EDIT" LinkFieldID="PICTURE" CaptionResourceKey="$$edit">
+				<ExecuteCLRAction xmlns="bb_appfx_commontypes">
+					<ComponentIdentifier AssemblyName="Blackbaud.AppFx.ConstituentPage.Client.dll" ClassName="Blackbaud.AppFx.ConstituentPage.Client.ConstituentEditAction" />
+					<ScriptIdentifier Url="browser/htmlforms/constituent/ConstituentEditAction.js" ObjectName="BBUI.customactions.constituent.ConstituentEditAction" />
+					<ActionContext>
+						<PageContextID />
+					</ActionContext>
+					<PostActionEvent>
+						<RefreshPage />
+					</PostActionEvent>
+				</ExecuteCLRAction>
+			</Action>
+		</Actions>
+		<HelpKey />
+	</SummarySection>
+	<Tabs>
+		<Tab Caption="Interactions" ID="a35cf3ec-0175-4f01-82bd-e32e78d426c1" CaptionResourceKey="$$interactions">
+			<Sections>
+				<Section ID="5a659307-f96b-4201-ad6a-4f989c0d8ac0" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
+					<DataList ID="cbbac8af-4f55-4a6e-b94c-628cf44d240d">
+						<RenderStyle>
+							<GroupedView>
+								<Groups>
+									<Group ColumnName="STATUS" />
+									<Group ColumnName="OWNER" />
+									<Group ColumnName="TYPE" />
+									<Group ColumnName="DATE" />
+								</Groups>
+								<DetailViewForm ViewDataFormID="=Fields!ViewFormID" HeaderCaption="Details" HeaderCaptionResourceKey="$$details" />
+							</GroupedView>
+						</RenderStyle>
+					</DataList>
+					<Actions>
+						<Action ID="118a24cc-4b55-4858-82b2-a790ff80f196" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+							<ActionGroup>
+								<Actions>
+									<Action ID="f2e6aeb4-f9b7-42d1-9519-99d0a5c9b4db" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" Visible="=Not CBool(Fields!ISMOVE) And Not CBool(Fields!ISSTEWARDSHIPSTEP)" Enabled="=Not CBool(Fields!ISMOVE) And Not CBool(Fields!ISSTEWARDSHIPSTEP)" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+										<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+									</Action>
+									<Action ID="bd3740d5-0ddc-4f73-a0da-fbea2f4d6e62" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" Visible="=CBool(Fields!ISMOVE) And Not CBool(Fields!ISSTEWARDSHIPSTEP)" Enabled="=CBool(Fields!ISMOVE) And Not CBool(Fields!ISSTEWARDSHIPSTEP)" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+										<ShowPage PageID="ea2743e0-38c2-42f9-b9f7-63eebeac7377" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+									</Action>
+									<Action ID="27ac64b8-cc7b-4fb7-b06c-8ae4f2f84967" Caption="Stewardship step" ImageKey="RES:goto_round" DefaultAction="true" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP)" Enabled="=CBool(Fields!ISSTEWARDSHIPSTEP)" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$stewardship_step">
+										<ShowPage PageID="86c60726-2e2c-4005-b944-feb8088bdb38" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowPage>
+									</Action>
+									<Action ID="0cf89ac1-71ea-48d8-b7da-635041235983" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="OWNER" CaptionResourceKey="$$owner">
+										<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>OWNERID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+									</Action>
+								</Actions>
+							</ActionGroup>
+						</Action>
+						<Action ID="d4309111-ea9b-4d3b-b2c4-b3598b5ad68b" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+							<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<PageContextID />
+								</ActionContext>
+								<PostActionEvent>
+									<RefreshSection />
+								</PostActionEvent>
+							</ShowAddDataForm>
+							<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+						</Action>
+						<Action ID="eaa32a4d-805d-4de3-aa72-a2f17865b0b6" Caption="Edit" ImageKey="RES:Edit" CaptionResourceKey="$$edit">
+							<ActionGroup>
+								<Actions>
+									<Action ID="d2596788-3b96-46de-9737-33fb6cf26d26" Caption="Interaction" ImageKey="RES:Edit" Visible="=(Not CBool(Fields!ISMOVE) Or Len(Fields!ID)=0) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" CaptionResourceKey="$$interaction">
+										<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowDataForm>
+										<HelpKey>CRMEditConstInteractions.html</HelpKey>
+									</Action>
+									<Action ID="dc3d5165-0168-418b-bc99-ea66c9684d40" Caption="Interaction" ImageKey="RES:Edit" Visible="=CBool(Fields!ISMOVE) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" CaptionResourceKey="$$interaction">
+										<ShowDataForm DataFormID="94bd73fa-61e1-4275-aa44-111ca5bb334c" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowDataForm>
+										<HelpKey>CRMEditConstInteractions.html</HelpKey>
+									</Action>
+									<Action ID="deb34258-3177-428c-bce3-97b94cea9005" Caption="Interaction" ImageKey="RES:Edit" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP) And CBool(Fields!ISINDIVIDUALSTEP)" CaptionResourceKey="$$interaction">
+										<ShowDataForm DataFormID="3c8ca438-914c-4391-b75c-8512a449ddf1" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowDataForm>
+										<HelpKey>MGStewardEditStep.html</HelpKey>
+									</Action>
+									<Action ID="8ccac364-1eb4-4aad-adaf-007a96557c01" Caption="Interaction" ImageKey="RES:Edit" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP) And (Not CBool(Fields!ISINDIVIDUALSTEP))" CaptionResourceKey="$$interaction">
+										<ShowDataForm DataFormID="93ca630c-413c-483d-b08a-363089e5cab5" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowDataForm>
+										<HelpKey>MGStewardEditStep.html</HelpKey>
+									</Action>
+									<Action ID="fc98c014-9ee4-46e6-906c-240896927d5e" Caption="Responses" ImageKey="RES:Edit" Visible="=Not CBool(Fields!ISMOVE)" Enabled="=Not CBool(Fields!ISSTEWARDSHIPSTEP)" CaptionResourceKey="$$responses">
+										<ShowDataForm DataFormID="ddb74740-0698-46cd-bb8e-77605fcdf7de" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowDataForm>
+										<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+									</Action>
+									<Action ID="2507cef8-916b-4a76-bc0d-b2f56d51fdf3" Caption="Responses" ImageKey="RES:Edit" Visible="=CBool(Fields!ISMOVE)" Enabled="=Not CBool(Fields!ISSTEWARDSHIPSTEP)" CaptionResourceKey="$$responses">
+										<ShowDataForm DataFormID="7e34a5d1-28df-4b0c-9811-15dc3adf3d22" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowDataForm>
+										<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+									</Action>
+								</Actions>
+							</ActionGroup>
+						</Action>
+						<Action ID="c7ebfd3c-0000-4ad1-bb2d-196198ee6a8b" Caption="Delete" ImageKey="RES:Delete" Visible="=Not CBool(Fields!ISMOVE) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" CaptionResourceKey="$$delete">
+							<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ExecuteRecordOperation>
+							<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+						</Action>
+						<Action ID="9e515f4e-49f4-4263-9b1a-3274b1cd2a71" Caption="Delete" ImageKey="RES:Delete" Visible="=CBool(Fields!ISMOVE) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" CaptionResourceKey="$$delete">
+							<ExecuteRecordOperation RecordOperationID="c8616393-0632-47a0-ae93-1a23d36c7887" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ExecuteRecordOperation>
+							<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+						</Action>
+						<Action ID="61fc2891-0249-49c4-8dc2-3c53c2437583" Caption="Delete" ImageKey="RES:Delete" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP)" CaptionResourceKey="$$delete">
+							<ExecuteRecordOperation RecordOperationID="5d28ff03-3116-45b8-a716-593cc355105b" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ExecuteRecordOperation>
+							<HelpKey>MGStewardDeleteStep.html</HelpKey>
+						</Action>
+					</Actions>
+					<HelpKey>CRMInteractions.html</HelpKey>
+				</Section>
+				<Section ID="37ed14c9-18a6-42d7-879a-cbd0592e62ee" Caption="Interactions" Visible="=CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
+					<DataList ID="dc27b924-d2ec-4865-b5a6-77b52fdaa957">
+						<RenderStyle>
+							<GroupedView>
+								<Groups>
+									<Group ColumnName="GROUPORPRIMARYSORT" Default="true" />
+									<Group ColumnName="GROUPORPRIMARYSORTVALUE" />
+									<Group ColumnName="STATUS" />
+									<Group ColumnName="ISSTEP" />
+									<Group ColumnName="DATE" />
+								</Groups>
+								<DetailViewForm ViewDataFormID="=Fields!ViewFormID" HeaderCaption="Details" HeaderCaptionResourceKey="$$details" />
+							</GroupedView>
+						</RenderStyle>
+					</DataList>
+					<Actions>
+						<Action ID="caf8d94f-c82b-4868-9bab-997421921d54" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+							<ActionGroup>
+								<Actions>
+									<Action ID="3db91787-73b9-4edd-867b-c34605e607c5" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" Visible="=(Not CBool(Fields!ISSTEP)) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" Enabled="=(Not CBool(Fields!ISSTEP)) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+										<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+									</Action>
+									<Action ID="c941808a-bc57-4528-b828-c16e726f1176" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" Visible="=(CBool(Fields!ISSTEP)) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" Enabled="=(CBool(Fields!ISSTEP)) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+										<ShowPage PageID="66081e86-940d-4be9-ace6-de6d4b45097c" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+									</Action>
+									<Action ID="56e27c22-1de7-4d30-a7c6-a85447357fe1" Caption="Stewardship step" ImageKey="RES:goto_round" DefaultAction="true" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP)" Enabled="=CBool(Fields!ISSTEWARDSHIPSTEP)" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$stewardship_step">
+										<ShowPage PageID="86c60726-2e2c-4005-b944-feb8088bdb38" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>ID</SectionField>
+											</ActionContext>
+										</ShowPage>
+									</Action>
+									<Action ID="742f2636-01dc-4ce1-8789-8142a9c3c0b4" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="FUNDRAISER" CaptionResourceKey="$$owner">
+										<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+											<ActionContext>
+												<SectionField>OWNERID</SectionField>
+											</ActionContext>
+										</ShowPage>
+										<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+									</Action>
+								</Actions>
+							</ActionGroup>
+						</Action>
+						<Action ID="4b9cc58f-2e24-4554-be2a-bfaf3f5c8496" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+							<ShowAddDataForm DataFormID="9554fe6b-5243-401b-bbab-a53fefbe4b98" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<PageContextID />
+								</ActionContext>
+								<PostActionEvent>
+									<RefreshPage />
+								</PostActionEvent>
+							</ShowAddDataForm>
+							<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+						</Action>
+						<Action ID="a68d6821-8808-4ffb-9c87-55f338680bd2" Caption="Edit" ImageKey="RES:Edit" Visible="=(Not CBool(Fields!ISSTEP) Or Len(Fields!ID)=0) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" Enabled="=CBool(Fields!HASPERMISSIONS)" CaptionResourceKey="$$edit">
+							<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ShowDataForm>
+							<HelpKey>CRMEditConstInteractions.html</HelpKey>
+						</Action>
+						<Action ID="f3da6b02-d854-45e5-ad88-846bc639c9dd" Caption="Edit" ImageKey="RES:Edit" Visible="=CBool(Fields!ISSTEP) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" Enabled="=CBool(Fields!HASPERMISSIONS)" CaptionResourceKey="$$edit">
+							<ShowDataForm DataFormID="94bd73fa-61e1-4275-aa44-111ca5bb334c" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ShowDataForm>
+							<HelpKey>CRMEditConstInteractions.html</HelpKey>
+						</Action>
+						<Action ID="18e3e97e-46de-410f-9c14-e0c62dd0f498" Caption="Edit" ImageKey="RES:Edit" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP) And CBool(Fields!ISINDIVIDUALSTEP)" Enabled="=CBool(Fields!HASPERMISSIONS)" CaptionResourceKey="$$edit">
+							<ShowDataForm DataFormID="3c8ca438-914c-4391-b75c-8512a449ddf1" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ShowDataForm>
+							<HelpKey>MGStewardEditStep.html</HelpKey>
+						</Action>
+						<Action ID="c10064a6-b54b-4f2d-8b2e-53e0032647b5" Caption="Edit" ImageKey="RES:Edit" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP) And (Not CBool(Fields!ISINDIVIDUALSTEP))" Enabled="=CBool(Fields!HASPERMISSIONS)" CaptionResourceKey="$$edit">
+							<ShowDataForm DataFormID="93ca630c-413c-483d-b08a-363089e5cab5" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ShowDataForm>
+							<HelpKey>MGStewardEditStep.html</HelpKey>
+						</Action>
+						<Action ID="b39ea8d0-31b0-422b-9510-695e44f29dab" Caption="Delete" ImageKey="RES:Delete" Visible="=Not CBool(Fields!ISSTEP) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" Enabled="=CBool(Fields!HASPERMISSIONS)" CaptionResourceKey="$$delete">
+							<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ExecuteRecordOperation>
+							<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+						</Action>
+						<Action ID="e05a9df9-2bd3-45e6-a1ad-7c44129bd6f9" Caption="Delete" ImageKey="RES:Delete" Visible="=CBool(Fields!ISSTEP) And (Not CBool(Fields!ISSTEWARDSHIPSTEP))" Enabled="=CBool(Fields!HASPERMISSIONS)" CaptionResourceKey="$$delete">
+							<ExecuteRecordOperation RecordOperationID="c8616393-0632-47a0-ae93-1a23d36c7887" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ExecuteRecordOperation>
+							<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+						</Action>
+						<Action ID="582c3446-f51a-4d86-ac0e-0a4eda620fa2" Caption="Delete" ImageKey="RES:Delete" Visible="=CBool(Fields!ISSTEWARDSHIPSTEP)" Enabled="=CBool(Fields!HASPERMISSIONS)" CaptionResourceKey="$$delete">
+							<ExecuteRecordOperation RecordOperationID="5d28ff03-3116-45b8-a716-593cc355105b" xmlns="bb_appfx_commontypes">
+								<ActionContext>
+									<SectionField>ID</SectionField>
+								</ActionContext>
+							</ExecuteRecordOperation>
+							<HelpKey>MGStewardDeleteStep.html</HelpKey>
+						</Action>
+					</Actions>
+					<HelpKey>CRMInteractions.html</HelpKey>
+				</Section>
+			</Sections>
+		</Tab>
+	</Tabs>
+	<PageActionGroups>
+		<PageActionGroup ID="fdcd37ab-bb14-4b6a-a2ea-4c41d162ca79" Caption="View as" CaptionResourceKey="$$view_as">
+			<Actions>
+				<Action ID="51cbe3de-74c4-416f-94d0-92ee10d71d15" Caption="Constituent" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" CaptionResourceKey="$$constituent">
+					<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+				</Action>
+				<Action ID="7a6f5a2d-81ae-409a-b392-5eaab3be76a8" Caption="=Page.Fields!VIEWAS_ADVOCATECONSTITUENCYTEXT" ImageKey="CATALOG:Blackbaud.AppFx.Advocacy.Catalog,Blackbaud.AppFx.Advocacy.Catalog.advocate_32.png" Visible="=Fields!ISADVOCATE">
+					<ShowPage PageID="16a707a7-d4d0-4848-bb03-4ac98f7479d9" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+				</Action>
+				<Action ID="2042fdbf-4566-4b65-aab2-50b10d59a099" Caption="=Page.Fields!VIEWAS_PROSPECTCONSTITUENCYTEXT" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.MajorGiving.Catalog.dll,Blackbaud.AppFx.MajorGiving.Catalog.prospect_32.png&quot;))" Visible="=Fields!ISPROSPECT orelse Fields!ISFORMERPROSPECT">
+					<ShowPage PageID="75a987f3-46f9-4b03-9af2-c3ccce89b3f4" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>MGProspectRecord.html</HelpKey>
+				</Action>
+				<Action ID="f6fb65c3-a6e5-4b7f-a07f-d871f140cf43" Caption="=Page.Fields!VIEWAS_FUNDRAISERCONSTITUENCYTEXT" ImageKey="catalog:Blackbaud.AppFx.MajorGiving.Catalog.dll,Blackbaud.AppFx.MajorGiving.Catalog.fundraiser.png" Visible="=(Fields!ISFUNDRAISER orelse Fields!ISFORMERFUNDRAISER) AndAlso Not Page.Fields!ISGROUP">
+					<ShowPage PageID="baee8762-6727-43a7-9645-5dd776f6289a" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>MGFundraiser_Pg.html</HelpKey>
+				</Action>
+				<Action ID="cdf2343c-909b-4c9b-a73c-2932ce7ca719" Caption="=Page.Fields!VIEWAS_VOLUNTEERCONSTITUENCYTEXT" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.VolunteerManagement.Catalog.dll,Blackbaud.AppFx.VolunteerManagement.Catalog.fa_volunteer.png&quot;))" Visible="=(Fields!ISVOLUNTEER orelse Fields!ISFORMERVOLUNTEER) AndAlso Not Page.Fields!ISGROUP">
+					<ShowPage PageID="ccf1af83-944d-4418-8e5c-1c9f18b1865f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>VOLVolunteerRecord.html</HelpKey>
+				</Action>
+				<Action ID="14232b84-161b-43fd-bead-8b6781ab417b" Caption="=Page.Fields!VIEWAS_COMMITTEECONSTITUENCYTEXT" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" Visible="=Fields!ISCOMMITTEE">
+					<ShowPage PageID="502d8e60-f3dd-46fa-b315-e8f4704e0d25" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+				</Action>
+				<Action ID="98b4404f-0d81-4c1f-9cb2-46966b105a48" Caption="=Page.Fields!VIEWAS_COMMITTEEMEMBERCONSTITUENCYTEXT" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" Visible="=Fields!ISCOMMITTEEMEMBER">
+					<ShowPage PageID="66d33d4a-5345-48ac-8db8-503a61446d5c" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMCommitteeMemberPage.html</HelpKey>
+				</Action>
+				<Action ID="2f74fb24-f0a7-4cc9-9c31-793463ff6dd0" Caption="=Page.Fields!VIEWAS_REGISTRANTCONSTITUENCYTEXT" ImageKey="catalog:Blackbaud.AppFx.EventManagement.Catalog.dll,Blackbaud.AppFx.EventManagement.Catalog.fa_events.png" Visible="=(Fields!ISREGISTRANT) AndAlso Not Page.Fields!ISGROUP">
+					<ShowPage PageID="f2e36b8d-28d9-4abc-8d58-229e67dd877a" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>EVRegistrantView.html</HelpKey>
+				</Action>
+				<Action ID="54fc74e4-1d34-4b38-9c2f-88b57509045b" Caption="Application user" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Security.Catalog.dll,Blackbaud.AppFx.Security.Catalog.application_users.png&quot;))" Visible="=( (Page.Fields!APPUSERID &lt;&gt; System.Guid.Empty)) AndAlso Not Page.Fields!ISGROUP" CaptionResourceKey="$$application_user">
+					<ShowPage PageID="6fa399dd-fcf7-4dc7-8cc6-fc2af4470ab0" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageExpressionField>APPUSERID</PageExpressionField>
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>ADMApplicationUsersRecords.html</HelpKey>
+				</Action>
+				<Action ID="a4020755-68f8-419c-874e-f9942af82572" Caption="=Page.Fields!VIEWAS_VENDORCONSTITUENCYTEXT" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" Visible="=(Fields!ISVENDOR) AndAlso Not Page.Fields!ISGROUP">
+					<ShowPage PageID="eac45758-b64a-4bf1-8bc3-0fb9dca4373b" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>GLBEVVendorView.html</HelpKey>
+				</Action>
+				<Action ID="38e48b68-cc71-4c52-8bb5-dd1c19da2024" Caption="=Page.Fields!VIEWAS_STUDENTALUMNUSCONSTITUENCYTEXT" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" Visible="=(Page.Fields!ISALUMNUS OrElse Page.Fields!ISSTUDENT OrElse Page.Fields!ISFORMERSTUDENT) AndAlso Not Page.Fields!ISGROUP">
+					<ShowPage PageID="f8cd98e0-e1ea-4513-972a-e40c24c2a99a" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMAddEducationHistory.html</HelpKey>
+				</Action>
+				<Action ID="5939db69-db28-4c23-b457-bef7efbf5f69" Caption="Group member" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" Visible="=Fields!ISGROUPMEMBER" CaptionResourceKey="$$group_member">
+					<ShowPage PageID="21f15458-cd57-48a9-9af9-39f784665f5e" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMGroupConstitViewasMember.html</HelpKey>
+				</Action>
+				<Action ID="09092fc6-4ccf-4f03-82c8-d7b10aef8f7b" Caption="Planned giver" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" Visible="=Fields!ISPLANNEDGIVER" CaptionResourceKey="$$planned_giver">
+					<ShowPage PageID="77b53b34-4271-448d-980d-bba1fe8030ce" TabID="6a508a90-8377-49e4-baeb-aadc26e809cc" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>MGPlannedGiftRecPlannedGiver.html</HelpKey>
+				</Action>
+				<Action ID="8de54877-7952-4627-b642-9b6003fec255" Caption="=Page.Fields!VIEWAS_BANKCONSTITUENCYTEXT" ImageKey="catalog:Blackbaud.AppFx.Treasury.Catalog.dll,Blackbaud.AppFx.Treasury.Catalog.viewasbank.png" Visible="=Fields!ISBANK">
+					<ShowPage PageID="2a7b7119-22c0-4cfb-872e-edb526abba25" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>BanksBankPage.html</HelpKey>
+				</Action>
+				<Action ID="35d7348a-ef0c-4ec5-af37-cc1c29762c48" Caption="=Page.Fields!VIEWAS_SPONSORCONSTITUENCYTEXT" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png&quot;, IIf(Page.Fields!IsGroup, IIf(Page.Fields!IsHousehold, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.households_32.png&quot;, &quot;catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.groups_32.png&quot;), &quot;catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.individual.png&quot;))" Visible="=Fields!ISSPONSOR orelse Fields!ISFORMERSPONSOR">
+					<ShowPage PageID="35740996-3dbb-4414-903f-c992d7504afb" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+				</Action>
+				<Action ID="83d6649f-9d90-418c-b86b-0839f7805067" Caption="=Page.Fields!VIEWAS_GRANTORCONSTITUENCYTEXT" ImageKey="catalog:Blackbaud.AppFx.GrantManagement.Catalog.dll,Blackbaud.AppFx.GrantManagement.Catalog.grants.png" Visible="=Fields!ISGRANTOR">
+					<ShowPage PageID="79c461a6-fc60-4b3d-ae6e-4915e37d9e79" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CFGrantors.html</HelpKey>
+				</Action>
+				<Action ID="f480e2c5-cc69-4a76-b470-76f940d116a9" Caption="=Page.Fields!VIEWAS_STUDENTCONSTITUENCYTEXT" ImageKey="catalog:Blackbaud.AppFx.Constituent.Student.Catalog.dll,Blackbaud.AppFx.Constituent.Student.Catalog.student_32.png" Visible="=(Page.Fields!ISSTUDENT OrElse Page.Fields!ISALUMNUS)">
+					<ShowPage PageID="30cf4d37-13a9-4249-b1ce-5922700ab8d6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>EEManageStudentRecord.html</HelpKey>
+				</Action>
+				<Action ID="7b877b25-aea6-40ce-8a3e-83407d2714ce" Caption="=Page.Fields!VIEWAS_FACULTYCONSTITUENCYTEXT" ImageKey="catalog:Blackbaud.AppFx.Constituent.Faculty.Catalog.dll,Blackbaud.AppFx.Constituent.Faculty.Catalog.faculty_32.png" Visible="=Page.Fields!ISFACULTY">
+					<ShowPage PageID="ef51f9bf-5a35-4485-867a-c1564389f502" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>EEManageFacultyRecord.html</HelpKey>
+				</Action>
+			</Actions>
+		</PageActionGroup>
+		<PageActionGroup ID="5deb3ed6-d90e-4dfa-ba99-9e8567c434ec" Caption="More information" CaptionResourceKey="$$more_information">
+			<Actions>
+				<Action ID="19877a89-a857-41bf-b557-db8466cb363c" Caption="Revenue and recognition" ImageKey="catalog:Blackbaud.AppFx.Fundraising.Catalog.dll,Blackbaud.AppFx.Fundraising.Catalog.fa_revenue.png" CaptionResourceKey="$$revenue_and_recognition">
+					<ShowPage PageID="77b53b34-4271-448d-980d-bba1fe8030ce" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMGivingInformation.html</HelpKey>
+				</Action>
+				<Action ID="73bda15f-e6bf-4d70-9905-f2c567a0abc0" Caption="Communications" ImageKey="catalog:Blackbaud.AppFx.Marketing.Catalog.dll,Blackbaud.AppFx.Marketing.Catalog.fa_mailings.png" CaptionResourceKey="$$communications">
+					<ShowPage PageID="49a24425-3b50-4c9e-8ac9-b78b08ed9586" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMCorrespondenceConstituentPage.html</HelpKey>
+				</Action>
+				<Action ID="59522cfc-12bd-44c9-99ec-cc309028a642" Caption="Extended network" ImageKey="catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.organization.png" CaptionResourceKey="$$extended_network">
+					<ShowPage PageID="229799d6-5c83-4d83-add4-088240f3f647" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMRelationshipsTab.html</HelpKey>
+				</Action>
+				<Action ID="77d7abe9-51a8-4f6e-a877-fd826a667039" Caption="History" ImageKey="RES:history" CaptionResourceKey="$$history">
+					<ShowPage PageID="360e00c0-9cf4-4760-b09f-f9752f95a04b" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMConstituentHistory.html</HelpKey>
+				</Action>
+				<Action ID="38a5a991-7163-4f2a-92f9-b0ca11faa657" Caption="Wealth and ratings" ImageKey="catalog:Blackbaud.AppFx.Fundraising.Catalog.dll,Blackbaud.AppFx.Fundraising.Catalog.fa_revenue.png" CaptionResourceKey="$$wealth_and_ratings">
+					<ShowPage PageID="a6c2fffb-2df0-44c9-8238-2ae74443f1de" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>MGWealthInfo.html</HelpKey>
+				</Action>
+				<Action ID="437f1c91-c7ca-48b7-8444-7c2c7cf44ab0" Caption="=Me.Globals.GetResourceString(&quot;Previous_household_members&quot;)" ImageKey="catalog:Blackbaud.AppFx.ConstituentGroups.Catalog.dll,Blackbaud.AppFx.ConstituentGroups.Catalog.household_previous_members_32.png" Visible="=Page.Fields!ISHOUSEHOLD">
+					<ShowPage PageID="f460b197-e6b8-4ea5-ab01-ba45bb175ebb" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+				</Action>
+				<Action ID="873a9688-bf18-40cd-9eed-4341bdc2c0eb" Caption="Sales orders" ImageKey="=IIF(Page.Fields!IsOrg, &quot;catalog:Blackbaud.AppFx.Patron.Catalog.dll,Blackbaud.AppFx.Patron.Catalog.tickets_many_32.png&quot;, &quot;catalog:Blackbaud.AppFx.Patron.Catalog.dll,Blackbaud.AppFx.Patron.Catalog.tickets_32.png&quot;)" CaptionResourceKey="$$sales_orders">
+					<ShowPage PageID="6c1bc719-64ca-4faa-bbaa-6c925b883116" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>RPAllSalesOrders.html</HelpKey>
+				</Action>
+				<Action ID="86004b32-2538-4e91-9b9f-5a7e0e8c1f9e" Caption="Surveys" ImageKey="catalog:Blackbaud.AppFx.Survey.Catalog.dll,Blackbaud.AppFx.Survey.Catalog.Survey_32.png" CaptionResourceKey="$$surveys">
+					<ShowPage PageID="fe6db5ed-e166-43ca-970a-174e02d86c31" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMConstituentSurveys.html</HelpKey>
+				</Action>
+				<Action ID="6f74eb4b-498a-4d0c-92d1-72ffaac2ef0a" Caption="Corporate information" ImageKey="catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.corporatestructure.png" Visible="=Fields!ISORG" CaptionResourceKey="$$corporate_information">
+					<ShowPage PageID="25a2919b-ddf3-4f86-a0b6-8a2ba8900d1d" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMCSCorporateStructurePage.html</HelpKey>
+				</Action>
+				<Action ID="36e4210a-7811-44dd-bcee-126b9c22ab06" Caption="Stewardship plans" ImageKey="catalog:Blackbaud.AppFx.Stewardship.Catalog.dll,Blackbaud.AppFx.Stewardship.Catalog.fa_pyramid.png" Visible="=Fields!HASSTEWARDSHIPPLAN" CaptionResourceKey="$$stewardship_plans">
+					<ShowPage PageID="f0e9dadd-7e3f-4fec-b2e4-faea89637e2f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+				</Action>
+				<Action ID="c0dea66f-5e04-4688-9009-91faee5a60d8" Caption="Documentation summary" ImageKey="catalog:Blackbaud.AppFx.Constituent.Catalog.dll,Blackbaud.AppFx.Constituent.Catalog.doc_summary.png" CaptionResourceKey="$$documentation_summary">
+					<ShowPage PageID="feb4c976-4af9-4c76-8ac5-0cd2f56ac623" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>CRMConstitDocSummary.html</HelpKey>
+				</Action>
+				<Action ID="b4517f94-d74d-419d-9142-4beabd86fadc" Caption="Funds received" ImageKey="catalog:Blackbaud.AppFx.Fundraising.Catalog.dll,Blackbaud.AppFx.Fundraising.Catalog.fa_fundraisinginitiatives.png" Visible="=Fields!HASRECEIVEDFUNDS" CaptionResourceKey="$$funds_received">
+					<ShowPage PageID="8f000a58-844c-4f71-ba4e-7d11275e31f6" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+				</Action>
+				<Action ID="5ed8a928-15be-4691-9980-f1274bf336a8" Caption="Online information" ImageKey="RES:web" Visible="=(Fields!ISCOMMUNITYMEMBER OrElse Fields!HASCOMMUNITYDATA) AndAlso Not Page.Fields!ISGROUP" CaptionResourceKey="$$online_information">
+					<ShowPage PageID="f9f73ab3-7225-4955-9c0f-f176387a9bc7" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+						<ActionContext>
+							<PageContextID />
+						</ActionContext>
+					</ShowPage>
+					<HelpKey>BBNCCommunityMemberPage.html</HelpKey>
+				</Action>
+			</Actions>
+		</PageActionGroup>
+	</PageActionGroups>
+	<HelpKey>CRMInteractions.html</HelpKey>
+	<PageExpressionForms>
+		<PageExpressionForm DataFormInstanceID="c8868cda-2070-4067-99e7-880a6075506b" />
+	</PageExpressionForms>
+</PageDefinitionSpec>

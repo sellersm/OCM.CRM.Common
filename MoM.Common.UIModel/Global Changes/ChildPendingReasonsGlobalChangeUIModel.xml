@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>Child.PendingReasons.GlobalChange.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>ChildPendingReasonsGlobalChangeUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>ChildPendingReasonsGlobalChange.html</HtmlFile>
+    <HtmlFolder>htmlforms\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

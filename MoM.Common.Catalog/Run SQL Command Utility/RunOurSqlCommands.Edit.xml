@@ -1,0 +1,110 @@
+﻿<EditDataFormTemplateSpec 
+    xmlns="bb_appfx_editdataformtemplate"
+    xmlns:common="bb_appfx_commontypes"
+    ID="87fbabf8-c559-4fd4-b921-bc7cc3ccfa55"
+    Name="RunOurSqlCommands Edit Data Form"
+    Description="Utility for OCM to check some data via sql"
+    Author="Memphis Sellers"
+    DataFormInstanceID="278824d6-c5e0-48aa-bc58-7b837be2e519"
+    RecordType="Utility"
+    common:SecurityUIFolder="Utility"
+	FormHeader="Run our SQL"	
+    >
+
+	<SPDataForm>
+		<LoadImplementation SPName="USR_USP_LOAD_RUNSQL_UTILITY" >
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_LOAD_RUNSQL_UTILITY(
+	@ID uniqueidentifier,
+	@DATALOADED bit = 0 output,
+	@COMMAND nvarchar(max) = null output,
+	@RESULTS nvarchar(max) = null output	
+)
+as
+
+	set nocount on;
+	
+	set @DATALOADED = 0;
+	declare @name nvarchar(max);
+
+	begin try		
+		select @DATALOADED = 1,
+			   @name = [NAME],
+			   @COMMAND = Value,
+			   @RESULTS = ''
+		from dbo.Setting
+		where ID = 1
+	end try
+	begin catch
+		exec dbo.USP_RAISE_ERROR
+		return 1
+	end catch
+
+return 0;
+				]]>
+			</common:CreateProcedureSQL>
+
+		</LoadImplementation>
+		
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDIT_RUNSQL_UTILITY">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDIT_RUNSQL_UTILITY(
+	@ID uniqueidentifier,
+	@CHANGEAGENTID uniqueidentifier = null,
+	@COMMAND nvarchar(max),
+	@RESULTS nvarchar(max)
+)
+as
+
+	set nocount on;
+
+	if @CHANGEAGENTID is null  
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+				
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate()
+
+	begin try
+		declare @foobar table (ID uniqueidentifier)
+   
+		insert into @foobar
+		select newid()
+	end try
+	begin catch
+		exec dbo.USP_RAISE_ERROR
+		return 1
+	end catch
+
+return 0;
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+
+	</SPDataForm>
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system paramters 
+	like the record ID, DATALOADED, TSLONG, and CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="false">
+		<common:FormFields>
+			<common:FormField FieldID="ID" Caption="ID" DataType="Guid" Hidden="true"/>
+			<common:FormField FieldID="COMMAND" Caption="Command" DataType="String" />
+			<common:FormField FieldID="RESULTS" Caption="Results" DataType="String" />
+		</common:FormFields>
+
+        <common:WebUIComponent>
+            <common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.RunOurSqlCommandsEditDataFormUIModel" />
+            <common:WebUI>
+                <common:ExternalResource Url="browser/htmlforms/custom/RunOurSqlCommandsEditDataForm.html" />
+            </common:WebUI>
+        </common:WebUIComponent>
+
+		<common:UIActions>
+			<common:UIAction ActionID="EXECUTESQL" Caption="Run" />
+		</common:UIActions>
+
+		<!-- indicate the client-side component for the user interface -->
+	</common:FormMetaData>
+
+</EditDataFormTemplateSpec>

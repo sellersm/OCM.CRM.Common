@@ -1,0 +1,15 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="428bca88-e48d-434f-9444-350ca091b679"
+	Name="Scan Rate Change Response"
+	Description="Launch Rate Change Response scanner."
+	Author="Memphis Sellers"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="99"
+	>
+
+	<!-- indicate what this task should do (navigate to a page, show a form, etc. -->
+  <common:ShowAddDataForm DataFormID="4bc1e218-eda2-4478-a899-d80ef4675ef6" />
+
+</TaskSpec>

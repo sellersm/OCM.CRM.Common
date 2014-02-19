@@ -1,0 +1,181 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="c85d7d77-6f03-41e3-8ecf-399a87d1179e" 
+	Name="Interaction Extension Sponsorship Data List"
+	Description="Used to display sponsoship related information for an interaction." 
+	Author="Cary Mayeda"
+	common:SecurityUIFolder="Interaction Extension" >
+
+	<!-- 
+	Remarks:    Currently displays all interactions (not just sponsorship related).
+				It displays the Interaction Extension fields
+				This is simliar to the "Interaction Extension Data List", but this filters for a specific child as well as constituent
+				It utilitizes the Sponsorhsip ID to get the constituent and child.
+
+	History:
+	Date            Modified By     Comments
+	01-Aug-2012		CMayeda			Initial Version
+	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
+	-->
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORSHIPLIST (
+	@SPONSORSHIPID uniqueidentifier 
+)
+
+as begin
+	declare @constituentID uniqueidentifier = null
+	declare @sponosrshipOpportunityChildID uniqueidentifier = null
+		
+	select @constituentID = CONSTITUENTID from dbo.SPONSORSHIP where ID = @SPONSORSHIPID
+	select @sponosrshipOpportunityChildID = SPONSORSHIPOPPORTUNITYID from dbo.SPONSORSHIP where ID = @SPONSORSHIPID
+	
+	set nocount on;
+
+	with interactionChildren (ROWNUMBER, INTERACTIONID, SPONSORSHIPOPPORTUNITYCHILDID, LOOKUPID, NAME)
+	as
+	(	
+		select	ROW_NUMBER() over (partition by InteractionID order by so.LOOKUPID) as ROWNUMBER,
+				INTERACTIONID,
+				SPONSORSHIPOPPORTUNITYCHILDID,
+				dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (so.ID, 1) as LOOKUPID,
+				so_child.NAME
+		  from	dbo.INTERACTION
+	inner join	dbo.USR_INTERACTIONEXTENSIONCHILDREN ie_children on
+					ie_children.INTERACTIONID = INTERACTION.ID
+	inner join	dbo.SPONSORSHIPOPPORTUNITY so on 
+					ie_children.SPONSORSHIPOPPORTUNITYCHILDID = so.ID 
+	inner join	dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on 
+					ie_children.SPONSORSHIPOPPORTUNITYCHILDID = so_child.ID 
+	where INTERACTION.CONSTITUENTID = @CONSTITUENTID
+	),
+	interactionChildCounts as
+	(select INTERACTIONID, COUNT(SPONSORSHIPOPPORTUNITYCHILDID) as CHILDCOUNT from interactionChildren group by INTERACTIONID)
+
+	select	INTERACTION.ID,
+			INTERACTION.EXPECTEDDATE,
+			(select DESCRIPTION from dbo.INTERACTIONTYPECODE  where ID = INTERACTION.INTERACTIONTYPECODEID) as CONTACTMETHOD,
+			cat.NAME as INTERACTIONSUBCATEGORY,			
+			subcat.NAME as INTERACTIONSUBCATEGORY,	
+			INTERACTION.STATUS,
+			INTERACTION.FUNDRAISERID as OWNERID,
+			fr_const.Name as OWNERNAME,
+			(select DESCRIPTION from USR_INTERACTIONEXTENSIONLETTERTYPECODE ltc where ID = int_ext.LETTERTYPECODEID) as LETTERTYPE,
+			(select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where ID = int_ext.CHILDCOUNTLETTERVERSIONCODEID) as CHILDCOUNTLETTERVERSION,
+			int_ext.EFTBROCHURE,
+			int_childcount.CHILDCOUNT,
+			case 
+				when int_childcount.CHILDCOUNT in (1,2)  then
+					(select SPONSORSHIPOPPORTUNITYCHILDID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
+				else null
+			end as SPONSORSHIPOPPORTUNITYCHILDID1,
+			case 
+				when int_childcount.CHILDCOUNT in (1,2)  then
+					(select LOOKUPID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
+				else ''	
+			end as CHILDLOOKUPID1,
+			case 
+				when int_childcount.CHILDCOUNT in (1,2)  then
+					(select NAME from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=1) 
+				else ''	
+			end as CHILDNAME1,
+
+			case 
+				when int_childcount.CHILDCOUNT = 2 then
+					(select SPONSORSHIPOPPORTUNITYCHILDID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
+				else null
+			end as SPONSORSHIPOPPORTUNITYCHILDID2,
+			case 
+				when int_childcount.CHILDCOUNT = 2 then
+					(select LOOKUPID from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
+				else ''	
+			end as CHILDLOOKUPID2,
+			case 
+				when int_childcount.CHILDCOUNT = 2 then
+					(select NAME from interactionChildren where INTERACTION.ID = interactionChildren.INTERACTIONID and interactionChildren.ROWNUMBER=2) 
+				else ''	
+			end as CHILDNAME2,
+			
+			int_ext.TRANSFERCHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.TRANSFERCHILDID, 1) as TRANSFERCHILDLOOKUPID,
+			int_ext.DEPARTEDCHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.DEPARTEDCHILDID, 1) as DEPARTEDCHILDLOOKUPID,			
+			int_ext.UNAVAILABLECHILDID, 
+			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.UNAVAILABLECHILDID, 1) as UNAVAILABLECHILDLOOKUPID,			
+			'b525985b-be02-4f02-a9b8-c110411cf936' as VIEWFORMID
+    		
+ 	  from	dbo.INTERACTION 
+	  join	dbo.USR_INTERACTIONEXTENSION int_ext on
+				int_ext.ID = INTERACTION.ID				
+ left join	dbo.CONSTITUENT fr_const on
+				fr_const.ID = INTERACTION.FUNDRAISERID
+ left join	dbo.INTERACTIONSUBCATEGORY subcat on
+				subcat.ID = INTERACTION.INTERACTIONSUBCATEGORYID
+ left join	dbo.INTERACTIONCATEGORY cat on 
+				subcat.INTERACTIONCATEGORYID = cat.ID
+-- left join	dbo.SPONSORSHIPOPPORTUNITY so_departedchild on
+--				int_ext.DEPARTEDCHILDID = so_departedchild.ID
+ left join	interactionChildCounts int_childcount on
+				int_childcount.INTERACTIONID = INTERACTION.ID	
+				
+	 where	INTERACTION.CONSTITUENTID = @constituentID
+	   and	INTERACTION.ISINTERACTION = 1  			 
+       and  (exists (select SPONSORSHIPOPPORTUNITYCHILDID  from interactionChildren where SPONSORSHIPOPPORTUNITYCHILDID = @sponosrshipOpportunityChildID and INTERACTIONID = INTERACTION.ID)
+			or int_ext.TRANSFERCHILDID = @sponosrshipOpportunityChildID
+			or int_ext.DEPARTEDCHILDID = @sponosrshipOpportunityChildID
+			or int_ext.UNAVAILABLECHILDID = @sponosrshipOpportunityChildID)
+
+end
+			]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable)-->
+	<Context ContextRecordType="SPONSORSHIP" RecordIDParameter="SPONSORSHIPID"/>	
+
+	<!-- describe any parameters (other than the context ID) defined on the SP
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>-->
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<OutputField FieldID="ID" Caption="ID" DataType="Guid" IsHidden="true" />
+			<OutputField FieldID="EXPECTEDDATE" Caption="Expected date" DataType="Date" />
+			<OutputField FieldID="CONTACTMETHOD" Caption="Contact Method" DataType="String" />
+			<OutputField FieldID="INTERACTIONCATEGORY" Caption="Category" DataType="String" />
+			<OutputField FieldID="INTERACTIONSUBCATEGORY" Caption="Sub Category" DataType="String" />
+			<OutputField FieldID="STATUS" Caption="Status" DataType="String" />
+			<OutputField FieldID="OWNERID" Caption="Owner System record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="OWNERNAME" Caption="Owner" DataType="String" />
+			<OutputField FieldID="LETTERTYPE" Caption="Letter Type" DataType="String" />
+			<OutputField FieldID="CHILDCOUNTLETTERVERSION" Caption="Child Version" DataType="String" />
+			<OutputField FieldID="EFTBROCHURE" Caption="EFT Brochure" DataType="String" IsHidden="true"/>
+			<OutputField FieldID="CHILDCOUNT" Caption="Child Count" DataType="Integer" />
+			<OutputField FieldID="SPONSORSHIPOPPORTUNITYCHILDID1" Caption="Child system record ID 1" DataType="Guid" IsHidden="true"/>			
+			<OutputField FieldID="CHILDLOOKUPID1" Caption="Child ID 1" DataType="String" />
+			<OutputField FieldID="CHILDNAME1" Caption="Child Name 1" DataType="String" />
+			<OutputField FieldID="SPONSORSHIPOPPORTUNITYCHILDID2" Caption="Child System system record 2" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="CHILDLOOKUPID2" Caption="Child ID 2" DataType="String" />
+			<OutputField FieldID="CHILDNAME2" Caption="Child Name 2" DataType="String" />
+			<OutputField FieldID="TRANSFERCHILDID" Caption="Transfer child system record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="TRANSFERCHILDLOOKUPID" Caption="Transfer child ID" DataType="String" />
+			<OutputField FieldID="DEPARTEDCHILDID" Caption="Departed child system record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="DEPARTEDCHILDLOOKUPID" Caption="Departed child ID" DataType="String" />
+			<OutputField FieldID="UNAVAILABLECHILDID" Caption="Unavailable system record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="UNAVAILABLECHILDLOOKUPID" Caption="Unavailable child ID" DataType="String" />
+			
+			<OutputField FieldID="VIEWFORMID" Caption="View Form ID" DataType="Guid" IsHidden="true"/>
+		</OutputFields>
+	</Output>
+
+</DataListSpec>

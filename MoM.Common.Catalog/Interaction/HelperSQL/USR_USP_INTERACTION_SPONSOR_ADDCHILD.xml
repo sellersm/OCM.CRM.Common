@@ -1,0 +1,61 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="7cc69c0a-93be-4a7c-a5ae-eeb5d8f1219a"
+	Name="USR_USP_INTERACTION_SPONSOR_ADDCHILD"
+	Description="Used to add a child to a sponsor interaction extension"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_SPONSOR_ADDCHILD" 
+	GrantServiceRolePermission="true" >
+	
+	<!-- 
+	Remarks:    This adds the child to the list of children associated with the interaction passed in @interactionID
+				It also updates the CHILDCOUNTLETTERVERSIONCODEID based on the current number of children associated with the interaction
+				This assumes that the row in USR_INTERACTIONEXTENSION exists. It does not create it if it doesn't.
+
+	History:
+	Date            Modified By     Comments
+	13-Aug-2012		CMayeda			Initial Version
+	03-Sep-2012		CMayeda			Modified to use USR_USP_INTERACTION_SPONSOR_ADDCHILDREN
+	22-Sep-2012		CMayeda			Added check for null @interactionID	
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD (
+	@interactionID uniqueidentifier = null,							-- Interaction ID to add the child to.
+	@sponsorshipOpportunityChildID uniqueidentifier = null,			-- Child ID of the child to add
+	@changeAgentID uniqueidentifier = null							-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	begin try
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+		if @interactionID is null
+			RAISERROR 1000000 'Interaction ID cannot be null'
+
+		declare @childIDList dbo.USR_UDT_CHILDIDLIST 
+		insert @childIDList 
+		select @sponsorshipOpportunityChildID 
+		
+		exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILDREN 
+			@interactionID = @interactionID,
+			@childIDList = @childIDList,
+			@changeAgentID = @changeAgentID
+			
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

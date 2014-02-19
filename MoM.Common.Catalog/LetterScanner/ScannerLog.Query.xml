@@ -1,0 +1,114 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="ee7db6e5-420c-4fdb-82bc-529fafcdfe02"
+	Name="Scanner Log Query"
+	Description="Query all fields of the Scanner Log table."
+	Author="Memphis Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="ScannerLog"
+	common:SecurityUIFolder="ScannerLog"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_SCANNERLOG">
+		<ViewSQL>
+			<![CDATA[
+select
+	   scanlog.[ID]
+      ,[LOGTYPE]
+      ,scanlog.[SCANSESSION]
+      ,[ORIGINALSEQUENCEID]
+      ,[DESCRIPTION]
+      ,[SCANOUTCOME]
+      ,scanlog.[CHILDID]
+      ,scanlog.[SPONSORID]
+      ,scanlog.[CHILDPROJECTID]
+      ,[LETTERSUBCATEGORYID]
+      ,[DATESPONSORSHIPCANCELLED]
+      ,[NUMBEROFDAYSSPONSORED]
+      ,[CANCELLATIONREASON]
+      ,scanlog.[CUSTOMIDENTIFIER]
+      ,scanlog.[SEQUENCEID] as SCANSEQUENCEID
+      ,scanlog.[LOOKUPID]
+      ,scanlog.[ADDEDBYID]
+      ,scanlog.[CHANGEDBYID]
+      ,scanlog.[DATEADDED]
+      ,scanlog.[DATECHANGED]
+      ,i.LOOKUPID as INTERACTIONLOOKUPID
+      ,ie.APPEALID
+      ,ie.CHILDCOUNTLETTERVERSIONCODEID
+      ,ie.COMPLETEDAFTERCANCELLATION
+      ,ie.COMPLETEDBYID
+      ,ie.DEPARTEDCHILDID
+      ,ie.DEPARTUREREASONCODEID
+      ,ie.DEPARTUREREASONOTHERDESCRIPTION
+      ,ie.DOUBLESPONSOREDCHILDID
+      ,ie.FULFILLMENTSTATUSCODEID
+      ,ie.ITEMSENCLOSEDCODEID
+      ,ie.LETTERTYPECODEID
+      ,ie.ORIGINALLETTERSUBCATEGORYID
+      ,ie.ORIGINALLETTERSEQUENCEID
+      ,ie.TRANSFERCHILDID
+      ,ie.TRANSFERCHILDPROJECTID
+      ,ie.UNAVAILABLECHILDID
+      ,ie.UNUSABLECODEID
+	FROM dbo.USR_LETTERSCANNERLOG scanlog
+	join dbo.INTERACTION i on scanlog.ORIGINALSEQUENCEID = i.SEQUENCEID
+	join dbo.USR_INTERACTIONEXTENSION ie on ie.ID = i.ID
+	
+				
+		]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="LOGTYPE" Caption="Log type" DataType="String" />
+			<OutputField Name="SCANSESSION" Caption="Scan session" DataType="String" />
+			<OutputField Name="ORIGINALSEQUENCEID" Caption="Original Sequence Id" DataType="Guid" />
+			<OutputField Name="DESCRIPTION" Caption="Description" DataType="String" />
+			<OutputField Name="SCANOUTCOME" Caption="Scan outcome" DataType="String" />
+			<OutputField Name="CHILDID" Caption="Child Id" DataType="Guid" />
+			<OutputField Name="SPONSORID" Caption="Sponsor Id" DataType="Guid" />
+			<OutputField Name="CHILDPROJECTID" Caption="Child project Id" DataType="Guid" />
+			<OutputField Name="LETTERSUBCATEGORYID" Caption="Letter subcategory Id" DataType="Guid" />
+			<OutputField Name="DATESPONSORSHIPCANCELLED" Caption="Date sponsorship cancelled" DataType="Date" />
+			<OutputField Name="NUMBEROFDAYSSPONSORED" Caption="Number days sponsored" DataType="Integer" />
+			<OutputField Name="CANCELLATIONREASON" Caption="Cancellation reason" DataType="String" />
+			<OutputField Name="SCANSEQUENCEID" Caption="Scanner log sequence Id" DataType="String" />
+			<OutputField Name="LOOKUPID" Caption="Lookup Id" DataType="String" />
+			<OutputField Name="ADDEDBYID" Caption="Added by Id" DataType="Guid" />
+			<OutputField Name="CHANGEDBYID" Caption="Changed by Id" DataType="Guid" />
+			<OutputField Name="DATEADDED" Caption="Date added" DataType="Date" />
+			<OutputField Name="DATECHANGED" Caption="Date changed" DataType="Date" />
+			<OutputField Name="INTERACTIONLOOKUPID" Caption="Interaction lookup id" DataType="String" />
+			<OutputField Name="APPEALID" Caption="Appeal id" DataType="Guid" />
+			<OutputField Name="CHILDCOUNTLETTERVERSIONCODEID" Caption="Childcount letter version code id" DataType="Guid" />
+			<OutputField Name="COMPLETEDAFTERCANCELLATION" Caption="Completed after cancellation" DataType="Boolean" />
+			<OutputField Name="COMPLETEDBYID" Caption="Completed by id" DataType="Guid" />
+			<OutputField Name="DEPARTEDCHILDID" Caption="Departed child id" DataType="Guid" />
+			<OutputField Name="DEPARTUREREASONCODEID" Caption="Departure reason code id" DataType="Guid" />
+			<OutputField Name="DEPARTUREREASONOTHERDESCRIPTION" Caption="Departure reason other description" DataType="String" />
+			<OutputField Name="DOUBLESPONSOREDCHILDID" Caption="Double sponsored child id" DataType="Guid" />
+			<OutputField Name="FULFILLMENTSTATUSCODEID" Caption="Fulfillment status code id" DataType="Guid" />
+			<OutputField Name="ITEMSENCLOSEDCODEID" Caption="Items enclosed code id" DataType="Guid" />
+			<OutputField Name="LETTERTYPECODEID" Caption="Letter type code id" DataType="Guid" />
+			<OutputField Name="ORIGINALLETTERSUBCATEGORYID" Caption="Original letter subcategory id" DataType="Guid" />
+			<OutputField Name="ORIGINALLETTERSEQUENCEID" Caption="Original letter sequence id" DataType="String" />
+			<OutputField Name="TRANSFERCHILDID" Caption="Transfer child id" DataType="Guid" />
+			<OutputField Name="TRANSFERCHILDPROJECTID" Caption="Transfer child project id" DataType="Guid" />
+			<OutputField Name="UNAVAILABLECHILDID" Caption="Unavailable child id" DataType="Guid" />
+			<OutputField Name="UNUSABLECODEID" Caption="Unusable code id" DataType="Guid" />
+	</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView Field="INTERACTIONLOOKUPID" RelatedView="V_QUERY_INTERACTION" RelatedField="LOOKUPID" PathAlias="Interactions"/>		
+	</RelationshipOperations>
+	
+</QueryViewSpec>
+

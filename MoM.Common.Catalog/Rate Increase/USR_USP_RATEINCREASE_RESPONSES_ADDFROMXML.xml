@@ -1,0 +1,302 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="28f05715-417d-42fa-bc20-906ae361435d"
+	Name="USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML"
+	Description="Adds rows to USR_SPONSOR_RATECHANGE_SPONSORSHIPS table from rate change scanner."
+	Author="Memphis Sellers"
+	SPName="USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML"
+	GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+	Remarks:    Stored procedure that adds rows to the USR_SPONSOR_RATECHANGE_SPONSORSHIPS table from rate increase responses scanner
+
+			
+	History:
+	Date            Modified By     Comments
+	03-Feb-2014		Memphis			Initial version.
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_RATEINCREASE_RESPONSES_ADDFROMXML 
+(
+  @SPONSORLOOKUPID nvarchar(100),
+  @XML xml,
+  @CHANGEAGENTID uniqueidentifier = null,
+  @DATEADDED datetime = null,
+  @CHANGEYEAR dbo.UDT_YEAR = null,
+  @RESPONSEDATE datetime = null,
+  @RESPONDAFTERRATECHANGEUPDATED bit = 0,
+  @RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID uniqueidentifier = null,
+  @RESPONSEALREADYEXISTS bit = 0 OUTPUT
+)
+
+as
+
+begin
+	set nocount on;
+  
+  begin try
+  
+    begin tran
+
+        declare @NoAppealResponseDate datetime = null;
+        declare @IsNoRateIncreaseAppeal bit = 0;
+        declare @NoAppealResponseCodeId uniqueidentifier = null;
+        declare @YesIncrease_NoAppealResponseCodeId uniqueidentifier = null;
+        declare @NoIncrease_NoAppealResponseCodeId uniqueidentifier = null;
+        declare @RESPONSECATEGORYID uniqueidentifier;
+        declare @IsAllIncreaseValuesYes bit = 0;
+        declare @IsAllIncreaseValuesNo bit = 0;
+        declare @IsSomeIncreaseValuesYes bit = 0;
+        declare @RESPONSEID uniqueidentifier;
+        declare @YesResponseID uniqueidentifier;
+        declare @NoResponseID uniqueidentifier;
+		declare @PartialIncreaseResponseID uniqueidentifier;
+        declare @constituentAppealId uniqueidentifier;
+		declare @ErrMsg nvarchar(4000);
+		declare @ErrSeverity int;
+      
+		set @RESPONSEALREADYEXISTS = 0;
+
+    	if @CHANGEAGENTID is null
+    		exec USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+    	if @DATEADDED is null
+    		set @DATEADDED = getdate()
+    	
+    	-- build a temporary table containing the values from the XML
+    	declare @TempTbl table (
+    	   [CONSTITUENTID] uniqueidentifier,
+    	   [ID] uniqueidentifier,
+    		RATEINCREASE bit,
+    		NEWRGAMOUNT money,
+    		REVENUELOOKUPID nvarchar(100),
+    		CHILDLOOKUPID nvarchar(100),
+    		SPONSORLOOKUPID nvarchar(100),
+    		SPONSORSHIPID uniqueidentifier,
+    		CURRENTRGAMOUNT money
+    		)
+
+    	insert into @TempTbl select 
+    		SPONSORID
+    		, newid()
+    		, RATEINCREASE
+    		, NEWRGAMOUNT
+    		, REVENUELOOKUPID
+    		, CHILDLOOKUPID
+    		, SPONSORLOOKUPID
+    		, SPONSORSHIPID
+    		, CURRENTRGAMOUNT
+    	from dbo.USR_UFN_RATECHANGE_RESPONSES_FROMITEMLISTXML(@XML)
+    	--join dbo.SPONSORSHIPOPPORTUNITY so on so.LOOKUPID = CHILDLOOKUPID
+    	--join dbo.CONSTITUENT sponsor on SPONSORLOOKUPID = sponsor.LOOKUPID
+    	--join dbo.REVENUE r on r.LOOKUPID = REVENUELOOKUPID
+
+    	update @TempTbl set ID = newid() where (ID is null) or (ID = '00000000-0000-0000-0000-000000000000');
+
+    	--if @@Error <> 0
+    		--return 1;
+    	
+      -- get the @RESPONSECATEGORYID value so we can check if there's an appeal response for this person:
+      select @RESPONSECATEGORYID = ID
+      from dbo.RESPONSECATEGORY
+      where [NAME] like '%Rate Increase%';      
+      
+      declare @SponsorID uniqueidentifier = null;
+      --get the constituentid of the sponsor based on the lookupid passed in:
+      select @SponsorID = ID
+      from dbo.CONSTITUENT
+      where LOOKUPID = @SPONSORLOOKUPID;
+      
+      -- check if a Rate Increase appeal exists for this sponsor:
+      select @constituentAppealId = ID
+      from dbo.CONSTITUENTAPPEAL
+      where dbo.CONSTITUENTAPPEAL.APPEALID = (select ID
+                                              from dbo.APPEAL
+                                              where [NAME] like '%10555%'  --972448FA-7837-445C-832C-CE7D287E0564
+                                              )
+      and CONSTITUENTID = @SponsorID;  
+
+
+      -- figure out what the Response Code value will be, based on the Increase values in the XML:
+      -- all values are True
+      If 1 = all (select RATEINCREASE from @TempTbl)
+        begin
+          set @IsAllIncreaseValuesYes = 1;
+          --set @NoAppealResponseCodeId = @YesIncrease_NoAppealResponseCodeId;
+        end
+      else
+        begin
+          -- all values are False
+          If 0 = all (select RATEINCREASE from @TempTbl)
+            begin
+              set @IsAllIncreaseValuesNo = 1;
+              --set @NoAppealResponseCodeId = @NoIncrease_NoAppealResponseCodeId;
+            end
+          else
+            begin
+              -- at least 1 value is true
+              If 1 = some (select RATEINCREASE from @TempTbl)
+                begin
+                  set @IsSomeIncreaseValuesYes = 1;
+                  --set @NoAppealResponseCodeId = @YesIncrease_NoAppealResponseCodeId;
+                end
+            end
+        end
+      
+      -- get the ResponseID value 
+      select @YesResponseID = ID
+      from dbo.RESPONSE
+      where dbo.RESPONSE.RESPONSECATEGORYID = @RESPONSECATEGORYID 
+      and lower(dbo.RESPONSE.RESPONSE) = lower('Yes - Increase')   
+      and dbo.RESPONSE.ISINACTIVE = 0
+
+      select @NoResponseID = ID
+      from dbo.RESPONSE
+      where dbo.RESPONSE.RESPONSECATEGORYID = @RESPONSECATEGORYID 
+      and lower(dbo.RESPONSE.RESPONSE) = lower('No - Increase')   
+      and dbo.RESPONSE.ISINACTIVE = 0
+
+      select @PartialIncreaseResponseID = ID
+      from dbo.RESPONSE
+      where dbo.RESPONSE.RESPONSECATEGORYID = @RESPONSECATEGORYID 
+      and lower(dbo.RESPONSE.RESPONSE) = lower('Partial - Increase')   
+      and dbo.RESPONSE.ISINACTIVE = 0
+
+
+      -- get the ResponseID value based on whether or not sponsor is increasing or not:
+      if @IsAllIncreaseValuesYes = 1
+        begin
+          set @RESPONSEID = @YesResponseID;
+        end
+
+      if @IsSomeIncreaseValuesYes = 1
+        begin
+          set @RESPONSEID = @PartialIncreaseResponseID;
+        end
+
+      if @IsAllIncreaseValuesNo = 1
+        begin
+          set @RESPONSEID = @NoResponseID;
+        end
+      
+      -- there is no rate increase appeal for this sponsor:
+      if @constituentAppealId is null 
+        begin
+          set @NoAppealResponseDate = getdate();
+          set @IsNoRateIncreaseAppeal = 1;
+          
+          -- get the No Appeal Response Code ID values since we'll need them
+          select @YesIncrease_NoAppealResponseCodeId = ID
+          from dbo.USR_NO_RATEINCREASEAPPEAL_RESPONSECODE
+          where [DESCRIPTION] like '%Yes%';
+
+          select @NoIncrease_NoAppealResponseCodeId = ID
+          from dbo.USR_NO_RATEINCREASEAPPEAL_RESPONSECODE
+          where [DESCRIPTION] like '%No%';      
+          
+          -- set the No Appeal Response code based on the following rules:
+          /*
+          -If all Increase? column value is Yes, then enter “Yes - Increase”
+          - If all Increase? column value is No, then enter “No - Increase”
+          - If at least 1 value in the Increase? column is Yes, then enter “Yes - Increase”
+          */
+          -- all values are True or some are True
+          If @IsAllIncreaseValuesYes = 1 or @IsSomeIncreaseValuesYes = 1
+            begin
+              set @NoAppealResponseCodeId = @YesIncrease_NoAppealResponseCodeId;
+            end
+          else
+            begin
+              -- all values are False
+              If @IsAllIncreaseValuesNo = 1
+                set @NoAppealResponseCodeId = @NoIncrease_NoAppealResponseCodeId;
+            end  
+        end
+      else
+        begin
+          -- if there's already an appeal response record then display exception to user, but still do the insert into USR_SPONSOR_RATECHANGE_SPONSORSHIPS below:
+          if not exists (select 1 from dbo.UFN_CONSTITUENTAPPEAL_GETRESPONSES(@constituentAppealId) where RESPONSECATEGORY = @RESPONSECATEGORYID)
+            begin
+              -- create the appealresponse row, calling the sproc to add it:
+              exec dbo.USR_USP_INSERT_CONSTITUENTAPPEALRESPONSE 
+      					@CONSTITUENTAPPEALID = @CONSTITUENTAPPEALID,
+      					@RESPONSEID = @RESPONSEID,
+      					@CHANGEAGENTID = @CHANGEAGENTID
+            end
+          else
+            begin
+              -- there's already an appeal response record so set the parmaeter to display exception to user
+              set @RESPONSEALREADYEXISTS = 1;
+            end
+        end
+      
+      -- we need to check to ensure there aren't already records in the ratechangesponsorship table
+      if not exists (select 1 from dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS where SPONSORID = @SponsorID and CHANGEYEAR = @CHANGEYEAR)
+        begin
+        	-- insert new items
+        	INSERT INTO dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS(
+        	   ID
+        	  ,SPONSORID
+        	  ,SPONSORSHIPID
+        	  ,CHANGEYEAR
+        	  ,INCREASERATE
+        	  ,RESPONSEDATE
+        	  ,RESPONDAFTERRATECHANGEUPDATED
+        	  ,ORIGINALSPONSORSHIPGIFTAMOUNT
+        	  ,UPDATEDSPONSORSHIPGIFTAMOUNT
+        	  ,RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID
+        	  ,REVENUELOOKUPID
+              ,NOAPPEALRESPONSEDATE
+              ,NOAPPEALRESPONSECODEID
+        	  ,ADDEDBYID
+        	  ,CHANGEDBYID
+        	  ,DATEADDED
+        	  ,DATECHANGED
+        	) 
+        	select 
+        	   ID -- ID - uniqueidentifier
+        	  ,CONSTITUENTID	 -- SPONSORID - uniqueidentifier
+        	  ,SPONSORSHIPID	 -- SPONSORSHIPID - uniqueidentifier
+        	  ,@CHANGEYEAR		 -- CHANGEYEAR - dbo.UDT_YEAR
+        	  ,RATEINCREASE		 -- INCREASERATE - bit
+        	  ,@RESPONSEDATE	 -- RESPONSEDATE - datetime
+        	  ,@RESPONDAFTERRATECHANGEUPDATED              -- RESPONDAFTERRATECHANGEUPDATED - bit
+        	  ,CURRENTRGAMOUNT   -- ORIGINALSPONSORSHIPGIFTAMOUNT - money
+        	  ,NEWRGAMOUNT		 -- UPDATEDSPONSORSHIPGIFTAMOUNT - money
+        	  ,@RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID -- RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID - uniqueidentifier
+        	  ,REVENUELOOKUPID        -- REVENUELOOKUPID nvarchar(100)
+              ,@NoAppealResponseDate  --NOAPPEALRESPONSEDATE
+              ,@NoAppealResponseCodeId  --NOAPPEALRESPONSECODEID
+        	  ,@CHANGEAGENTID	 -- ADDEDBYID - uniqueidentifier
+        	  ,@CHANGEAGENTID	 -- CHANGEDBYID - uniqueidentifier
+        	  ,@DATEADDED		 -- DATEADDED - datetime
+        	  ,@DATEADDED		 -- DATECHANGED - datetime
+        	from @TempTbl as [temp]
+        end
+
+    	--if @@Error <> 0
+    		--return 2;
+
+    	--return 0;
+      
+      commit;
+    end try
+    
+    begin catch
+      rollback
+	  -- Raise an error with the details of the exception
+	  SELECT @ErrMsg = ERROR_MESSAGE(),
+  		@ErrSeverity = ERROR_SEVERITY()
+
+	  RAISERROR(@ErrMsg, @ErrSeverity, 1)	      
+    end catch
+    
+end
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

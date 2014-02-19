@@ -1,0 +1,84 @@
+<QueryViewSpec 
+    xmlns:c="bb_appfx_commontypes"
+    ID="8fa0256e-15ec-429b-9064-2fb89dc1de65"
+    Name="Interaction Extension UI Model Field Manager"
+    Description="Provides support for querying on Interaction Extension UI Model Field Manager information."
+    Author="Cary Mayeda"
+    PrimaryKeyField="ID"
+    RecordType="Interaction Extension UI Model Field Manager"
+    IsRoot="true"
+    c:SecurityUIFolder="Interaction Extension UI Model Field Manager"
+    xmlns="bb_appfx_queryview" >
+
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	07-Aug-2012		CMayeda			Initial Version
+	-->
+	
+	<ViewImplementation ViewName="USR_V_QUERY_USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER">
+        <ViewSQL>
+<![CDATA[
+select
+    USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.ID,
+    USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.[INTERACTIONSUBCATEGORYID],
+	(select INTERACTIONCATEGORY.NAME from dbo.INTERACTIONCATEGORY join dbo.INTERACTIONSUBCATEGORY on INTERACTIONCATEGORY.ID = INTERACTIONSUBCATEGORY.INTERACTIONCATEGORYID where INTERACTIONSUBCATEGORY.ID = USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.[INTERACTIONSUBCATEGORYID]) as INTERACTIONCATEGORYNAME,
+	(select NAME from dbo.INTERACTIONSUBCATEGORY where ID = USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.[INTERACTIONSUBCATEGORYID]) as INTERACTIONSUBCATEGORYNAME,
+    (select USR_INTERACTIONEXTENSIONUIMODELFIELDCODE.DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUIMODELFIELDCODE where USR_INTERACTIONEXTENSIONUIMODELFIELDCODE.ID = USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.[UIMODELFIELDCODEID]) as UIMODELFIELDCODEID_TRANSLATION,
+    USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.[ISVISIBLE],
+    USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.[ISREQUIRED],
+	ADDEDBY.APPLICATIONNAME as [ADDEDBY_APPLICATION],
+	ADDEDBY.USERNAME as [ADDEDBY_USERNAME],
+	CHANGEDBY.APPLICATIONNAME as [CHANGEDBY_APPLICATION],
+	CHANGEDBY.USERNAME as [CHANGEDBY_USERNAME],
+	USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.DATEADDED,
+	USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.DATECHANGED,
+	USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.TSLONG
+from 
+    dbo.USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER
+    left join dbo.CHANGEAGENT as [ADDEDBY] on [ADDEDBY].ID = USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.ADDEDBYID
+    left join dbo.CHANGEAGENT as [CHANGEDBY] on [CHANGEDBY].ID = USR_INTERACTIONEXTENSION_UIMODELFIELDMANAGER.CHANGEDBYID
+]]>
+</ViewSQL>
+    </ViewImplementation>
+    <Output>
+        <OutputFields>
+            <OutputField Name="ID" Caption="System record ID" Category="System Fields" DataType="Guid" />
+            <OutputField Name="INTERACTIONSUBCATEGORYID" Category="System Fields" Caption="Interaction subcategory record id" DataType="Guid" />
+			<OutputField Name="INTERACTIONCATEGORYNAME" Caption="Interaction category" DataType="String" />
+			<OutputField Name="INTERACTIONSUBCATEGORYNAME" Caption="Interaction subcategory" DataType="String" />
+			<OutputField Name="UIMODELFIELDCODEID_TRANSLATION" Caption="UI model field">
+                <LookupInfo>
+                    <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUIMODELFIELDCODE" IncludeInactive="true" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="ISVISIBLE" Caption="Is visible" DataType="Boolean" />
+            <OutputField Name="ISREQUIRED" Caption="Is required" DataType="Boolean" />
+            <OutputField Name="ADDEDBY_APPLICATION" Caption="Added by application" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="37e3e458-af0d-4dbc-8a18-a93885521a42" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="ADDEDBY_USERNAME" Caption="Added by user name" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="cea15e1c-e455-41be-9ecf-6b5453fa96a4" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="CHANGEDBY_APPLICATION" Caption="Changed by application" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="37e3e458-af0d-4dbc-8a18-a93885521a42" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="CHANGEDBY_USERNAME" Caption="Changed by user name" Category="System Fields">
+                <LookupInfo>
+                    <SimpleDataList SimpleDataListID="cea15e1c-e455-41be-9ecf-6b5453fa96a4" />
+                </LookupInfo>
+            </OutputField>
+            <OutputField Name="DATEADDED" Caption="Date added" Category="System Fields" DataType="Date" />
+            <OutputField Name="DATECHANGED" Caption="Date changed" Category="System Fields" DataType="Date" />
+            <OutputField Name="TSLONG" Caption="Timestamp value" IsHidden="true" Category="System Fields" DataType="Long" />
+        </OutputFields>
+    </Output>
+</QueryViewSpec>

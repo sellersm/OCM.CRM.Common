@@ -1,0 +1,20 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="33acf919-3b59-4ded-aaf8-f24a30a93f29" 
+	Name="Interaction Extension Field Memo Sent Code Table"
+	Description="Field Memo Sent"
+	Author="Cary Mayeda"
+	DBTablename="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE"
+	Category="Interaction Extension"
+	SortMethod="UserDefined"	
+/>
+
+<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	07-Aug-2012		CMayeda			Initial Version
+
+-->

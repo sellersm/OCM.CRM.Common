@@ -1,0 +1,183 @@
+﻿<TableSpec
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes"
+	ID="0afd52bf-bb49-493d-a962-02b16e770fe6"
+	Name="Interaction Extension"
+	Description="Extension of the Interaction table"
+	Author="Cary Mayeda"
+	Tablename="USR_INTERACTIONEXTENSION"
+	PrimaryKeyAsForeignKeyTablename="INTERACTION" >
+
+
+	<!-- 
+	Remarks:    This is used to extend the interaction table for sponsorship and child related items.
+				Actions tha require specific children are stored here (departed child, transfer child, ...)
+				All other children are stored in USR_INTERACTIONEXTENSIONCHILDREN.
+				
+				** The triggers are used to update the Expected Date based on date the field memo was sent. It currently adds 30 days all the time.  This needs to be reviewed and most likely changed.  **
+
+	History:
+	Date            Modified By     Comments
+	27-Jul-2012		CMayeda			Initial Version
+	22-Aug-2012		CMayeda			Added column TRANSFERCHILDPROJECTID
+	05-Sep-2012		CMayeda			Added Reservation Request fields
+	26-Sep-2012		CMayeda			Added SPONSORID, ITEMSENCLOSEDCODEID
+									Removed Sequence ID (customidentifier) because we can use the one on the INTERACTION table.
+	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
+	27-Oct-2012		CMayeda			Fixed trigger
+	31-Oct-2012		CMayeda			Added indexes, another trigger fix
+	09-Nov-2012		Memphis			Added the fields for Letter Scanner feature
+	14-May-2013		Memphis			Added the new PRINTBLACKOUTLABEL field for letter scanner.
+	-->
+
+
+	<!-- define fields on the table -->
+	<Fields>
+		<!-- Sponsor Interaction Extension Fields -->
+		<CodeTableField Name="LETTERTYPECODEID" Description="Type of letter (contacted, not contacted)" CodeTable="USR_INTERACTIONEXTENSIONLETTERTYPECODE" />
+		<CodeTableField Name="CHILDCOUNTLETTERVERSIONCODEID" Description="The version of the letter based on the number of children (one child, two children, multiple children)" CodeTable="USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE" />
+		<CodeTableField Name="FULFILLMENTSTATUSCODEID" Description="Fulfillment Status (Pending, Ready, Complete)" CodeTable="USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE" />
+		<EnumField Name="EFTBROCHURECODE" DefaultValue="0" Description="Whether to include an EFT Brochure" >
+			<EnumValues>
+				<EnumValue ID="0" Translation="No"/>
+				<EnumValue ID="1" Translation="Yes"/>
+			</EnumValues>
+		</EnumField>
+		<EnumField Name="RESENDCODE" DefaultValue="0" Description="Is this a 're-sending' of the letter">
+			<EnumValues>
+				<EnumValue ID="0" Translation="No"/>
+				<EnumValue ID="1" Translation="Yes"/>
+			</EnumValues>
+		</EnumField>
+		<ForeignKeyField Name="UNAVAILABLECHILDID" Description ="ID of the unavailable child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="TRANSFERCHILDID" Description ="ID of the transfer child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="DEPARTEDCHILDID" Description ="ID of the departed child" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<CodeTableField Name="DEPARTUREREASONCODEID" Description="Reason for the departure" CodeTable="USR_INTERACTIONEXTENSIONDEPARTUREREASONCODE"/>
+		<TextField Name="DEPARTUREREASONOTHERDESCRIPTION" Description="Description of the reason a child was departed that wasn't included in  the code table" Length="250"/>
+		<ForeignKeyField Name="DOUBLESPONSOREDCHILDID" Description ="ID of the child that was already sponsored by another person" Cardinality="ManyToOne" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" OnDelete="RaiseError" />
+		<ForeignKeyField Name="PREVIOUSCHILDPROJECTID" Description="Used for the Child Project Transfer Letter - project transfered from" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+		<ForeignKeyField Name="TRANSFERCHILDPROJECTID" Description="Used for the Child Project Transfer Letter - project transfered to" Cardinality="ManyToOne" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+		<DateField Name="PREVIOUSBIRTHDATE" Description="Used for the Child Bithdate Change Notification letter"/>
+		<TextField Name="PREVIOUSNAME" Description="Used for the Child Name Change Notification letter" Length="150"/>
+		<ForeignKeyField Name="SPONSOREDPROJECTID" Description="Used for project sponsorship interactions" ForeignFieldName="ID" ForeignDataType="uniqueidentifier" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPOPPORTUNITY" OnDelete="RaiseError"/>
+		
+		<!-- Child Field Memo Interaction Extension Fields -->
+		<DateField Name="FIELDMEMODATESENT" Description="The date the field memo was sent" />
+		<CodeTableField Name="FIELDMEMOSENTCODEID" Description="Field Memo Sent" CodeTable="USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE"/>
+		<CodeTableField Name="HOLDREASONCODEID" Description="Field Memo - Reason for hold" CodeTable="USR_INTERACTIONEXTENSIONHOLDREASONCODE"/>
+		<CodeTableField Name="UNUSABLECODEID" Description="Field Memo - Unusable item" CodeTable="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE"/>
+
+		<!-- Child and Sponsor Letter Interaction Extension Fields -->
+		<ForeignKeyField Name="SPONSORID" Description="Sponsor ID at time of interaction creation" OnDelete="RaiseError" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
+		<CodeTableField Name="ITEMSENCLOSEDCODEID" Description="Items Enclosed" CodeTable="USR_ITEMSENCLOSEDCODE"/>
+		<ForeignKeyField Name="ORIGINALLETTERSUBCATEGORYID" Description="Original Letter Subcategory ID" OnDelete="RaiseError" ForeignTable="INTERACTIONSUBCATEGORY" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
+
+		<!-- Reservation Request Interaction Extension Fields -->
+		<TextField Name="RESERVATIONREQREPCODE" Description="Rep Code for the reservation request" Length="100"/>
+		<NumberField Name="RESERVATIONREQNUMBEROFPROFILES" Description="Number of Profiles needed for this reservation request" Type="smallint" />
+		<NumberField Name="RESERVATIONREQDISPLAYRACKS" Description="Number of Display Racks requested" Type="smallint"  />
+		<NumberField Name="RESERVATIONREQBROCHURES" Description="Number of Brochures requested" Type="smallint"  />
+		<CodeTableField Name="RESERVATIONREQEXPECTEDDATETYPECODEID" CodeTable="USR_INTERACTIONEXTENSIONEXPECTEDDATETYPECODE" Description="Type of deadline (hard vs soft)" />
+		<ForeignKeyField Name="STATEID" ForeignTable="STATE" />
+		<TextField Name="ADDRESSBLOCK" Description="Contains the address lines." Length="150" />
+		<TextField Name="CITY" Description="Contains the address city." Length="50" />
+		<TextField Name="POSTCODE" Description="Contains the address post code." Length="12" />
+
+		<!-- Letter Interaction Extension Fields -->
+		<EnumField Name="COMPLETEDAFTERCANCELLATIONCODE" DefaultValue="0" Description="Set to true if an interaction status was changed from cancelled to completed">
+			<EnumValues>
+				<EnumValue ID="0" Translation="False"/>
+				<EnumValue ID="1" Translation="True"/>
+			</EnumValues>
+		</EnumField>
+		<TextField Name="SCANSESSION" Description="Used to identify what scn session the letter was scanned in" Length="68"/>
+		<GuidField Name="COMPLETEDBYID" Description="Interaction completed by"/>
+		<ForeignKeyField Name="CHILDID" Description="Child ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPOPPORTUNITYCHILD" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError" />
+		<ForeignKeyField Name="CHILDPROJECTID" Description="Child Project ID at time of interaction creation" Cardinality="ManyToOne" ForeignTable="SPONSORSHIPLOCATION" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" OnDelete="RaiseError"/>
+		<NumberField Name="ORIGINALLETTERSEQUENCEID" Description="Sequence ID of original scanned letter" Type="int" />
+		<GuidField Name="APPEALID" Description="Appeal ID"/>
+		<BooleanField DefaultValue="false" Name="PRINTBLACKOUTLABEL" Description="Print blackout label" />
+
+	</Fields>
+	<Indexes>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="UNAVAILABLECHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="TRANSFERCHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="DEPARTEDCHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="DOUBLESPONSOREDCHILDID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="PREVIOUSCHILDPROJECTID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="TRANSFERCHILDPROJECTID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="SPONSORID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="RESERVATIONREQREPCODE"/>
+			</IndexFields>
+		</Index>
+	</Indexes>
+	<Triggers>
+		<Trigger Name="USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+			<CreateTriggerSQL>
+				<![CDATA[
+
+create trigger dbo.USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_INSERT on dbo.USR_INTERACTIONEXTENSION after insert not for replication
+as begin
+	update	INTERACTION
+	   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
+			DATECHANGED = getdate()
+	  from	INTERACTION
+	  join  inserted on inserted.ID = INTERACTION.ID
+	 where	inserted.FIELDMEMODATESENT is not null
+end
+
+				]]>
+			</CreateTriggerSQL>
+		</Trigger>
+		<Trigger Name="USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE" Description="Used to update the EXPECTEDDATE based on the date a field memo was sent">
+			<CreateTriggerSQL>
+				<![CDATA[
+
+create trigger dbo.USR_TR_INTERACTIONEXTENSION_FIELDMEMODATESENT_UPDATE on dbo.USR_INTERACTIONEXTENSION after update not for replication
+as begin
+	if update(FIELDMEMODATESENT)
+		update	INTERACTION
+		   set	EXPECTEDDATE = dateadd(day, 30, inserted.FIELDMEMODATESENT),
+				DATECHANGED = getdate()
+		  from	INTERACTION
+	      join  inserted on inserted.ID = INTERACTION.ID
+	     where	inserted.FIELDMEMODATESENT is not null
+end
+				
+				]]>
+			</CreateTriggerSQL>
+		</Trigger>
+	</Triggers>
+
+
+</TableSpec>

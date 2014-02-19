@@ -1,0 +1,113 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="374592a3-5433-4834-b9c6-45560aadba80"
+	Name="USR_USP_ADDVALUETOCODETABLE"
+	Description="This is used to add new values to code tables"
+	Author="Cary Mayeda"
+	SPName="USR_USP_ADDVALUETOCODETABLE"
+	>
+<!-- 
+	Remarks:    This is used to add rows to code tables. It checks to make sure the value doesn't already exist before adding.
+				Future versions will allow updating description and sequence columns
+
+	History:
+	Date            Modified By     Comments
+	11-Jun-2012		CMayeda			Initial Version
+
+-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_ADDVALUETOCODETABLE (
+	@codeTableName nvarchar(128),	-- Name of the code table to insert values into
+	@description nvarchar(100),		-- Description to be added to the code table
+	@active bit,					-- Currently not used
+	@sequence int,					-- Sequence in code table
+	@setSequenceToMax bit,			-- This is used to specify if the Sequence value should be calculated automatically
+	@valueAdded bit output			-- 0 if the insert was not performed, and 1 if the value was inserted into the code table
+
+)
+as
+begin
+	-- Get ChangeAgent if none was passed into the sproc
+	declare @changeAgentID uniqueidentifier
+  	if @changeAgentID is null  
+	    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+    -- Used for setting date fields to today's date
+	declare @currentDate datetime = null  
+	set @currentDate = getdate()	
+
+	-- Tracks if the insert should be performed
+	declare @descriptionExists bit 
+	set @descriptionExists = 0
+  
+	declare @sqlMaxSequence nvarchar(max)
+	declare @sqlMaxSequenceParms nvarchar(500)
+
+	declare @sqlCheckExists nvarchar(max)
+	declare @sqlCheckExistsParms nvarchar(500)
+	
+	declare @sqlInsertCodeValue nvarchar(max)
+	declare @sqlInsertCodeValueParms  nvarchar(500)
+
+	set nocount on
+	
+	begin try
+	
+		if COALESCE (@setSequenceToMax,0) = 1
+		begin
+			set @sqlMaxSequence = 
+				N'select @sequenceOut = max(SEQUENCE) + 10 from ' + quotename(@codeTableName)
+
+			set @sqlMaxSequenceParms = 
+				N'@sequenceOut int output'
+
+			exec sp_executeSQL @sqlMaxSequence, @sqlMaxSequenceParms, @sequenceOut = @sequence output
+			
+			if @sequence is null
+				set @sequence = 10
+		end
+			
+		set @sqlCheckExists = 
+			N'if exists (select ID from ' + quotename(@CodeTableName) + ' where DESCRIPTION = @myDescription)
+				set @descriptionExistsOut = 1
+			  else
+				set @descriptionExistsOut = 0'
+	
+		set @sqlCheckExistsParms = N'@myDescription nvarchar(100), @descriptionExistsOut bit OUTPUT'
+
+		exec sp_executeSQL 	@sqlCheckExists, @sqlCheckExistsParms, @myDescription = @description, @descriptionExistsOut = @descriptionExists OUTPUT
+	
+		set @sqlInsertCodeValue = 
+			N'insert ' + quotename(@CodeTableName) + ' ([ID], [DESCRIPTION], [ACTIVE], [SEQUENCE], [ADDEDBYID], [CHANGEDBYID], [DATEADDED], [DATECHANGED]) 
+				values (NEWID(), @myDescription, 1, @mySequence, @myChangeAgentID, @myChangeAgentID, @myCurrentDate, @myCurrentDate)'
+	
+		set @sqlInsertCodeValueParms = N'@myDescription nvarchar(100), @mySequence int, @myChangeAgentID uniqueidentifier, @myCurrentDate datetime'
+
+		if @descriptionExists = 0
+		begin
+			exec sp_executeSQL 	@sqlInsertCodeValue, @sqlInsertCodeValueParms, @myDescription = @description, @mySequence = @sequence, @myChangeAgentID = @changeAgentID, @myCurrentDate = @currentDate
+			set @valueAdded = 1
+			print 'Added ' + @codeTableName + ' - ''' + @description + ''''
+		end 
+		else
+		begin
+			set @valueAdded = 0
+			print 'Skipped ' + @codeTableName + ' - ''' + @description + ''''
+		end
+	end try
+	begin catch
+		print 'Skipped ' + @codeTableName + ' - ''' + @description + ''''
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+end
+
+	
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

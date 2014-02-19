@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>CRM_ChildLetterBarCode.Add.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>CRMChildLetterScannerAddDataFormUIModel</ClassName>
+  <HtmlInfo GenerateHtml="false">
+    <HtmlFile />
+    <HtmlFolder>custom\TestBarCode\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

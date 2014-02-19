@@ -1,0 +1,754 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="5ace7bdc-1311-4bfd-a896-9e0fc45fba7c"
+	Name="USR_USP_CHILD_EDUCATION_LETTERSCANNER"
+	Description="Sproc for child education letter scanner."
+	Author="Memphis Sellers"
+	SPName="USR_USP_CHILD_EDUCATION_LETTERSCANNER"
+	GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+	Remarks:    This is a new, one-off letter scanner that will ONLY WORK for Child Education letters!
+				It combines some features of both the CRM Child and RE Child letter scanners.
+
+	History:
+	Date            Modified By     Comments
+	23-Apr-2013		Memphis			Initial Version.  Fogbugz Case 1069
+	17-Jun-2013		Memphis			Fixing error message and check for Primary address that has do not mail code.
+	18-Jun-2013		Memphis			Fixed bug need to search for cancelled interactions when not found by sequence id.
+	19-Jun-2013		Memphis			Added new output parms: SponsorName and SponsorSalutation, check for attribute that identifies an incorrect salutation
+	                                & sets flag to print blackout label.
+	27-Jun-2013		Memphis			Various fixes for Pamela...
+	-->	
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_CHILD_EDUCATION_LETTERSCANNER
+	@SponsorLookupID nvarchar(6),	-- ** RESET TO 6 **
+	@ChildLookupID nvarchar(7),	    -- ** RESET TO 7 **
+	@ChildProjectLookupID nvarchar(5),
+	@InteractionSequenceId int,
+	@ChangeAgentID uniqueidentifier,
+	@ScanSession nvarchar(68),
+	@ScannerMessage nvarchar(1000) OUTPUT,
+	@ScanOutcome nvarchar(1000) OUTPUT,
+	@ExceptionOccurred bit OUTPUT,
+	@setPrintBlackoutLabel bit OUTPUT,
+  @SponsorName nvarchar(154) OUTPUT,  -- constituent name
+  @SponsorSalutation nvarchar(700) OUTPUT     -- constituent salutation or org name
+
+as
+begin
+
+	declare @projectLookupId nvarchar(6) = left(@ChildProjectLookupID,2) + '-' + right(@ChildProjectLookupID,3);  -- we must reformat the project lookup id cuz it comes in with no dash
+
+	declare @SponsorID as uniqueidentifier = null
+	declare @CurrentChildProjectID as uniqueidentifier		-- holds the current project id of the child, used to compare if child changed projects
+	declare @DateSponsorshipCancelled as datetime
+	declare @NumberOfDaysSponsored smallint
+	declare @CancellationReason as nvarchar(100)
+	declare @ConstituentID uniqueidentifier
+	declare @LogTypeCode as tinyint
+	declare @ChildID as uniqueidentifier
+	declare @OriginalInteractionID as uniqueidentifier
+	declare @OriginalLetterSubcategoryID as uniqueidentifier
+	declare @OriginalLetterSequenceID as int
+	declare @NumberOfPendingInteractions AS int
+	declare @TempTable TABLE(InteractionID uniqueidentifier, OriginalLetterSequenceID int)
+	declare @StatusCodeCompleted as tinyint
+	declare @StatusCodePending as tinyint
+	declare @ErrMsg nvarchar(4000)
+	declare @ErrSeverity int
+	declare @InteractionStatus nvarchar(100) = null;
+	declare @newInteractionStatus nvarchar(100) = ''
+	declare @completedAfterCancellationCode bit = 0
+	declare @BarcodeChildProjectID uniqueidentifier			-- holds the projectId of the child based on the @ChildProjectLookupID parameter passed in
+
+	declare @possibleInteractionCount int = 0;		-- counter used to help locate the child letter interaction when  not using the sequence id
+	declare @isInteractionFound bit = 0;			-- flag to identify if we found the child letter interaction
+	declare @childInteractionId uniqueidentifier = null;	-- holds the child interaction id when found by searching, not sequence id
+	declare @childInteractionSummary nvarchar(100) = 'Annual Letter - Educational';    -- used to locate the child interaction if not found by sequence id
+
+	declare @foundSubCategoryId uniqueidentifier;
+	declare @foundExpectedDate date;
+	declare @foundInteractionId uniqueidentifier = null;
+
+	declare @ignoreSponsorCheck bit = 0;            -- flag used to skip checking for matching/valid sponsor, set if sponsorlookupid = 000000
+	declare @noChildCorrespondence bit = 0;         -- flag used to skip creating sponsor interaction
+	--declare @setPrintBlackoutLabel bit = 0;         -- flag to indicate if we should set the PRINT_BLACKOUT_LABEL field in the interactionextension table.:  6/12/13 passed in now to the form as parameter
+	set @setPrintBlackoutLabel = 0;					-- default to False to avoid any conversion errors in the UIModel class.
+
+  declare @isOrgRecord bit = 0;   -- flag to identify if this Sponsor's constituent record is an ORG (ISORGANIZATION) or not, used to set the sponsor name & salutation
+  
+	declare @interactionSponsorId uniqueidentifier;
+
+	--declare @noChildCorrespondenceSolicitCodeId uniqueidentifier = null;
+
+	--declare @isOkToUseSequence bit = 0;			-- flag to identify whether or not we can use the given sequence id
+
+	-- Constants
+	set @StatusCodeCompleted = 2
+	set @StatusCodePending = 1
+	set @ExceptionOccurred = 0
+
+	set @ChangeAgentID = null;
+
+	if @ChangeAgentID is null
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @ChangeAgentID output;
+
+
+	-- Get type code of 'Mail'
+	declare @InteractionTypeCode as uniqueidentifier
+	set @InteractionTypeCode = (select ID from dbo.INTERACTIONTYPECODE where LOWER(DESCRIPTION) = 'mail')
+
+	-- Get Subcategory
+	Declare @InteractionSubcategoryID as uniqueidentifier
+	set @InteractionSubcategoryID = (Select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = 'send child correspondence')
+
+	/*
+	IF the interaction SequenceID matches AND interaction Subcategory equal to "Child Letter 1" AND the Year of the Expected date is 2013
+		THEN follow the regular script to complete [follow the . (I added extra criteria because I am wondering if the scanner will find the sequence ID that matches, but it is the wrong interaction.)
+	Else 
+		IF interaction Subcategory equal to "Child Letter 1" AND the Expected date is 2013 
+		THEN follow the reqular script to complete.
+	
+	  - Child "Learning Letter" Scanner:
+	  - same search criteria as before, for all 3 paths, always complete the child interaction!!! Then do sponsorship checks...
+	   - 1. happy path = all ID values match and are valid/found
+	   - 2. scanner skips everything in the label except the child ID and project ID & finds the child record
+		 - if the sponsor id of the barcode doesn't match the current sponsor of the kid, then DO NOT THROW AN EXCEPTION
+			but instead set a flag and when the sponsor interaction is created, set the new interaction extension field:
+		 - Create new field in INTERACTION EXTENSION that will get set in the step above:  PRINT_BLACKOUT_LABEL bit default 0
+		 - Display the result of the flag
+	   - 3. For the barcodes that have a blank (0000000) SponsorId, 
+		 - ignore the check for Sponsor ID validation
+		 - ignore the check of current sponsor matching sponsor barcode
+		 - complete child interaction,
+		 - if child is sponsored, create the sponsor interaction on the current sponsor with NO PRINT_BLACKOUT_LABEL value!	
+	*/
+
+
+	-- get the child letter 1 subcategory id value for comparing later:
+	declare @childLetterSubCategoryId uniqueidentifier;
+
+	select @childLetterSubCategoryId = ID
+	from dbo.INTERACTIONSUBCATEGORY
+	where lower(NAME) = LOWER('Child Letter 1');
+	
+	-- 6/12/13 Memphis per Pamela, need to to populate the “Original Letter Subcategory” extension field in the sponsor’s 
+	-- Send Child Correspondence interaction with Child Letter 1.  That way we can query on only the learning letters that were scanned for that day.
+	set @OriginalLetterSubcategoryID = @childLetterSubCategoryId
+	
+
+	begin try
+		if @childLetterSubCategoryId is null
+			RAISERROR 1000000 'Unable to locate the interaction subcategory: Child Letter 1.'        
+	end try
+
+	begin catch
+		exec dbo.USP_RAISE_ERROR
+	end catch
+
+
+	/*
+	-- 1.1 
+	-- is there a matching interaction (Sequence ID)?  
+	--   If not, then look for matching subcategory and Expected date:
+	-- Once we find the Interaction we're looking for:
+	-- is the interaction status one of these:
+	--   Pending?    If YES: set status to completed, then do Send Child Correspondence interaction precheck
+	--   Cancelled?  IF YES: set status to completed, set "Completed After Cancellation" to TRUE (1, it's a bit field).
+	--   Completed?  If YES: goto exception processing
+	--   not one of the above status, then goto exception processing
+	-- (case [COMPLETEDAFTERCANCELLATIONCODE] when (0) then N'False' when (1) then N'True'  end)
+	*/
+
+
+	set @ChildID = (select ID from dbo.SPONSORSHIPOPPORTUNITY where LOOKUPID = @ChildLookupID)
+	If @ChildID is null
+		begin
+			set @ExceptionOccurred = 1
+			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child ID not found. '
+		end
+
+
+	If @ExceptionOccurred = 0
+		begin
+			-- first try to find the child letter interaction using the interaction sequenceid value from barcode:
+			select  @InteractionStatus = [STATUS],
+					@foundSubCategoryId = INTERACTIONSUBCATEGORYID,
+					@foundExpectedDate = EXPECTEDDATE,
+					@foundInteractionId = ID
+			from dbo.INTERACTION 
+			where SEQUENCEID = @InteractionSequenceId;
+
+			-- if we found a row, compare to see if this is the one we really want or not
+			if @foundInteractionId is not null
+				begin
+					-- check if this interaction Subcategory is equal to "Child Letter 1" AND the Year of the Expected date is 2013
+					if @foundSubCategoryId = @childLetterSubCategoryId
+						begin
+							-- the subcategory matches, now check the expected date
+							if YEAR(@foundExpectedDate) = 2013
+								begin
+									-- we have a match, so we can use this interaction sequence id
+									--set @isOkToUseSequence = 1;
+									set @isInteractionFound = 1;
+								end
+							else
+								--set @isOkToUseSequence = 0;
+								set @isInteractionFound = 0;
+						end
+					else
+						--set @isOkToUseSequence = 0;
+						set @isInteractionFound = 0;
+					
+				end
+		
+			-- if we didn't find the child letter interaction yet, search for it another way
+			if @isInteractionFound = 0
+				begin
+					-- we need to find the interaction by using the subcategory, objective (summary) and expected date and child:
+					select @possibleInteractionCount = COUNT(*),
+						   @foundInteractionId = ID
+					from dbo.INTERACTION 
+					where (CONSTITUENTID = @ChildID 
+						and INTERACTIONSUBCATEGORYID = @childLetterSubCategoryId
+						and STATUSCODE IN (1, 4) --@StatusCodePending or Cancelled
+						and OBJECTIVE = @childInteractionSummary
+						and YEAR(EXPECTEDDATE) = 2013)
+					group by ID;
+					
+					if (@possibleInteractionCount = 1)
+						begin
+							-- this should be the child's interaction
+							set @isInteractionFound = 1;
+						end
+					else
+						begin
+							-- what do we do if there are more than 1 possible interactions?
+							-- set the flag to 'not found', exception message will be populated down below
+							--set @ExceptionOccurred = 1;
+							--set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Unable to locate the correct interaction for the child.';
+							set @isInteractionFound = 0;
+						end			
+				
+				end
+			
+			-- check if we found the child leter interaction or not
+			if @isInteractionFound = 1				
+				begin
+					-- if we don' already have the interaction status, get it now:
+					if @foundInteractionId is not null
+						begin
+							select  @InteractionStatus = [STATUS]
+							from dbo.INTERACTION 
+							where ID = @foundInteractionId;
+						end
+					
+					if @InteractionStatus is null
+						begin
+							-- this indicates a problem since by now we really should have found the Status of this child interaction
+							set @ExceptionOccurred = 1;
+							set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Unable to determine the Status of the Child Letter interaction. ';
+						end
+
+					if @ExceptionOccurred = 0
+						begin
+							-- set the completion status of the child letter interaction:
+							if LOWER(@InteractionStatus) = 'cancelled'
+								set @completedAfterCancellationCode = 1;
+						
+							set @newInteractionStatus = case LOWER(@InteractionStatus) 
+									when 'pending' then 'Completed'
+									when 'cancelled' then 'Completed'
+									when 'completed' then 'EXCEPTION'
+									else 'EXCEPTION'
+								end
+						end
+
+				end
+			else
+				begin
+					set @ExceptionOccurred = 1
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No Child Letter Interaction found. '
+				end
+		end
+
+
+	if @ExceptionOccurred = 0
+		begin
+			if @newInteractionStatus = 'EXCEPTION'
+				begin
+					set @ExceptionOccurred = 1
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child Letter interaction is already Completed. '
+				end
+		end			
+
+	if @ExceptionOccurred = 0
+		begin
+		if @SponsorLookupID = '000000'
+			begin
+				-- set flag to ignore further checking of matching sponsor           
+				set @ignoreSponsorCheck = 1;
+				set @setPrintBlackoutLabel = 0;
+			end
+		end
+
+  -- we need the sponsor id for completing the child interaction...
+	set @SponsorID = (select ID from dbo.CONSTITUENT where LOOKUPID = @SponsorLookupID)
+
+	-- 1.4 & 1.5
+	-- Update the existing Child Interaction with the new status code value:
+	if @ExceptionOccurred = 0
+		begin
+			-- determine how to locate the child interacion record based on how we found it above!
+			if @foundInteractionId is not null
+				begin		
+					update dbo.INTERACTION
+					set STATUSCODE = @StatusCodeCompleted,
+						ACTUALDATE = CONVERT(date, getdate()) 
+						OUTPUT inserted.ID, inserted.SEQUENCEID
+						INTO @TempTable
+					from (select TOP 1 ID, SEQUENCEID
+					from dbo.INTERACTION 
+					--where SEQUENCEID = @InteractionSequenceId
+					where ID = @foundInteractionId
+					order by EXPECTEDDATE ASC) as ib
+					where INTERACTION.ID = ib.ID			
+
+					select TOP 1 
+							@OriginalInteractionID = InteractionID, 
+							@OriginalLetterSequenceID =  OriginalLetterSequenceID 
+					from @TempTable
+
+					-- 1.5
+					-- if this was completed after cancelled then update the
+					--  COMPLETEDAFTERCANCELLATION field
+					if @completedAfterCancellationCode = 0
+						begin
+							Update dbo.USR_INTERACTIONEXTENSION
+							set COMPLETEDBYID = @ChangeAgentID,
+								SCANSESSION = @ScanSession,
+								SPONSORID = @SponsorID
+							where ID = @OriginalInteractionID
+						end
+					else
+						begin
+							Update dbo.USR_INTERACTIONEXTENSION
+							set COMPLETEDBYID = @ChangeAgentID,
+								SCANSESSION = @ScanSession,
+								SPONSORID = @SponsorID,
+								COMPLETEDAFTERCANCELLATIONCODE = @completedAfterCancellationCode
+							where ID = @OriginalInteractionID
+						end
+					
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The Child Letter Interaction was completed. '	
+				end
+			else
+				begin
+					-- what to do?
+					set @ExceptionOccurred = 1
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Unable to complete the Child Letter interaction. '				
+				end	
+		end
+
+
+	/*
+		1.2 check sponsor lookup id value:
+		 - 1. Happy Path: if it matches, go on, otherwise
+		 - 2. If the sponsor id of the barcode doesn't match the current sponsor of the kid, then DO NOT THROW AN EXCEPTION
+			but instead set a flag and when the sponsor interaction is created, set the new interaction extension field:
+		 - Create new field in INTERACTION EXTENSION that will get set in the step above:  PRINT_BLACKOUT_LABEL bit default 0
+		 - Display the result of the flag
+		 - 3. For the barcodes that have a blank (0000000) SponsorId, 
+			- ignore the check for Sponsor ID validation
+			- ignore the check of current sponsor matching sponsor barcode
+			- complete child interaction,
+			- if child is sponsored, create the sponsor interaction on the current sponsor with NO PRINT_BLACKOUT_LABEL value!
+	*/
+
+	-- Sponsor ID
+	if @ExceptionOccurred = 0 and @ignoreSponsorCheck = 0
+		begin
+      -- the following line is done above now...
+			--set @SponsorID = (select ID from dbo.CONSTITUENT where LOOKUPID = @SponsorLookupID)
+			if @SponsorID is null
+				begin
+					set @ExceptionOccurred = 1;
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor ID not found. ';
+				end
+		end
+
+	-- Start the TRY here since table updates follow
+	begin try
+	begin tran
+
+
+
+	-- 2A Send Child Response Letter interaction precheck
+
+	-- Send Child Response Letter pre-check
+	-- when 0 then 'Pending', when 1 then 'Eligible', when 2 then 'Ineligible'	
+	
+	--   2.1 Is the child departed: Check eligibility status for “ineligible”.
+	--   IF YES:  alert child is ineligible, goto exception processing
+	if @ExceptionOccurred = 0
+		begin
+    		if exists (select 1 from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
+    			begin
+    				set @ExceptionOccurred = 1
+    				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child ineligible.  '
+    			end
+    		else
+    			begin
+    				--   2.2 Is Child currently sponsored?
+    				--   If NO:  alert child not currently sponsored, goto 3A exception processing
+            -- 6/19/13: Memphis added to check for 'bad data' where a child is actively sponsored by 
+            --          more than 1 sponsor:
+            declare @sponsorshipCount int = 0;
+            select @sponsorshipCount = count(*)
+            from dbo.SPONSORSHIP 
+            where SPONSORSHIPOPPORTUNITYID = @ChildID 
+            and STATUSCODE = 1;
+            
+            if @sponsorshipCount > 1
+              begin
+    						set @ExceptionOccurred = 1
+    						set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child has more than one Active sponsorships.  '                
+              end
+            else
+              begin
+      				  set @ConstituentID = (select CONSTITUENTID from dbo.SPONSORSHIP where SPONSORSHIPOPPORTUNITYID = @ChildID and STATUSCODE = 1)
+                
+        				If @ConstituentID is null
+        					begin
+        						set @ExceptionOccurred = 1
+        						set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child not currently sponsored.  '
+        					end
+        				else  -- Child sponsored - check for change of sponsor - box 2.3
+        					--   2.3 Does child currently have the same Sponsor as the barcode?
+        					If (@SponsorLookupID = '000000' or (@ConstituentID <> @SponsorID)) -- scanned sponsor ID
+        						begin
+      								-- **NEW**: don't throw exception, instead set a flag and later set a new field
+      								set @setPrintBlackoutLabel = 1;
+
+      								-- set the sponsorid that will be used for creating the Sponsor Interaction to the current sponsor of this child
+      								set @interactionSponsorId = @ConstituentID;
+        							--set @ExceptionOccurred = 1
+        							set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Blackout label needed.  '
+        						end
+      						else
+      							begin
+      								-- set the sponsorid that will be used for creating the sponsor interaction to the sponsor passed in from bar code
+      								set @interactionSponsorId = @SponsorID;
+      							end
+              end
+    			end
+		end
+
+
+
+	-- **NEW**: 2.6 Check for the 'no child correspondence' solicit code on the sponsor
+	if @ExceptionOccurred = 0
+		begin
+			declare @solicitCodeList table (CODEDESCRIPTION nvarchar(100))
+        
+			insert @solicitCodeList
+			select * from dbo.USR_UFN_GET_CONSTITUENT_SOLICITCODES_LIST(@interactionSponsorId)
+
+			if exists(select 1 from @solicitCodeList where lower(CODEDESCRIPTION) = 'no child correspondence')
+				begin 
+					--set @noChildCorrespondence = 1;
+					set @ExceptionOccurred = 1;
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Sponsor has No Child Correspondence solicit code.  ';
+				end
+		end
+
+
+
+	--   2.5 IS Sponsor address valid?
+	--   IF NO: alert that sponsor address is invalid, goto 3A exception processing
+	if @ExceptionOccurred = 0
+	begin	
+		if not exists (SELECT 1 FROM dbo.ADDRESS where constituentID = @interactionSponsorId and HISTORICALENDDATE is null)
+			begin
+				set @ExceptionOccurred = 1
+				set @ScannerMessage = coalesce(@ScannerMessage, '') + 'No active addresses exist for Sponsor. '
+			end
+		else
+			if exists (SELECT 1 FROM dbo.ADDRESS where (constituentID = @interactionSponsorId and HISTORICALENDDATE is null and DONOTMAIL = 1 and ISPRIMARY = 1))
+				begin
+					set @ExceptionOccurred = 1
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'A Primary address has a do not mail flag. '
+				end
+	end
+
+	--   2.4 Does the Child Project on the barcode match the child’s current Project?
+	--   If NO:  alert current Project not match barcode project, goto 3A exception processing
+	if @ExceptionOccurred = 0
+		begin
+			-- get the Child Project ID
+			set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+			if @CurrentChildProjectID <> @BarcodeChildProjectID
+				begin
+					set @ExceptionOccurred = 1
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Current Child Project ID does not match barcode Project ID. '						
+				end
+		end
+
+
+	/*
+	Generate "Send Child Correspondence" interaction
+	Intercationtypecode is the Contact method
+	Status Code = 2 - completed
+	Wrap interaction and interaction extention insert in a transaction so both get updated
+	*/
+
+
+  -- 6/18/13 Memphis:  if the PrintBlackoutLabel is 0, check to see if this constituent has the special Attribute which will 
+  --                   require the blackout label!
+  if @setPrintBlackoutLabel = 0
+    begin
+      -- check for the attribute on the Constituent record, 
+      -- where the ChildID is in this attribute, if found, print blackout label
+      if exists (select 1 from dbo.ATTRIBUTE8CBD724EE4DF4C539467FED50781835A where CONSTITUENTID = @SponsorID and COMMENT = @ChildLookupID)
+        begin
+          set @setPrintBlackoutLabel = 1;
+		  set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Blackout label needed.  '
+        end      
+    end
+    
+  -- 6/19/13: Memphis populate the Sponsor Name and Sponsor Salutation output parameters:
+  select @SponsorName = [NAME],
+         @isOrgRecord = ISORGANIZATION
+  from dbo.CONSTITUENT
+  where ID = @interactionSponsorId;  -- use this if you want the current sponsor of the child: @interactionSponsorId
+
+  -- just make the salutation the same as the NAME in case this is an ORG, if not it'll get set below
+  set @SponsorSalutation = @SponsorName
+
+  if @isOrgRecord = 0
+    begin
+      -- this is NOT an ORG, so get the sponsor salutation
+      select @SponsorSalutation = FORMATTEDNAME
+      from dbo.NAMEFORMAT
+      where PRIMARYSALUTATION = 1
+      and CONSTITUENTID = @interactionSponsorId;  -- use this if you want the current sponsor of the child: @interactionSponsorId
+    end
+
+
+	if @ExceptionOccurred = 0
+		begin
+
+		Declare @Date as datetime
+		set @Date = CONVERT(DATE,GETDATE())
+	
+		--Expected Date is last day of month, 3 months in advance
+		declare @expectedDate date = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);
+
+		Declare @NewID as uniqueidentifier
+		set @NewID = NEWID()
+
+			INSERT INTO dbo.INTERACTION(
+			ID,
+			CONSTITUENTID,
+			INTERACTIONTYPECODEID,
+			EXPECTEDDATE,
+			ACTUALDATE,
+			STATUSCODE,
+			INTERACTIONSUBCATEGORYID,
+			OBJECTIVE,
+			ADDEDBYID,
+			CHANGEDBYID,
+			DATEADDED,
+			DATECHANGED
+			)
+			VALUES(
+			@NewID,
+			@interactionSponsorId,
+			@InteractionTypeCode,
+			@Date,
+			@Date,
+			@StatusCodeCompleted,
+			@InteractionSubcategoryID,
+			'Send Child Correspondence',
+			@ChangeAgentID,
+			@ChangeAgentID, 
+			GETDATE(),
+			GETDATE()
+			)
+
+			INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+			ID, 
+			COMPLETEDBYID, 
+			CHILDID, 
+			SCANSESSION, 
+			ORIGINALLETTERSUBCATEGORYID, 
+			ORIGINALLETTERSEQUENCEID, 
+			CHILDPROJECTID, 
+			PRINTBLACKOUTLABEL,
+			ADDEDBYID, 
+			CHANGEDBYID, 
+			DATEADDED, 
+			DATECHANGED
+			)
+			VALUES (
+			@NewID, 
+			@ChangeAgentID, 
+			@ChildID, 
+			@ScanSession, 
+			@OriginalLetterSubcategoryID, 
+			@OriginalLetterSequenceID, 
+			@BarcodeChildProjectID, 
+			@setPrintBlackoutLabel,
+			@ChangeAgentID, 
+			@ChangeAgentID, 
+			GETDATE(), 
+			GETDATE()
+			)
+		
+			-- call 'add child to interaction sproc' from Cary here, to get the child info in this interaction:
+			-- get the sponsorshipopportunitychildid for the given childLookupId
+
+			if @ChildID is not null
+				begin
+					exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
+						@interactionID = @NewID,
+						@sponsorshipOpportunityChildID = @ChildID,
+						@changeAgentID = @ChangeAgentID
+				end
+		
+			-- 6/12/13 Memphis took this out to unclutter the dialog box message that the user sees.
+			--set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Send Child Correspondence interaction created.  '
+
+		end
+
+
+
+	-- This covers 1.6 and 3A:
+	/* 1.6 & 3A
+	Scan was successful.
+	Write record to Scan Log
+	*/
+
+	if @ExceptionOccurred = 0
+		begin
+		set @LogTypeCode = 1 -- Success
+		Set @ScanOutcome = 'Place the letter on successful scan stack. '
+		Set @NumberOfDaysSponsored = 0
+		Set @CancellationReason = ''
+		set @Scannermessage = RTRIM(@ScannerMessage)
+
+		insert into dbo.USR_LETTERSCANNERLOG(
+		LOGTYPECODE, 
+		SCANSESSION, 
+		ORIGINALSEQUENCEID, 
+		DESCRIPTION, 
+		SCANOUTCOME, 
+		CHILDID, 
+		SPONSORID, 
+		CHILDPROJECTID, 
+		LETTERSUBCATEGORYID, 
+		DATESPONSORSHIPCANCELLED, 
+		NUMBEROFDAYSSPONSORED, 
+		CANCELLATIONREASON, 
+		ADDEDBYID,
+		CHANGEDBYID
+		)
+		values(
+		@LogTypeCode, 
+		@ScanSession, 
+		@OriginalLetterSequenceID, 
+		@ScannerMessage, 
+		@Scanoutcome,
+		@ChildID, 
+		@interactionSponsorId, 
+		@BarcodeChildProjectID, 
+		@OriginalLetterSubcategoryID, 
+		@DateSponsorshipCancelled, 
+		@NumberOfDaysSponsored,
+		@CancellationReason, 
+		@ChangeAgentID, 
+		@ChangeAgentID
+		)		
+
+		end
+
+	else
+		-- Exceptions occurred
+		begin
+			-- Sponsorship Cancelled?
+			select	@CancellationReason = sr.REASON, 
+					@DateSponsorshipCancelled = sp.ENDDATE, 
+					@NumberOfDaysSponsored = DATEDIFF(DAY, sp.STARTDATE, sp.ENDDATE)
+			from dbo.SPONSORSHIP as sp
+			join dbo.SPONSORSHIPTRANSACTION as st on sp.ID = st.CONTEXTSPONSORSHIPID
+			join SPONSORSHIPREASON as sr on st.SPONSORSHIPREASONID = sr.ID
+			where sp.statuscode = 2 
+			and sp.SPONSORSHIPOPPORTUNITYID = @ChildID 
+			and sp.CONSTITUENTID = @interactionSponsorId   -- must include the constituentid of the sponsor from the bar code!
+
+			if @DateSponsorshipCancelled is not null		
+				Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship is currently cancelled.  '
+		
+			set @Scannermessage = RTRIM(@ScannerMessage)
+			set @LogTypeCode = 0 -- Exception
+			set @ScanOutcome = 'Place the letter on the exception stack.'
+			set @OriginalLetterSequenceID =  coalesce(@OriginalLetterSequenceID, '')
+			set @NumberOfDaysSponsored = coalesce(@NumberOfDaysSponsored, 0)
+			set @CancellationReason = coalesce(@CancellationReason,'')
+		
+			insert into dbo.USR_LETTERSCANNERLOG(
+			LOGTYPECODE, 
+			SCANSESSION, 
+			ORIGINALSEQUENCEID, 
+			DESCRIPTION, 
+			SCANOUTCOME, 
+			CHILDID, 
+			SPONSORID, 
+			CHILDPROJECTID, 
+			LETTERSUBCATEGORYID, 
+			DATESPONSORSHIPCANCELLED, 
+			NUMBEROFDAYSSPONSORED, 
+			CANCELLATIONREASON, 
+			ADDEDBYID,
+			CHANGEDBYID
+			)
+			values(
+			@LogTypeCode, 
+			@ScanSession, 
+			@OriginalLetterSequenceID, 
+			@ScannerMessage, 
+			@Scanoutcome,
+			@ChildID, 
+			@interactionSponsorId, 
+			@BarcodeChildProjectID, 
+			@OriginalLetterSubcategoryID, 
+			@DateSponsorshipCancelled, 
+			@NumberOfDaysSponsored,
+			@CancellationReason, 
+			@ChangeAgentID, 
+			@ChangeAgentID
+			)
+	
+		end
+
+
+
+	commit	
+	end try
+
+	begin catch
+		ROLLBACK
+		exec dbo.USP_RAISE_ERROR
+		return 1
+	end catch
+
+end
+]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

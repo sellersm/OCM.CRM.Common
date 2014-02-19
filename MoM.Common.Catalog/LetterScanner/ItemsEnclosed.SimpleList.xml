@@ -1,0 +1,23 @@
+﻿<SimpleDataListSpec
+	xmlns="bb_appfx_simpledatalist"
+	xmlns:common="bb_appfx_commontypes"
+	ID="1c6155fb-b169-4beb-a64f-0295383717f4"
+	Name="Items Enclosed Simple Data List"
+	Description="Items Enclosed From Sponsor To Child"
+  Author="Bill Elfstrom"
+  TranslationFunctionID="d801f4cd-7213-4c6c-a997-941d03f53f58"
+	>
+
+  <SPSimpleList SPName="USR_USP_ITEMSENCLOSEDSIMPLEDATALIST">
+		<common:CreateProcedureSQL >
+			<![CDATA[
+create procedure dbo.USR_USP_ITEMSENCLOSEDSIMPLEDATALIST as
+	select 
+		ID as VALUE, 
+		DESCRIPTION as LABEL
+	from dbo.USR_ITEMSENCLOSEDCODE
+  order by DESCRIPTION
+			]]>
+		</common:CreateProcedureSQL>
+	</SPSimpleList>
+</SimpleDataListSpec>

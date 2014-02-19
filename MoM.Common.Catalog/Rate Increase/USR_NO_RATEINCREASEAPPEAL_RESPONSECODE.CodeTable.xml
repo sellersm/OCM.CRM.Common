@@ -1,0 +1,11 @@
+﻿<CodeTableSpec 
+	xmlns="bb_appfx_codetable" 
+	xmlns:common="bb_appfx_commontypes"
+	ID="0c484b02-c254-405b-a575-570e7a5b3221" 
+	Name="USR_NO_RATEINCREASEAPPEAL_RESPONSECODE"
+	Description="Codes for Rate Increase Response when Sponsor has no Appeal."
+	Author="Memphis Sellers"
+	DBTablename="USR_NO_RATEINCREASEAPPEAL_RESPONSECODE"
+	Category="LetterScanner"
+	SortMethod="Alpha"
+/>

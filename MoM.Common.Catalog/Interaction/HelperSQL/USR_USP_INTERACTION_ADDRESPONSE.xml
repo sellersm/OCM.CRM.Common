@@ -1,0 +1,53 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="7cab2f42-2a3c-4277-89c3-f2e494849702"
+	Name="USR_USP_INTERACTION_ADDRESPONSE"
+	Description="Add a response to an interaction"
+	Author="Cary Mayeda"
+	SPName="USR_USP_INTERACTION_ADDRESPONSE"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_ADDRESPONSE (
+	@interactionID uniqueidentifier = null,					-- Interaction ID to add the response to.
+	@responseCategoryName nvarchar(100) = '',				-- Response Category Name to add
+	@response nvarchar(100) = '',							-- Response to add
+	@responseDate datetime = null,							-- Date of the Response (this can be null)
+	@changeAgentID uniqueidentifier = null					-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as begin
+	declare @responseID uniqueidentifier = null
+	
+	begin try
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+
+		exec dbo.USR_USP_INTERACTION_GETRESPONSEID 
+			@responseID = @responseID output,		
+			@responseCategoryName = @responseCategoryName,
+			@response = @response,
+			@raiseErrorIfNotFound = 1
+
+		insert dbo.INTERACTIONRESPONSE 
+		(INTERACTIONID, RESPONSEID, DATE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		values
+		(@interactionID, @responseID, @responseDate, @changeAgentID, @changeAgentID, getdate(), getdate())
+		
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+   return 0
+				
+	
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
