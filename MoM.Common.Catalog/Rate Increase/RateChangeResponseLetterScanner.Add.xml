@@ -3,12 +3,12 @@
     xmlns:common="bb_appfx_commontypes"
     ID="918488ee-99d8-42b6-980e-458225d73172"
     Name="Rate Change response scanner form"
-    Description="Form for rate change response scanner."
+    Description="Form for rate increase response scanner."
     Author="Memphis Sellers"
     DataFormInstanceID="4bc1e218-eda2-4478-a899-d80ef4675ef6"
     RecordType="Letterscanner"
     common:SecurityUIFolder="Letterscanner"
-    FormHeader="Rate Change Response Scanner"
+    FormHeader="Rate Increase Response Scanner"
     >
 
 	<SPDataForm>

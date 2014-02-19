@@ -55,7 +55,7 @@ Partial Public Class [RateChangeResponseScannerFormUIModel]
         MyBase.DataFormTemplateId = New Guid("918488ee-99d8-42b6-980e-458225d73172")
         MyBase.DataFormInstanceId = New Guid("4bc1e218-eda2-4478-a899-d80ef4675ef6")
         MyBase.RecordType = "Letterscanner"
-        MyBase.FORMHEADER.Value = "Rate Change Response Scanner"
+		MyBase.FORMHEADER.Value = "Rate Increase Response Scanner"
 		MyBase.UserInterfaceUrl = "browser/htmlforms/custom/RateChangeResponseScannerForm.html"
 
         '

@@ -168,6 +168,7 @@ Public Class RateChangeResponseScannerFormUIModel
 			cmd.CommandType = CommandType.StoredProcedure
 
 			cmd.Parameters.AddWithValue("@LOOKUPID", _sponsorId)
+			cmd.Parameters.AddWithValue("@ChangeYear", 2014)
 
 			Dim rateChangeSponsorships As DataTable = New DataTable
 			rateChangeSponsorships.Load(cmd.ExecuteReader)
@@ -188,8 +189,14 @@ Public Class RateChangeResponseScannerFormUIModel
 					For Each row As DataRow In rateChangeSponsorships.Rows
 						rateChangeRow = New RateChangeResponseScannerFormBARCODEELEMENTSUIModel()
 						'check if this sponsorid is valid, by checking for a null SponsorName value:
-						If row(0) = "Sponsor ID not found" Then	'String.Empty OrElse row(0) Is DBNull.Value Then
+						If row(0) = "Sponsor ID not found" Then
 							_exceptionMessage = "Invalid Sponsor Id!"
+							Exit For
+						End If
+
+						'check if this sponsor has already been scanned
+						If row(0) = "Already scanned" Then
+							_exceptionMessage = "This Sponsor already has a Rate Increase response (already been scanned)."
 							Exit For
 						Else
 							Me.SPONSORNAME.Value = row(0)						'conSponsor.[NAME]
