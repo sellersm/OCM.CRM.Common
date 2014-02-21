@@ -66,6 +66,9 @@
 		<!-- Forms, tasks, pages, etc.-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateChangeResponseLetterScanner.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateChangeResponseLetterScanner.Task.xml" />
+		
+		<!-- Query -->
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateIncreaseData.Query.xml" />
 	</common:DependencyList>
 
 </PackageSpec>
