@@ -1,0 +1,167 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="5d52e2c7-633c-4ad4-8fe6-451e28489d99"
+	Name="USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE"
+	Description="This is used for updating certain criterias for Child Annual Photo"
+	Author="Trucmai Gutpa"
+	SPName="USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE"
+	>
+
+	<CreateProcedureSQL>
+    <![CDATA[
+create procedure dbo.USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE
+(
+	@ID xml, 
+	@CHANGEAGENTID uniqueidentifier
+)
+as begin
+ 
+  -- build a temporary table containing the values from the XML
+	declare @TempTbl table (
+	     CHILDLOOKUPID nvarchar(50),
+	     ACTUALDATE datetime,
+       COMPLETEINTERACTIONPROCESSID uniqueidentifier)
+
+  Begin
+  
+    insert into @TempTbl select 
+		      CHILDLOOKUPID,
+		      ACTUALDATE,
+          COMPLETEINTERACTIONPROCESSID
+	      from dbo.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML(@ID)
+    select * from @TempTbl
+  End
+  
+  
+  --Start cursor
+  
+  --Declare variables to hold the ouput from the cursor
+  Declare @ConsitutentID uniqueidentifier 
+  Declare @ChildLookupID nvarchar(50)
+  Declare @InteractionStatus nvarchar(50)
+  Declare @Actualdate Datetime
+  Declare @InteractionID uniqueidentifier
+  Declare @CompleteInteractionProcessID uniqueidentifier
+  
+  --Declare a cursor object
+  Declare @InteractionCursor as CURSOR
+  
+  --Assign the query to the cursor
+  Set @InteractionCursor = CURSOR FOR 
+  select CHILDLOOKUPID, ACTUALDATE, COMPLETEINTERACTIONPROCESSID
+  from @TempTbl
+  
+  --Open the cursor 
+  Open @InteractionCursor
+  
+  --Fetch the first row from cursor into the defined output variables
+  Fetch next from @InteractionCursor into @ChildLookupID, @Actualdate, @CompleteInteractionProcessID
+  
+  --Loop thru till no more results
+  While @@Fetch_status = 0
+    
+  Begin
+      select @ConsitutentID = [ID] from dbo.SPONSORSHIPOPPORTUNITY so where so.lookupid = @ChildLookupID
+      
+      select @InteractionID = i.[ID]  from interaction i
+                                  join dbo.INTERACTIONSUBCATEGORY isc on i.INTERACTIONSUBCATEGORYID = isc.id
+                                  join dbo.interactioncategory ic on ic.id = isc.interactioncategoryid
+                                  where ((ic.name = 'Child Field Memo' and isc.name = 'Unusable Annual Photo Update') 
+                                  or (ic.name = 'Child Annual Update' and isc.name = 'Annual Photo Update'))
+                                  and year(i.expecteddate) = 2014
+                                  and i.constituentid = @ConsitutentID
+                                  
+      if @InteractionID is null
+          Begin
+            insert into dbo.USR_PHOTOINTERACTION_EXCEPTIONS(
+		        InteractionID,
+		        ChildLookupID, 
+		        Exception, 
+		        ActualDate, 
+		        CompleteInteractionProcessID, 
+		        AddedByID, 
+		        ChangedByID, 
+		        DateAdded, 
+		        DateChanged
+		        )
+            values ( 
+            @InteractionID,
+            @ChildLookupID,
+            'Interaction Not Found',
+            @Actualdate,
+            @CompleteInteractionProcessID,
+            @CHANGEAGENTID,
+            @CHANGEAGENTID,
+            getDate(),
+            getDate()
+            )
+          End
+      Else
+          Begin
+              select @InteractionStatus = [Status] from dbo.Interaction i where i.constituentid = @ConsitutentID
+              
+              if @InteractionStatus = 'Completed'
+                  Begin
+                    insert into dbo.USR_PHOTOINTERACTION_EXCEPTIONS(
+		                InteractionID,
+		                ChildLookupID, 
+		                Exception, 
+		                ActualDate, 
+		                CompleteInteractionProcessID, 
+		                AddedByID, 
+		                ChangedByID, 
+		                DateAdded, 
+		                DateChanged
+		                )
+                    values ( 
+                    @InteractionID,
+                    @ChildLookupID,
+                    'Annual photo already completed',
+                    @Actualdate,
+                    @CompleteInteractionProcessID,
+                    @CHANGEAGENTID,
+                    @CHANGEAGENTID,
+                    getDate(),
+                    getDate()
+                    )
+                  End
+              Else if @InteractionStatus <> 'Completed'
+                  Begin
+                      if @InteractionStatus = 'Pending' 
+	                        Begin
+		                        update dbo.Interaction 
+		                          set [StatusCode] = 2,
+		                          [actualdate] = (case when @Actualdate is null then Actualdate else @Actualdate end)
+                            where constituentid = @ConsitutentID
+                            and ID = @InteractionID
+	                        End
+	                    if @InteractionStatus = 'Cancelled'
+	                        Begin
+		                        update dbo.Interaction 
+		                          set [StatusCode] = 2,
+		                          [actualdate] = (case when @Actualdate is null then Actualdate else @Actualdate end)
+		                        where constituentid = @ConsitutentID
+                            and ID = @InteractionID
+                            
+		                        update dbo.USR_INTERACTIONEXTENSION 
+		                        set [COMPLETEDAFTERCANCELLATIONCODE] = 1
+                            where ID = @InteractionID
+	                        End
+                  End
+          End
+      --Fetch the next row from cursor into the defined output variables
+      Fetch next from @InteractionCursor into @ChildLookupID, @Actualdate, @CompleteInteractionProcessID  
+      
+  End --End of While Loop
+  
+  --Close cursor
+  Close @InteractionCursor
+  
+  return 0;
+  
+end
+				]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
