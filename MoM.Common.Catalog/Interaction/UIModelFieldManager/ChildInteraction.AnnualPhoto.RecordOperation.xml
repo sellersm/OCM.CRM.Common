@@ -1,0 +1,72 @@
+﻿<RecordOperationSpec 
+	xmlns="bb_appfx_recordoperation"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="18afc1ad-dd5f-4a3c-9c9b-206943857edf" 
+	Name="Child Interaction Annual Photo Update" 
+	Description="This operation is used for updating certain criterias for Child Annual Photo"
+	Author="Trucmai Gupta"
+	OperationType="Update"
+	RecordType="Interaction"
+	common:SecurityUIFolder="Interaction"
+	>
+
+	<SPRecord>
+		<SPOperationImplementation SPName="USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE
+(
+	@ID uniqueidentifier, --if @ID is ChildLookupID
+  @ACTUALDATE Datetime = null,
+	@CHANGEAGENTID uniqueidentifier
+)
+as begin
+	--check deletion rules, if any
+
+	-- use the system generated delete routine to allow proper recording of the deleting agent
+	--exec USP_TABLE1_DELETEBYID_WITHCHANGEAGENTID @ID, @CHANGEAGENTID
+  
+  Declare @ConsitutentID uniqueidentifier 
+  Declare @InteractionStatus nvarchar(50)
+
+  
+	select @ConsitutentID = ID from dbo.SPONSORSHIPOPPORTUNITY so where so.lookupid = @ID --Use this if @ID is ChildLookupID
+  
+	--set @ConsitutentID = @ID --Use this one if if @ID is ChildID
+
+  select @InteractionStatus = [Status] from dbo.Interaction i where i.constituentid = @ConsitutentID
+
+
+  if @InteractionStatus <> 'Completed' and getDate() > (select expecteddate from dbo.Interaction i where i.constituentid = @ConsitutentID)
+  Begin
+	  if @InteractionStatus = 'Pending' 
+	  Begin
+		  update dbo.Interaction
+		  set [StatusCode] = 2,
+		  [actualdate] = (case when @ACTUALDATE is null then ACTUALDATE else @ACTUALDATE end)
+	  End
+	  if @InteractionStatus = 'Cancelled'
+	  Begin
+		  update dbo.Interaction
+		  set [StatusCode] = 2,
+		  [actualdate] = (case when @ACTUALDATE is null then ACTUALDATE else @ACTUALDATE end)
+		
+		  update dbo.InteractinExtension
+		  set [COMPLETEDAFTERCANCELLATIONCODE] = 'True'
+	  End
+  End
+
+	return 0;
+	
+end
+				]]>
+			</common:CreateProcedureSQL>
+		</SPOperationImplementation>
+	</SPRecord>
+
+	<!-- optionally, offer a prompt before executing the record operation -->
+	<Prompt>
+		<StandardPrompt Text="Are you sure you want to continue?" />
+	</Prompt>
+
+</RecordOperationSpec>
