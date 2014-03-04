@@ -493,7 +493,9 @@
     <EmbeddedResource Include="GlobalChanges\Child Extension\ChildExtension.FulfillmentStatus.GlobalChange.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GlobalChanges\Interaction\AddObjectiveToChildInteractions.GlobalChange.xml" />
+    <EmbeddedResource Include="GlobalChanges\Interaction\AddObjectiveToChildInteractions.GlobalChange.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Rate Increase\RateChangeResponseLetterScanner.Add.xml" />
