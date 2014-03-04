@@ -73,7 +73,7 @@ as
           </SearchList>
         </FormField>
         <FormField FieldID="RECORDTYPEID" DataType="Guid" ReadOnly="true" Hidden="true" />
-        <FormField FieldID="ADDOBJECTIVEVALUE" Caption="Objective" CaptionResourceKey="$$objective"/>
+        <FormField FieldID="ADDOBJECTIVEVALUE" Caption="Objective" CaptionResourceKey="$$objective" DataType="String"/>
 			</FormFields>
 		</FormMetaData>
 	</ParametersFormMetaData>
