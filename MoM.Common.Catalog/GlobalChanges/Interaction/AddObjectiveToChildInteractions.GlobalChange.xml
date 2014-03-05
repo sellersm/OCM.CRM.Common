@@ -43,10 +43,11 @@ as
     -- perform the Add
 		-- use the @ADDOBJECTIVEVALUE as the new value
 		
-			update dbo.INTERACTION
+			update dbo.INTERACTION 
 			set OBJECTIVE = @ADDOBJECTIVEVALUE,
 					DATECHANGED = @CURRENTDATE, 
 					CHANGEDBYID = @CHANGEAGENTID
+      where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
 						
 			select @NUMBERADDED = @@ROWCOUNT						
 			
