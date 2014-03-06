@@ -1,0 +1,31 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes"
+	ID="fac9bf5e-d45d-4221-b683-89ec86e2b566"
+	Name="USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML"
+	Description="This is used to retrieve the Child Lookup ID and the Actual Date of the Annual Photo"
+	Author="Trucmai Gupta"
+	DBFunctionName="USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML"
+  GrantServiceRolePermission="true"
+	>
+
+	<CreateFunctionSQL>
+		<![CDATA[
+      
+create function dbo.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML(
+	@ITEMLISTXML xml = null
+)
+returns table
+as  
+	-- do work here and return a value
+	return (SELECT 
+		T.c.value('(CHILDLOOKUPID)[1]','nvarchar(50)') AS 'CHILDLOOKUPID',
+    T.c.value('(ACTUALDATE)[1]','Datetime') AS 'ACTUALDATE',
+    T.c.value('(COMPLETEINTERACTIONPROCESSID)[1]', 'uniqueidentifier') AS 'COMPLETEINTERACTIONPROCESSID'
+		FROM @ITEMLISTXML.nodes('/PHOTOINTERACTION/ITEM') T(c)
+	)
+  
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>
