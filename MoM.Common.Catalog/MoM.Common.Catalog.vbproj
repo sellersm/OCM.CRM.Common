@@ -525,20 +525,14 @@
     <EmbeddedResource Include="Rate Increase\RateIncreaseData.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="\\hannah\consultingshare\Trucmai\ChildInteraction.AnnualPhoto.RecordOperation.xml">
-      <Link>Interaction\ChildInteraction.AnnualPhoto.RecordOperation.xml</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="\\hannah\consultingshare\Trucmai\USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML.xml">
-      <Link>Interaction\USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML.xml</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Interaction\USR_PHOTOINTERACTION_EXCEPTIONS.Table.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\ChildInteraction.AnnualPhoto.RecordOperation.xml" />
+    <EmbeddedResource Include="Interaction\USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

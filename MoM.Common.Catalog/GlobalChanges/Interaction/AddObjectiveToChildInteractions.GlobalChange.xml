@@ -51,6 +51,8 @@ as
 						
 			select @NUMBERADDED = @@ROWCOUNT						
 			
+      return 0;
+      
 	end try
 	
 	begin catch
