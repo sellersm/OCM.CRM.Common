@@ -1,0 +1,53 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="1a347536-d326-4f1f-8c6b-87d8320b4b18" 
+	Name="Child Data For Photo API Data List"
+	Description="Gets child data for given child." 
+	Author="Memphis Sellers"
+	common:SecurityUIFolder="Child">
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_GETCHILDDATA_PHOTOAPI">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+create procedure dbo.USR_USP_DATALIST_GETCHILDDATA_PHOTOAPI(
+	@CHILDLOOKUPID nvarchar(100)
+)
+as
+	set nocount on;
+
+	select 
+		sc.[NAME] as CHILDNAME, so.LOOKUPID as CHILDID, sl.LOOKUPID as LOCATIONID, sl.[NAME] as LOCATIONNAME
+	from dbo.SPONSORSHIPOPPORTUNITYCHILD sc
+	join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = sc.ID
+	join dbo.SPONSORSHIPLOCATION sl ON sl.ID = so.SPONSORSHIPLOCATIONID
+	where so.LOOKUPID = @CHILDLOOKUPID
+			]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable)-->
+	<Context ContextRecordType="SPONSORSHIPOPPORTUNITY" RecordIDParameter="CHILDLOOKUPID"/>
+
+	<!-- describe any parameters (other than the context ID) defined on the SP
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>-->
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<!--<OutputField FieldID="CHILDLOOKUPID" Caption="Child Lookup Id" DataType="String" IsHidden="true" />-->
+			<OutputField FieldID="CHILDNAME" Caption="Child Name" DataType="String" />
+			<OutputField FieldID="CHILDID" Caption="Child Id" DataType="String" />
+			<OutputField FieldID="LOCATIONID" Caption="Location Id" DataType="String" />
+			<OutputField FieldID="LOCATIONNAME" Caption="Location Name" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</DataListSpec>
