@@ -1,0 +1,55 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="6136072e-f5b4-4367-8121-f45b9c7a07e6" 
+	Name="Get Child List For Photo API Data List"
+	Description="Gets a list of child photo data for annual photo Web API program." 
+	Author="Memphis Sellers"
+	common:SecurityUIFolder="Child">
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_GETLISTOFCHILDDATA_PHOTOAPI">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+create procedure dbo.USR_USP_DATALIST_GETLISTOFCHILDDATA_PHOTOAPI(
+	@CHILDIDLIST xml
+)
+as
+	set nocount on;
+
+	select 
+		--replace(ISNULL(sc.[FIRSTNAME], '') + ISNULL(sc.[MIDDLENAME], '') + ISNULL(sc.[LASTNAME], ''), ' ', '') as CHILDNAME, 
+		rtrim(replace(sc.[NAME], ' ','')) as CHILDNAME,
+		so.LOOKUPID as CHILDID, 
+		sl.LOOKUPID as LOCATIONID
+	from dbo.SPONSORSHIPOPPORTUNITYCHILD sc
+	join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = sc.ID
+	join dbo.SPONSORSHIPLOCATION sl ON sl.ID = so.SPONSORSHIPLOCATIONID
+	where so.LOOKUPID IN (select CHILDLOOKUPID from dbo.USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML(@CHILDIDLIST))
+	order by so.LOOKUPID;
+			]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable)-->
+	<Context ContextRecordType="SPONSORSHIPOPPORTUNITY" RecordIDParameter="CHILDIDLIST"/>
+
+	<!-- describe any parameters (other than the context ID) defined on the SP
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>-->
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<OutputField FieldID="CHILDNAME" Caption="Child Name" DataType="String" />
+			<OutputField FieldID="CHILDID" Caption="Child Id" DataType="String" />
+			<OutputField FieldID="LOCATIONID" Caption="Location Id" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</DataListSpec>

@@ -1,0 +1,51 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="e2d58c9d-df33-4f49-835b-f2b7db3846d1" 
+	Name="Photo Interaction Exceptions Data List"
+	Description="Photo Interaction Exceptions Data List." 
+	Author="Memphis Sellers"
+	common:SecurityUIFolder="Interaction"	
+	>
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_GETPHOTOINTERACTION_EXCEPTIONS_DATALIST">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+create procedure dbo.USR_USP_DATALIST_GETPHOTOINTERACTION_EXCEPTIONS_DATALIST(
+	@CONTEXTID uniqueidentifier,
+	@SESSIONID uniqueidentifier
+)
+as
+	set nocount on;
+
+	select CHILDLOOKUPID,
+		   EXCEPTION
+	from dbo.USR_PHOTOINTERACTION_EXCEPTIONS
+	where COMPLETEINTERACTIONPROCESSID = @SESSIONID
+			]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable)-->
+	<Context ContextRecordType="CONSTITUENT" RecordIDParameter="CONTEXTID"/>
+
+	 <!--describe any parameters (other than the context ID) defined on the SP-->
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="SESSIONID" Caption="SESSION ID" DataType="Guid"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<!--<OutputField FieldID="ID" Caption="ID" DataType="Guid" IsHidden="true" />-->
+			<OutputField FieldID="CHILDLOOKUPID" Caption="Child Lookup Id" DataType="String" />
+			<OutputField FieldID="EXCEPTION" Caption="Exception" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</DataListSpec>
