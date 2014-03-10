@@ -27,17 +27,20 @@ as
 	set nocount off;
 	
 	declare @CURRENTDATE datetime
-	set @CURRENTDATE = getdate();
+  set @CURRENTDATE = getDate()
 	set @NUMBERADDED = 0;
+	set @NUMBEREDITED = 0;
+	set @NUMBERDELETED = 0; 
+			
+  begin try
 	
-  if @IDSETREGISTERID is null begin
-		raiserror ('IDSETREGISTERID is required',13,1);
-	end
+    if @IDSETREGISTERID is null begin
+		  raiserror ('IDSETREGISTERID is required',13,1);
+	  end
 				
-	if @CHANGEAGENTID is null  
-		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+	  if @CHANGEAGENTID is null  
+		  exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
           
-	begin try
 		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate
 		
     -- perform the Add
