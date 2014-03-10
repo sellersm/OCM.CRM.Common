@@ -6,6 +6,7 @@
 	Description="This is used for updating certain criterias for Child Annual Photo"
 	Author="Trucmai Gutpa"
 	SPName="USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE"
+	GrantServiceRolePermission="true"
 	>
 
 	<CreateProcedureSQL>
@@ -34,14 +35,14 @@ begin try
 			 ACTUALDATE datetime,
 		   COMPLETEINTERACTIONPROCESSID uniqueidentifier)
 
-		Begin
+		--Begin
 
 		insert into @TempTbl select 
 				  CHILDLOOKUPID,
 				  ACTUALDATE,
 			  COMPLETEINTERACTIONPROCESSID
 			  from dbo.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML(@ID)
-		End
+		--End
 
 		-- Need to add this line to set the required CHANGEAGENTID value:
 		if @CHANGEAGENTID is null
