@@ -8,6 +8,14 @@
 	SPName="USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE"
 	GrantServiceRolePermission="true"
 	>
+	
+	<!-- Remarks:  stored procedure to complete Annual Photo and Unusable Photo interactions.	
+				
+	History:
+	Date			Modified By		Comments
+    20-Feb-2014		Trucmai			Initial Version
+	10-Mar-2014		Memphis			add the Interaction Comment:  insert the char(13) + char(10) values for a CR/LF in between current Comment and newly added Comment
+	-->	
 
 	<CreateProcedureSQL>
     <![CDATA[
@@ -33,15 +41,19 @@ begin try
 		declare @TempTbl table (
 			 CHILDLOOKUPID nvarchar(50),
 			 ACTUALDATE datetime,
-		   COMPLETEINTERACTIONPROCESSID uniqueidentifier)
+		     COMPLETEINTERACTIONPROCESSID uniqueidentifier,
+		     COMMENT nvarchar(100)
+			 )
 
 		--Begin
 
-		insert into @TempTbl select 
+		insert into @TempTbl 
+			select 
 				  CHILDLOOKUPID,
 				  ACTUALDATE,
-			  COMPLETEINTERACTIONPROCESSID
-			  from dbo.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML(@ID)
+				  COMPLETEINTERACTIONPROCESSID,
+				  COMMENT
+			from dbo.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML(@ID)
 		--End
 
 		-- Need to add this line to set the required CHANGEAGENTID value:
@@ -50,10 +62,11 @@ begin try
 
 		if @debugging = 1
 			begin
-				insert into dbo.USR_DEBUGGING_PHOTO_INTERACTIONS (childId, actualDate, sessionId)
+				insert into dbo.USR_DEBUGGING_PHOTO_INTERACTIONS (childId, actualDate, sessionId, debuggingStatement)
 				select CHILDLOOKUPID
 					   , ACTUALDATE
 					   , COMPLETEINTERACTIONPROCESSID
+					   , COMMENT
 				 from @TempTbl;
 			end
 
@@ -66,6 +79,8 @@ begin try
 		Declare @CompleteInteractionProcessID uniqueidentifier
 		Declare @rowCount int
 		declare @interactionName nvarchar(100);
+		declare @comment nvarchar(100);
+		declare @crLf nvarchar(10) = char(13) + char(10);
 
 
 		--Declare a cursor object
@@ -74,14 +89,17 @@ begin try
 
 		--Set InteractionCursor = CURSOR FOR 
 		declare InteractionCursor cursor local fast_forward for 
-		select CHILDLOOKUPID, ACTUALDATE, COMPLETEINTERACTIONPROCESSID
+		select  CHILDLOOKUPID, 
+				ACTUALDATE, 
+				COMPLETEINTERACTIONPROCESSID, 
+				COMMENT
 		from @TempTbl;
 
 		--Open the cursor 
 		Open InteractionCursor
 
 		--Fetch the first row from cursor into the defined output variables
-		Fetch next from InteractionCursor into @ChildLookupID, @Actualdate, @CompleteInteractionProcessID
+		Fetch next from InteractionCursor into @ChildLookupID, @Actualdate, @CompleteInteractionProcessID, @comment
 
 		--Loop thru till no more results
 		While @@Fetch_status = 0
@@ -248,11 +266,12 @@ begin try
 											values (@ChildLookupID, 'Pending status, so perform the Update to the Interaction: ', @InteractionID);
 										end				
 							
-									update dbo.Interaction 
-									  set [StatusCode] = 2,
-									  [actualdate] = (case when @Actualdate is null then Actualdate else @Actualdate end)
-													  where constituentid = @ConsitutentID
-														and ID = @InteractionID
+									update dbo.INTERACTION 
+									  set [STATUSCODE] = 2,
+										  [ACTUALDATE] = (case when @Actualdate is null then Actualdate else @Actualdate end),
+										  COMMENT = COMMENT + @crLf + @crLf + @comment
+									  --where constituentid = @ConsitutentID
+									  where ID = @InteractionID
 								End
                         
 							if @InteractionStatus = 'Cancelled'
@@ -264,15 +283,16 @@ begin try
 											values (@ChildLookupID, 'Cancelled status, so perform the Update to Interaction and Interaction Extension: ', @InteractionID);
 										end				
 							
-									update dbo.Interaction 
-									  set [StatusCode] = 2,
-									  [actualdate] = (case when @Actualdate is null then Actualdate else @Actualdate end)
-													  where constituentid = @ConsitutentID
-													  and ID = @InteractionID
+									update dbo.INTERACTION 
+									set [STATUSCODE] = 2,
+										  [ACTUALDATE] = (case when @Actualdate is null then Actualdate else @Actualdate end),
+										  COMMENT = COMMENT + @crLf + @crLf + @comment
+									--where constituentid = @ConsitutentID
+									where ID = @InteractionID
                 
 									update dbo.USR_INTERACTIONEXTENSION 
-													  set [COMPLETEDAFTERCANCELLATIONCODE] = 1
-													  where ID = @InteractionID
+									set [COMPLETEDAFTERCANCELLATIONCODE] = 1
+									where ID = @InteractionID
 								End
                      
 
@@ -292,7 +312,7 @@ begin try
 			  
 			End 
     
-			Fetch next from InteractionCursor into @ChildLookupID, @Actualdate, @CompleteInteractionProcessID
+			Fetch next from InteractionCursor into @ChildLookupID, @Actualdate, @CompleteInteractionProcessID, @comment
 		End
 
 		--Close cursor

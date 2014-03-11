@@ -20,8 +20,9 @@ as
 	-- do work here and return a value
 	return (SELECT 
 		T.c.value('(CHILDLOOKUPID)[1]','nvarchar(50)') AS 'CHILDLOOKUPID',
-    T.c.value('(ACTUALDATE)[1]','Datetime') AS 'ACTUALDATE',
-    T.c.value('(COMPLETEINTERACTIONPROCESSID)[1]', 'uniqueidentifier') AS 'COMPLETEINTERACTIONPROCESSID'
+		T.c.value('(ACTUALDATE)[1]','Datetime') AS 'ACTUALDATE',
+		T.c.value('(COMPLETEINTERACTIONPROCESSID)[1]', 'uniqueidentifier') AS 'COMPLETEINTERACTIONPROCESSID',
+		T.c.value('(COMMENT)[1]','nvarchar(100)') AS 'COMMENT'
 		FROM @ITEMLISTXML.nodes('/PHOTOINTERACTION/ITEM') T(c)
 	)
   

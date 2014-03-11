@@ -21,7 +21,8 @@ as
 		--replace(ISNULL(sc.[FIRSTNAME], '') + ISNULL(sc.[MIDDLENAME], '') + ISNULL(sc.[LASTNAME], ''), ' ', '') as CHILDNAME, 
 		rtrim(replace(sc.[NAME], ' ','')) as CHILDNAME,
 		so.LOOKUPID as CHILDID, 
-		sl.LOOKUPID as LOCATIONID
+		sl.LOOKUPID as LOCATIONID,
+		sc.[NAME] as CRMNAME
 	from dbo.SPONSORSHIPOPPORTUNITYCHILD sc
 	join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = sc.ID
 	join dbo.SPONSORSHIPLOCATION sl ON sl.ID = so.SPONSORSHIPLOCATIONID
@@ -49,6 +50,7 @@ as
 			<OutputField FieldID="CHILDNAME" Caption="Child Name" DataType="String" />
 			<OutputField FieldID="CHILDID" Caption="Child Id" DataType="String" />
 			<OutputField FieldID="LOCATIONID" Caption="Location Id" DataType="String" />
+			<OutputField FieldID="CRMNAME" Caption="CRM Child Name" DataType="String" />
 		</OutputFields>
 	</Output>
 
