@@ -28,6 +28,8 @@ select srs.ID
   , (select dbo.USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE.[DESCRIPTION] from dbo.USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE where ID = srs.RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID) as RESPONSEIFAFTERIMPLEMENTATIONDESCRIPTION
   , srs.NOAPPEALRESPONSEDATE
   , (select dbo.USR_NO_RATEINCREASEAPPEAL_RESPONSECODE.[DESCRIPTION] from dbo.USR_NO_RATEINCREASEAPPEAL_RESPONSECODE where ID = srs.NOAPPEALRESPONSECODEID) as NOAPPEALRESPONSEDESCRIPTION
+  , srs.SPONSORID as CONSTITUENTID
+  , srs.SPONSORSHIPID
 from dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS srs
 join dbo.CONSTITUENT c on c.ID = srs.SPONSORID
 join dbo.SPONSORSHIP s on s.ID = srs.SPONSORSHIPID
@@ -60,8 +62,16 @@ join dbo.SPONSORSHIPCOMMITMENT sc on sc.ID = s.SPONSORSHIPCOMMITMENTID
 					<CodeTable CodeTableName="USR_NO_RATEINCREASEAPPEAL_RESPONSECODE"/>
 				</LookupInfo>
 			</OutputField>
+			<OutputField Name="CONSTITUENTID" Caption="Constituent Id" DataType="Guid" IsHidden="true" />
+			<OutputField Name="SPONSORSHIPID" Caption="Sponsorship Id" DataType="Guid" IsHidden="true" />
 		</OutputFields>
 	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="SPONSORID" PathAlias="Constituent"/>
+		<AddRelatedView RelatedView="V_QUERY_SPONSORSHIP" RelatedField="ID" Field="SPONSORSHIPID" PathAlias="Sponsorship"/>
+	</RelationshipOperations>
+
 
 </QueryViewSpec>
 
