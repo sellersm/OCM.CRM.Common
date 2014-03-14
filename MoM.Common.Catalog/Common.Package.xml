@@ -54,9 +54,12 @@
 	13-Aug-2013		Memphis			Added these two for the Run SQL Command Utility:
 									RunOurSqlCommands.Edit.xml
 	25-Sep-2013		CMayeda			Added USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.xml
-  19-Nov-2013   TGupta      Added Global Change for Fulfillment Status on a child's sponsorshipopportunity
-  06-Feb-2014   TGupta      Added Global Change for Objective in Child Interaction
-  05-March-2014 TGupta      Added ChildInteraction Annual Photo Update
+	19-Nov-2013		TGupta			Added Global Change for Fulfillment Status on a child's sponsorshipopportunity
+	06-Feb-2014		TGupta			Added Global Change for Objective in Child Interaction
+	05-Mar-2014		TGupta			Added ChildInteraction Annual Photo Update
+	13-Mar-2014		Memphis			Added ChildDataForPhotoAPI.DataList.xml  
+	13-Mar-2014		Memphis			Added GetChildListForPhotoAPI.DataList.xml
+	13-Mar-2014		Memphis			Added PhotoInteractionExceptions.DataList.xml
 	-->
 
 
@@ -121,7 +124,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.Table.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtensionChildren.Table.xml" />		
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Table.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_PHOTOINTERACTION_EXCEPTIONS.Table.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_PHOTOINTERACTION_EXCEPTIONS.Table.xml" />
     
     <!-- SQL sprocs and functions -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_CONVERTTEXTTOBOOLEAN.xml" />
@@ -159,21 +162,25 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTION_SPONSOR_SETSPONSOREDPROJECTID.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INTERACTIONEXTENSION_UIMODELFIELDMANAGER_GETFIELDSTATUS.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE.xml" />
 		
 		<!-- Record Operations -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Delete.RecordOperation.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildInteraction.AnnualPhoto.RecordOperation.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildInteraction.AnnualPhoto.RecordOperation.xml" />
     
 
-    <!-- Data Lists -->
+		<!-- Data Lists -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.FieldList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorshipInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ChildInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttributesNonCodeTables.SimpleList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildDataForPhotoAPI.DataList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.GetChildListForPhotoAPI.DataList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.PhotoInteractionExceptions.DataList.xml" />
+
 
 		<!-- Data Forms -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.Add.xml" />
@@ -217,8 +224,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddSponsorToChildInteractions.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteractions.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteraction.ExpectedDate.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildExtension.FulfillmentStatus.GlobalChange.xml" />
-    <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddObjectiveToChildInteractions.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildExtension.FulfillmentStatus.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddObjectiveToChildInteractions.GlobalChange.xml" />
 
 
 		<!-- Pages -->

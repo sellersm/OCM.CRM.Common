@@ -20,7 +20,8 @@ as
 	set nocount on;
 
 	select CHILDLOOKUPID,
-		   EXCEPTION
+		   EXCEPTION,
+		   COMPLETEDDATE
 	from dbo.USR_PHOTOINTERACTION_EXCEPTIONS
 	where COMPLETEINTERACTIONPROCESSID = @SESSIONID
 			]]>
@@ -45,6 +46,7 @@ as
 			<!--<OutputField FieldID="ID" Caption="ID" DataType="Guid" IsHidden="true" />-->
 			<OutputField FieldID="CHILDLOOKUPID" Caption="Child Lookup Id" DataType="String" />
 			<OutputField FieldID="EXCEPTION" Caption="Exception" DataType="String" />
+			<OutputField FieldID="COMPLETEDDATE" Caption="Completed Date" DataType="Date" />
 		</OutputFields>
 	</Output>
 

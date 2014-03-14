@@ -15,6 +15,7 @@
 	Date			Modified By		Comments
     20-Feb-2014		Trucmai			Initial Version
 	10-Mar-2014		Memphis			add the Interaction Comment:  insert the char(13) + char(10) values for a CR/LF in between current Comment and newly added Comment
+	13-Mar-2014		Memphis			added the Completion Date if the Interaction is already completed.
 	-->	
 
 	<CreateProcedureSQL>
@@ -81,6 +82,7 @@ begin try
 		declare @interactionName nvarchar(100);
 		declare @comment nvarchar(100);
 		declare @crLf nvarchar(10) = char(13) + char(10);
+        declare @completionDate date;
 
 
 		--Declare a cursor object
@@ -216,7 +218,8 @@ begin try
 								values (@ChildLookupID, 'working with interactionID value: ' + Cast(@InteractionID as nvarchar(100)), @InteractionID);
 							end				
               	
-						  select @InteractionStatus = [Status] 
+						  select @InteractionStatus = [Status],
+                                 @completionDate = cast(ACTUALDATE as date)
 						  from dbo.Interaction i 
 						  where i.ID = @InteractionID;
                   
@@ -236,6 +239,7 @@ begin try
 									ChildLookupID, 
 									Exception, 
 									ActualDate, 
+                                    COMPLETEDDATE,
 									CompleteInteractionProcessID, 
 									AddedByID, 
 									ChangedByID, 
@@ -249,6 +253,7 @@ begin try
 									  when @interactionName = 'Unusable Annual Update Photo' then 'Unusable photo already completed' 
 								 end),
 								@Actualdate,
+                                @completionDate,
 								@CompleteInteractionProcessID,
 								@CHANGEAGENTID,
 								@CHANGEAGENTID,
