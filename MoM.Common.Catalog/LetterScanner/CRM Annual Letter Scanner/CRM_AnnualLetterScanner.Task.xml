@@ -1,0 +1,15 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="9b6578f9-4790-4aad-a7c7-3cadf8a6f9dd"
+	Name="CRM Annual Letter Scanner"
+	Description="CRM Annual Letter Scanner"
+	Author="Trucmai Gupta"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="0"
+	>
+
+  <!-- indicate what this task should do (navigate to a page, show a form, etc. -->
+  <common:ShowAddDataForm DataFormID="e8891e98-cd70-4c05-b10e-319db1d2fc71" />
+
+</TaskSpec>

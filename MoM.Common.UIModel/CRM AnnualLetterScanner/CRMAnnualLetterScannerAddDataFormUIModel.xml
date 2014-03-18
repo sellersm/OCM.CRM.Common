@@ -1,0 +1,13 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>CRM_AnnualLetterScanner.Add.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>CRMAnnualLetterScannerAddDataFormUIModel</ClassName>
+  <HtmlInfo GenerateHtml="false">
+    <HtmlFile />
+    <HtmlFolder>custom\TestBarCode\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>
+
+
+
