@@ -1,0 +1,77 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="9e162b4f-8d7a-4169-af8f-67cc6367cfc6"
+	Name="Rate Increase Response Query With Constituent"
+	Description="Rate Increase response data joins to Constituent"
+	Author="Memphis Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Rate Increase"
+	common:SecurityUIFolder="Rate Increase"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASERESPONSE_WITHCONSTITUENT">
+		<ViewSQL>
+			<![CDATA[
+select srs.ID
+  , c.LOOKUPID as SponsorID
+  , sc.LOOKUPID as SponsorshipCommitmentID
+  , srs.REVENUELOOKUPID
+  , srs.CHANGEYEAR
+  , srs.INCREASERATE 
+  , srs.RESPONSEDATE
+  , srs.RESPONDAFTERRATECHANGEUPDATED 
+  , srs.ORIGINALSPONSORSHIPGIFTAMOUNT
+  , srs.UPDATEDSPONSORSHIPGIFTAMOUNT
+  , (select dbo.USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE.[DESCRIPTION] from dbo.USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE where ID = srs.RESPONSEIFAFTERRATECHANGEIMPLEMENTEDCODEID) as RESPONSEIFAFTERIMPLEMENTATIONDESCRIPTION
+  , srs.NOAPPEALRESPONSEDATE
+  , (select dbo.USR_NO_RATEINCREASEAPPEAL_RESPONSECODE.[DESCRIPTION] from dbo.USR_NO_RATEINCREASEAPPEAL_RESPONSECODE where ID = srs.NOAPPEALRESPONSECODEID) as NOAPPEALRESPONSEDESCRIPTION
+  , srs.SPONSORID as CONSTITUENTID
+  , srs.SPONSORSHIPID
+from dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS srs
+join dbo.CONSTITUENT c on c.ID = srs.SPONSORID
+join dbo.SPONSORSHIP s on s.ID = srs.SPONSORSHIPID
+join dbo.SPONSORSHIPCOMMITMENT sc on sc.ID = s.SPONSORSHIPCOMMITMENTID
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="SponsorID" Caption="Sponsor Id" DataType="String" />
+			<OutputField Name="SponsorshipCommitmentID" Caption="Sponsorship Commitment Id" DataType="String" />
+			<OutputField Name="REVENUELOOKUPID" Caption="Revenue Id" DataType="String" />
+			<OutputField Name="CHANGEYEAR" Caption="Rate Increase Year" DataType="Integer" />
+			<OutputField Name="INCREASERATE" Caption="Response" DataType="Boolean" />
+			<OutputField Name="RESPONSEDATE" Caption="Response Date" DataType="Date" />
+			<OutputField Name="RESPONDAFTERRATECHANGEUPDATED" Caption="Respond After Implementation?" DataType="Boolean" />
+			<OutputField Name="ORIGINALSPONSORSHIPGIFTAMOUNT" Caption="Original Amount" DataType="Money" />
+			<OutputField Name="UPDATEDSPONSORSHIPGIFTAMOUNT" Caption="New Amount" DataType="Money" />
+			<OutputField Name="RESPONSEIFAFTERIMPLEMENTATIONDESCRIPTION" Caption="Reversal/Increase" DataType="String">
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_RESPONSE_AFTER_RATECHANGE_IMPLEMENTED_CODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="NOAPPEALRESPONSEDATE" Caption="No Response Date" DataType="Date" />
+			<OutputField Name="NOAPPEALRESPONSEDESCRIPTION" Caption="No Response Code" DataType="String" >
+				<LookupInfo>
+					<CodeTable CodeTableName="USR_NO_RATEINCREASEAPPEAL_RESPONSECODE"/>
+				</LookupInfo>
+			</OutputField>
+			<OutputField Name="CONSTITUENTID" Caption="Constituent Id" DataType="Guid" IsHidden="true" />
+			<OutputField Name="SPONSORSHIPID" Caption="Sponsorship Id" DataType="Guid" IsHidden="true" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="CONSTITUENTID" PathAlias="Constituent"/>
+		<!--<AddRelatedView RelatedView="V_QUERY_SPONSORSHIP" RelatedField="ID" Field="SPONSORSHIPID" PathAlias="Sponsorship"/>-->
+	</RelationshipOperations>
+
+
+</QueryViewSpec>
+
