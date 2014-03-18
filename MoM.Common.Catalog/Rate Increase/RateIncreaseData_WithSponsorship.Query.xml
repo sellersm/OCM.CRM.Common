@@ -7,7 +7,7 @@
 	Author="Memphis Sellers"
 	IsRoot="true"
 	PrimaryKeyField="ID"
-	RecordType="Rate Increase"
+	RecordType="Sponsorship"
 	common:SecurityUIFolder="Rate Increase"
 	>
 
