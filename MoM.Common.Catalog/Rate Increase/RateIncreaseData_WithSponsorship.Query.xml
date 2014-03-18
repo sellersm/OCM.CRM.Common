@@ -14,7 +14,8 @@
 	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASERESPONSE_WITHSPONSORSHIP">
 		<ViewSQL>
 			<![CDATA[
-select srs.ID
+select --srs.ID
+  srs.SPONSORSHIPID as ID
   , c.LOOKUPID as SponsorID
   , sc.LOOKUPID as SponsorshipCommitmentID
   , srs.REVENUELOOKUPID
