@@ -522,7 +522,7 @@
     <EmbeddedResource Include="Rate Increase\USR_NO_RATEINCREASEAPPEAL_RESPONSECODE.CodeTable.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Rate Increase\RateIncreaseData.Query.xml" />
+    <EmbeddedResource Include="Rate Increase\RateIncreaseData_WithConstituent.Query.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interaction\USR_PHOTOINTERACTION_EXCEPTIONS.Table.xml" />
@@ -538,6 +538,9 @@
     <EmbeddedResource Include="Annual Photo API Webservice Specs\ChildDataForPhotoAPI.DataList.xml" />
     <EmbeddedResource Include="Annual Photo API Webservice Specs\GetChildListForPhotoAPI.DataList.xml" />
     <EmbeddedResource Include="Annual Photo API Webservice Specs\PhotoInteractionExceptions.DataList.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncreaseData_WithSponsorship.Query.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
