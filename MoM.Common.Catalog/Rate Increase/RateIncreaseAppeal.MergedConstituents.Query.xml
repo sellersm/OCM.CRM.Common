@@ -1,0 +1,39 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="493dacff-f20e-47a2-ae8e-901d87f23d34"
+	Name="Rate Increase Appeal Merged Constituents Query"
+	Description="Rate Increase Appeal Merged Constituents Query"
+	Author="Memphis Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Constituent"
+	common:SecurityUIFolder="Rate Increase"	
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASEAPPEAL_FINDMERGEDCONSTITUENTS">
+		<ViewSQL>
+			<![CDATA[
+select count(*) as AppealCount, 
+	   CONSTITUENTID as ID
+from dbo.constituentappeal
+where appealid = (select ID from dbo.APPEAL where NAME like '%10555%')
+group by CONSTITUENTID
+having count(CONSTITUENTID) > 1
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="AppealCount" Caption="Appeal Count" DataType="Integer" />
+			<!--<OutputField Name="FIELD2" Caption="Field 2" DataType="REPLACE_WITH_DATATYPE" />
+			<OutputField Name="FIELD3" Caption="Field 3" DataType="REPLACE_WITH_DATATYPE" />-->
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
