@@ -109,6 +109,13 @@
       <DependentUpon>CommonUIModelVersionUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="CommonUIModelVersionUIModel.vb" />
+    <Compile Include="CRM AnnualLetterScanner\CRMAnnualLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb">
+      <DependentUpon>CRMAnnualLetterScannerAddDataFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="CRM AnnualLetterScanner\CRMAnnualLetterScannerAddDataFormUIModel.CodeGen.vb">
+      <DependentUpon>CRMAnnualLetterScannerAddDataFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="CRM AnnualLetterScanner\CRMAnnualLetterScannerAddDataFormUIModel.vb" />
     <Compile Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.vb" />
@@ -206,6 +213,12 @@
     <None Include="..\MoM.Common.Catalog\GlobalChanges\Child Extension\ChildExtension.FulfillmentStatus.GlobalChange.xml">
       <Link>LinkedSpecs\ChildExtension.FulfillmentStatus.GlobalChange.xml</Link>
     </None>
+    <None Include="..\MoM.Common.Catalog\LetterScanner\CRM Annual Letter Scanner\CRM_AnnualLetterScanner.Add.xml">
+      <Link>LinkedSpecs\CRM_AnnualLetterScanner.Add.xml</Link>
+    </None>
+    <Content Include="CRM AnnualLetterScanner\CRMAnnualLetterScannerAddDataFormUIModel.xml">
+      <DependentUpon>CRMAnnualLetterScannerAddDataFormUIModel.vb</DependentUpon>
+    </Content>
     <Content Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.xml" />
     <Content Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.xml" />
     <Content Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.xml">
@@ -232,6 +245,7 @@
     <Content Include="htmlforms\ChildFieldMemoSentCodeGlobalChange.html" />
     <Content Include="htmlforms\ChildLearningLetterLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\ChildPendingReasonsGlobalChange.html" />
+    <Content Include="htmlforms\CRMAnnualLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\ChildExtensionFulfillmentStatusGlobalChange.html" />
