@@ -56,7 +56,7 @@ Public Class CRMAnnualLetterScannerAddDataFormUIModel
         _sponsorName = String.Empty
         _sponsorSalutation = String.Empty
 
-        Dim element As ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel = New ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel()
+		Dim element As CRMAnnualLetterScannerAddDataFormBARCODEELEMENTSUIModel = New CRMAnnualLetterScannerAddDataFormBARCODEELEMENTSUIModel()
         element.RESULTSOK.Enabled = False
 
         If _barcode.Value.ToString().Length = _barCodeLength Then

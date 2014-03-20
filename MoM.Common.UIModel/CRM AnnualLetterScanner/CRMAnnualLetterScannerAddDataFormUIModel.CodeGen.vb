@@ -27,84 +27,85 @@ Partial Public Class [CRMAnnualLetterScannerAddDataFormUIModel]
 #End Region
 
     Private WithEvents _barcode As Global.Blackbaud.AppFx.UIModeling.Core.StringField
-    Private WithEvents _barcodeelements As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel)
-    Private WithEvents _submit As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
-    Private WithEvents _scansession As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+	Private WithEvents _barcodeelements As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of CRMAnnualLetterScannerAddDataFormBARCODEELEMENTSUIModel)
+	Private WithEvents _submit As Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+	Private WithEvents _scansession As Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
 
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public Sub New()
-        MyBase.New()
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public Sub New()
+		MyBase.New()
 
-        _barcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
-        _barcodeelements = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel)
-        _submit = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
-        _scansession = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		_barcode = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		_barcodeelements = New Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of CRMAnnualLetterScannerAddDataFormBARCODEELEMENTSUIModel)
+		_submit = New Global.Blackbaud.AppFx.UIModeling.Core.BooleanField
+		_scansession = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
 
-        MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add
-        MyBase.DataFormTemplateId = New Guid("264da07a-1919-4b6e-b976-f28da8ff2c92")
-        MyBase.DataFormInstanceId = New Guid("e8891e98-cd70-4c05-b10e-319db1d2fc71")
-        MyBase.RecordType = "Bar Code"
-        MyBase.FixedDialog = False
-        MyBase.UserInterfaceUrl = "browser/htmlforms/custom/CRMAnnualLetterScannerAddDataForm.html"
+		MyBase.Mode = Global.Blackbaud.AppFx.UIModeling.Core.DataFormMode.Add
+		MyBase.DataFormTemplateId = New Guid("264da07a-1919-4b6e-b976-f28da8ff2c92")
+		MyBase.DataFormInstanceId = New Guid("e8891e98-cd70-4c05-b10e-319db1d2fc71")
+		MyBase.RecordType = "Bar Code"
+		MyBase.FixedDialog = False
+		MyBase.FORMHEADER.Value = "CRM Annual Letter Scanner"
+		MyBase.UserInterfaceUrl = "browser/htmlforms/custom/CRMAnnualLetterScannerAddDataForm.html"
 
-        '
-        '_barcode
-        '
-        _barcode.Name = "BARCODE"
-        _barcode.Caption = "Bar code"
-        _barcode.MaxLength = 100
-        Me.Fields.Add(_barcode)
-        '
-        '_barcodeelements
-        '
-        _barcodeelements.Name = "BARCODEELEMENTS"
-        _barcodeelements.Caption = "Results"
-        _barcodeelements.AllowDelete = False
-        _barcodeelements.EnablePaging = True
-        _barcodeelements.ItemsPerPage = 18
-        _barcodeelements.AllowColumnMove = True
-        Me.Fields.Add(_barcodeelements)
-        '
-        '_submit
-        '
-        _submit.Name = "SUBMIT"
-        _submit.Caption = "Save results"
-        Me.Fields.Add(_submit)
+		'
+		'_barcode
+		'
+		_barcode.Name = "BARCODE"
+		_barcode.Caption = "Bar code"
+		_barcode.MaxLength = 100
+		Me.Fields.Add(_barcode)
+		'
+		'_barcodeelements
+		'
+		_barcodeelements.Name = "BARCODEELEMENTS"
+		_barcodeelements.Caption = "Results"
+		_barcodeelements.AllowDelete = False
+		_barcodeelements.EnablePaging = True
+		_barcodeelements.ItemsPerPage = 18
+		_barcodeelements.AllowColumnMove = True
+		Me.Fields.Add(_barcodeelements)
+		'
+		'_submit
+		'
+		_submit.Name = "SUBMIT"
+		_submit.Caption = "Save results"
+		Me.Fields.Add(_submit)
 
-        '
-        '_scansession
-        '
-        _scansession.Caption = "Scan session"
-        _scansession.Name = "SCANSESSION"
-        _scansession.MaxLength = 100
-        Me.Fields.Add(_scansession)
+		'
+		'_scansession
+		'
+		_scansession.Caption = "Scan session"
+		_scansession.Name = "SCANSESSION"
+		_scansession.MaxLength = 100
+		Me.Fields.Add(_scansession)
 
-        OnCreated()
+		OnCreated()
 
-    End Sub
+	End Sub
 
-    ''' <summary>
-    ''' Bar code (9-character string)
-    ''' </summary>
-    <System.ComponentModel.Description("Bar code (9-character string)")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [BARCODE]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
-        Get
-            Return _barcode
-        End Get
-    End Property
+	''' <summary>
+	''' Bar code (9-character string)
+	''' </summary>
+	<System.ComponentModel.Description("Bar code (9-character string)")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [BARCODE]() As Global.Blackbaud.AppFx.UIModeling.Core.StringField
+		Get
+			Return _barcode
+		End Get
+	End Property
 
-    ''' <summary>
-    ''' Elements
-    ''' </summary>
-    <System.ComponentModel.Description("Elements")> _
-    <System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
-    Public ReadOnly Property [BARCODEELEMENTS]() As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of ChildLearningLetterLetterScannerAddDataFormBARCODEELEMENTSUIModel)
-        Get
-            Return _barcodeelements
-        End Get
-    End Property
+	''' <summary>
+	''' Elements
+	''' </summary>
+	<System.ComponentModel.Description("Elements")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [BARCODEELEMENTS]() As Global.Blackbaud.AppFx.UIModeling.Core.CollectionField(Of CRMAnnualLetterScannerAddDataFormBARCODEELEMENTSUIModel)
+		Get
+			Return _barcodeelements
+		End Get
+	End Property
 
     ''' <summary>
     ''' Save results
