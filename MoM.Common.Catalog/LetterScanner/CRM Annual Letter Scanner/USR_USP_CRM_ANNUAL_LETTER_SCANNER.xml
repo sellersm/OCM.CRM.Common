@@ -6,6 +6,7 @@
 	Description="It is used for CRM Annual Letter Scanner"
 	Author="Trucmai Gupta"
 	SPName="USR_USP_CRM_ANNUAL_LETTER_SCANNER"
+	GrantServiceRolePermission="true"
 	>
 
   <!-- 
