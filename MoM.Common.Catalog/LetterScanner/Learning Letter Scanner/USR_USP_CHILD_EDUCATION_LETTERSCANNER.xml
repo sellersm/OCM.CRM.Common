@@ -492,6 +492,10 @@ begin
 		begin
 			-- get the Child Project ID
 			set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+			
+			-- get the project id of the barcode child project lookupid:
+			set @BarcodeChildProjectID = (select ID from sponsorshiplocation where lookupid = @projectLookupId);
+
 			if @CurrentChildProjectID <> @BarcodeChildProjectID
 				begin
 					set @ExceptionOccurred = 1
