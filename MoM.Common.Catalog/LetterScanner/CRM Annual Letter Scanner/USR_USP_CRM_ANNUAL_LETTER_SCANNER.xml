@@ -20,6 +20,7 @@
 	20-Mar-2014		Memphis			fixes to bugs and incorrect interpretation of requirements:
 									- 000000 is a valid sponsorid value, but don't check if it's a Found Sponsor.
 									- wasn't setting the original letter subcageory id and original sequence id
+									- wasn't checking the bar code project id correctly
 	-->
 
   <CreateProcedureSQL>
@@ -360,7 +361,11 @@ begin
 	if @ExceptionOccurred = 0
 		begin
 			-- get the Child Project ID
-			set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+			set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID);
+			
+			-- get the project id of the barcode child project lookupid:
+			set @BarcodeChildProjectID = (select ID from sponsorshiplocation where lookupid = @projectLookupId);
+
 			if @CurrentChildProjectID <> @BarcodeChildProjectID
 				begin
 					--set @ExceptionOccurred = 1
