@@ -62,6 +62,7 @@
 	13-Mar-2014		Memphis			Added PhotoInteractionExceptions.DataList.xml
 	17-Mar-2014		Memphis			Added RateIncreaseData_WithSponsorship.Query.xml
 	17-Mar-2014		Memphis			Added RateIncreaseData_WithConstituent.Query.xml
+	24-Mar-2014		Memphis			Added missing USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML.xml
 	-->
 
 
@@ -166,7 +167,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_ADDRESS_ADDRESSBLOCK_NORMALIZE_LOWERCASE.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_CHILDINTERACTION_ANNUALPHOTOUPDATE_FROMITEMLISTXML.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CHILD_INTERACTION_ANNUAL_PHOTO_UPDATE.xml" />
-		
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML.xml" />
+
 		<!-- Record Operations -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Delete.RecordOperation.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildInteraction.AnnualPhoto.RecordOperation.xml" />
