@@ -1,0 +1,27 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="a1543322-dd88-4830-82c2-818a2e7f6f15"
+	Name="USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML"
+	Description="Gets the child lookupid values from xml."
+	Author="Memphis Sellers"
+	DBFunctionName="USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML"
+	GrantServiceRolePermission="true"
+	>
+
+	<CreateFunctionSQL>
+		<![CDATA[
+create function dbo.USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML(
+	@ITEMLISTXML xml = null
+)
+returns table
+as  
+	-- do work here and return a value
+	return (SELECT 
+				T.c.value('(CHILDLOOKUPID)[1]','nvarchar(10)') AS 'CHILDLOOKUPID'
+			FROM @ITEMLISTXML.nodes('/CHILDPHOTOCOLLECTION/ITEM') T(c)
+	)
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>
