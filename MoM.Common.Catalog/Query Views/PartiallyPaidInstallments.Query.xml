@@ -1,0 +1,79 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes"
+	ID="2096f7ac-1ced-4340-aa8b-1d3e4eab5535"
+	Name="Partially Paid Installments Query"
+	Description="Find Recurring gifts that have installments that have been partially paid."
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Rate Increase"
+	>
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	27-Mar-2013		CMayeda			Initial Version
+									Created for task TK-01311
+	-->
+
+
+	<ViewImplementation ViewName="USR_V_QUERY_RECURRINGGIFTS_PARTIALLYPAIDINSTALLMENTS">
+		<ViewSQL>
+			<![CDATA[
+with RGInstallmentsWithBalance as
+(select 
+	ft.ID,
+	i.TRANSACTIONAMOUNT as INSTALLMENTAMOUNT,
+	dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(i.ID) as INSTALLMENTBALANCE,
+	rs.NEXTTRANSACTIONDATE,
+	ft.CALCULATEDUSERDEFINEDID as REVENUEID
+from 
+	RECURRINGGIFTINSTALLMENT i
+	join dbo.FINANCIALTRANSACTION ft ON ft.ID = i.REVENUEID
+	join dbo.REVENUESCHEDULE rs ON rs.ID = ft.ID
+
+where 
+	rs.STATUSCODE = 0  -- Active
+)
+select 
+	ID,
+	INSTALLMENTAMOUNT,
+	INSTALLMENTBALANCE,
+	NEXTTRANSACTIONDATE,
+	REVENUEID
+from 
+	RGInstallmentsWithBalance
+where 
+	INSTALLMENTBALANCE > 0
+and INSTALLMENTBALANCE < INSTALLMENTAMOUNT
+  
+  
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="INSTALLMENTAMOUNT" Caption="Installment Amount" DataType="Money" />
+			<OutputField Name="INSTALLMENTBALANCE" Caption="Installment Balance" DataType="Money" />
+			<OutputField Name="NEXTTRANSACTIONDATE" Caption="Next Transaction Date" DataType="Date" />
+			<OutputField Name="REVENUEID" Caption="Revenue Id" DataType="String" />
+			
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="ID" PathAlias="Recurring Gift"/>
+	</RelationshipOperations>
+
+</QueryViewSpec>
+
+
+
+
