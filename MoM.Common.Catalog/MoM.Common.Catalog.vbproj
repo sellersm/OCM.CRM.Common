@@ -562,6 +562,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Annual Photo API Webservice Specs\USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateChange.OriginalAmountDifference.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Query Views\PartiallyPaidInstallments.Query.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
