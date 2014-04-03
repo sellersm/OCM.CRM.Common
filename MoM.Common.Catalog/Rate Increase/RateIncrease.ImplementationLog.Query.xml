@@ -82,7 +82,7 @@ from
 	</Output>
 
 	<RelationshipOperations>
-		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="REVENUEID" PathAlias="Sponsorship"/>	
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="REVENUEID" PathAlias="Revenue"/>	
 	</RelationshipOperations>
 </QueryViewSpec>
 
