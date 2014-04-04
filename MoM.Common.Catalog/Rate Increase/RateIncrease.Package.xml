@@ -62,6 +62,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RATECHANGE_RESPONSE_SCANNER.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_INSERT_CONSTITUENTAPPEALRESPONSE.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SAVE_RATEINCREASE_APPEALRESPONSE.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_UFN_RATEINCREASE_GETINSTALLMENTSWITHBALANCE.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_RATEINCREASE_ADDRECURRINGGIFTWRITEOFF.xml" />
 
 		<!-- Forms, tasks, pages, etc.-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateChangeResponseLetterScanner.Add.xml" />
