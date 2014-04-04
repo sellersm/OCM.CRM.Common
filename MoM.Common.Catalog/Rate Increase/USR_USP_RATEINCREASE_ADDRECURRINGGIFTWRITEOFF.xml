@@ -1,0 +1,261 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="3c91b606-0777-4818-8c04-e3b0db8c9498"
+	Name="USR_USP_RATEINCREASE_ADDRECURRINGGIFTWRITEOFF"
+	Description="Rate Increase 2014 - Used to add writeoffs to everyone that has delinquent installments less than 4/1/14"
+	Author="Cary Mayeda"
+	SPName="USR_USP_RATEINCREASE_ADDRECURRINGGIFTWRITEOFF"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+		
+create procedure dbo.USR_USP_RATEINCREASE_ADDRECURRINGGIFTWRITEOFF
+(
+    @REVENUEID uniqueidentifier,
+    @CHANGEAGENTID uniqueidentifier = null
+)
+as
+
+begin
+	set nocount on;
+
+	-- This was copied from USP_DATAFORMTEMPLATE_ADD_RECURRINGGIFTWRITEOFF
+	-- Modified to create waivers for all outstanding installments up to a 
+	-- Other parms included in USP_DATAFORMTEMPLATE_ADD_RECURRINGGIFTWRITEOFF
+	declare @ID uniqueidentifier = null
+	declare @DATE date = getdate()
+	declare @REASONID uniqueidentifier = '739536C3-74D3-4182-8C02-7A0E8BD3410E' -- rate change
+	declare @AMOUNT money = 0
+
+
+	declare @rateIncreaseDate date = '3/31/14'	-- This is hard coded to the last installment date that should be waived.
+	declare @installmentCount int				-- Used to track how many open installments were found <= @rateIncreaseDate 
+	declare @installmentTotalAmount money		-- Used to track the total waiver amount.
+
+	declare @installmentsWithBalance table (
+		REVENUEID uniqueidentifier,
+		INSTALLMENTID uniqueidentifier,
+		CONSTITUENTID uniqueidentifier,
+		INSTALLMENTDATE datetime,
+		INSTALLMENTAMOUNT money,
+		INSTALLMENTBALANCE money,	
+		NEXTTRANSACTIONDATE date,
+		REVENUELOOKUPID nvarchar(100)
+	)
+
+	if @CHANGEAGENTID is null  
+	    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate()
+
+	begin try
+	      /* Originif (select sum(WRITEOFFAMOUNT) from dbo.UFN_RECURRINGGIFTINSTALLMENT_GETWRITEOFFINSTALLMENTS_2_FROMITEMLISTXML(@INSTALLMENTS)) <> @AMOUNT
+	              raiserror('BBERR_AMOUNTAPPLIED_NOTEQUALTO_WRITEOFFAMOUNT', 13, 1);
+	       */       
+		   
+		   
+			delete @installmentsWithBalance
+			insert @installmentsWithBalance
+			select * from dbo.USR_UFN_RATEINCREASE_GETINSTALLMENTSWITHBALANCE (@REVENUEID, @rateIncreaseDate)
+			
+			set @installmentCount = 0
+			set @installmentTotalAmount = 0
+			select 
+				@installmentCount = count(*),
+				@installmentTotalAmount = sum (INSTALLMENTBALANCE)
+			from 
+				@installmentsWithBalance
+				
+			
+	       declare @RGAMOUNT money;
+	       declare @BASECURRENCYID uniqueidentifier;
+	       declare @RGORGANIZATIONAMOUNT money;
+	       declare @ORGANIZATIONEXCHANGERATEID uniqueidentifier;
+	       declare @RGTRANSACTIONAMOUNT money;
+	       declare @TRANSACTIONCURRENCYID uniqueidentifier;
+	       declare @BASEEXCHANGERATEID uniqueidentifier;
+	       
+		   	while @installmentCount > 0
+			begin
+				/*
+				print @installmentCount
+				print @installmentTotalAmount
+				*/
+				
+			    set @ID = newid()
+
+		       select
+		              @RGAMOUNT = REVENUE.AMOUNT,
+		              @BASECURRENCYID = REVENUE.BASECURRENCYID,
+		              @RGORGANIZATIONAMOUNT = REVENUE.ORGANIZATIONAMOUNT,
+		              @ORGANIZATIONEXCHANGERATEID = REVENUE.ORGANIZATIONEXCHANGERATEID,
+		              @RGTRANSACTIONAMOUNT = REVENUE.TRANSACTIONAMOUNT,
+		              @TRANSACTIONCURRENCYID = REVENUE.TRANSACTIONCURRENCYID,
+		              @BASEEXCHANGERATEID = REVENUE.BASEEXCHANGERATEID
+		       from
+		              dbo.REVENUE
+		       where
+		              REVENUE.ID = @REVENUEID;
+		              
+		              
+		       if @BASECURRENCYID <> @TRANSACTIONCURRENCYID and @BASEEXCHANGERATEID is null
+		              raiserror('BBERR_BASEEXCHANGERATE_MISSING', 13, 1);
+		       
+		       -- add missing installments
+		       exec dbo.USP_RECURRINGGIFT_ADDMISSINGINSTALLMENTS
+		              @REVENUEID,
+		              @CHANGEAGENTID,
+		              @CURRENTDATE,
+		              @RGAMOUNT,
+		              null,
+		              @BASECURRENCYID,
+		              @RGORGANIZATIONAMOUNT,
+		              @ORGANIZATIONEXCHANGERATEID,
+		              @RGTRANSACTIONAMOUNT,
+		              @TRANSACTIONCURRENCYID,
+		              @BASEEXCHANGERATEID;
+
+		       insert into dbo.RECURRINGGIFTWRITEOFF (ID, REVENUEID, DATE, REASONCODEID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		       values (@ID, @REVENUEID, @DATE, @REASONID, @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE);
+		       
+		       insert into dbo.RECURRINGGIFTINSTALLMENTWRITEOFF (
+		              ID,
+		              RECURRINGGIFTINSTALLMENTID,
+		              WRITEOFFID,
+		              AMOUNT,
+		              BASECURRENCYID,
+		              ORGANIZATIONAMOUNT,
+		              ORGANIZATIONEXCHANGERATEID,
+		              TRANSACTIONAMOUNT,
+		              TRANSACTIONCURRENCYID,
+		              BASEEXCHANGERATEID,
+		              ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		       select
+		              newid(),
+		--              coalesce(WRITEOFFINSTALLMENT.ID,(select ID from dbo.RECURRINGGIFTINSTALLMENT where REVENUEID = @REVENUEID and DATE = WRITEOFFINSTALLMENT.DATE)),
+					  WRITEOFFINSTALLMENT.INSTALLMENTID,
+		              @ID,
+		              WRITEOFFAMOUNTCURRENCYVALUES.BASEAMOUNT,
+		              @BASECURRENCYID,
+		              WRITEOFFAMOUNTCURRENCYVALUES.ORGANIZATIONAMOUNT,
+		              @ORGANIZATIONEXCHANGERATEID,
+		              WRITEOFFINSTALLMENT.INSTALLMENTBALANCE,
+		              @TRANSACTIONCURRENCYID,
+		              @BASEEXCHANGERATEID,
+		              @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE
+		       from @installmentsWithBalance WRITEOFFINSTALLMENT
+		--              dbo.UFN_RECURRINGGIFTINSTALLMENT_GETWRITEOFFINSTALLMENTS_2_FROMITEMLISTXML(@INSTALLMENTS) WRITEOFFINSTALLMENT
+		--              usr_TEMP_WRITEOFFINSTALLMENT WRITEOFFINSTALLMENT
+		              outer apply dbo.UFN_CURRENCY_GETCURRENCYVALUES_2
+		                     (
+		                           WRITEOFFINSTALLMENT.INSTALLMENTBALANCE,
+		                           null,
+		                           @BASECURRENCYID,
+		                           @BASEEXCHANGERATEID,
+		                           @TRANSACTIONCURRENCYID,
+		                           null,
+		                           null,
+		                           null,
+		                           @ORGANIZATIONEXCHANGERATEID,
+		                           0
+		                     ) as WRITEOFFAMOUNTCURRENCYVALUES
+		       where
+		              WRITEOFFINSTALLMENT.INSTALLMENTBALANCE > 0;
+		       
+		       -- add next installment if it doesn't already exist
+		       declare @FUTUREINSTALLMENTEXISTS bit;
+		       set @FUTUREINSTALLMENTEXISTS = 0;
+		       
+		       select @FUTUREINSTALLMENTEXISTS = 1
+		       from dbo.RECURRINGGIFTINSTALLMENT
+		       where REVENUEID = @REVENUEID
+		       and DATE >= dbo.UFN_DATE_GETEARLIESTTIME(@CURRENTDATE)
+		       and dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(ID) > 0;
+		       
+		       if @FUTUREINSTALLMENTEXISTS = 0
+		       begin
+		              declare @LASTINSTALLMENTDATE date;
+		              
+		              select @LASTINSTALLMENTDATE = max(DATE)
+		              from dbo.RECURRINGGIFTINSTALLMENT
+		              where REVENUEID = @REVENUEID;
+		              
+		              set @LASTINSTALLMENTDATE = dbo.UFN_REVENUE_GETNEXTTRANSACTIONDATE_BYID_1_1(@REVENUEID,@LASTINSTALLMENTDATE)
+		              
+		              declare @ENDDATE date;
+		              declare @STATUSCODE tinyint;
+		              select @ENDDATE = ENDDATE,
+		                        @STATUSCODE = STATUSCODE
+		              from dbo.REVENUESCHEDULE
+		              where ID = @REVENUEID;
+		              
+		              if @STATUSCODE = 0 and
+		                 (@ENDDATE is null or
+		                  @LASTINSTALLMENTDATE <= @ENDDATE)
+		              begin
+		                     insert into dbo.RECURRINGGIFTINSTALLMENT (
+		                           ID,
+		                           REVENUEID,
+		                           AMOUNT,
+		                           DATE,
+		                           BASECURRENCYID,
+		                           ORGANIZATIONAMOUNT,
+		                           ORGANIZATIONEXCHANGERATEID,
+		                           TRANSACTIONAMOUNT,
+		                           TRANSACTIONCURRENCYID,
+		                           BASEEXCHANGERATEID,
+		                           ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		                     values (
+		                           newid(),
+		                           @REVENUEID,
+		                           @RGAMOUNT,
+		                           @LASTINSTALLMENTDATE,
+		                           @BASECURRENCYID,
+		                           @RGORGANIZATIONAMOUNT,
+		                           @ORGANIZATIONEXCHANGERATEID,
+		                           @RGTRANSACTIONAMOUNT,
+		                           @TRANSACTIONCURRENCYID,
+		                           @BASEEXCHANGERATEID,
+		                           @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE);
+		                     
+		              end
+		              else
+		                     update dbo.REVENUESCHEDULE
+		                           set NEXTTRANSACTIONDATE = @LASTINSTALLMENTDATE,
+		                                  STATUSCODE = case when @STATUSCODE = 0 then 3 else @STATUSCODE end,
+		                                  CHANGEDBYID = @CHANGEAGENTID,
+		                                  DATECHANGED = @CURRENTDATE                      
+		                     from dbo.REVENUESCHEDULE
+		                     where ID = @REVENUEID;
+		       end
+		       -- always call this to update the revenueschedule record
+		       exec dbo.USP_RECURRINGGIFT_SETNEXTTRANSACTIONDATE @REVENUEID, @CHANGEAGENTID
+
+				delete @installmentsWithBalance
+				insert @installmentsWithBalance
+				select * from dbo.USR_UFN_RATEINCREASE_GETINSTALLMENTSWITHBALANCE (@REVENUEID, @rateIncreaseDate)
+				
+				set @installmentCount = 0
+				set @installmentTotalAmount = 0
+				select 
+					@installmentCount = count(*),
+					@installmentTotalAmount = sum (INSTALLMENTBALANCE)
+				from 
+					@installmentsWithBalance
+			end
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+	    return 1
+	end catch
+
+	return 0      
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
