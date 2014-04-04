@@ -38,6 +38,7 @@ from
 			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
 			<OutputField Name="CONSTITUENTID" Caption="Constituent System ID" DataType="Guid" />
 			<OutputField Name="INSTALLMENTID" Caption="Installment System ID" DataType="Guid" />
+			<OutputField Name="CONSTITUENTLOOKUPID" Caption="Constituent Lookup ID" DataType="String" />
 			<OutputField Name="CONSTITUENTNAME" Caption="Constituent Name" DataType="String" />
 			<OutputField Name="INSTALLMENTAMOUNT" Caption="Installment Amount" DataType="Money" />
 			<OutputField Name="INSTALLMENTBALANCE" Caption="Installment Balance" DataType="Money" />

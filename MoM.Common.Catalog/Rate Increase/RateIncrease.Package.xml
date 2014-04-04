@@ -76,7 +76,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateIncreaseAppeal.MergedConstituents.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateIncrease.OriginalAmountDifference.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateIncrease.ImplementationLog.Query.xml" />
-		
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.RateIncrease.ActiveSponsorshipLessThan39NoMatchingRIRow.Query.xml" />
 	</common:DependencyList>
 
 </PackageSpec>
