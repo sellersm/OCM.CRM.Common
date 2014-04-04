@@ -10,6 +10,13 @@
 	RecordType="Revenue"
 	common:SecurityUIFolder="Rate Increase"
 	>
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	04-Apr-2013		CMayeda			Initial Version based on Mark's query
+	-->
 
 	<!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_HASAPPEALRGLESSTHAN39NORIROW">
@@ -71,6 +78,11 @@ and dbo.MKTSEGMENTCATEGORYCODE.[DESCRIPTION] like '%no increase letter%'
 			<OutputField Name="FREQUENCY" Caption="Frequency" DataType="String" />
 		</OutputFields>
 	</Output>
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="ID" PathAlias="Recurring Gift"/>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="SPONSORID" PathAlias="Sponsor"/>
+		<AddRelatedView RelatedView="V_QUERY_SPONSORSHIP" RelatedField="ID" Field="SPONSORSHIPID" PathAlias="Sponsorship"/>
+	</RelationshipOperations>
 
 </QueryViewSpec>
 
