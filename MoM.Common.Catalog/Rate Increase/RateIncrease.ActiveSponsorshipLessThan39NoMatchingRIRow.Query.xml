@@ -1,0 +1,76 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="1718d8a9-8ef6-4a94-bd1c-85659d846ac3"
+	Name="Rate Increase Active Sponsorship less than $39 No Matching RI Row Query"
+	Description="Rate Increase Active Sponsorship less than $39 No Matching RI Row Query"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Rate Increase"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_HASAPPEALRGLESSTHAN39NORIROW">
+		<ViewSQL>
+			<![CDATA[
+			
+select
+      r.ID 
+      , conSponsor.ID as SPONSORID
+      , s.ID as SPONSORSHIPID
+      , conSponsor.LOOKUPID as SPONSORLOOKUPID
+      , conSponsor.[NAME] as SPONSORNAME
+      , so.LOOKUPID as CHILDLOOKUPID
+      , soc.[NAME] as CHILDNAME
+      , sc.LOOKUPID as COMMITMENTLOOKUPID
+      , r.LOOKUPID  as REVENUELOOKUPID
+      , r.AMOUNT 
+      , dbo.REVENUESCHEDULE.FREQUENCY
+from dbo.SPONSORSHIP s
+join dbo.SPONSORSHIPCOMMITMENT sc ON sc.ID = s.SPONSORSHIPCOMMITMENTID
+join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = s.SPONSORSHIPOPPORTUNITYID
+join dbo.SPONSORSHIPOPPORTUNITYCHILD soc ON soc.ID = so.ID
+join dbo.REVENUESPLIT rs on rs.ID = s.REVENUESPLITID
+join dbo.REVENUE r on r.ID = rs.REVENUEID
+join dbo.CONSTITUENT conSponsor ON conSponsor.ID = r.CONSTITUENTID
+join dbo.REVENUESCHEDULE on r.ID = REVENUESCHEDULE.ID
+left outer join dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS srs on srs.SPONSORID = conSponsor.ID
+left outer join dbo.CONSTITUENTAPPEAL conAppeal on conAppeal.CONSTITUENTID = conSponsor.ID and conAppeal.APPEALID = (select ID from dbo.APPEAL where NAME like '%10555%')
+left join dbo.MKTSEGMENTATIONSEGMENT ON dbo.MKTSEGMENTATIONSEGMENT.ID = conAppeal.MKTSEGMENTATIONSEGMENTID
+left join dbo.MKTSEGMENTATION ON dbo.MKTSEGMENTATION.ID = dbo.MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
+left join dbo.MKTSEGMENT on dbo.MKTSEGMENT.ID = SEGMENTID
+left join dbo.MKTSEGMENTCATEGORYCODE on dbo.MKTSEGMENTCATEGORYCODE.ID = dbo.MKTSEGMENT.SEGMENTCATEGORYCODEID
+where (r.TRANSACTIONTYPECODE = 2  -- recurring gift
+and s.STATUSCODE = 1
+and r.AMOUNT < 39
+and srs.ID is null
+and r.CONSTITUENTID NOT IN (select CONSTITUENTID from dbo.CONSTITUENTSOLICITCODE where SOLICITCODEID = '5834E262-82B2-47E3-A5B2-DE02FB3DB62D')
+and dbo.MKTSEGMENTCATEGORYCODE.[DESCRIPTION] like '%no increase letter%'    
+)   -- no matching RI row
+
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="SPONSORID" Caption="Sponsor System record ID" Category="System Fields" DataType="Guid"  />
+			<OutputField Name="SPONSORSHIPID" Caption="Sponsorship System record ID" Category="System Fields" DataType="Guid"  />
+			<OutputField Name="SPONSORLOOKUPID" Caption="Sponsor Lookup ID" DataType="String" />
+			<OutputField Name="SPONSORNAME" Caption="Sponsor Name" DataType="String" />
+			<OutputField Name="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
+			<OutputField Name="CHILDNAME" Caption="Child Name" DataType="String" />
+			<OutputField Name="COMMITMENTLOOKUPID" Caption="Commitment Lookup ID" DataType="String" />
+			<OutputField Name="REVENUELOOKUPID" Caption="Revenue Lookup ID" DataType="String" />
+			<OutputField Name="AMOUNT" Caption="Amount" DataType="Money" />
+			<OutputField Name="FREQUENCY" Caption="Frequency" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
