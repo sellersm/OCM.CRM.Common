@@ -1,0 +1,62 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="fd1cf2eb-9a6d-4521-8f7b-debfd1f38fd9"
+	Name="USR_UFN_RATEINCREASE_GETINSTALLMENTSWITHBALANCE"
+	Description="Used to find all installments with a balance as less than "
+	Author="Cary Mayeda"
+	DBFunctionName="USR_UFN_RATEINCREASE_GETINSTALLMENTSWITHBALANCE"
+	>
+
+	<CreateFunctionSQL>
+		<![CDATA[
+		
+create function USR_UFN_RATEINCREASE_GETINSTALLMENTSWITHBALANCE (@revenueID uniqueidentifier, @date date)
+returns @retInstallments table
+(
+	REVENUEID uniqueidentifier,
+	INSTALLMENTID uniqueidentifier,
+	CONSTITUENTID uniqueidentifier,
+	INSTALLMENTDATE datetime,
+	INSTALLMENTAMOUNT money,
+	INSTALLMENTBALANCE money,	
+	NEXTTRANSACTIONDATE date,
+	REVENUELOOKUPID nvarchar(100)
+)
+as
+
+begin
+	;with RGInstallmentsWithBalance as
+	(select 
+		ft.ID as REVENUEID,
+		i.ID as INSTALLMENTID,
+		ft.CONSTITUENTID,
+		i.[DATE],
+		i.TRANSACTIONAMOUNT as INSTALLMENTAMOUNT,
+		dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(i.ID) as INSTALLMENTBALANCE,
+		rs.NEXTTRANSACTIONDATE,
+		ft.CALCULATEDUSERDEFINEDID as REVENUELOOKUPID
+	from 
+		dbo.RECURRINGGIFTINSTALLMENT i
+		join dbo.FINANCIALTRANSACTION ft ON ft.ID = i.REVENUEID
+		join dbo.REVENUESCHEDULE rs ON rs.ID = ft.ID
+
+	where
+		rs.STATUSCODE = 0 -- Active
+	and	i.[DATE] <= rs.NEXTTRANSACTIONDATE
+	and i.[DATE] <= @date
+	and ft.ID = @revenueID
+	)
+	
+	insert @retInstallments
+	select * from RGInstallmentsWithBalance 
+	where INSTALLMENTBALANCE > 0
+	order by date;
+	
+	return;
+end
+
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

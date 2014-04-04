@@ -575,9 +575,6 @@
     <EmbeddedResource Include="Rate Increase\RateIncrease.ImplementationLog.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Rate Increase\RateIncrease.ActiveSponsorshipLessThan39NoMatchingRIRow.Query.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Rate Increase\RateIncrease.RevenueBackup.Query.xml" />
   </ItemGroup>
   <ItemGroup>
