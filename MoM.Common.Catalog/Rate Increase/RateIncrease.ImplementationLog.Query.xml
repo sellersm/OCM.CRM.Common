@@ -23,7 +23,18 @@
 			<![CDATA[
 select 
 	log.REVENUEID,
-	log.SESSIONID,
+	case 
+		when log.SESSIONID = '9E3E3E83-521B-46B0-8E76-8330062F266C' then 'Batch 1 - 000000 and 099999'
+		when log.SESSIONID = '9E46A98D-0829-4D58-853D-B1CD0A135DAD' then 'Batch 2 - 100000 and 199999'
+		when log.SESSIONID = '659E8A98-3157-4812-B965-600E1D4FABBC' then 'Batch 3 - 200000 and 239999'
+		when log.SESSIONID = '8B52A536-E8B7-45A9-B5BE-8F425CE0C922' then 'Batch 4 - 240000 and 279999'
+		when log.SESSIONID = '1371E080-BA32-49DA-869F-E15ABA1CFAF1' then 'Batch 5 - 280000 and 299999'
+		when log.SESSIONID = 'BCCB7F65-C870-4C4C-861E-9AFAA15A217B' then 'Batch 6 - 300000 and 399999'
+		when log.SESSIONID = '7AF30EAE-3049-47E3-A9DF-C7D653F2D1F6' then 'Batch 7 - 400000 and 499999'
+		when log.SESSIONID = 'F4EB6804-4DF2-4388-9E27-19DC4CEE265E' then 'Batch 8 - 500000 and 599999'
+		when log.SESSIONID = '0662B1D0-5A0C-4774-8899-46739F12786F' then 'Batch 9 - 600000 and 999999'
+		else log.SESSIONID 
+	end as SESSION,
 	log.IMPLMENTATIONDATE,
 	log.LOGMESSAGE,
 	log.GIFTAMOUNT,
@@ -49,7 +60,7 @@ from
 	<Output>
 		<OutputFields>
 			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" DataType="Guid"/>
-			<OutputField Name="SESSIONID" Caption="Session ID" DataType="Guid" />
+			<OutputField Name="SESSION" Caption="Session" DataType="String" />
 			<OutputField Name="IMPLMENTATIONDATE" Caption="Implementation Date" DataType="Date" />
 			<OutputField Name="LOGMESSAGE" Caption="Log Message" DataType="String" />
 			<OutputField Name="GIFTAMOUNT" Caption="Gift Amount" DataType="Money" />
