@@ -1,0 +1,227 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="60b1ec04-f2da-4ffc-b0d3-9522937ca456"
+	Name="USR_USP_RATEINCREASE_ADDSINGLERECURRINGGIFTWRITEOFF"
+	Description="Used to create a single write off with a reason 'RI non-delinquent $5 reversal'"
+	Author="Cary Mayeda"
+	SPName="USR_USP_RATEINCREASE_ADDSINGLERECURRINGGIFTWRITEOFF"
+	>
+	<!-- 
+	Remarks:    This is very specific to the Rate Increase project
+
+	History:
+	Date            Modified By     Comments
+	06-Apr-2013		CMayeda			Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+		
+create procedure dbo.USR_USP_RATEINCREASE_ADDSINGLERECURRINGGIFTWRITEOFF
+(
+    @REVENUEID uniqueidentifier,
+	@INSTALLMENTID uniqueidentifier,
+	@WRITEOFFAMOUNT money,
+    @CHANGEAGENTID uniqueidentifier = null
+)
+as
+
+begin
+	set nocount on;
+
+	-- This was copied from USP_DATAFORMTEMPLATE_ADD_RECURRINGGIFTWRITEOFF
+	-- Modified to create waivers for all outstanding installments up to a 
+	-- Other parms included in USP_DATAFORMTEMPLATE_ADD_RECURRINGGIFTWRITEOFF
+	declare @ID uniqueidentifier = null
+	declare @DATE date = getdate()
+	declare @REASONID uniqueidentifier = null
+
+
+	declare @recurringGiftFrequencyCode int
+
+	if @CHANGEAGENTID is null  
+	    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate()
+
+	begin try
+	    
+		    select @REASONID = ID from dbo.WRITEOFFREASONCODE where DESCRIPTION = 'RI non-delinquent $5 reversal'
+		    if @REASONID is null 
+				RAISERROR 1000000 'Cannot find the RI non-delinquent $5 reversal Revenue Function code'
+				
+		    select @recurringGiftFrequencyCode = FREQUENCYCODE from dbo.REVENUESCHEDULE where ID = @REVENUEID
+		    if @recurringGiftFrequencyCode = 3   -- Monthly
+			begin
+		       declare @RGAMOUNT money;
+		       declare @BASECURRENCYID uniqueidentifier;
+		       declare @RGORGANIZATIONAMOUNT money;
+		       declare @ORGANIZATIONEXCHANGERATEID uniqueidentifier;
+		       declare @RGTRANSACTIONAMOUNT money;
+		       declare @TRANSACTIONCURRENCYID uniqueidentifier;
+		       declare @BASEEXCHANGERATEID uniqueidentifier;
+		       
+					
+			   set @ID = newid()
+
+		       select
+		              @RGAMOUNT = REVENUE.AMOUNT,
+		              @BASECURRENCYID = REVENUE.BASECURRENCYID,
+		              @RGORGANIZATIONAMOUNT = REVENUE.ORGANIZATIONAMOUNT,
+		              @ORGANIZATIONEXCHANGERATEID = REVENUE.ORGANIZATIONEXCHANGERATEID,
+		              @RGTRANSACTIONAMOUNT = REVENUE.TRANSACTIONAMOUNT,
+		              @TRANSACTIONCURRENCYID = REVENUE.TRANSACTIONCURRENCYID,
+		              @BASEEXCHANGERATEID = REVENUE.BASEEXCHANGERATEID
+		       from
+		              dbo.REVENUE
+		       where
+		              REVENUE.ID = @REVENUEID;
+		              
+		              
+		       if @BASECURRENCYID <> @TRANSACTIONCURRENCYID and @BASEEXCHANGERATEID is null
+		              raiserror('BBERR_BASEEXCHANGERATE_MISSING', 13, 1);
+		       
+		       -- add missing installments
+		       exec dbo.USP_RECURRINGGIFT_ADDMISSINGINSTALLMENTS
+		              @REVENUEID,
+		              @CHANGEAGENTID,
+		              @CURRENTDATE,
+		              @RGAMOUNT,
+		              null,
+		              @BASECURRENCYID,
+		              @RGORGANIZATIONAMOUNT,
+		              @ORGANIZATIONEXCHANGERATEID,
+		              @RGTRANSACTIONAMOUNT,
+		              @TRANSACTIONCURRENCYID,
+		              @BASEEXCHANGERATEID;
+
+		       insert into dbo.RECURRINGGIFTWRITEOFF (ID, REVENUEID, DATE, REASONCODEID, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		       values (@ID, @REVENUEID, @DATE, @REASONID, @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE);
+		       
+		       insert into dbo.RECURRINGGIFTINSTALLMENTWRITEOFF (
+		              ID,
+		              RECURRINGGIFTINSTALLMENTID,
+		              WRITEOFFID,
+		              AMOUNT,
+		              BASECURRENCYID,
+		              ORGANIZATIONAMOUNT,
+		              ORGANIZATIONEXCHANGERATEID,
+		              TRANSACTIONAMOUNT,
+		              TRANSACTIONCURRENCYID,
+		              BASEEXCHANGERATEID,
+		              ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		       select
+		              newid(),
+		--              coalesce(WRITEOFFINSTALLMENT.ID,(select ID from dbo.RECURRINGGIFTINSTALLMENT where REVENUEID = @REVENUEID and DATE = WRITEOFFINSTALLMENT.DATE)),
+					  @INSTALLMENTID, --						  WRITEOFFINSTALLMENT.INSTALLMENTID,
+		              @ID,
+		              WRITEOFFAMOUNTCURRENCYVALUES.BASEAMOUNT,
+		              @BASECURRENCYID,
+		              WRITEOFFAMOUNTCURRENCYVALUES.ORGANIZATIONAMOUNT,
+		              @ORGANIZATIONEXCHANGERATEID,
+		              @WRITEOFFAMOUNT,--WRITEOFFINSTALLMENT.INSTALLMENTBALANCE,
+		              @TRANSACTIONCURRENCYID,
+		              @BASEEXCHANGERATEID,
+		              @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE
+		       from
+					dbo.UFN_CURRENCY_GETCURRENCYVALUES_2
+		                     (
+		                           @WRITEOFFAMOUNT,--WRITEOFFINSTALLMENT.INSTALLMENTBALANCE,
+		                           null,
+		                           @BASECURRENCYID,
+		                           @BASEEXCHANGERATEID,
+		                           @TRANSACTIONCURRENCYID,
+		                           null,
+		                           null,
+		                           null,
+		                           @ORGANIZATIONEXCHANGERATEID,
+		                           0
+		                     ) as WRITEOFFAMOUNTCURRENCYVALUES
+
+		       
+		       -- add next installment if it doesn't already exist
+		       declare @FUTUREINSTALLMENTEXISTS bit;
+		       set @FUTUREINSTALLMENTEXISTS = 0;
+		       
+		       select @FUTUREINSTALLMENTEXISTS = 1
+		       from dbo.RECURRINGGIFTINSTALLMENT
+		       where REVENUEID = @REVENUEID
+		       and DATE >= dbo.UFN_DATE_GETEARLIESTTIME(@CURRENTDATE)
+		       and dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(ID) > 0;
+		       
+		       if @FUTUREINSTALLMENTEXISTS = 0
+		       begin
+		              declare @LASTINSTALLMENTDATE date;
+		              
+		              select @LASTINSTALLMENTDATE = max(DATE)
+		              from dbo.RECURRINGGIFTINSTALLMENT
+		              where REVENUEID = @REVENUEID;
+		              
+		              set @LASTINSTALLMENTDATE = dbo.UFN_REVENUE_GETNEXTTRANSACTIONDATE_BYID_1_1(@REVENUEID,@LASTINSTALLMENTDATE)
+		              
+		              declare @ENDDATE date;
+		              declare @STATUSCODE tinyint;
+		              select @ENDDATE = ENDDATE,
+		                        @STATUSCODE = STATUSCODE
+		              from dbo.REVENUESCHEDULE
+		              where ID = @REVENUEID;
+		              
+		              if @STATUSCODE = 0 and
+		                 (@ENDDATE is null or
+		                  @LASTINSTALLMENTDATE <= @ENDDATE)
+		              begin
+		                     insert into dbo.RECURRINGGIFTINSTALLMENT (
+		                           ID,
+		                           REVENUEID,
+		                           AMOUNT,
+		                           DATE,
+		                           BASECURRENCYID,
+		                           ORGANIZATIONAMOUNT,
+		                           ORGANIZATIONEXCHANGERATEID,
+		                           TRANSACTIONAMOUNT,
+		                           TRANSACTIONCURRENCYID,
+		                           BASEEXCHANGERATEID,
+		                           ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED)
+		                     values (
+		                           newid(),
+		                           @REVENUEID,
+		                           @RGAMOUNT,
+		                           @LASTINSTALLMENTDATE,
+		                           @BASECURRENCYID,
+		                           @RGORGANIZATIONAMOUNT,
+		                           @ORGANIZATIONEXCHANGERATEID,
+		                           @RGTRANSACTIONAMOUNT,
+		                           @TRANSACTIONCURRENCYID,
+		                           @BASEEXCHANGERATEID,
+		                           @CHANGEAGENTID, @CHANGEAGENTID, @CURRENTDATE, @CURRENTDATE);
+		                     
+		              end
+		              else
+		                     update dbo.REVENUESCHEDULE
+		                           set NEXTTRANSACTIONDATE = @LASTINSTALLMENTDATE,
+		                                  STATUSCODE = case when @STATUSCODE = 0 then 3 else @STATUSCODE end,
+		                                  CHANGEDBYID = @CHANGEAGENTID,
+		                                  DATECHANGED = @CURRENTDATE                      
+		                     from dbo.REVENUESCHEDULE
+		                     where ID = @REVENUEID;
+		       end
+		       -- always call this to update the revenueschedule record
+		       exec dbo.USP_RECURRINGGIFT_SETNEXTTRANSACTIONDATE @REVENUEID, @CHANGEAGENTID
+
+			end
+	end try
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+	    return 1
+	end catch
+
+	return 0      
+end
+
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
