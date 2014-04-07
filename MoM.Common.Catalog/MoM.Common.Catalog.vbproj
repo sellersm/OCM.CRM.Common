@@ -595,6 +595,30 @@
   <ItemGroup>
     <EmbeddedResource Include="Rate Increase\USR_USP_RATEINCREASE_ADDSINGLERECURRINGGIFTWRITEOFF.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.DuplicateInstallmentsFixed4.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.DuplicateInstallmentsFixed5.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.DuplicateInstallmentsFixed6.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.DuplicateInstallmentsFixed7.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.DuplicateInstallmentsFixed8.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.DuplicateInstallmentsFixed9.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.NonMonthlyWithInstallmentBalance20140401.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.CheckOrignalAndUpdatedAmounts.Query.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

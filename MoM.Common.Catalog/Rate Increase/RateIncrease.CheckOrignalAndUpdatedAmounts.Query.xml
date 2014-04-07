@@ -1,0 +1,86 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="039d8fb7-9636-4cda-9daf-99f50e635a4c"
+	Name="Rate Increase Check Orignal and Updated Amounts Query"
+	Description="Compare the Updated Sponsorship Gift Amount with the Recurring gift amount and the Original Sponsorship Gift Amount with the Backup"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="REVENUEID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Rate Increase"
+	>
+	<!-- 
+	Remarks:		Used to verify that amounts match after rate increase scripts have been run.
+	
+	History:
+	Date            Modified By     Comments
+	07-Apr-2013		CMayeda			Initial Version
+	-->
+	
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_CHECKORIGNALANDUPDATEDAMOUNTS">
+		<ViewSQL>
+			<![CDATA[
+select 
+	rsplit.REVENUEID,
+	r.CONSTITUENTID,
+	i.ID as INSTALLMENTID,
+	srs.ORIGINALSPONSORSHIPGIFTAMOUNT,
+	srs.UPDATEDSPONSORSHIPGIFTAMOUNT,
+	r.AMOUNT as RGAMOUNT,
+	rb.AMOUNT as BACKUPAMOUNT,
+	i.DATE as INSTALLMENTDATE,
+	i.TRANSACTIONAMOUNT as INSTALLMENTAMOUNT,
+	dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(i.ID) as INSTALLMENTBALANCE,
+	rsch.NEXTTRANSACTIONDATE,
+	r.LOOKUPID as REVENUELOOKUPID
+
+from  
+	dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS srs
+	join dbo.SPONSORSHIP s on s.ID = srs.SPONSORSHIPID
+	join dbo.SPONSORSHIP s2 on s.SPONSORSHIPCOMMITMENTID = s2.SPONSORSHIPCOMMITMENTID and s2.ISMOSTRECENTFORCOMMITMENT = 1
+	join dbo.REVENUESPLIT rsplit on rsplit.ID = s2.REVENUESPLITID
+	join dbo.REVENUE r on r.ID = rsplit.REVENUEID
+	join dbo.REVENUESCHEDULE rsch on rsch.ID = r.ID
+	join dbo.USR_RATEINCREASE_REVENUEBACKUP rb on r.ID = rb.ID
+	join dbo.CONSTITUENT c on c.ID = s2.CONSTITUENTID
+	join dbo.RECURRINGGIFTINSTALLMENT i on i.REVENUEID = r.ID
+
+where srs.INCREASERATE = 1
+  and s2.STATUSCODE = 1
+  and (srs.ORIGINALSPONSORSHIPGIFTAMOUNT <> rb.AMOUNT
+        or 
+	   srs.UPDATEDSPONSORSHIPGIFTAMOUNT <> r.AMOUNT
+	  )
+
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
+			<OutputField Name="CONSTITUENTID" Caption="Constituent System ID" DataType="Guid" />
+			<OutputField Name="INSTALLMENTID" Caption="Installment System ID" DataType="Guid" />
+			<OutputField Name="ORIGINALSPONSORSHIPGIFTAMOUNT" Caption="Original Sponsorship Gift Amount" DataType="Money" />
+			<OutputField Name="UPDATEDSPONSORSHIPGIFTAMOUNT" Caption="Updated Sponsorship Gift Amount" DataType="Money" />
+			<OutputField Name="RGAMOUNT" Caption="Recurring Gift Amount" DataType="Money" />
+			<OutputField Name="BACKUPAMOUNT" Caption="Recurring Gift Backup Amount" DataType="Money" />
+			<OutputField Name="INSTALLMENTDATE" Caption="Installment Date" DataType="Date" />
+			<OutputField Name="INSTALLMENTAMOUNT" Caption="Installment Amount" DataType="Money" />
+			<OutputField Name="INSTALLMENTBALANCE" Caption="Installment Balance" DataType="Money" />
+			<OutputField Name="NEXTTRANSACTIONDATE" Caption="Next Transaction Date" DataType="Date" />
+			<OutputField Name="REVENUELOOKUPID" Caption="Revenue Lookup ID" DataType="String" />
+		</OutputFields>
+	</Output>
+
+	
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="CONSTITUENTID" PathAlias="Constituent"/>
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="REVENUEID" PathAlias="Recurring Gift"/>
+	</RelationshipOperations>
+</QueryViewSpec>
+
