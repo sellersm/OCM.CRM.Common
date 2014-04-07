@@ -1,0 +1,56 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes"
+	ID="890df65c-404b-4f9a-8d37-e05f01b6b5fa"
+	Name="Rate Increase Duplicate Installments Fixed Batch 8 Query"
+	Description="Rate Increase - Duplicate Installments Fixed - Batch 8"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="REVENUEID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Rate Increase"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_DUPLICATEINSTALLMENTFIX8">
+		<ViewSQL>
+			<![CDATA[
+select
+	REVENUEID,
+	CONSTITUENTID,
+	INSTALLMENTID,
+	CONSTITUENTLOOKUPID,
+	CONSTITUENTNAME,
+	INSTALLMENTAMOUNT,
+	INSTALLMENTBALANCE,
+	NEXTTRANSACTIONDATE,
+	REVENUELOOKUPID
+from
+	dbo.USR_OCM_RATEINCREASE_INSTALLMENTFIX_BATCH8
+	
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
+			<OutputField Name="CONSTITUENTID" Caption="Constituent System ID" DataType="Guid" />
+			<OutputField Name="INSTALLMENTID" Caption="Installment System ID" DataType="Guid" />
+			<OutputField Name="CONSTITUENTLOOKUPID" Caption="Constituent Lookup ID" DataType="String" />
+			<OutputField Name="CONSTITUENTNAME" Caption="Constituent Name" DataType="String" />
+			<OutputField Name="INSTALLMENTAMOUNT" Caption="Installment Amount" DataType="Money" />
+			<OutputField Name="INSTALLMENTBALANCE" Caption="Installment Balance" DataType="Money" />
+			<OutputField Name="NEXTTRANSACTIONDATE" Caption="Next Transaction Date" DataType="Date" />
+			<OutputField Name="REVENUELOOKUPID" Caption="Revenue Lookup ID" DataType="String" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="CONSTITUENTID" PathAlias="Constituent"/>
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="REVENUEID" PathAlias="Recurring Gift"/>
+	</RelationshipOperations>
+
+</QueryViewSpec>
+

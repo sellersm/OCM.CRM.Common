@@ -4,7 +4,7 @@
 	ID="a3de7e91-1533-4fc3-987b-494d655c074c"
 	Name="Rate Increase Implementation Log Query"
 	Description="Used to display / query the log for the rate increase implementation scripts"
-	Author="Caru Mayeda"
+	Author="Cary Mayeda"
 	IsRoot="true"
 	PrimaryKeyField="REVENUEID"
 	RecordType="REVENUE"
