@@ -237,7 +237,7 @@ Public Class RateChangeResponseScannerFormUIModel
 										rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 12)
 
 									Case "quarterly"
-										rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 4)
+										rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 3)
 
 									Case "semi-annually"
 										rateChangeRow.NEWRGAMOUNT.Value = (39.0 * 6)
