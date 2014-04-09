@@ -1,0 +1,83 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="1845183c-a4a3-4b95-b3fc-d81243ff3754"
+	Name="Rate Increase Find Duplicate Installments Query"
+	Description="This finds any duplicate installments that were missed by the scripts."
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="REVENUEID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Rate Increase"
+	>
+
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_FINDDUPLICATEINSTALLMENTS">
+		<ViewSQL>
+			<![CDATA[
+
+with RGInstallmentsWithBalance as
+(select 
+	ft.ID as REVENUEID,
+	i.ID as INSTALLMENTID,
+	ft.CONSTITUENTID,
+	i.TRANSACTIONAMOUNT as INSTALLMENTAMOUNT,
+	dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(i.ID) as INSTALLMENTBALANCE,
+	rs.NEXTTRANSACTIONDATE,
+	ft.CALCULATEDUSERDEFINEDID as REVENUELOOKUPID
+from 
+	dbo.RECURRINGGIFTINSTALLMENT i
+	join dbo.FINANCIALTRANSACTION ft ON ft.ID = i.REVENUEID
+	join dbo.REVENUESCHEDULE rs ON rs.ID = ft.ID
+    join dbo.CONSTITUENT c on ft.CONSTITUENTID = c.ID
+where
+	i.[DATE] = rs.NEXTTRANSACTIONDATE
+and	(rs.STATUSCODE = 0 or rs.STATUSCODE = 1) -- active and held
+
+)
+select 
+	ib1.CONSTITUENTID,
+	ib1.REVENUEID, 
+	ib1.INSTALLMENTID,
+	c.LOOKUPID as CONSTITUENTLOOKUPID,
+	c.NAME as CONSTITUENTNAME,
+	ib1.INSTALLMENTAMOUNT,
+	ib1.INSTALLMENTBALANCE,
+	ib1.NEXTTRANSACTIONDATE,
+	ib1.REVENUELOOKUPID
+from 
+	RGInstallmentsWithBalance ib1
+	join dbo.CONSTITUENT c on c.ID = ib1.CONSTITUENTID
+	
+where 
+	INSTALLMENTBALANCE = INSTALLMENTAMOUNT
+and exists (SELECT INSTALLMENTID FROM RGInstallmentsWithBalance ib2 where ib2.REVENUEID = ib1.REVENUEID and ib2.INSTALLMENTID <> ib1.INSTALLMENTID and ib2.INSTALLMENTBALANCE > 0 and ib2.INSTALLMENTBALANCE < ib2.INSTALLMENTAMOUNT)
+		
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
+			<OutputField Name="CONSTITUENTID" Caption="Constituent System ID" DataType="Guid" />
+			<OutputField Name="INSTALLMENTID" Caption="Installment System ID" DataType="Guid" />
+			<OutputField Name="CONSTITUENTLOOKUPID" Caption="Constituent Lookup ID" DataType="String" />
+			<OutputField Name="CONSTITUENTNAME" Caption="Constituent Name" DataType="String" />
+			<OutputField Name="INSTALLMENTAMOUNT" Caption="Installment Amount" DataType="Money" />
+			<OutputField Name="INSTALLMENTBALANCE" Caption="Installment Balance" DataType="Money" />
+			<OutputField Name="NEXTTRANSACTIONDATE" Caption="Next Transaction Date" DataType="Date" />
+			<OutputField Name="REVENUELOOKUPID" Caption="Revenue Lookup ID" DataType="String" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="CONSTITUENTID" PathAlias="Constituent"/>
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="REVENUEID" PathAlias="Recurring Gift"/>
+	</RelationshipOperations>
+
+
+</QueryViewSpec>
+
