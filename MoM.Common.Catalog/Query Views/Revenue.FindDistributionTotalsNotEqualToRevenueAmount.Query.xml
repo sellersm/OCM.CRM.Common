@@ -1,0 +1,87 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="7ac18922-6bcd-40b4-9368-c3ab6c2cce20"
+	Name="Find Distribution Totals Not Equal To Revenue Amount Query"
+	Description="Find Distribution Totals Not Equal To Revenue Amount Query"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="REVENUEID"
+	RecordType="REVENUE"
+	common:SecurityUIFolder="Revenue"
+	>
+	<!-- 
+	Remarks:    Only the past 2 years
+
+	History:
+	Date            Modified By     Comments
+	02-Apr-2013		CMayeda			Initial Version
+-->
+
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_REVENUE_FINDDISTRIBUTIONTOTALSNOTEQUALTOREVENUEAMOUNT">
+		<ViewSQL>
+			<![CDATA[
+			
+with RevenueGLDistributionTotal as
+(
+select 
+	r.BATCHNUMBER,
+	r.ID,
+	sum (dist.AMOUNT) as TOTALDISTRIBUTIONAMOUNT
+from 
+	dbo.REVENUE r
+	join [V_QUERY_REVENUEGLDISTRIBUTION] dist on r.ID = dist.REVENUEID
+	
+where	
+	r.DATE >= dateadd(mm,-2,getdate())
+and	dist.TRANSACTIONTYPE = 'Credit'
+
+group by r.BATCHNUMBER, r.ID
+)	
+
+select
+	r.ID as REVENUEID,
+	c.ID as CONSTITUENTID,
+	r.LOOKUPID as REVENUELOOKUPID,
+	d.BATCHNUMBER,
+	c.LOOKUPID as CONSTITUENTLOOKUPID,
+	c.NAME,
+	r.AMOUNT,
+	d.TOTALDISTRIBUTIONAMOUNT,
+	dist.TRANSACTIONTYPE,
+	dist.ACCOUNTALIAS,
+	dist.ACCOUNT
+from 
+	RevenueGLDistributionTotal d
+	join dbo.REVENUE r on r.ID = d.ID
+	join dbo.CONSTITUENT c on r.CONSTITUENTID = c.ID
+	join [V_QUERY_REVENUEGLDISTRIBUTION] dist on r.ID = dist.REVENUEID
+	
+where 
+	r.AMOUNT <> d.TOTALDISTRIBUTIONAMOUNT
+
+		
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
+			<OutputField Caption="Constituent System record ID" Category="System Fields" Name="CONSTITUENTID" />
+			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+			<OutputField Name="CONSTITUENTLOOKUPID" Caption="Constituent Lookup ID" DataType="String" />
+			<OutputField Name="NAME" Caption="Constituent Name" DataType="String" />
+			<OutputField Name="TOTALDISTRIBUTIONAMOUNT" Caption="Total Distribution Amount" DataType="Money" />
+			<OutputField Name="AMOUNT" Caption="Amount" DataType="Money" />
+			<OutputField Name="TRANSACTIONTYPE" Caption="Transaction Type" DataType="String" />
+			<OutputField Name="ACCOUNTALIAS" Caption="Account Alias" DataType="String" />
+			<OutputField Name="ACCOUNT" Caption="Account" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
