@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>SponsorMailing2014LetterScanner.Add.xml</SpecFileName>
+  <Namespace>TESTING_ONLY</Namespace>
+  <ClassName>SponsorMailing2014LetterScannerAddDataFormUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>SponsorMailing2014LetterScannerAddDataForm.html</HtmlFile>
+    <HtmlFolder>htmlforms\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

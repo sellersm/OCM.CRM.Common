@@ -625,6 +625,11 @@
   <ItemGroup>
     <EmbeddedResource Include="Query Views\Revenue.FindDistributionTotalsNotEqualToRevenueAmount.Query.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScanner.Add.xml" />
+    <EmbeddedResource Include="LetterScanner\Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScanner.Task.xml" />
+    <EmbeddedResource Include="LetterScanner\Sponsor Mailing 2014 Letter Scanner\USR_USP_SPONSORMAILING2014_LETTERSCANNER.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -186,6 +186,9 @@
     <Compile Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormBARCODEELEMENTSUIModel.vb" />
     <Compile Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormUIModel.vb" />
+    <Compile Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormUIModel.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.vb" />
@@ -261,6 +264,7 @@
     <Content Include="Rate Increase\RateChangeResponseScannerFormUIModel.xml" />
     <Content Include="Run SQL Command Utility\RunOurSqlCommandsEditDataFormUIModel.xml" />
     <Content Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormUIModel.xml" />
+    <Content Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormUIModel.xml" />
     <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
       <Link>LinkedSpecs\Interaction Extension.View.xml</Link>
