@@ -1,0 +1,106 @@
+<AddDataFormTemplateSpec 
+    xmlns="bb_appfx_adddataformtemplate"
+    xmlns:common="bb_appfx_commontypes"
+    ID="90f6e17c-28cf-4ada-bcb5-0554b605f2b2"
+    Name="Sponsor Mailing 2014 letter scanner add data form"
+    Description="Add data form for Sponsor Mailing 2014 letter scanner."
+    Author="Memphis Sellers"
+    DataFormInstanceID="e09beb61-3e7b-4e60-8f77-07b395eabbce"
+    RecordType="Letterscanner"
+    common:SecurityUIFolder="Letterscanner"
+    FormHeader="Sponsor Mailing 2014 Letter Scanner"
+    >
+
+	<SPDataForm>
+		<!-- describe the preload SP (if applicable), which should be used to fetch field default values from the database.  If no
+		preload is needed, then this section can be removed -->
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_SPONSORRETENTION2014_LETTERSCANNER">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_SPONSORRETENTION2014_LETTERSCANNER
+(
+	@ID uniqueidentifier = null output,
+    @CHANGEAGENTID uniqueidentifier = null,
+	@BARCODE nvarchar(20) = '',
+	@BARCODEELEMENTS xml = null, 
+    @SUBMIT bit = 0,
+	@SPONSORLOOKUPID nvarchar(6) = '',
+	@APPEALID nvarchar(10) = '',
+	@CHILDLOOKUPID nvarchar(7) = ''
+)
+as
+
+set nocount on;
+
+if @ID is null
+    set @ID = newid()
+
+if @CHANGEAGENTID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+declare @CURRENTDATE datetime
+set @CURRENTDATE = getdate()
+
+begin try
+	-- handle inserting the data
+	declare @foobar table (ID uniqueidentifier)
+   
+	insert into @foobar
+    select newid()
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+return 0				
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+	<!--Context ContextRecordType="REPLACE_WITH_RECORDTYPE" RecordIDParameter="CONTEXTID"/-->
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="false">
+		<common:FormFields>
+			<common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+
+			<common:FormField FieldID="BARCODEELEMENTS" Caption="Scan Results" DataType="XML">
+				<common:Collection EnablePaging="true">
+					<common:Fields>
+						<common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+						<common:FormField FieldID="SCANSTATUS" Caption="Scan status" DataType="String" MaxLength="1000" />
+						<common:FormField FieldID="FIELD1" Caption="Field 1" DataType="String" MaxLength="100" />
+						<common:FormField FieldID="FIELD2" Caption="Field 2" DataType="String" MaxLength="100" />
+						<common:FormField FieldID="FIELD3" Caption="Field 3" DataType="String" MaxLength="100" />
+					</common:Fields>
+				</common:Collection>
+			</common:FormField>
+			<common:FormField FieldID="SUBMIT" Caption="Save results" DataType="Boolean" />
+			<common:FormField FieldID="SPONSORLOOKUPID" Caption="Sponsor Lookup ID" DataType="String" />
+			<common:FormField FieldID="APPEALID" Caption="Appeal ID" DataType="String" />
+			<common:FormField FieldID="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
+		</common:FormFields>
+
+        <common:WebUIComponent>
+            <common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.SponsorMailing2014LetterScannerAddDataFormUIModel" />
+            <common:WebUI>
+                <common:ExternalResource Url="browser/htmlforms/custom/SponsorMailing2014LetterScannerAddDataForm.html" />
+            </common:WebUI>
+        </common:WebUIComponent>
+		
+
+		<common:UIActions>
+			<common:UIAction ActionID="ENTERAPPEAL" Caption="Enter Appeal" />
+		</common:UIActions>
+
+
+
+	</common:FormMetaData>
+
+</AddDataFormTemplateSpec>

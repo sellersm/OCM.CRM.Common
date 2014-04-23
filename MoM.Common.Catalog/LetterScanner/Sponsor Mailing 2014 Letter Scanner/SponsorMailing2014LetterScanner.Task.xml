@@ -1,0 +1,15 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="5772b2da-3811-4d87-a797-8babae750b22"
+	Name="Scan CRM sponsor mailing 2014 appeal"
+	Description="Launch CRM sponsor mailing 2014 scanner."
+	Author="Memphis Sellers"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="0"
+	>
+
+	<!-- indicate what this task should do (navigate to a page, show a form, etc. -->
+  <common:ShowAddDataForm DataFormID="e09beb61-3e7b-4e60-8f77-07b395eabbce" />
+
+</TaskSpec>
