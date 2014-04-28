@@ -16,6 +16,10 @@
 	History:
 	Date            Modified By     Comments
 	15-Apr-2014		Memphis			Initial Version.
+	24-Apr-2014		Memphis			Additions from Pamela:
+									Child Interaction status should be Pending.
+									Check for existing Child Interaction before adding another.
+									Expected Date of Child Interaction is last day of 3 months from scan date.
 	-->	
 	
 	<CreateProcedureSQL>
@@ -37,30 +41,31 @@ begin
 	 the appeal for this is: Appeal is 10558 - Sponsor Retention 2014
 	*/
 	
-	declare @CancellationReason as nvarchar(100)
-	declare @ChildEducationalAppealResponseSubcategoryID as uniqueidentifier
-	declare @ChildID as uniqueidentifier
-	declare @OriginalInteractionID as uniqueidentifier
-	declare @OriginalLetterSequenceID as int
-	declare @OriginalLetterSubcategoryID as uniqueidentifier
-	declare @CurrentChildProjectID as uniqueidentifier		-- holds the current project id of the child, used to compare if child changed projects
-	declare @ConstituentID uniqueidentifier
-	declare @CurrentDate as datetime
-	declare @Date as datetime
-	declare @DateSponsorshipCancelled as datetime
-	declare @ErrMsg nvarchar(4000)
-	declare @ErrSeverity int
-	declare @ExtraLetter as bit
-	declare @InteractionTypeCode as uniqueidentifier	
-	declare @LogTypeCode as tinyint
-	declare @NewID as uniqueidentifier
-	declare @NumberOfDaysSponsored smallint
+	declare @CancellationReason as nvarchar(100);
+	declare @ChildEducationalAppealResponseSubcategoryID as uniqueidentifier;
+	declare @ChildID as uniqueidentifier;
+	declare @OriginalInteractionID as uniqueidentifier;
+	declare @OriginalLetterSequenceID as int;
+	declare @OriginalLetterSubcategoryID as uniqueidentifier;
+	declare @CurrentChildProjectID as uniqueidentifier;		-- holds the current project id of the child, used to compare if child changed projects
+	declare @ConstituentID uniqueidentifier;
+	declare @CurrentDate as datetime;
+	declare @Date as datetime;
+	declare @DateSponsorshipCancelled as datetime;
+	declare @ErrMsg nvarchar(4000);
+	declare @ErrSeverity int;
+	declare @ExtraLetter as bit;
+	declare @InteractionTypeCode as uniqueidentifier;
+	declare @LogTypeCode as tinyint;
+	declare @NewID as uniqueidentifier;
+	declare @NumberOfDaysSponsored smallint;
 	declare @SponsorID as uniqueidentifier
-	declare @SponsorLetterSequenceID as int
-	declare @SponsorLetterSubcategoryID as uniqueidentifier
-	declare @StatusCodeCompleted as tinyint
-	declare @StatusCodeCancelled as tinyint
-	declare @TempTable TABLE(SponsorLetterSequenceID int)
+	declare @SponsorLetterSequenceID as int;
+	declare @SponsorLetterSubcategoryID as uniqueidentifier;
+--	declare @StatusCodeCompleted as tinyint
+	declare @StatusCodeCancelled as tinyint;
+	declare @StatusCodePending as tinyint;
+	declare @TempTable TABLE(SponsorLetterSequenceID int);
 	declare @isMajorDonor bit = 0;   -- flag that identifies if this is a major donor appeal letter, if so then won't have child id and need to find all its sponsored kids
 	declare @appealId uniqueidentifier;
 	declare @appealResponseCreated bit = 0;   --flag to indicate if appeal response was created or not
@@ -72,11 +77,8 @@ begin
 	declare @interactionComment nvarchar(100) = 'from Sponsor Retention 2014 scanner';
 	declare @isCancelledSponsorship bit = 0;
 	declare @isChildIneligible bit = 0;
-	declare @expectedDate datetime;
-	
-	-- workflow documentation indicates that the Expected Date is 3 months from date of scanning:
-	set @expectedDate = Cast(DATEADD(mm, 3, getdate()) as date);
-  
+	declare @expectedDate datetime = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);   -- last day of the month that is 3 months from the date scanned [today]
+
 	--   the RESPONSECATEGORY will be whatever they want to use for each Response,
 	--   the RESPONSEID will point to the Response of "Yes" or whatever it is for the given RESPONSECATEGORY
 	declare @RESPONSECATEGORYID uniqueidentifier;
@@ -99,7 +101,8 @@ begin
 	set @InteractionTypeCode = (select ID from dbo.INTERACTIONTYPECODE where LOWER(DESCRIPTION) = 'mail')
 
 	-- Set constants
-	set @StatusCodeCompleted = 2;
+	set @StatusCodePending = 1;
+--	set @StatusCodeCompleted = 2;
 	set @StatusCodeCancelled = 4;
 
 	set @ExtraLetter = 0
@@ -318,67 +321,79 @@ begin
 						if (@isCancelledSponsorship = 1 or @isChildIneligible = 1)
 							set @StatusCodeValue = @StatusCodeCancelled;
 						else
-							set @StatusCodeValue = @StatusCodeCompleted;
+							set @StatusCodeValue = @StatusCodePending;
+							
+						-- Per Pamela, only create a new Child Interaction if the child doesn't already have one within last 12 months (Expected Date)
+						-- ExpectedDate >= DATEADD(year,-1,GETDATE())
+						if not exists (select 1 from dbo.INTERACTION 
+										where (CONSTITUENTID = @ChildID and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID and EXPECTEDDATE >=DATEADD(year,-1,GETDATE())))
+							begin
+						  		INSERT INTO dbo.INTERACTION(
+						  			ID
+						  			,CONSTITUENTID
+						  			,INTERACTIONTYPECODEID
+						  			,EXPECTEDDATE
+						  			,ACTUALDATE
+						  			,STATUSCODE
+						  			,INTERACTIONSUBCATEGORYID
+						  			,OBJECTIVE
+									,COMMENT
+						  			,ADDEDBYID
+						  			,CHANGEDBYID
+						  			,DATEADDED
+						  			,DATECHANGED
+						  			)
+						  		VALUES(
+						  			@NewID
+						  			,@ChildID
+						  			,@InteractionTypeCode
+						  			,@expectedDate
+						  			,null   
+						  			,@StatusCodeValue
+						  			,@ChildEducationalAppealResponseSubcategoryID
+						  			,'Retention Response Received'
+									,@interactionComment
+						  			,@ChangeAgentID
+						  			,@ChangeAgentID
+						  			,GETDATE()
+						  			,GETDATE()
+						  			)
 
-				  		INSERT INTO dbo.INTERACTION(
-				  			ID
-				  			,CONSTITUENTID
-				  			,INTERACTIONTYPECODEID
-				  			,EXPECTEDDATE
-				  			,ACTUALDATE
-				  			,STATUSCODE
-				  			,INTERACTIONSUBCATEGORYID
-				  			,OBJECTIVE
-							,COMMENT
-				  			,ADDEDBYID
-				  			,CHANGEDBYID
-				  			,DATEADDED
-				  			,DATECHANGED
-				  			)
-				  		VALUES(
-				  			@NewID
-				  			,@ChildID
-				  			,@InteractionTypeCode
-				  			,@expectedDate
-				  			,@Date
-				  			,@StatusCodeValue
-				  			,@ChildEducationalAppealResponseSubcategoryID
-				  			,'Retention Response Received'
-							,@interactionComment
-				  			,@ChangeAgentID
-				  			,@ChangeAgentID
-				  			,GETDATE()
-				  			,GETDATE()
-				  			)
+						  		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+							  		ID, 
+							  		COMPLETEDBYID, 	
+							  		CHILDID,
+							  		SPONSORID, 
+							  		SCANSESSION, 
+							  		CHILDPROJECTID, 
+									APPEALID,
+							  		ADDEDBYID, 
+							  		CHANGEDBYID, 
+							  		DATEADDED, 
+							  		DATECHANGED
+						  		)
+						  		VALUES (
+							  		@NewID, 
+							  		@ChangeAgentID, 
+							  		@ChildID,
+							  		@SponsorID,
+							  		@ScanSession, 
+							  		@CurrentChildProjectID, 
+									@appealId,
+							  		@ChangeAgentID, 
+							  		@ChangeAgentID, 
+							  		GETDATE(), 
+							  		GETDATE()
+						  		)							
 
-				  		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
-					  		ID, 
-					  		COMPLETEDBYID, 	
-					  		CHILDID,
-					  		SPONSORID, 
-					  		SCANSESSION, 
-					  		CHILDPROJECTID, 
-							APPEALID,
-					  		ADDEDBYID, 
-					  		CHANGEDBYID, 
-					  		DATEADDED, 
-					  		DATECHANGED
-				  		)
-				  		VALUES (
-					  		@NewID, 
-					  		@ChangeAgentID, 
-					  		@ChildID,
-					  		@SponsorID,
-					  		@ScanSession, 
-					  		@CurrentChildProjectID, 
-							@appealId,
-					  		@ChangeAgentID, 
-					  		@ChangeAgentID, 
-					  		GETDATE(), 
-					  		GETDATE()
-				  		)
-
-				  		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interaction created.  '
+					  			set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interaction created.  '
+						end
+					else
+						begin
+							set @ExceptionOccurred = 1
+							set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child already has Socio-Emotional Appeal Response Interaction. '
+						end
+						
 				  	end
 				else
 				  begin
@@ -408,71 +423,81 @@ begin
 				        
 				  	while (@@FETCH_STATUS = 0)
 				  	begin					    
-				      set @NewID = NEWID();
+						set @NewID = NEWID();
 				      
-				      -- get the child project id
-				      set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @SPONSORSHIPOPPORTUNITYCHILDID)
+						-- get the child project id
+						set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @SPONSORSHIPOPPORTUNITYCHILDID)
 				      
-				      -- create the interactions
-				  		INSERT INTO dbo.INTERACTION(
-				  			ID
-				  			,CONSTITUENTID
-				  			,INTERACTIONTYPECODEID
-				  			,EXPECTEDDATE
-				  			,ACTUALDATE
-				  			,STATUSCODE
-				  			,INTERACTIONSUBCATEGORYID
-				  			,OBJECTIVE
-				        	,COMMENT
-				  			,ADDEDBYID
-				  			,CHANGEDBYID
-				  			,DATEADDED
-				  			,DATECHANGED
-				  			)
-				  		values ( 
-				  			@NewID
-				  			,@SPONSORSHIPOPPORTUNITYCHILDID
-				  			,@InteractionTypeCode
-				  			,@expectedDate
-				  			,@Date
-				  			,@StatusCodeCompleted
-				  			,@ChildEducationalAppealResponseSubcategoryID
-				  			,'Retention Response Received'
-				        	,@interactionComment
-				  			,@ChangeAgentID
-				  			,@ChangeAgentID
-				  			,GETDATE()
-				  			,GETDATE()
-				        );
+						-- Per Pamela, only create a new Child Interaction if the child doesn't already have one within last 12 months (Expected Date)
+						if not exists (select 1 from dbo.INTERACTION 
+									   where (CONSTITUENTID = @ChildID and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID and EXPECTEDDATE >=DATEADD(year,-1,GETDATE())))
+							begin					  					  
+							    -- create the interactions
+						  		INSERT INTO dbo.INTERACTION(
+						  			ID
+						  			,CONSTITUENTID
+						  			,INTERACTIONTYPECODEID
+						  			,EXPECTEDDATE
+						  			,ACTUALDATE
+						  			,STATUSCODE
+						  			,INTERACTIONSUBCATEGORYID
+						  			,OBJECTIVE
+						        	,COMMENT
+						  			,ADDEDBYID
+						  			,CHANGEDBYID
+						  			,DATEADDED
+						  			,DATECHANGED
+						  			)
+						  		values ( 
+						  			@NewID
+						  			,@SPONSORSHIPOPPORTUNITYCHILDID
+						  			,@InteractionTypeCode
+						  			,@expectedDate
+						  			,null
+						  			,@StatusCodePending
+						  			,@ChildEducationalAppealResponseSubcategoryID
+						  			,'Retention Response Received'
+						        	,@interactionComment
+						  			,@ChangeAgentID
+						  			,@ChangeAgentID
+						  			,GETDATE()
+						  			,GETDATE()
+						        );
 
-				  		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
-				  		ID, 
-				  		COMPLETEDBYID, 	
-				  		CHILDID,
-				  		SPONSORID, 
-				  		SCANSESSION, 
-				  		CHILDPROJECTID, 
-						APPEALID,
-				  		ADDEDBYID, 
-				  		CHANGEDBYID, 
-				  		DATEADDED, 
-				  		DATECHANGED
-				  		)
-				  		VALUES (
-				  		@NewID, 
-				  		@ChangeAgentID, 
-				  		@SPONSORSHIPOPPORTUNITYCHILDID,
-				  		@SponsorID,
-				  		@ScanSession, 
-				  		@CurrentChildProjectID, 
-						@appealId,
-				  		@ChangeAgentID, 
-				  		@ChangeAgentID, 
-				  		GETDATE(), 
-				  		GETDATE()
-				  		)
-				      
-				      fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
+						  		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+						  		ID, 
+						  		COMPLETEDBYID, 	
+						  		CHILDID,
+						  		SPONSORID, 
+						  		SCANSESSION, 
+						  		CHILDPROJECTID, 
+								APPEALID,
+						  		ADDEDBYID, 
+						  		CHANGEDBYID, 
+						  		DATEADDED, 
+						  		DATECHANGED
+						  		)
+						  		VALUES (
+						  		@NewID, 
+						  		@ChangeAgentID, 
+						  		@SPONSORSHIPOPPORTUNITYCHILDID,
+						  		@SponsorID,
+						  		@ScanSession, 
+						  		@CurrentChildProjectID, 
+								@appealId,
+						  		@ChangeAgentID, 
+						  		@ChangeAgentID, 
+						  		GETDATE(), 
+						  		GETDATE()
+						  		)
+				      		end
+						else
+							begin
+								set @ExceptionOccurred = 1
+								set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child already has Socio-Emotional Appeal Response Interaction. '
+							end
+				    	
+						fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
 				    end
 				    
 				    close ChildrenCursor;
@@ -548,7 +573,6 @@ begin
 
 		RAISERROR(@ErrMsg, @ErrSeverity, 1)
 	end catch
-
 
 end
 		]]>
