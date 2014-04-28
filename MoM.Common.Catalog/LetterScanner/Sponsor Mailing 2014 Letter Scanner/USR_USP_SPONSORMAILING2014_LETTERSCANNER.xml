@@ -430,7 +430,7 @@ begin
 				      
 						-- Per Pamela, only create a new Child Interaction if the child doesn't already have one within last 12 months (Expected Date)
 						if not exists (select 1 from dbo.INTERACTION 
-									   where (CONSTITUENTID = @ChildID and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID and EXPECTEDDATE >=DATEADD(year,-1,GETDATE())))
+									   where (CONSTITUENTID = @SPONSORSHIPOPPORTUNITYCHILDID and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID and EXPECTEDDATE >=DATEADD(year,-1,GETDATE())))
 							begin					  					  
 							    -- create the interactions
 						  		INSERT INTO dbo.INTERACTION(
@@ -493,7 +493,7 @@ begin
 				      		end
 						else
 							begin
-								set @ExceptionOccurred = 1
+								--set @ExceptionOccurred = 1
 								set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child already has Socio-Emotional Appeal Response Interaction. '
 							end
 				    	
