@@ -190,9 +190,18 @@ Public Class SponsorMailing2014LetterScannerAddDataFormUIModel
 				resultString = sBarCode.Substring(_sponsorIdLength, finderLength)
 
 				'check the child lookup id since we should have one
-				_childId = sBarCode.Substring(childStartsAt, _childIdLength)
-				If (Not _ISTESTING) AndAlso (Not IsNumeric(_childId.Substring(1, _childIdLength - 1))) Then
-					errorMessage = errorMessage + "Child Lookup Id isn't a number."
+				'check if there's a child lookupid value at all:
+				If childStartsAt > -1 Then
+					'need to check if all of the characters are present:
+					If sBarCode.Length < childStartsAt + _childIdLength Then
+						'we are missing something:
+						errorMessage = errorMessage + "The barcode isn't the correct length. Please check it."
+					Else
+						_childId = sBarCode.Substring(childStartsAt, _childIdLength)
+						If (Not _ISTESTING) AndAlso (Not IsNumeric(_childId.Substring(1, _childIdLength - 1))) Then
+							errorMessage = errorMessage + "Child Lookup Id isn't a number."
+						End If
+					End If
 				End If
 			Else
 				'no child id means we must just start looking at the end of the sponsorid value:
