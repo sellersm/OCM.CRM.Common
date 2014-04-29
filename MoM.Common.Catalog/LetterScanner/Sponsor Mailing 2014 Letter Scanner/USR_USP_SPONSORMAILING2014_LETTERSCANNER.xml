@@ -20,6 +20,7 @@
 									Child Interaction status should be Pending.
 									Check for existing Child Interaction before adding another.
 									Expected Date of Child Interaction is last day of 3 months from scan date.
+	29-Apr-2014		Memphis			Added check for existing Child Interactions for the given major Sponsor (defect 3 enhancement) per Pamela.
 	-->	
 	
 	<CreateProcedureSQL>
@@ -416,93 +417,109 @@ begin
 							@childIDList
 					
 				  	declare @SPONSORSHIPOPPORTUNITYCHILDID uniqueidentifier;
+					declare @childInteractionAlreadyExists bit;
 				  		
 				  	open ChildrenCursor;
 				  				
 				  	fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
 				        
 				  	while (@@FETCH_STATUS = 0)
-				  	begin					    
-						set @NewID = NEWID();
-				      
-						-- get the child project id
-						set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @SPONSORSHIPOPPORTUNITYCHILDID)
-				      
-						-- Per Pamela, only create a new Child Interaction if the child doesn't already have one within last 12 months (Expected Date)
-						if not exists (select 1 from dbo.INTERACTION 
-									   where (CONSTITUENTID = @SPONSORSHIPOPPORTUNITYCHILDID and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID and EXPECTEDDATE >=DATEADD(year,-1,GETDATE())))
-							begin					  					  
-							    -- create the interactions
-						  		INSERT INTO dbo.INTERACTION(
-						  			ID
-						  			,CONSTITUENTID
-						  			,INTERACTIONTYPECODEID
-						  			,EXPECTEDDATE
-						  			,ACTUALDATE
-						  			,STATUSCODE
-						  			,INTERACTIONSUBCATEGORYID
-						  			,OBJECTIVE
-						        	,COMMENT
-						  			,ADDEDBYID
-						  			,CHANGEDBYID
-						  			,DATEADDED
-						  			,DATECHANGED
-						  			)
-						  		values ( 
-						  			@NewID
-						  			,@SPONSORSHIPOPPORTUNITYCHILDID
-						  			,@InteractionTypeCode
-						  			,@expectedDate
-						  			,null
-						  			,@StatusCodePending
-						  			,@ChildEducationalAppealResponseSubcategoryID
-						  			,'Retention Response Received'
-						        	,@interactionComment
-						  			,@ChangeAgentID
-						  			,@ChangeAgentID
-						  			,GETDATE()
-						  			,GETDATE()
-						        );
+					  	begin					    
+							-- this is set when we don't create an interaction because there's already one on this child:
+							set @childInteractionAlreadyExists = 0;
+							set @NewID = NEWID();
+					      
+							-- get the child project id
+							set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @SPONSORSHIPOPPORTUNITYCHILDID)
+					      
+							-- Per Pamela, only create a new Child Interaction if the child doesn't already have one within last 12 months (Expected Date)
+							--             for the given major Sponsor.
+							if not exists (select *
+											from dbo.INTERACTION 
+											join dbo.USR_INTERACTIONEXTENSION ON dbo.USR_INTERACTIONEXTENSION.ID = dbo.INTERACTION.ID
+											where (CONSTITUENTID = @SPONSORSHIPOPPORTUNITYCHILDID 
+											and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID 
+											and EXPECTEDDATE >=DATEADD(year,-1,GETDATE())
+											and dbo.USR_INTERACTIONEXTENSION.SPONSORID = @sponsorId))
+								begin					  					  
+								    -- create the interactions
+							  		INSERT INTO dbo.INTERACTION(
+							  			ID
+							  			,CONSTITUENTID
+							  			,INTERACTIONTYPECODEID
+							  			,EXPECTEDDATE
+							  			,ACTUALDATE
+							  			,STATUSCODE
+							  			,INTERACTIONSUBCATEGORYID
+							  			,OBJECTIVE
+							        	,COMMENT
+							  			,ADDEDBYID
+							  			,CHANGEDBYID
+							  			,DATEADDED
+							  			,DATECHANGED
+							  			)
+							  		values ( 
+							  			@NewID
+							  			,@SPONSORSHIPOPPORTUNITYCHILDID
+							  			,@InteractionTypeCode
+							  			,@expectedDate
+							  			,null
+							  			,@StatusCodePending
+							  			,@ChildEducationalAppealResponseSubcategoryID
+							  			,'Retention Response Received'
+							        	,@interactionComment
+							  			,@ChangeAgentID
+							  			,@ChangeAgentID
+							  			,GETDATE()
+							  			,GETDATE()
+							        );
 
-						  		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
-						  		ID, 
-						  		COMPLETEDBYID, 	
-						  		CHILDID,
-						  		SPONSORID, 
-						  		SCANSESSION, 
-						  		CHILDPROJECTID, 
-								APPEALID,
-						  		ADDEDBYID, 
-						  		CHANGEDBYID, 
-						  		DATEADDED, 
-						  		DATECHANGED
-						  		)
-						  		VALUES (
-						  		@NewID, 
-						  		@ChangeAgentID, 
-						  		@SPONSORSHIPOPPORTUNITYCHILDID,
-						  		@SponsorID,
-						  		@ScanSession, 
-						  		@CurrentChildProjectID, 
-								@appealId,
-						  		@ChangeAgentID, 
-						  		@ChangeAgentID, 
-						  		GETDATE(), 
-						  		GETDATE()
-						  		)
-				      		end
-						else
-							begin
-								--set @ExceptionOccurred = 1
-								set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child already has Socio-Emotional Appeal Response Interaction. '
-							end
-				    	
-						fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
-				    end
+							  		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+							  		ID, 
+							  		COMPLETEDBYID, 	
+							  		CHILDID,
+							  		SPONSORID, 
+							  		SCANSESSION, 
+							  		CHILDPROJECTID, 
+									APPEALID,
+							  		ADDEDBYID, 
+							  		CHANGEDBYID, 
+							  		DATEADDED, 
+							  		DATECHANGED
+							  		)
+							  		VALUES (
+							  		@NewID, 
+							  		@ChangeAgentID, 
+							  		@SPONSORSHIPOPPORTUNITYCHILDID,
+							  		@sponsorId,
+							  		@ScanSession, 
+							  		@CurrentChildProjectID, 
+									@appealId,
+							  		@ChangeAgentID, 
+							  		@ChangeAgentID, 
+							  		GETDATE(), 
+							  		GETDATE()
+							  		)
+					      		end
+							else
+								begin
+									--set @ExceptionOccurred = 1
+									--set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child already has Socio-Emotional Appeal Response Interaction. '
+									-- set the flag to indicate that a child interaction won't be created:
+									set @childInteractionAlreadyExists = 1;
+								end
+					    	
+							fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
+					    end
 				    
 				    close ChildrenCursor;
 				    
-					set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interactions created.  ';
+					if @childInteractionAlreadyExists = 1
+						begin
+							set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Some Child interactions created: One or more of the children already has a Socio-Emotional Appeal Response for this Sponsor.  ';
+						end
+					else
+						set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interactions created.  ';
 				        
 				  end
 				end
