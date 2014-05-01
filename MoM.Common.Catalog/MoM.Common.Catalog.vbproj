@@ -630,6 +630,9 @@
     <EmbeddedResource Include="LetterScanner\Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScanner.Task.xml" />
     <EmbeddedResource Include="LetterScanner\Sponsor Mailing 2014 Letter Scanner\USR_USP_SPONSORMAILING2014_LETTERSCANNER.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.SummaryStats.Query.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

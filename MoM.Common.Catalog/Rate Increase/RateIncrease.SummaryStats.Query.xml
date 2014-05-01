@@ -1,0 +1,176 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="6f1de470-9b22-48ba-a040-90bb158de83a"
+	Name="Rate Increase Summary Stats Query"
+	Description="Used to create Summary Stats for the Rate Increase in 2014"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="SEGMENT"
+	RecordType="Report"
+	common:SecurityUIFolder="Rate Increase"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_SUMMARYSTATS">
+		<ViewSQL>
+			<![CDATA[
+
+with RateIncreaseSegmentResponses as
+(
+select 
+	MKTSEGMENT.NAME as SEGMENTNAME, 
+	MKTSEGMENT.DESCRIPTION as SEGMENTDESC,
+	MKTSEGMENTCATEGORYCODE.DESCRIPTION as SEGMENTCATEGORY,
+	MKTPACKAGE.NAME as PACKAGENAME,
+	case 
+		when RESPONSE.RESPONSE is null then 'Did not respond'
+		else RESPONSE.RESPONSE 
+	end as RESPONSE,
+	srs.INCREASERATE,
+	srs.ORIGINALSPONSORSHIPGIFTAMOUNT,
+	srs.UPDATEDSPONSORSHIPGIFTAMOUNT,
+	srs.REVENUELOOKUPID,
+	ca.ID as CONSTITUENTID
+
+from 
+	dbo.MKTSEGMENTATIONSEGMENT
+    inner join dbo.MKTSEGMENTATION ON MKTSEGMENTATION.ID = MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
+	inner join dbo.MKTSEGMENT on MKTSEGMENT.ID = MKTSEGMENTATIONSEGMENT.SEGMENTID
+	inner join dbo.MKTSEGMENTCATEGORYCODE on MKTSEGMENTCATEGORYCODE.ID = MKTSEGMENT.SEGMENTCATEGORYCODEID
+    inner join dbo.CONSTITUENTAPPEAL ca on ca.MKTSEGMENTATIONSEGMENTID = MKTSEGMENTATIONSEGMENT.ID
+    inner join dbo.MKTPACKAGE on MKTPACKAGE.ID = ca.MKTPACKAGEID
+	inner join dbo.APPEAL a on a.ID = ca.APPEALID 
+	left join dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS srs on srs.SPONSORID = ca.CONSTITUENTID
+	left join dbo.CONSTITUENTAPPEALRESPONSE ca_response on ca_response.CONSTITUENTAPPEALID = ca.ID 
+	left join dbo.RESPONSE on ca_response.RESPONSEID = RESPONSE.ID
+where 
+	a.NAME like '%10555%'
+)
+--select * from RateIncreaseSegmentResponses where increaserate = 1 and response = 'No - Increase' 
+
+, Responses as
+(select 'No - Increase' as RESPONSE
+ union
+ select 'Partial - Increase' as RESPONSE
+ union
+ select 'Yes - Increase' as RESPONSE
+ union
+ select 'Did not respond' as RESPONSE
+),
+RateIncreaseSegments as
+(
+select distinct 
+	risr.SEGMENTNAME, 
+	risr.SEGMENTDESC,
+	risr.SEGMENTCATEGORY,
+	risr.PACKAGENAME,
+	Responses.RESPONSE
+from
+	RateIncreaseSegmentResponses risr
+cross apply Responses
+),
+RateIncreaseConstituentStats as
+(
+select 
+	SEGMENTNAME, 
+	SEGMENTDESC,
+	SEGMENTCATEGORY,
+	PACKAGENAME,
+	RESPONSE,
+	count(distinct CONSTITUENTID) as CONSTITUENTCOUNT
+from 
+	RateIncreaseSegmentResponses
+
+group by 	
+	SEGMENTNAME, 
+	SEGMENTDESC,
+	SEGMENTCATEGORY,
+	PACKAGENAME,
+	RESPONSE
+),
+RateIncreaseRevenueStats as
+(
+select 
+	SEGMENTNAME, 
+	SEGMENTDESC,
+	SEGMENTCATEGORY,
+	PACKAGENAME,
+	RESPONSE,
+	count(distinct REVENUELOOKUPID) as RGCOUNT
+from 
+	RateIncreaseSegmentResponses
+where
+	INCREASERATE = 1
+	
+group by 	
+	SEGMENTNAME, 
+	SEGMENTDESC,
+	SEGMENTCATEGORY,
+	PACKAGENAME,
+	RESPONSE
+),
+Counts as
+(
+select 
+	substring(ris.SEGMENTNAME, 17, 11) as SEGMENT,
+	ris.SEGMENTNAME,
+	ris.SEGMENTDESC,
+	ris.SEGMENTCATEGORY,
+	substring(ris.PACKAGENAME,22,25) as PACKAGETYPE, 
+	ris.PACKAGENAME,
+	ris.RESPONSE,
+	case 
+		when ric.CONSTITUENTCOUNT is null then 0
+		else ric.CONSTITUENTCOUNT 
+	end as CONSTITUENTCOUNT,
+	case 
+		when rir.RGCOUNT is null then 0
+		else rir.RGCOUNT 
+	end as RGCOUNT
+  from RateIncreaseSegments ris
+  left join RateIncreaseConstituentStats ric on 
+				ris.SEGMENTNAME = ric.SEGMENTNAME
+			and ris.SEGMENTDESC = ric.SEGMENTDESC
+			and ris.SEGMENTCATEGORY = ric.SEGMENTCATEGORY
+			and ris.PACKAGENAME = ric.PACKAGENAME
+			and ris.RESPONSE = ric.RESPONSE
+  left join RateIncreaseRevenueStats rir on 
+				ris.SEGMENTNAME = rir.SEGMENTNAME
+			and ris.SEGMENTDESC = rir.SEGMENTDESC
+			and ris.SEGMENTCATEGORY = rir.SEGMENTCATEGORY
+			and ris.PACKAGENAME = rir.PACKAGENAME
+			and ris.RESPONSE = rir.RESPONSE
+)
+
+select distinct 
+	SEGMENT, 
+	SEGMENTDESC,
+	PACKAGETYPE,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Yes - Increase') as YESINCREASE,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Partial - Increase') as PARTIALINCREASE,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'No - Increase') as NOINCREASE,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Did not respond') as DIDNOTRESPONSE,
+	(select sum(RGCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC) as SPONSORSHIPSINCREASED
+	
+from Counts C
+	
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="SEGMENT" Caption="Segment" DataType="String" />
+			<OutputField Name="SEGMENTDESC" Caption="Segment Description" DataType="String" />
+			<OutputField Name="PACKAGETYPE" Caption="Package Type" DataType="String" />
+			<OutputField Name="YESINCREASE" Caption="Yes - Increase response count" DataType="Integer" />
+			<OutputField Name="PARTIALINCREASE" Caption="Partial - Increase response count" DataType="Integer" />
+			<OutputField Name="NOINCREASE" Caption="No - Increase response count" DataType="Integer" />
+			<OutputField Name="DIDNOTRESPONSE" Caption="Did not respond count" DataType="Integer" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
