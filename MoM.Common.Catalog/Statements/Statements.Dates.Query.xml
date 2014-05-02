@@ -1,0 +1,53 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="62c01a35-00ee-44ef-8535-c2224a9da357"
+	Name="Statements Dates Query"
+	Description="This is used to determine the dates used during the statements process"
+	Author="Cary Mayeda"
+	IsRoot="false"
+	PrimaryKeyField="ID"
+	RecordType="CONSTITUENT"
+	common:SecurityUIFolder="Statements"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_STATEMENTS_DATES">
+		<ViewSQL>
+			<![CDATA[
+
+select
+	ID,
+	dateadd(day, 1, dateadd(month, datediff(month, 0, dateadd(month, -1, getdate())), 0)) as FIRSTDAYOFTHECURRENTSTATEMENTSPERIOD,	
+	dateadd(month, datediff(month, 0, getdate()), 0) as LASTDAYOFTHECURRENTSTATEMENTSPERIOD,
+	dateadd(month, -1, dateadd(month, datediff(month, 0, getdate()), 0)) as LASTDAYOFTHEPREVIOUSSTATEMENTSPERIOD,
+	dateadd(year, datediff(year, 0, getdate()), 0) as FIRSTDAYOFCALENDARYEAR,
+	dateadd(month, datediff(month, 0, getdate()), 0) as FIRSTDAYOFCURRENTMONTH,
+	dateadd(day, -1, dateadd(month, datediff(month, 0, getdate()), 0)) as LASTDAYOFTHEPREVIOUSMONTH,
+	dateadd(day, -1, dateadd(month, datediff(month, 0, dateadd(month, 3, getdate())), 0)) as LASTDAYOFTHEMONTHTWOMONTHSINTHEFUTURE
+	
+from dbo.CONSTITUENT
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="FIRSTDAYOFTHECURRENTSTATEMENTSPERIOD" Caption="First Day of Current Statements Period" DataType="Date" />
+			<OutputField Name="LASTDAYOFTHECURRENTSTATEMENTSPERIOD" Caption="Last Day of Current Statements Period" DataType="Date" />
+			<OutputField Name="LASTDAYOFTHEPREVIOUSSTATEMENTSPERIOD" Caption="First Day of Previous Statements Period" DataType="Date" />
+			<OutputField Name="FIRSTDAYOFCALENDARYEAR" Caption="First Day of the Current Calendar Year" DataType="Date" />
+			<OutputField Name="FIRSTDAYOFCURRENTMONTH" Caption="First Day of Current Month" DataType="Date" />
+			<OutputField Name="LASTDAYOFTHEPREVIOUSMONTH" Caption="Last Day of Previous Month" DataType="Date" />
+			<OutputField Name="LASTDAYOFTHEMONTHTWOMONTHSINTHEFUTURE" Caption="Last Day of the Month Two Months in the Future" DataType="Date" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddToParentView ParentView="V_QUERY_CONSTITUENT" Field="ID" ParentViewRelatedField="ID" PathAlias="Statement Dates" />
+	</RelationshipOperations>
+</QueryViewSpec>
+
