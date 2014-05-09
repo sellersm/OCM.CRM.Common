@@ -40,10 +40,10 @@ from
 	join dbo.REVENUESCHEDULE rsch ON rsch.ID = ft.ID
 	join dbo.REVENUESPLIT rsplit on rsplit.REVENUEID = ft.ID
 	join dbo.SPONSORSHIP s on rsplit.ID = s.REVENUESPLITID
-	left join dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on so_child.ID = s.ID
+	left join dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on so_child.ID = s.SPONSORSHIPOPPORTUNITYID
 	
 where
-	i.[DATE] >= '1/1/12'
+	i.[DATE] >= '10/1/12'
 and rsch.STATUSCODE = 0-- = 'Active'
 )
 select 
