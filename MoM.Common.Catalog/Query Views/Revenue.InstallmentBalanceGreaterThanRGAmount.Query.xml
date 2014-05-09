@@ -1,0 +1,88 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="3a6275e2-f672-4e07-a51d-82129a83c23d"
+	Name="Installment balance greater than the recurring gift amount Query"
+	Description="This is used to find errors with changing schedules from non-monthly to monthly. Only checks installments since 1/1/12."
+	Author="Caru Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="REVENUEID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Revenue"
+	>
+	<!-- 
+	Remarks:	
+
+	History:
+	Date            Modified By     Comments
+	09-May-2014		CMayeda			Initial Version
+	-->
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_INSTALLMENTBALANCEGREATERTHANRGAMOUNT">
+		<ViewSQL>
+			<![CDATA[
+with RGInstallmentsWithBalance as
+(select 
+	ft.ID as REVENUEID,
+	i.ID as INSTALLMENTID,
+	i.DATE as INSTALLMENTDATE,
+	ft.TRANSACTIONAMOUNT as RGAMOUNT,
+	i.TRANSACTIONAMOUNT as INSTALLMENTAMOUNT,
+	dbo.UFN_RECURRINGGIFTINSTALLMENT_GETINSTALLMENTBALANCE(i.ID) as INSTALLMENTBALANCE,
+	rsch.STATUSCODE,
+	rsch.STATUS,
+	so_child.NAME as CHILDNAME,
+	ft.CALCULATEDUSERDEFINEDID as REVENUELOOKUPID
+from 
+	dbo.RECURRINGGIFTINSTALLMENT i
+	join dbo.FINANCIALTRANSACTION ft ON ft.ID = i.REVENUEID
+	join dbo.REVENUESCHEDULE rsch ON rsch.ID = ft.ID
+	join dbo.REVENUESPLIT rsplit on rsplit.REVENUEID = ft.ID
+	join dbo.SPONSORSHIP s on rsplit.ID = s.REVENUESPLITID
+	left join dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on so_child.ID = s.ID
+	
+where
+	i.[DATE] >= '1/1/12'
+and rsch.STATUSCODE = 0-- = 'Active'
+)
+select 
+	ib1.REVENUEID, 
+	ib1.RGAMOUNT,
+	ib1.INSTALLMENTDATE,
+	ib1.INSTALLMENTAMOUNT,
+	ib1.INSTALLMENTBALANCE,
+	ib1.STATUS,
+	ib1.CHILDNAME,
+	ib1.REVENUELOOKUPID
+
+from 
+	RGInstallmentsWithBalance ib1
+	
+where 
+	INSTALLMENTBALANCE > RGAMOUNT
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
+			<OutputField Name="RGAMOUNT" Caption="Recurring Gift Amount" DataType="Money" />
+			<OutputField Name="INSTALLMENTDATE" Caption="Installment Date" DataType="Date" />
+			<OutputField Name="INSTALLMENTAMOUNT" Caption="Installment Amount" DataType="Money" />
+			<OutputField Name="INSTALLMENTBALANCE" Caption="Installment Balance" DataType="Money" />
+			<OutputField Name="STATUS" Caption="Sponsorship Status" DataType="String" />
+			<OutputField Name="CHILDNAME" Caption="Sponsored Child Name" DataType="String" />
+			<OutputField Name="REVENUELOOKUPID" Caption="Revenue ID" DataType="String" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="REVENUEID" PathAlias="Recurring Gift"/>
+	</RelationshipOperations>
+
+</QueryViewSpec>
+
