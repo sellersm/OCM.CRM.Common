@@ -10,6 +10,14 @@
 	RecordType="Report"
 	common:SecurityUIFolder="Rate Increase"
 	>
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	27-Apr-2014		CMayeda			Initial Version
+	08-May-2014		CMayeda			Added Never Increase and Reversal responses
+	-->
 
 	<!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_SUMMARYSTATS">
@@ -55,6 +63,12 @@ where
  select 'Partial - Increase' as RESPONSE
  union
  select 'Yes - Increase' as RESPONSE
+ union
+ select 'Never - Increase' as RESPONSE
+ union
+ select 'Partial - Reversal' as RESPONSE
+ union
+ select 'Reversal' as RESPONSE
  union
  select 'Did not respond' as RESPONSE
 ),
@@ -150,11 +164,14 @@ select distinct
 	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Yes - Increase') as YESINCREASE,
 	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Partial - Increase') as PARTIALINCREASE,
 	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'No - Increase') as NOINCREASE,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Never - Increase') as NEVERINCREASE,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Partial - Reversal') as PARTIALREVERSAL,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Reversal') as REVERSAL,
 	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Did not respond') as DIDNOTRESPONSE,
 	(select sum(RGCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC) as SPONSORSHIPSINCREASED
 	
 from Counts C
-	
+
 			]]>
 		</ViewSQL>
 	</ViewImplementation>
@@ -168,7 +185,11 @@ from Counts C
 			<OutputField Name="YESINCREASE" Caption="Yes - Increase response count" DataType="Integer" />
 			<OutputField Name="PARTIALINCREASE" Caption="Partial - Increase response count" DataType="Integer" />
 			<OutputField Name="NOINCREASE" Caption="No - Increase response count" DataType="Integer" />
+			<OutputField Name="NEVERINCREASE" Caption="Never - Increase response count" DataType="Integer" />
+			<OutputField Name="PARTIALREVERSAL" Caption="Partial - Reversal response count" DataType="Integer" />
+			<OutputField Name="REVERSAL" Caption="Reversal response count" DataType="Integer" />
 			<OutputField Name="DIDNOTRESPONSE" Caption="Did not respond count" DataType="Integer" />
+			<OutputField Name="SPONSORSHIPSINCREASED" Caption="Sponsorships Increased" DataType="Integer" />			
 		</OutputFields>
 	</Output>
 
