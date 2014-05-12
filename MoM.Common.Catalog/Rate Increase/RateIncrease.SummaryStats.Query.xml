@@ -17,6 +17,7 @@
 	Date            Modified By     Comments
 	27-Apr-2014		CMayeda			Initial Version
 	08-May-2014		CMayeda			Added Never Increase and Reversal responses
+	09-May-2014		CMayeda			Added percentages
 	-->
 
 	<!-- define the view used to return data for the query -->
@@ -127,7 +128,7 @@ group by
 Counts as
 (
 select 
-	substring(ris.SEGMENTNAME, 17, 11) as SEGMENT,
+	substring(ris.SEGMENTNAME, 25, 3) as SEGMENT,
 	ris.SEGMENTNAME,
 	ris.SEGMENTDESC,
 	ris.SEGMENTCATEGORY,
@@ -155,8 +156,9 @@ select
 			and ris.SEGMENTCATEGORY = rir.SEGMENTCATEGORY
 			and ris.PACKAGENAME = rir.PACKAGENAME
 			and ris.RESPONSE = rir.RESPONSE
-)
-
+),
+CountsWithSums as
+(
 select distinct 
 	SEGMENT, 
 	SEGMENTDESC,
@@ -167,10 +169,44 @@ select distinct
 	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Never - Increase') as NEVERINCREASE,
 	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Partial - Reversal') as PARTIALREVERSAL,
 	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Reversal') as REVERSAL,
-	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Did not respond') as DIDNOTRESPONSE,
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC AND yc.RESPONSE = 'Did not respond') as DIDNOTRESPOND,	
+	(select sum(CONSTITUENTCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC) as RECIPIENTCOUNT,
 	(select sum(RGCOUNT) from Counts yc where c.SEGMENT = yc.SEGMENT and c.SEGMENTDESC = yc.SEGMENTDESC) as SPONSORSHIPSINCREASED
 	
 from Counts C
+)
+select 
+	SEGMENT, 
+	SEGMENTDESC,
+	PACKAGETYPE,
+	RECIPIENTCOUNT,
+	YESINCREASE,
+	cast ((cast(YESINCREASE as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3)) as YESINCREASEPERCENTAGE,
+	PARTIALINCREASE,
+	cast ((cast(PARTIALINCREASE as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3)) as PARTIALINCREASEPERCENTAGE,
+	NOINCREASE,
+	cast ((cast(NOINCREASE as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3)) as NOINCREASEPERCENTAGE,
+	NEVERINCREASE,
+	cast ((cast(NEVERINCREASE as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3)) as NEVERINCREASEPERCENTAGE,
+	REVERSAL,
+	cast ((cast(REVERSAL as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3)) as REVERSALPERCENTAGE,
+	PARTIALREVERSAL,
+	cast ((cast(NEVERINCREASE as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3)) as PARTIALREVERSALPERCENTAGE,
+	DIDNOTRESPOND,
+	cast ((cast(DIDNOTRESPOND as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3)) as DIDNOTRESPONDPERCENTAGE,
+	case
+		when upper(left (SEGMENT, 1)) in ('A', 'B') then YESINCREASE + PARTIALINCREASE + DIDNOTRESPOND
+		when upper(left (SEGMENT, 1)) in ('C', 'D', 'E') then YESINCREASE + PARTIALINCREASE
+		else 0
+	end as RESULTSININCREASE,
+	case
+		when upper(left (SEGMENT, 1)) in ('A', 'B') then cast ((cast((YESINCREASE + PARTIALINCREASE + DIDNOTRESPOND) as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3))
+		when upper(left (SEGMENT, 1)) in ('C', 'D', 'E') then cast ((cast((YESINCREASE + PARTIALINCREASE) as float) / cast(RECIPIENTCOUNT as float)) as decimal (5,3))
+		else 0
+	end as RESULTSININCREASEPERCENTAGE,	
+	SPONSORSHIPSINCREASED
+from CountsWithSums
+
 
 			]]>
 		</ViewSQL>
@@ -183,13 +219,22 @@ from Counts C
 			<OutputField Name="SEGMENTDESC" Caption="Segment Description" DataType="String" />
 			<OutputField Name="PACKAGETYPE" Caption="Package Type" DataType="String" />
 			<OutputField Name="YESINCREASE" Caption="Yes - Increase response count" DataType="Integer" />
+			<OutputField Name="YESINCREASEPERCENTAGE" Caption="Yes - Increase response percent" DataType="Decimal" />
 			<OutputField Name="PARTIALINCREASE" Caption="Partial - Increase response count" DataType="Integer" />
+			<OutputField Name="PARTIALINCREASEPERCENTAGE" Caption="Partial - Increase response percent" DataType="Decimal" />
 			<OutputField Name="NOINCREASE" Caption="No - Increase response count" DataType="Integer" />
+			<OutputField Name="NOINCREASEPERCENTAGE" Caption="No - Increase response percent" DataType="Decimal" />
 			<OutputField Name="NEVERINCREASE" Caption="Never - Increase response count" DataType="Integer" />
+			<OutputField Name="NEVERINCREASEPERCENTAGE" Caption="Never - Increase response percent" DataType="Decimal" />
 			<OutputField Name="PARTIALREVERSAL" Caption="Partial - Reversal response count" DataType="Integer" />
+			<OutputField Name="PARTIALREVERSALPERCENTAGE" Caption="Partial - Reversal response percent" DataType="Decimal" />
 			<OutputField Name="REVERSAL" Caption="Reversal response count" DataType="Integer" />
-			<OutputField Name="DIDNOTRESPONSE" Caption="Did not respond count" DataType="Integer" />
-			<OutputField Name="SPONSORSHIPSINCREASED" Caption="Sponsorships Increased" DataType="Integer" />			
+			<OutputField Name="REVERSALPERCENTAGE" Caption="Reversal response percent" DataType="Decimal" />
+			<OutputField Name="DIDNOTRESPOND" Caption="Did not respond count" DataType="Integer" />
+			<OutputField Name="DIDNOTRESPONDPERCENTAGE" Caption="Did not respond percent" DataType="Decimal" />
+			<OutputField Name="SPONSORSHIPSINCREASED" Caption="Sponsorships Increased" DataType="Integer" />
+			<OutputField Name="RESULTSININCREASEPERCENTAGE" Caption="Results in Increase count" DataType="Integer" />
+			<OutputField Name="YESINCREASEPERCENTAGE" Caption="Results in Increase percent" DataType="Decimal" />
 		</OutputFields>
 	</Output>
 
