@@ -218,6 +218,7 @@ from CountsWithSums
 			<OutputField Name="SEGMENT" Caption="Segment" DataType="String" />
 			<OutputField Name="SEGMENTDESC" Caption="Segment Description" DataType="String" />
 			<OutputField Name="PACKAGETYPE" Caption="Package Type" DataType="String" />
+			<OutputField Name="RECIPIENTCOUNT" Caption="Recipient count" DataType="Integer" />
 			<OutputField Name="YESINCREASE" Caption="Yes - Increase response count" DataType="Integer" />
 			<OutputField Name="YESINCREASEPERCENTAGE" Caption="Yes - Increase response percent" DataType="Decimal" />
 			<OutputField Name="PARTIALINCREASE" Caption="Partial - Increase response count" DataType="Integer" />
@@ -233,8 +234,8 @@ from CountsWithSums
 			<OutputField Name="DIDNOTRESPOND" Caption="Did not respond count" DataType="Integer" />
 			<OutputField Name="DIDNOTRESPONDPERCENTAGE" Caption="Did not respond percent" DataType="Decimal" />
 			<OutputField Name="SPONSORSHIPSINCREASED" Caption="Sponsorships Increased" DataType="Integer" />
-			<OutputField Name="RESULTSININCREASEPERCENTAGE" Caption="Results in Increase count" DataType="Integer" />
-			<OutputField Name="YESINCREASEPERCENTAGE" Caption="Results in Increase percent" DataType="Decimal" />
+			<OutputField Name="RESULTSININCREASE" Caption="Results in Increase count" DataType="Integer" />
+			<OutputField Name="RESULTSININCREASEPERCENTAGE" Caption="Results in Increase percent" DataType="Decimal" />
 		</OutputFields>
 	</Output>
 
