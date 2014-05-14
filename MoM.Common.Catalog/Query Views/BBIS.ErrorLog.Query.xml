@@ -1,0 +1,42 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="4f825808-a3d5-4445-9b1a-be93e0dbd374"
+	Name="BBIS Error log table Query"
+	Description="Queries the Error table used to store exceptions thrown by IIS"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="BBISERROR"
+	common:SecurityUIFolder="BBISERROR"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_BBISERROR">
+		<ViewSQL>
+			<![CDATA[
+select 
+	ID, 
+	Type, 
+	Message, 
+	StackTrace, 
+	CreateDate 
+from 
+	Error		
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" DataType="Integer" />
+			<OutputField Name="Type" Caption="Type" DataType="String" />
+			<OutputField Name="Message" Caption="Message" DataType="String" />
+			<OutputField Name="StackTrace" Caption="Stack Trace" DataType="String" />
+			<OutputField Name="CreateDate" Caption ="Create Date" DataType="Date" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
