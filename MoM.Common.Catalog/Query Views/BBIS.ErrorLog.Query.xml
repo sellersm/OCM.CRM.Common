@@ -7,7 +7,7 @@
 	Author="Cary Mayeda"
 	IsRoot="true"
 	PrimaryKeyField="ID"
-	RecordType="BBISERROR"
+	RecordType="BBIS Error"
 	common:SecurityUIFolder="BBISERROR"
 	>
 
@@ -16,10 +16,10 @@
 		<ViewSQL>
 			<![CDATA[
 select 
-	ID, 
+	ID,
 	Type, 
 	Message, 
-	StackTrace, 
+	cast (StackTrace as nvarchar(max)) as StackTrace, 
 	CreateDate 
 from 
 	Error		
