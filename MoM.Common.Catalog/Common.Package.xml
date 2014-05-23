@@ -65,6 +65,9 @@
 	24-Mar-2014		Memphis			Added missing USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML.xml
 	27-Mar-2013		CMayeda			Added PartiallyPaidInstallments.Query.xml
 	17-Apr-2013		CMayeda			Added Revenue.FindDistributionTotalsNotEqualToRevenueAmount.Query.xml
+	17-Apr-2013		CMayeda			Added InteractionExtension.RevenueInteractionList.DataList.xml
+										  InteractionExtension.ChildCorrespondenceInteractionList.DataList.xml
+										  TK-01415
 	-->
 
 
@@ -180,6 +183,8 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.UIModelFieldManager.Config.FieldList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.SponsorshipInteractionList.DataList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ChildCorrespondenceInteractionList.DataList.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.RevenueInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionExtension.ChildInteractionList.DataList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttribute.CodeTablesOnly.SimpleList.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.InteractionAttributesNonCodeTables.SimpleList.xml" />

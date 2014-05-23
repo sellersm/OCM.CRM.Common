@@ -1,26 +1,24 @@
 ﻿<DataListSpec 
 	xmlns="bb_appfx_datalist"
 	xmlns:common="bb_appfx_commontypes" 
-	ID="a39f10f7-e1fe-4642-bdbd-75ed78713664" 
-	Name="Interaction Extension Sponsor Data List"
-	Description="Used to display sponsorship related interactions for a sponsor / constituent." 
+	ID="a4922805-0bd6-4e62-a0e2-7a433a629ed7" 
+	Name="Interaction Extension Revenue Data List"
+	Description="Used to display revenue related interactions for a constituent."
 	Author="Cary Mayeda"
 	common:SecurityUIFolder="Interaction Extension" >
-
 	<!-- 
-	Remarks:   It displays the Interaction Extension fields
+	Remarks:    
 
 	History:
 	Date            Modified By     Comments
-	01-Aug-2012		CMayeda			Initial Version
-	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
+	23-May-2014		CMayeda			Initial Version - TK-01415
 	-->
-	
+
 	<!-- define the SP that returns the data for the datalist -->
-	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORLIST">
+	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_REVENUELIST">
 		<common:CreateProcedureSQL>
 			<![CDATA[
-create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORLIST (
+create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_REVENUELIST (
 	@CONSTITUENTID uniqueidentifier
 )
 as begin
@@ -113,7 +111,7 @@ as begin
 				
 		where	INTERACTION.CONSTITUENTID = @CONSTITUENTID
 		  and	INTERACTION.ISINTERACTION = 1  			 
-		  and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('sponsor') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
+		  and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('revenue') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
 end
 
 			]]>
@@ -121,7 +119,7 @@ end
 	</SPDataList>
 
 	<!-- describe the context ID parameter for the SP (if applicable)-->
-	<Context ContextRecordType="CONSTITUENT" RecordIDParameter="CONSTITUENTID"/>	
+	<Context ContextRecordType="CONSTITUENT" RecordIDParameter="CONSTITUENTID"/>
 
 	<!-- describe any parameters (other than the context ID) defined on the SP
 	<Parameters>
@@ -147,7 +145,7 @@ end
 			<OutputField FieldID="CHILDCOUNTLETTERVERSION" Caption="Child Version" DataType="String" />
 			<OutputField FieldID="EFTBROCHURE" Caption="EFT Brochure" DataType="String" IsHidden="true"/>
 			<OutputField FieldID="CHILDCOUNT" Caption="Child Count" DataType="Integer" />
-			<OutputField FieldID="SPONSORSHIPOPPORTUNITYCHILDID1" Caption="Child system record ID 1" DataType="Guid" IsHidden="true"/>			
+			<OutputField FieldID="SPONSORSHIPOPPORTUNITYCHILDID1" Caption="Child system record ID 1" DataType="Guid" IsHidden="true"/>
 			<OutputField FieldID="CHILDLOOKUPID1" Caption="Child ID 1" DataType="String" />
 			<OutputField FieldID="CHILDNAME1" Caption="Child Name 1" DataType="String" />
 			<OutputField FieldID="SPONSORSHIPOPPORTUNITYCHILDID2" Caption="Child System system record 2" DataType="Guid" IsHidden="true"/>
@@ -159,7 +157,7 @@ end
 			<OutputField FieldID="DEPARTEDCHILDLOOKUPID" Caption="Departed child ID" DataType="String" />
 			<OutputField FieldID="UNAVAILABLECHILDID" Caption="Unavailable system record ID" DataType="Guid" IsHidden="true"/>
 			<OutputField FieldID="UNAVAILABLECHILDLOOKUPID" Caption="Unavailable child ID" DataType="String" />
-			
+
 			<OutputField FieldID="VIEWFORMID" Caption="View Form ID" DataType="Guid" IsHidden="true"/>
 		</OutputFields>
 	</Output>

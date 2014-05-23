@@ -1,26 +1,24 @@
 ﻿<DataListSpec 
 	xmlns="bb_appfx_datalist"
 	xmlns:common="bb_appfx_commontypes" 
-	ID="a39f10f7-e1fe-4642-bdbd-75ed78713664" 
-	Name="Interaction Extension Sponsor Data List"
-	Description="Used to display sponsorship related interactions for a sponsor / constituent." 
+	ID="7c2c7824-51a6-4bc5-abad-6877f51ceeb6" 
+	Name="Interaction Extension Child Correspondence Data List"
+	Description="Used to display Child Correspondence interactions for a sponsor / constituent." 
 	Author="Cary Mayeda"
 	common:SecurityUIFolder="Interaction Extension" >
-
 	<!-- 
-	Remarks:   It displays the Interaction Extension fields
+	Remarks:    
 
 	History:
 	Date            Modified By     Comments
-	01-Aug-2012		CMayeda			Initial Version
-	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
+	23-May-2014		CMayeda			Initial Version - TK-01415
 	-->
-	
+
 	<!-- define the SP that returns the data for the datalist -->
-	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORLIST">
+	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_CHILDCORRESPONDENCELIST">
 		<common:CreateProcedureSQL>
 			<![CDATA[
-create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_SPONSORLIST (
+create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_CHILDCORRESPONDENCELIST (
 	@CONSTITUENTID uniqueidentifier
 )
 as begin
@@ -113,7 +111,7 @@ as begin
 				
 		where	INTERACTION.CONSTITUENTID = @CONSTITUENTID
 		  and	INTERACTION.ISINTERACTION = 1  			 
-		  and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('sponsor') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
+		  and	exists (select interactionSubcategoryID from dbo.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP ('child correspondence') where interactionSubcategoryID = INTERACTION.INTERACTIONSUBCATEGORYID)
 end
 
 			]]>
