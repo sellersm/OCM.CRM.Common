@@ -6,9 +6,20 @@
 	Description="Used to retrieve a table of the interaction categories for a specific view (child, sponsor, sponsorship, ...)"
 	Author="Cary Mayeda"
 	DBFunctionName="USR_UFN_INTERACTION_GETCATEGORYGROUP" >
+	
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	23-May-2014		CMayeda			Removed child correspondence from the 'sponsor' category group into it's own category group
+									Added category group 'Revenue'
+									TK-01415
+	-->
 
 	<CreateFunctionSQL>
 		<![CDATA[
+		
 create function dbo.USR_UFN_INTERACTION_GETCATEGORYGROUP (
 	@categoryGroup nvarchar(50)
 )
@@ -20,29 +31,40 @@ as begin
 	if lower(@categoryGroup) = 'sponsor'
 		insert @interactioncategories 
 		select	ID as interactionCategoryID
-			from	dbo.INTERACTIONCATEGORY
-			where	lower(NAME) in 
-					('child change notifications', 
-						'child correspondence',
-						'misc processing',
-						'project sponsorship',
-						'prospect welcome',
-						'sponsor welcome',
-						'sponsorship cancellation',
-						'sponsorship delinquency',
-						'sponsorship rate increase',
-						'sponsorship retention',
-						'sponsorship transfers',
-						'sympathy and cancellation' )
-
-					
+		  from	dbo.INTERACTIONCATEGORY
+		 where	lower(NAME) in 
+				   ('child change notifications', 
+					'misc processing',
+					'project sponsorship',
+					'prospect welcome',
+					'sponsor welcome',
+					'sponsorship cancellation',
+					'sponsorship delinquency',
+					'sponsorship rate increase',
+					'sponsorship retention',
+					'sponsorship transfers',
+					'sympathy and cancellation' )
 	else
-		if lower(@categoryGroup) = 'child'
+		if lower(@categoryGroup) = 'child correspondence'
 			insert @interactioncategories 
 			select	ID as interactionCategoryID
 			  from	dbo.INTERACTIONCATEGORY
-			 where	lower(NAME) in 
-						('child field memo', 'child letters')
+			 where	lower(NAME) = 'child correspondence'
+		else		
+			if lower(@categoryGroup) = 'child'
+				insert @interactioncategories 
+				select	ID as interactionCategoryID
+				  from	dbo.INTERACTIONCATEGORY
+				 where	lower(NAME) in 
+							('child field memo', 'child letters')
+			else
+				if lower(@categoryGroup) = 'revenue'
+					insert @interactioncategories 
+					select	ID as interactionCategoryID
+					  from	dbo.INTERACTIONCATEGORY
+					 where	lower(NAME) = 'revenue'
+		
+
 		
 	return 
 end
