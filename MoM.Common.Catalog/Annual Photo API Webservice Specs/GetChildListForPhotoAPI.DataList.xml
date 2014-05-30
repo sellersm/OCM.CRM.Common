@@ -7,6 +7,16 @@
 	Author="Memphis Sellers"
 	common:SecurityUIFolder="Child">
 
+	<!-- 
+	Remarks:    This returns a list of children whose lookupid values are in the XML list passed in.
+				Called from the Annual Photo Helper application which verifies info about the child photo.
+
+	History:
+	Date            Modified By     Comments
+	07-Mar-2014		Memphis			Initial Version
+	30-May-2014		Memphis			Added First and Last Name fields to output for JW Distance and DL Distance name comparison algorithms.
+	-->	
+
 	<!-- define the SP that returns the data for the datalist -->
 	<SPDataList SPName="USR_USP_DATALIST_GETLISTOFCHILDDATA_PHOTOAPI">
 		<common:CreateProcedureSQL>
@@ -22,7 +32,9 @@ as
 		rtrim(replace(sc.[NAME], ' ','')) as CHILDNAME,
 		so.LOOKUPID as CHILDID, 
 		sl.LOOKUPID as LOCATIONID,
-		sc.[NAME] as CRMNAME
+		sc.[NAME] as CRMNAME,
+		sc.[FIRSTNAME] as FIRSTNAME,
+		sc.[LASTNAME] as LASTNAME
 	from dbo.SPONSORSHIPOPPORTUNITYCHILD sc
 	join dbo.SPONSORSHIPOPPORTUNITY so ON so.ID = sc.ID
 	join dbo.SPONSORSHIPLOCATION sl ON sl.ID = so.SPONSORSHIPLOCATIONID
@@ -51,6 +63,8 @@ as
 			<OutputField FieldID="CHILDID" Caption="Child Id" DataType="String" />
 			<OutputField FieldID="LOCATIONID" Caption="Location Id" DataType="String" />
 			<OutputField FieldID="CRMNAME" Caption="CRM Child Name" DataType="String" />
+			<OutputField FieldID="FIRSTNAME" Caption="First Name" DataType="String" />
+			<OutputField FieldID="LASTNAME" Caption="Last Name" DataType="String" />
 		</OutputFields>
 	</Output>
 
