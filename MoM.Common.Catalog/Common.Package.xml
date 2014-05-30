@@ -65,7 +65,7 @@
 	24-Mar-2014		Memphis			Added missing USR_UFN_GETCHILDLOOKUPIDLIST_FROM_ITEMSXML.xml
 	27-Mar-2013		CMayeda			Added PartiallyPaidInstallments.Query.xml
 	17-Apr-2013		CMayeda			Added Revenue.FindDistributionTotalsNotEqualToRevenueAmount.Query.xml
-	17-Apr-2013		CMayeda			Added InteractionExtension.RevenueInteractionList.DataList.xml
+	23-May-2013		CMayeda			Added InteractionExtension.RevenueInteractionList.DataList.xml
 										  InteractionExtension.ChildCorrespondenceInteractionList.DataList.xml
 										  TK-01415
 	-->
