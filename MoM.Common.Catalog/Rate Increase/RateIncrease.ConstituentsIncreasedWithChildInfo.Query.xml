@@ -1,0 +1,62 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="0f5d31c2-2405-4a51-a506-1617f97c72b8"
+	Name="Rate Increase Constituents Increased with Child Info Query"
+	Description="This includes one row per active sponsorship increased"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Constituent"
+	common:SecurityUIFolder="Rate Increase"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_CONSTITUENTSINCREASED_WITHCHILDINFO">
+		<ViewSQL>
+			<![CDATA[
+select 
+	c.ID, 
+	c.LOOKUPID, 
+	c.NAME, 
+	so.ID as CHILDID,
+	so.LOOKUPID as CHILDLOOKUPID,
+	so_child.NAME as CHILDNAME
+	
+from 
+	dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS ri
+	join dbo.SPONSORSHIP s on s.id = ri.SPONSORSHIPID
+	join dbo.SPONSORSHIPCOMMITMENT sc ON sc.ID = s.SPONSORSHIPCOMMITMENTID
+	join dbo.SPONSORSHIP s_current ON s_current.SPONSORSHIPCOMMITMENTID = sc.ID and s_current.STATUSCODE = 1
+	join dbo.SPONSORSHIPOPPORTUNITY so on so.ID = s_current.SPONSORSHIPOPPORTUNITYID
+	join dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on so_child.ID = s_current.SPONSORSHIPOPPORTUNITYID
+	join dbo.REVENUESPLIT rs on rs.id = s.REVENUESPLITID
+	join dbo.REVENUE r on r.ID = rs.REVENUEID
+	join dbo.CONSTITUENT c on c.ID = r.CONSTITUENTID
+where 
+	ri.INCREASERATE = 1 
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="LOOKUPID" Caption="Sponsor Lookup ID" DataType="String" />
+			<OutputField Name="NAME" Caption="Sponsor Name" DataType="String" />
+			<OutputField Name="CHILDID" Caption="Child system record ID" DataType="Guid" />
+			<OutputField Name="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
+			<OutputField Name="CHILDNAME" Caption="Child Name" DataType="String" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="ID" PathAlias="Constituent"/>
+		<!--<AddRelatedView RelatedView="V_QUERY_SPONSORSHIP" RelatedField="ID" Field="SPONSORSHIPID" PathAlias="Sponsorship"/>-->
+	</RelationshipOperations>
+
+
+</QueryViewSpec>
+
