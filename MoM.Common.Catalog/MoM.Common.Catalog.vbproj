@@ -648,6 +648,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Interaction\InteractionExtension.ChildCorrespondenceInteractionList.DataList.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.ConstituentsIncreasedWithChildInfo.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rate Increase\RateIncrease.ConstituentsIncreasedWithActiveIncreasedSponsorshipCount.Query.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
