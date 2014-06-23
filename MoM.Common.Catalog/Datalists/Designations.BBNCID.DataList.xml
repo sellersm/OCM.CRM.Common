@@ -1,0 +1,50 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="027fc290-ea81-490f-822a-d5f4445a93b5" 
+	Name="Designations with BBNC ID Data List"
+	Description="Contains Designation information, including the ID used for BBIS payments" 
+	Author="Cary Mayeda"
+	common:SecurityUIFolder="Fundraising Efforts\Designations"
+	>
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_DESIGNATIONLISTWITHBBNCID">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+
+create procedure dbo.USR_USP_DATALIST_DESIGNATIONLISTWITHBBNCID(@CONTEXTID nvarchar(1))
+as
+	set nocount on;
+
+select 
+	d.ID as DESIGNATIONID, 
+	case 
+		when d.USERID = d.VANITYNAME then d.USERID
+		else d.USERID + ' ' + d.VANITYNAME 
+	end as DESIGNATIONNAME,
+	bbnc.ID as BBNCID
+from 
+	dbo.DESIGNATION d 
+	join dbo.BBNCDESIGNATIONIDMAP bbnc on d.ID = bbnc.DESIGNATIONID
+where 
+	d.ISACTIVE = 1
+order by DESIGNATIONNAME
+
+			]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable)-->
+	<Context ContextRecordType="NotUsed" RecordIDParameter="CONTEXTID"/>
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<OutputField FieldID="DESIGNATIONID" Caption="Designation ID" DataType="Guid" />
+			<OutputField FieldID="DESIGNATIONNAME" Caption="Designation Name" DataType="String" />
+			<OutputField FieldID="BBNCID" Caption="BBNC ID" DataType="Integer" />
+		</OutputFields>
+	</Output>
+
+</DataListSpec>

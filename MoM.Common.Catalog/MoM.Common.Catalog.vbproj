@@ -72,6 +72,10 @@
       <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.Server.dll</HintPath>
     </Reference>
     <Reference Include="Blackbaud.AppFx.UIModeling.Core, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Blackbaud.AppFx.WebAPI, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SDK\DLLReferences\Blackbaud.AppFx.WebAPI.dll</HintPath>
+    </Reference>
     <Reference Include="Blackbaud.AppFx.XmlTypes, Version=1.0.128.756, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
@@ -91,11 +95,13 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Datalists\DesignationsWithBBNCIDDataList.codegen.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
     <Folder Include="Temp 0.3.4 Deployment\" />
+    <Folder Include="View Forms\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeTableManager.Table.xml">
@@ -653,6 +659,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Rate Increase\RateIncrease.ConstituentsIncreasedWithActiveIncreasedSponsorshipCount.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Datalists\Designations.BBNCID.DataList.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
