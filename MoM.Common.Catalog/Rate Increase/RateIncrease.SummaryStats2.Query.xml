@@ -1,0 +1,229 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="ECB6FDCB-9D64-4806-8574-8BF8CEFD8068"
+	Name="Rate Increase Summary Delinquency and Cancellation Stats Query"
+	Description="Used to create Summary Stats regarding delinquency campaiangs and cancellations for the Rate Increase in 2014"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="SEGMENT"
+	RecordType="Report"
+	common:SecurityUIFolder="Rate Increase"
+	>
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	15-Oct-2014		CMayeda			Initial Version
+	-->
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RATEINCREASE_SUMMARYSTATS_DELINQUENCYCANCELLATION">
+		<ViewSQL>
+			<![CDATA[
+
+with MadePayment as
+(
+select 
+	rev.CONSTITUENTID,
+	rev.ID as REVENUEID,
+	max (rev_payment.DATE) as LATESTPAYMENT
+from 
+	dbo.SPONSORSHIP sp
+	inner join dbo.REVENUESPLIT revsplit on sp.REVENUESPLITID = revsplit.ID
+	inner join dbo.REVENUE rev on revsplit.REVENUEID = rev.ID
+	inner join 	dbo.RECURRINGGIFTACTIVITY rg_act on rg_act.SOURCEREVENUEID = rev.ID 
+	inner join dbo.FINANCIALTRANSACTIONLINEITEM as payment on payment.ID = rg_act.PAYMENTREVENUEID									
+	inner join dbo.FINANCIALTRANSACTION as rev_payment on payment.FINANCIALTRANSACTIONID = rev_payment.ID									
+where	
+	rev_payment.TRANSACTIONAMOUNT > 0
+	and rev_payment.DATE > '5/1/14'
+
+group by rev.CONSTITUENTID, rev.ID
+)
+
+,D2RateIncreaseRecipients as 
+(
+select CONSTITUENTID from dbo.INTERACTION where COMMENT like '%Rate Increase D2 Campaign%'
+)
+
+,D3Recipients as 
+(
+select 
+	CONSTITUENTID 
+from 
+	dbo.INTERACTION 
+	join dbo.INTERACTIONSUBCATEGORY ON dbo.INTERACTIONSUBCATEGORY.ID = dbo.INTERACTION.INTERACTIONSUBCATEGORYID
+where 
+	INTERACTIONSUBCATEGORY.[NAME] like 'Delinquent 3 Month'
+and INTERACTION.EXPECTEDDATE > '4/1/14'
+)
+
+, Cancellations as 
+(
+select 
+	[USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Financial sponsor].[ID] as CONSTITUENTID,
+	[USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship].[REASON] as CANCELLATIONREASON
+from 
+	[USR_V_QUERY_SPONSORSHIPEXTENSION] as [USR_V_QUERY_SPONSORSHIPEXTENSION]
+	left outer join [V_QUERY_SPONSORSHIP] as [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship] on [USR_V_QUERY_SPONSORSHIPEXTENSION].[ID] = [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship].[ID]
+	left outer join [V_QUERY_CONSTITUENT] as [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Financial sponsor] on [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship].[FINANCIALSPONSOR] = [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Financial sponsor].[ID]
+	inner join [V_QUERY_SPONSORSHIPOPPORTUNITY] as [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship Opportunity] on [USR_V_QUERY_SPONSORSHIPEXTENSION].[SPONSORSHIPOPPORTUNITYID] = [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship Opportunity].[ID]
+	left outer join [V_QUERY_SPONSORSHIPTRANSACTION] as [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions] on [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship].[ID] = [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions].[CONTEXTSPONSORSHIPID]
+where 
+	[USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship Opportunity].[TYPE] = N'Child'
+and ([USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions].[ACTION] in (N'Terminate', N'Cancel')
+and [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions].[ISLASTTRANSACTION] = 1
+and (([USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions].[REASON] not  in (N'Account Correction', N'User Correction')) or [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions].[REASON] is null or [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions].[REASON] = '')
+and [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship\Context transactions].[TRANSACTIONDATE] > '4/1/14')
+and [USR_V_QUERY_SPONSORSHIPEXTENSION].[CURRENTOPPORTUNITYSPONSORSHIPSTATUS] in (N'Formerly Sponsored', N'Formerly Unpaid Sponsored')
+and ([USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship].[REASON] like 'autocancel%'
+      or [USR_V_QUERY_SPONSORSHIPEXTENSION\Sponsorship].[REASON] like 'Sponsor Request%')
+)
+
+,RateIncreaseSegmentResponses as
+(
+select 
+	MKTSEGMENT.NAME as SEGMENTNAME, 
+	MKTSEGMENT.DESCRIPTION as SEGMENTDESC,
+	MKTSEGMENTCATEGORYCODE.DESCRIPTION as SEGMENTCATEGORY,
+	MKTPACKAGE.NAME as PACKAGENAME,
+	case 
+		when RESPONSE.RESPONSE is null then 'Did not respond'
+		else RESPONSE.RESPONSE 
+	end as RESPONSE,
+	srs.INCREASERATE,
+	srs.ORIGINALSPONSORSHIPGIFTAMOUNT,
+	srs.UPDATEDSPONSORSHIPGIFTAMOUNT,
+	srs.REVENUELOOKUPID,
+	ca.CONSTITUENTID as CONSTITUENTID
+
+from 
+	dbo.MKTSEGMENTATIONSEGMENT
+    inner join dbo.MKTSEGMENTATION ON MKTSEGMENTATION.ID = MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
+	inner join dbo.MKTSEGMENT on MKTSEGMENT.ID = MKTSEGMENTATIONSEGMENT.SEGMENTID
+	inner join dbo.MKTSEGMENTCATEGORYCODE on MKTSEGMENTCATEGORYCODE.ID = MKTSEGMENT.SEGMENTCATEGORYCODEID
+    inner join dbo.CONSTITUENTAPPEAL ca on ca.MKTSEGMENTATIONSEGMENTID = MKTSEGMENTATIONSEGMENT.ID
+    inner join dbo.MKTPACKAGE on MKTPACKAGE.ID = ca.MKTPACKAGEID
+	inner join dbo.APPEAL a on a.ID = ca.APPEALID 
+	left join dbo.USR_SPONSOR_RATECHANGE_SPONSORSHIPS srs on srs.SPONSORID = ca.CONSTITUENTID
+	left join dbo.CONSTITUENTAPPEALRESPONSE ca_response on ca_response.CONSTITUENTAPPEALID = ca.ID 
+	left join dbo.RESPONSE on ca_response.RESPONSEID = RESPONSE.ID
+where 
+	a.NAME like '%10555%'
+)
+
+,RateIncreaseSegments as
+(
+select distinct 
+	risr.SEGMENTNAME, 
+	risr.SEGMENTDESC,
+	risr.SEGMENTCATEGORY,
+	risr.PACKAGENAME
+from
+	RateIncreaseSegmentResponses risr
+)
+
+,RateIncreaseConstituentCancellations as
+(
+select 
+	SEGMENTNAME,
+	count (csponsorreq.CONSTITUENTID) as SponsorRequestCancellationCount,
+	count (cauto.CONSTITUENTID) as AutoCancellationCount
+from 
+	RateIncreaseSegmentResponses r
+	left join Cancellations csponsorreq on r.CONSTITUENTID = csponsorreq.CONSTITUENTID and csponsorreq.CANCELLATIONREASON like 'sponsor%'
+	left join Cancellations cauto on r.CONSTITUENTID = cauto.CONSTITUENTID and cauto.CANCELLATIONREASON like 'auto%'
+group by 
+	SEGMENTNAME
+)
+
+,RateIncreaseConstituentD2 as
+(
+select 
+	SEGMENTNAME, 
+	count (r.CONSTITUENTID) as D2Count,
+	count (csponsorreq.CONSTITUENTID) as D2SponsorRequestCancellationCount,
+	count (cauto.CONSTITUENTID) as D2AutoCancellationCount,
+	count (mp.CONSTITUENTID) as D2MadePayment
+	
+from 
+	RateIncreaseSegmentResponses r
+	left join Cancellations csponsorreq on r.CONSTITUENTID = csponsorreq.CONSTITUENTID and csponsorreq.CANCELLATIONREASON like 'sponsor%'
+	left join Cancellations cauto on r.CONSTITUENTID = cauto.CONSTITUENTID and cauto.CANCELLATIONREASON like 'auto%'
+	left join MadePayment mp on mp.CONSTITUENTID = r.CONSTITUENTID
+where 
+	r.CONSTITUENTID in (select CONSTITUENTID from  D2RateIncreaseRecipients)
+group by 
+	SEGMENTNAME
+)
+
+,RateIncreaseConstituentD3 as
+(
+select 
+	SEGMENTNAME, 
+	count (r.CONSTITUENTID) as D3Count,
+	count (csponsorreq.CONSTITUENTID) as D3SponsorRequestCancellationCount,
+	count (cauto.CONSTITUENTID) as D3AutoCancellationCount,
+	count (mp.CONSTITUENTID) as D3MadePayment
+	
+from 
+	RateIncreaseSegmentResponses r
+	left join Cancellations csponsorreq on r.CONSTITUENTID = csponsorreq.CONSTITUENTID and csponsorreq.CANCELLATIONREASON like 'sponsor%'
+	left join Cancellations cauto on r.CONSTITUENTID = cauto.CONSTITUENTID and cauto.CANCELLATIONREASON like 'auto%'
+	left join MadePayment mp on mp.CONSTITUENTID = r.CONSTITUENTID
+where 
+	r.CONSTITUENTID in (select CONSTITUENTID from  D3Recipients)
+group by 
+	SEGMENTNAME
+)
+
+select 
+	substring(seg.SEGMENTNAME, 25, 3) as SEGMENT, 
+	seg.SEGMENTDESC,
+	substring(seg.PACKAGENAME,22,25) as PACKAGETYPE, 
+	coalesce(d2.D2Count,0) as RECEIVEDD2POSTCARD,
+	coalesce(d2.D2SponsorRequestCancellationCount,0) as RECEIVEDD2POSTCARD_SPONSORREQUESTCANCELLATION,
+	coalesce(d2.D2AutoCancellationCount,0) as RECEIVEDD2POSTCARD_AUTOCANCELLATION,
+	coalesce(d2.D2MadePayment,0) as RECEIVEDD2POSTCARD_ANDMADEPAYMENT,
+	coalesce(d3.D3Count,0) as RECEIVEDD3,
+	coalesce(d3.D3SponsorRequestCancellationCount,0) as RECEIVEDD3_SPONSORREQUESTCANCELLATION,
+	coalesce(d3.D3AutoCancellationCount,0) as RECEIVEDD3_AUTOCANCELLATION,
+	coalesce(d3.D3MadePayment,0) as RECEIVEDD3_ANDMADEPAYMENT,
+	coalesce(c.SponsorRequestCancellationCount,0) as SPONSORREQUESTCANCELLATION,
+	coalesce(c.AutoCancellationCount,0) as AUTOCANCELLATION
+from 
+	RateIncreaseSegments seg
+	left join RateIncreaseConstituentD2 d2 on seg.SEGMENTNAME = d2.SEGMENTNAME
+	left join RateIncreaseConstituentD3 d3 on seg.SEGMENTNAME = d3.SEGMENTNAME
+	left join RateIncreaseConstituentCancellations c on seg.SEGMENTNAME = c.SEGMENTNAME
+
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="SEGMENT" Caption="Segment" DataType="String" />
+			<OutputField Name="SEGMENTDESC" Caption="Segment Description" DataType="String" />
+			<OutputField Name="PACKAGETYPE" Caption="Package Type" DataType="String" />
+			<OutputField Name="RECEIVEDD2POSTCARD" Caption="Received D2 Postcard count" DataType="Integer" />
+			<OutputField Name="RECEIVEDD2POSTCARD_SPONSORREQUESTCANCELLATION" Caption="Received D2 Postcard and Sponsor Requested Cancellation" DataType="Integer" />
+			<OutputField Name="RECEIVEDD2POSTCARD_AUTOCANCELLATION" Caption="Received D2 Postcard and Auto Cancellation" DataType="Integer" />
+			<OutputField Name="RECEIVEDD2POSTCARD_ANDMADEPAYMENT" Caption="Received D2 Postcard and Made a Payment" DataType="Integer" />
+
+			<OutputField Name="RECEIVEDD3" Caption="Received D3 count" DataType="Integer" />
+			<OutputField Name="RECEIVEDD3_SPONSORREQUESTCANCELLATION" Caption="Received D3 and Sponsor Requested Cancellation" DataType="Integer" />
+			<OutputField Name="RECEIVEDD3_AUTOCANCELLATION" Caption="Received D3 and Auto Cancellation" DataType="Integer" />
+			<OutputField Name="RECEIVEDD3_ANDMADEPAYMENT" Caption="Received D3 and Made a Payment" DataType="Integer" />
+
+			<OutputField Name="SPONSORREQUESTCANCELLATION" Caption="Total Sponsor Request Cancellation" DataType="Integer" />
+			<OutputField Name="AUTOCANCELLATION" Caption="Total Auto Cancellation" DataType="Integer" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
