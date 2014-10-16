@@ -143,8 +143,8 @@ from
 (
 select 
 	SEGMENTNAME,
-	count (csponsorreq.CONSTITUENTID) as SponsorRequestCancellationCount,
-	count (cauto.CONSTITUENTID) as AutoCancellationCount
+	count (distinct csponsorreq.CONSTITUENTID) as SponsorRequestCancellationCount,
+	count (distinct cauto.CONSTITUENTID) as AutoCancellationCount
 from 
 	RateIncreaseSegmentResponses r
 	left join Cancellations csponsorreq on r.CONSTITUENTID = csponsorreq.CONSTITUENTID and csponsorreq.CANCELLATIONREASON like 'sponsor%'
