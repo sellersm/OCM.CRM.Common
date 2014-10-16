@@ -44,18 +44,22 @@
     <Reference Include="Blackbaud.AppFx, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Blackbaud.AppFx.Server, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.Server.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Blackbaud.AppFx.WebAPI, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.WebAPI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Blackbaud.AppFx.XmlTypes, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.XmlTypes.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
