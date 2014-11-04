@@ -55,6 +55,7 @@ and	s.CONSTITUENTID not in (select ID from Received2013Ornament)
 			<OutputField Caption="Sponsor System record ID" Category="System Fields" Name="CONSTITUENTID" />
 			<OutputField Name="CHILDID" Caption="Child System record ID" Category="System Fields" DataType="Guid" />
 			<OutputField Name="PROJECTLOOKUPID" Caption="Project Lookup ID" DataType="String" />
+			<OutputField Name="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
 			<OutputField Name="CHILDFIRSTNAME" Caption="Child First Name" DataType="String" />
 			<OutputField Name="CHILDNAME" Caption="Child Full Name" DataType="String" />
 		</OutputFields>
