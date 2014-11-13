@@ -1,0 +1,52 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="fa9e85fb-f89e-467b-9d06-771e6cdf0e1d"
+	Name="BBMS Transactions Query"
+	Description="BBMS Transactions Pending is Status = 0"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="BBMSTRANACTION"
+	common:SecurityUIFolder="REVENUE"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_BBMSTRANSACTIONS">
+		<ViewSQL>
+			<![CDATA[
+select 
+	TransactionGUID as ID,
+	DonationTransactionsID,
+	ClientDonationsID,
+	AddedByUserID,
+	cast (DateAdded as date) as DateAdded,
+	convert (nvarchar(20), dateadded, 14) as DateAddedTime,
+	XMLObjectData,
+	LastName,
+	Status
+	
+from 
+	dbo.DonationTransactions
+		
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="DonationTransactionsID" Caption="DonationTransactionsID" DataType="Integer" />
+			<OutputField Name="ClientDonationsID" Caption="ClientDonationsID" DataType="Integer" />
+			<OutputField Name="AddedByUserID" Caption="AddedByUserID" DataType="Integer" />
+			<OutputField Name="DateAdded" Caption="DateAdded" DataType="Date" />
+			<OutputField Name="DateAddedTime" Caption="DateAddedTime" DataType="String" />
+			<OutputField Name="XMLObjectData" Caption="XMLObjectData" DataType="String" />
+			<OutputField Name="LastName" Caption="LastName" DataType="String" />
+			<OutputField Name="Status" Caption="Status" DataType="Integer" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
