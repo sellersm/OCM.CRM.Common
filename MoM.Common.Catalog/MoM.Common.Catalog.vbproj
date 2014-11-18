@@ -674,6 +674,14 @@
   <ItemGroup>
     <EmbeddedResource Include="Query Views\BBMS.DonationTransactions.Query.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Website.Batch.Donations.Query.xml" />
+    <Content Include="Website.Donations.Query.xml" />
+    <Content Include="Website.Signups.Query.xml" />
+    <EmbeddedResource Include="Website\Website.Batch.Donations.Query.xml" />
+    <EmbeddedResource Include="Website\Website.Donations.Query.xml" />
+    <EmbeddedResource Include="Website\Website.Signups.Query.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

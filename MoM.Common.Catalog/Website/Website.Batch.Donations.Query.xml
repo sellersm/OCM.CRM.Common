@@ -1,0 +1,196 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="02351673-5F2E-45FD-9F42-A15C08204B7A"
+	Name="Website Donation Batches"
+	Description="Information on Website Donation batches"
+	Author="Cary Mayeda"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="BATCHREVENUE"
+	common:SecurityUIFolder="Website"
+	>
+	<!-- 
+	Remarks:   Used to assist with processing BBIS account signups.
+
+	History:
+	Date            Modified By     Comments
+	17-Nov-2014		CMayeda			Added XML Data and moved from Child to Common
+	
+	-->
+
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_WEBSITE_DONATION_BATCHES">
+		<ViewSQL>
+			<![CDATA[
+
+with DonorInfo as
+(
+select 
+	bbis.ID,
+	item.value('FIELD[1]', 'nvarchar(255)') as FieldName,
+	item.value('NEWVALUE[1]', 'nvarchar(255)') as Value
+from 
+	dbo.BATCHBBNCDONATION bbis
+	inner join dbo.BATCH b on bbis.BATCHID = b.ID
+	cross apply bbis.DONORINFORMATIONALLFIELDS.nodes ('/DONORINFORMATIONALLFIELDS/ITEM') t(item)
+where batchnumber like 'W%'
+),
+DonorAddressInformation as
+(select 
+	bbis.ID,
+	item.value('FIELD[1]', 'nvarchar(255)') as FieldName,
+	item.value('NEWVALUE[1]', 'nvarchar(255)') as Value
+from 
+	dbo.BATCHBBNCDONATION bbis
+	inner join dbo.BATCH b on bbis.BATCHID = b.ID
+	cross apply bbis.DONORADDRESSINFORMATIONALLFIELDS.nodes ('/DONORADDRESSINFORMATIONALLFIELDS/ITEM') t(item)
+where BATCHNUMBER like 'W%'
+)
+,
+GiftInformation as
+(select 
+	bbis.ID,
+	item.value('FIELD[1]', 'nvarchar(255)') as FieldName,
+	item.value('NEWVALUE[1]', 'nvarchar(255)') as Value
+from 
+	dbo.BATCHBBNCDONATION bbis
+	inner join dbo.BATCH b on bbis.BATCHID = b.ID
+	cross apply bbis.GIFTINFORMATION.nodes ('/GIFTINFORMATION/ITEM') t(item)
+where BATCHNUMBER like 'W%'
+),
+GiftAttributeInformation as
+(select 
+	bbis.ID,
+	item.value('FIELD[1]', 'nvarchar(255)') as FieldName,
+	item.value('NEWVALUE[1]', 'nvarchar(255)') as Value
+from 
+	dbo.BATCHBBNCDONATION bbis
+	inner join dbo.BATCH b on bbis.BATCHID = b.ID
+	cross apply bbis.GIFTATTRIBUTEINFORMATION.nodes ('/GIFTATTRIBUTEINFORMATION/ITEM') t(item)
+where BATCHNUMBER like 'W%'
+)
+
+select 
+	bbis.ID,
+	b.ID BATCHID,
+	bbis.DONORID as MATCHEDCONSTITUENTID,
+	b.BATCHNUMBER,
+	bbis.SEQUENCE,
+	c.LOOKUPID as MATCHEDCONSTITUENTLOOKUPID,
+	c.NAME  as MATCHEDCONSTITUENTNAME,
+	firstname.Value as FIRSTNAME,
+	lastname.Value as LASTNAME,
+	donoraddress.Value as DONORADDRESS,
+	donorcity.Value as DONORCITY,
+	donorstate.Value as DONORSTATE,
+	donorpostcode.Value as DONORPOSTCODE,
+	donorcountry.Value as DONORCOUNTRY,
+	giftamount.Value as GIFTAMOUNT,
+	giftdate.Value as GIFTDATE,
+	giftpaymentmethod.Value as PAYMENTMETHOD,
+	giftnameoncard.Value as NAMEONCARD,
+	giftcardtype.Value as CARDTYPE,	
+	giftcardexp.Value as EXPDATE,
+	rgfrequency.Value as RGFREQUENCY,
+	rgday.Value as RGDAY,
+	rgfinancialinstitution.Value as FINANCIALINSTITUTION,
+	rg1stpaymentprocessed.Value as RGPROCESSEDFIRSTPAYMENT,
+	giftcomment.Value as GIFTCOMMENT,
+	giftcorporate.Value as CORPORATEGIFT,
+	bbis.ORIGINPAGE,
+	bbis.DONORIDAUTOMATCH,
+	giftattrsponsorid.Value as ATTRIBUTESPONSORID,
+	giftattrchildid.Value as ATTRIBUTECHILDID,
+	case
+		when giftattrsponsorid.Value is null then 'no sponsor id attribute'
+		when giftattrsponsorid.Value = c.LOOKUPID then 'Sponsor ID attribute is the same as matched constituent'
+		else 'Sponsor ID attribute is NOT the same as matched constituent'
+	end as SPONSORIDATTRIBUTEMATCH,
+	case
+		when giftattrchildid.Value is null then 'no child id attribute'
+		when s.ID is not null then 'Matched constituent sponsors child in attribute'
+		when bbis.DONORID is null then 'not matched'
+		else 'Matched constituent does NOT sponsor child listed in attribute'
+	end as CHILDIDATTRIBUTEMATCH
+	
+from 
+	dbo.BATCHBBNCDONATION bbis
+	inner join dbo.BATCH b on bbis.BATCHID = b.ID
+    left join DonorInfo firstname on firstname.ID = bbis.ID and coalesce (firstname.FieldName,'') = 'First name'
+    left join DonorInfo lastname on lastname.ID = bbis.ID and coalesce(lastname.FieldName,'') = 'Last name'
+    left join DonorAddressInformation donoraddress on donoraddress.ID = bbis.ID and coalesce (donoraddress.FieldName, '') = 'Address'
+    left join DonorAddressInformation donorcity on donorcity.ID = bbis.ID and coalesce (donorcity.FieldName, '') = 'City'
+    left join DonorAddressInformation donorstate on donorstate.ID = bbis.ID and coalesce (donorstate.FieldName, '') = 'State'
+    left join DonorAddressInformation donorpostcode on donorpostcode.ID = bbis.ID and coalesce (donorpostcode.FieldName, '') = 'Post code'
+    left join DonorAddressInformation donorcountry on donorcountry.ID = bbis.ID and coalesce (donorcountry.FieldName, '') = 'Country'
+	left join GiftInformation giftamount on giftamount.ID = bbis.ID and coalesce (giftamount.FieldName, '') = 'Amount'
+	left join GiftInformation giftdate on giftdate.ID = bbis.ID and coalesce (giftdate.FieldName, '') = 'Date'
+	left join GiftInformation giftpaymentmethod on giftpaymentmethod.ID = bbis.ID and coalesce (giftpaymentmethod.FieldName, '') = 'Payment method'
+	left join GiftInformation giftnameoncard on giftnameoncard.ID = bbis.ID and coalesce (giftnameoncard.FieldName, '') = 'Name on card'
+	left join GiftInformation giftcardtype on giftcardtype.ID = bbis.ID and coalesce (giftcardtype.FieldName, '') = 'Card type'
+	left join GiftInformation giftcardexp on giftcardexp.ID = bbis.ID and coalesce (giftcardexp.FieldName, '') = 'Expires on'
+	left join GiftInformation giftcomment on giftcomment.ID = bbis.ID and coalesce (giftcomment.FieldName, '') = 'Comments'
+	left join GiftInformation rgfinancialinstitution on rgfinancialinstitution.ID = bbis.ID and coalesce (rgfinancialinstitution.FieldName, '') = 'Financial institution'
+	left join GiftInformation rgfrequency on rgfrequency.ID = bbis.ID and coalesce (rgfrequency.FieldName, '') = 'Frequency'
+	
+	left join GiftInformation rgday on rgday.ID = bbis.ID and coalesce (rgday.FieldName, '') = 'Day'
+	left join GiftInformation rg1stpaymentprocessed on rg1stpaymentprocessed.ID = bbis.ID and coalesce (rg1stpaymentprocessed.FieldName, '') = 'First payment processed'
+	left join GiftInformation giftcorporate on giftcorporate.ID = bbis.ID and coalesce (giftcorporate.FieldName, '') = 'Corporate gift'
+	left join GiftAttributeInformation giftattrsponsorid on giftattrsponsorid.ID = bbis.ID and coalesce (giftattrsponsorid.FieldName, '') = 'BBNC Sponsorship Payment Sponsor ID'
+	left join GiftAttributeInformation giftattrchildid on giftattrchildid.ID = bbis.ID and coalesce (giftattrchildid.FieldName, '') = 'BBNC Sponsorship Payment Child ID'
+    left join dbo.CONSTITUENT c on bbis.DONORID = c.ID
+	left join dbo.SPONSORSHIP s on c.ID = s.CONSTITUENTID and s.STATUSCODE = 1 and s.SPONSORSHIPOPPORTUNITYID in (select ID from dbo.SPONSORSHIPOPPORTUNITY where LOOKUPID = upper(giftattrchildid.Value))
+		    
+
+]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="ID" Caption="System record ID" Category="System Fields" />
+			<OutputField Name="BATCHID" Caption="Batch System record ID" Category="System Fields" />
+			<OutputField Name="MATCHEDCONSTITUENTID" Caption="Matched Constituent System recordID" Category="System Fields" />
+			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+			<OutputField Name="SEQUENCE" Caption="Sequence" DataType="Integer" />
+			<OutputField Name="MATCHEDCONSTITUENTLOOKUPID" Caption="Matched Constituent Lookup ID" DataType="String" />
+			<OutputField Name="MATCHEDCONSTITUENTNAME" Caption="Matched Constituent Name" DataType="String" />
+			<OutputField Name="FIRSTNAME" Caption="Donor First Name" DataType="String" />
+			<OutputField Name="LASTNAME" Caption="Donor Last Name" DataType="String" />
+			<OutputField Name="DONORADDRESS" Caption="Donor Address" DataType="String" />
+			<OutputField Name="DONORCITY" Caption="Donor City" DataType="String" />
+			<OutputField Name="DONORSTATE" Caption="Donor State" DataType="String" />
+			<OutputField Name="DONORPOSTCODE" Caption="Donor Post Code" DataType="String" />
+			<OutputField Name="DONORCOUNTRY" Caption="Donor Country" DataType="String" />
+			<OutputField Name="GIFTAMOUNT" Caption="Gift Amount" DataType="Money" />
+			<OutputField Name="GIFTDATE" Caption="Gift Date" DataType="Date" />
+			<OutputField Name="PAYMENTMETHOD" Caption="Payment Method" DataType="String" />
+			<OutputField Name="NAMEONCARD" Caption="Name on Card" DataType="String" />
+			<OutputField Name="CARDTYPE" Caption="Card Type" DataType="String" />
+			<OutputField Name="EXPDATE" Caption="Expiration Date" DataType="String" />
+			<OutputField Name="RGFREQUENCY" Caption="Recurring Gift Frequency" DataType="String" />
+			<OutputField Name="RGDAY" Caption="Recurring Gift Day" DataType="TinyInt" />
+			<OutputField Name="FINANCIALINSTITUTION" Caption="Recurring Gift Financial Institution" DataType="String" />
+			<OutputField Name="RGPROCESSEDFIRSTPAYMENT" Caption="Recurring Gift 1st Payment Processed" DataType="String" />
+			<OutputField Name="GIFTCOMMENT" Caption="Comment" DataType="String" />
+			<OutputField Name="CORPORATEGIFT" Caption="Corporate Gift" DataType="Boolean" />
+			<OutputField Name="ORIGINPAGE" Caption="Website page of origin" DataType="String" />
+			<OutputField Name="DONORIDAUTOMATCH" Caption="Donor ID Auto Match" DataType="String" />
+			<OutputField Name="ATTRIBUTESPONSORID" Caption="Attribute - Sponsor Lookup ID" DataType="String" />
+			<OutputField Name="ATTRIBUTECHILDID" Caption="Attributte - Child Lookup ID" DataType="String" />
+			<OutputField Name="SPONSORIDATTRIBUTEMATCH" Caption="Sponsor Lookup ID Matches" DataType="String" />
+			<OutputField Name="CHILDIDATTRIBUTEMATCH" Caption="Child Lookup ID Matches" DataType="String" />
+		</OutputFields>
+	</Output>
+
+										
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="MATCHEDCONSTITUENTID" PathAlias="Matched Constituent"/>
+		<AddRelatedView RelatedView="V_QUERY_BATCH" RelatedField="ID" Field="BATCHID" PathAlias="Batch"/>
+	</RelationshipOperations>
+</QueryViewSpec>
+

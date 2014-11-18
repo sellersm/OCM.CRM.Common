@@ -67,7 +67,9 @@
 	17-Apr-2013		CMayeda			Added Revenue.FindDistributionTotalsNotEqualToRevenueAmount.Query.xml
 	23-May-2013		CMayeda			Added InteractionExtension.RevenueInteractionList.DataList.xml
 										  InteractionExtension.ChildCorrespondenceInteractionList.DataList.xml
-										  TK-01415
+										  TK-01415							
+	18-Nov-2014		CMayeda		Added Website.Batch.Donations.Query.xml
+	
 	-->
 
 
@@ -220,6 +222,9 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.PartiallyPaidInstallments.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Revenue.FindDistributionTotalsNotEqualToRevenueAmount.Query.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Statements.Dates.Query.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Website.Batch.Donations.Query.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Website.Donations.Query.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Website.Signups.Query.xml" />
 
 		<!-- Global Changes -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.Delete.GlobalChange.xml" />
