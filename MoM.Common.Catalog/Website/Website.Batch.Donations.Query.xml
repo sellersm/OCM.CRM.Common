@@ -7,7 +7,7 @@
 	Author="Cary Mayeda"
 	IsRoot="true"
 	PrimaryKeyField="ID"
-	RecordType="BATCHREVENUE"
+	RecordType="CONSTITUENT"
 	common:SecurityUIFolder="Website"
 	>
 	<!-- 
@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	17-Nov-2014		CMayeda			Added XML Data and moved from Child to Common
+	20-Nov-2014		CMayeda			Added Designation and changed record type to CONSTITUENT
 	
 	-->
 
@@ -73,9 +74,9 @@ where BATCHNUMBER like 'W%'
 )
 
 select 
-	bbis.ID,
+	bbis.DONORID as ID,
+	bbis.ID as BATCHROWID,
 	b.ID BATCHID,
-	bbis.DONORID as MATCHEDCONSTITUENTID,
 	b.BATCHNUMBER,
 	bbis.SEQUENCE,
 	c.LOOKUPID as MATCHEDCONSTITUENTLOOKUPID,
@@ -87,8 +88,19 @@ select
 	donorstate.Value as DONORSTATE,
 	donorpostcode.Value as DONORPOSTCODE,
 	donorcountry.Value as DONORCOUNTRY,
-	giftamount.Value as GIFTAMOUNT,
 	giftdate.Value as GIFTDATE,
+	giftamount.Value as GIFTAMOUNT,
+	stuff((	select 
+				'  |  ' + 
+				case 
+					when desig1.USERID = 'RG-WEB' then 'Autopay Signup'
+					when desig1.USERID = 'RG-WEB-PAY' then 'Sponsorship Payment'
+					when desig1.VANITYNAME <> desig1.USERID then desig1.USERID + ' ' + desig1.VANITYNAME 
+					else desig1.USERID 
+				end
+		    from dbo.BATCHBBNCDONATIONSPLIT split1 join dbo.DESIGNATION desig1 on split1.DESIGNATIONID = desig1.ID 
+	       where bbis.ID = split1.BATCHBBNCDONATIONID 
+	       for xml path('')), 1, 5, '') as DESIGNATION,
 	giftpaymentmethod.Value as PAYMENTMETHOD,
 	giftnameoncard.Value as NAMEONCARD,
 	giftcardtype.Value as CARDTYPE,	
@@ -114,9 +126,9 @@ select
 		when bbis.DONORID is null then 'not matched'
 		else 'Matched constituent does NOT sponsor child listed in attribute'
 	end as CHILDIDATTRIBUTEMATCH
-	
+		
 from 
-	dbo.BATCHBBNCDONATION bbis
+	dbo.BATCHBBNCDONATION bbis	
 	inner join dbo.BATCH b on bbis.BATCHID = b.ID
     left join DonorInfo firstname on firstname.ID = bbis.ID and coalesce (firstname.FieldName,'') = 'First name'
     left join DonorInfo lastname on lastname.ID = bbis.ID and coalesce(lastname.FieldName,'') = 'Last name'
@@ -151,9 +163,9 @@ from
 	<!-- describe each field in the view output -->
 	<Output>
 		<OutputFields>
-			<OutputField Name="ID" Caption="System record ID" Category="System Fields" />
+			<OutputField Name="ID" Caption="Matched Constituent System recordID" Category="System Fields" />
+			<OutputField Name="BATCHROWID" Caption="Batch Row System record ID" Category="System Fields" />
 			<OutputField Name="BATCHID" Caption="Batch System record ID" Category="System Fields" />
-			<OutputField Name="MATCHEDCONSTITUENTID" Caption="Matched Constituent System recordID" Category="System Fields" />
 			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
 			<OutputField Name="SEQUENCE" Caption="Sequence" DataType="Integer" />
 			<OutputField Name="MATCHEDCONSTITUENTLOOKUPID" Caption="Matched Constituent Lookup ID" DataType="String" />
@@ -165,8 +177,9 @@ from
 			<OutputField Name="DONORSTATE" Caption="Donor State" DataType="String" />
 			<OutputField Name="DONORPOSTCODE" Caption="Donor Post Code" DataType="String" />
 			<OutputField Name="DONORCOUNTRY" Caption="Donor Country" DataType="String" />
-			<OutputField Name="GIFTAMOUNT" Caption="Gift Amount" DataType="Money" />
 			<OutputField Name="GIFTDATE" Caption="Gift Date" DataType="Date" />
+			<OutputField Name="GIFTAMOUNT" Caption="Gift Amount" DataType="Money" />
+			<OutputField Name="DESIGNATION" Caption="Designation" DataType="String" />
 			<OutputField Name="PAYMENTMETHOD" Caption="Payment Method" DataType="String" />
 			<OutputField Name="NAMEONCARD" Caption="Name on Card" DataType="String" />
 			<OutputField Name="CARDTYPE" Caption="Card Type" DataType="String" />
@@ -180,7 +193,7 @@ from
 			<OutputField Name="ORIGINPAGE" Caption="Website page of origin" DataType="String" />
 			<OutputField Name="DONORIDAUTOMATCH" Caption="Donor ID Auto Match" DataType="String" />
 			<OutputField Name="ATTRIBUTESPONSORID" Caption="Attribute - Sponsor Lookup ID" DataType="String" />
-			<OutputField Name="ATTRIBUTECHILDID" Caption="Attributte - Child Lookup ID" DataType="String" />
+			<OutputField Name="ATTRIBUTECHILDID" Caption="Attribute - Child Lookup ID" DataType="String" />
 			<OutputField Name="SPONSORIDATTRIBUTEMATCH" Caption="Sponsor Lookup ID Matches" DataType="String" />
 			<OutputField Name="CHILDIDATTRIBUTEMATCH" Caption="Child Lookup ID Matches" DataType="String" />
 		</OutputFields>
@@ -189,7 +202,7 @@ from
 										
 
 	<RelationshipOperations>
-		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="MATCHEDCONSTITUENTID" PathAlias="Matched Constituent"/>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="ID" PathAlias="Matched Constituent"/>
 		<AddRelatedView RelatedView="V_QUERY_BATCH" RelatedField="ID" Field="BATCHID" PathAlias="Batch"/>
 	</RelationshipOperations>
 </QueryViewSpec>
