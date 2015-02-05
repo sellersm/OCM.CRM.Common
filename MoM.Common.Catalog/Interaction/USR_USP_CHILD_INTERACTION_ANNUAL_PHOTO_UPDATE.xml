@@ -16,6 +16,7 @@
     20-Feb-2014		Trucmai			Initial Version
 	10-Mar-2014		Memphis			add the Interaction Comment:  insert the char(13) + char(10) values for a CR/LF in between current Comment and newly added Comment
 	13-Mar-2014		Memphis			added the Completion Date if the Interaction is already completed.
+	04-Feb-2015		Memphis			added code to look for current year instead of hard-coded year
 	-->	
 
 	<CreateProcedureSQL>
@@ -37,6 +38,8 @@ begin try
 				values (cast(@ID as nvarchar(MAX)));
 			end
 
+		-- 02/04/15 Memphis: we now look for interactions for this current year, as of date this is run
+		declare @expectedDateYear integer = year(getdate());
 
 		-- build a temporary table containing the values from the XML
 		declare @TempTbl table (
@@ -135,7 +138,7 @@ begin try
 			join dbo.interactioncategory ic on ic.id = isc.interactioncategoryid
 			where (((ic.name = 'Child Field Memo' and isc.name = 'Unusable Annual Update Photo') 
 			or (ic.name = 'Child Annual Update' and isc.name = 'Annual Photo Update'))
-			and year(i.expecteddate) = 2014
+			and year(i.expecteddate) = @expectedDateYear -- 2014
 			and i.constituentid = @ConsitutentID);
 
 		  End
