@@ -26,6 +26,7 @@
 	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
 	13-Jun-2013		CMayeda			Added PRINTBLACKOUTLABEL, COMPLETEDAFTERCANCELLATIONCODE
 	10-Oct-2013		Memphis			Added ORIGINALLETTERSEQUENCEID
+	25-Feb-2015		CMayeda			Fixed "Additional Info" tab not being displayed when there is no Interaction Extension row.
 	-->
 	<SPDataForm>
 		<LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
@@ -82,35 +83,39 @@ as
 	set @DATALOADED = 0
 	set @TSLONG = 0
 
+	-- Check if the interaction extension row exists 
 	select @DATALOADED = 1 
-	from dbo.USR_INTERACTIONEXTENSION
-	where ID = @ID
+	  from dbo.USR_INTERACTIONEXTENSION
+	 where ID = @ID
 	
+	-- If there isn't already an interaction extension row, create it
 	if @DATALOADED = 0
-		begin
-			declare @CHANGEAGENTID uniqueidentifier
+	begin
+		declare @CHANGEAGENTID uniqueidentifier
 
-			if @CHANGEAGENTID is null  
-				exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+		if @CHANGEAGENTID is null  
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
 
-			declare @CURRENTDATE datetime
-			set @CURRENTDATE = getdate()
+		declare @CURRENTDATE datetime
+		set @CURRENTDATE = getdate()
 
-			insert dbo.USR_INTERACTIONEXTENSION
-					(ID, 						
-					ADDEDBYID, 
-					CHANGEDBYID, 
-					DATEADDED, 
-					DATECHANGED)
+		insert dbo.USR_INTERACTIONEXTENSION
+			(ID, 						
+			ADDEDBYID, 
+			CHANGEDBYID, 
+			DATEADDED, 
+			DATECHANGED)
 			
-					values 
-					(@ID, 	
-					@CHANGEAGENTID, 
-					@CHANGEAGENTID, 
-					@CURRENTDATE, 
-					@CURRENTDATE)
-		end
+			values 
+			(@ID, 	
+			@CHANGEAGENTID, 
+			@CHANGEAGENTID, 
+			@CURRENTDATE, 
+			@CURRENTDATE)
+	end
 		
+	set @DATALOADED = 0
+	
 	-- populate the output parameters, which correspond to fields on the form.  Note that
 	-- we set @DATALOADED = 1 to indicate that the load was successful.  Otherwise, the system
 	-- will display a "no data loaded" message.  Also note that we fetch the TSLONG so that concurrency
