@@ -642,7 +642,7 @@
     <EmbeddedResource Include="Statements\Statements.Dates.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Query Views\Revenue.InstallmentBalanceGreaterThanRGAmount.Query.xml" />
+    <EmbeddedResource Include="Query Views\Revenue.CCToken.Query.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Query Views\BBIS.ErrorLog.Query.xml" />
@@ -678,6 +678,9 @@
     <EmbeddedResource Include="Website\Website.Batch.Donations.Query.xml" />
     <EmbeddedResource Include="Website\Website.Donations.Query.xml" />
     <EmbeddedResource Include="Website\Website.Signups.Query.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Query Views\Revenue.InstallmentBalanceGreaterThanRGAmount.Query.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

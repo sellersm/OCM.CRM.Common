@@ -1,0 +1,49 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="25609722-9034-4820-90DC-3D3982CBD961"
+	Name="Revenue CC Token Query"
+	Description="This is used to find credit card token id"
+	Author="Caru Mayeda"
+	IsRoot="false"
+	PrimaryKeyField="ID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Revenue"
+	>
+	<!-- 
+	Remarks:	
+
+	History:
+	Date            Modified By     Comments
+	26-Feb-2015		CMayeda			Initial Version
+	-->
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_REVENUE_CCTOKEN">
+		<ViewSQL>
+			<![CDATA[
+select 
+	r_sched.ID,
+	cc.CREDITCARDTOKEN
+from 
+	dbo.REVENUESCHEDULE r_sched
+	join dbo.CREDITCARD cc on cc.ID = r_sched.CREDITCARDID
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="CREDITCARDTOKEN" Caption="Credit Card Token ID" DataType="Guid" />
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddToParentView ParentView="V_QUERY_REVENUE" ParentViewRelatedField="ID" Field="ID" PathAlias="Credit Card Token"></AddToParentView>
+	</RelationshipOperations>
+
+</QueryViewSpec>
+
