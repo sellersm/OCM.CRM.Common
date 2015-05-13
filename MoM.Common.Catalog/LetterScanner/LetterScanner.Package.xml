@@ -49,6 +49,11 @@
 									SponsorMailing2014LetterScanner.Add.xml
 									SponsorMailing2014LetterScanner.Task.xml
 									USR_USP_SPONSORMAILING2014_LETTERSCANNER.xml
+
+	27-Apr-2015		Memphis			Added	SponsorRetention2015LetterScanner.Add.xml
+											SponsorRetention2015LetterScanner.Task.xml
+											USR_USP_SPONSORRETENTION_2015_LETTERSCANNER.xml
+									
 	-->	
 	
 
@@ -67,6 +72,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORAPPEAL_LETTERSCANNER.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_CRM_ANNUAL_LETTER_SCANNER.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORMAILING2014_LETTERSCANNER.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORRETENTION_2015_LETTERSCANNER.xml" />
 
 		<!-- forms-->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildLetterBarCode.Add.xml" />
@@ -77,6 +83,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorAppealLetterScanner.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_AnnualLetterScanner.Add.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorMailing2014LetterScanner.Add.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorRetention2015LetterScanner.Add.xml" />
 
 
 		<!-- DataLists-->
@@ -93,6 +100,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorAppealLetterScanner.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.CRM_AnnualLetterScanner.Task.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorMailing2014LetterScanner.Task.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorRetention2015LetterScanner.Task.xml" />
 
 		<!-- Query -->
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ScannerLog.Query.xml" />

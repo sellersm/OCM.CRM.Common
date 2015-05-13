@@ -189,6 +189,13 @@
     <Compile Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormUIModel.vb" />
+    <Compile Include="Sponsor Retention 2015 Letter Scanner\SponsorRetention2015LetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb">
+      <DependentUpon>SponsorRetention2015LetterScannerAddDataFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Sponsor Retention 2015 Letter Scanner\SponsorRetention2015LetterScannerAddDataFormUIModel.CodeGen.vb">
+      <DependentUpon>SponsorRetention2015LetterScannerAddDataFormUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Sponsor Retention 2015 Letter Scanner\SponsorRetention2015LetterScannerAddDataFormUIModel.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.vb" />
@@ -218,6 +225,9 @@
     </None>
     <None Include="..\MoM.Common.Catalog\LetterScanner\CRM Annual Letter Scanner\CRM_AnnualLetterScanner.Add.xml">
       <Link>LinkedSpecs\CRM_AnnualLetterScanner.Add.xml</Link>
+    </None>
+    <None Include="..\MoM.Common.Catalog\LetterScanner\Sponsor Retention 2015 Letter Scanner\SponsorRetention2015LetterScanner.Add.xml">
+      <Link>LinkedSpecs\SponsorRetention2015LetterScanner.Add.xml</Link>
     </None>
     <Content Include="CRM AnnualLetterScanner\CRMAnnualLetterScannerAddDataFormUIModel.xml">
       <DependentUpon>CRMAnnualLetterScannerAddDataFormUIModel.vb</DependentUpon>
@@ -256,6 +266,7 @@
     <Content Include="htmlforms\RunOurSqlCommandsEditDataForm.html" />
     <Content Include="htmlforms\SponsorAppealLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
+    <Content Include="htmlforms\SponsorRetention2015LetterScannerAddDataForm.html" />
     <Content Include="htmlforms\UpdateChildInteractionsGlobalChange.html" />
     <Content Include="Interaction\UpdateChildInteractionsGlobalChangeUIModel.xml">
       <DependentUpon>UpdateChildInteractionsGlobalChangeUIModel.vb</DependentUpon>
@@ -265,6 +276,9 @@
     <Content Include="Run SQL Command Utility\RunOurSqlCommandsEditDataFormUIModel.xml" />
     <Content Include="Sponsor Appeal Letter Scanner\SponsorAppealLetterScannerAddDataFormUIModel.xml" />
     <Content Include="Sponsor Mailing 2014 Letter Scanner\SponsorMailing2014LetterScannerAddDataFormUIModel.xml" />
+    <Content Include="Sponsor Retention 2015 Letter Scanner\SponsorRetention2015LetterScannerAddDataFormUIModel.xml">
+      <DependentUpon>SponsorRetention2015LetterScannerAddDataFormUIModel.vb</DependentUpon>
+    </Content>
     <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
       <Link>LinkedSpecs\Interaction Extension.View.xml</Link>
