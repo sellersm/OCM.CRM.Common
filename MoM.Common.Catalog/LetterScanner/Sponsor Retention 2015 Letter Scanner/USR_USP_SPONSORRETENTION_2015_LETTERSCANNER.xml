@@ -20,6 +20,10 @@
 								   - Major donor should be in a specific segment...
 								   - It's possible that the Finder Number can be "empty", will have a -1 value in it,
 									 if it does, then use the Appeal ID value
+									 
+	19-May-2015		Memphis			Updated to correctly follow V2 requirements docs from Pamela:
+										- check for an existing Child Interaction before creating a new one
+										- fix the Expected Date to be last day of month that's 3 months ahead
 	-->
 
 	<CreateProcedureSQL>
@@ -59,8 +63,9 @@ begin
   declare @SponsorID as uniqueidentifier
   declare @SponsorLetterSequenceID as int
   declare @SponsorLetterSubcategoryID as uniqueidentifier
-  declare @StatusCodeCompleted as tinyint
-  declare @StatusCodeCancelled as tinyint
+  --declare @StatusCodeCompleted as tinyint
+  --declare @StatusCodeCancelled as tinyint
+  declare @StatusCodePending as tinyint = 1;
   declare @TempTable TABLE(SponsorLetterSequenceID int)
   declare @isMajorDonor bit = 0;   -- flag that identifies if this is a major donor appeal letter, if so then won't have child id and need to find all its sponsored kids
   declare @appealId uniqueidentifier;
@@ -73,6 +78,11 @@ begin
   declare @interactionComment nvarchar(100) = 'from Sponsor 2015 Appeal scanner';
   declare @isCancelledSponsorship bit = 0;
   declare @isChildIneligible bit = 0;
+  declare @isChildInteractionExisting bit = 0;
+  --Expected Date is last day of month, 3 months in advance
+  declare @expectedDate date = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);
+  declare @childInteractionSponsorId uniqueidentifier = null;
+  declare @childInteractionId uniqueidentifier = null;
   
   --   the RESPONSECATEGORY will be whatever they want to use for each Response,
   --   the RESPONSEID will point to the Response of "Yes" or whatever it is for the given RESPONSECATEGORY
@@ -96,8 +106,8 @@ begin
   set @InteractionTypeCode = (select ID from dbo.INTERACTIONTYPECODE where LOWER(DESCRIPTION) = 'mail')
 
   -- Set constants
-  set @StatusCodeCompleted = 2;
-  set @StatusCodeCancelled = 4;
+--  set @StatusCodeCompleted = 2;
+--  set @StatusCodeCancelled = 4;
 
   set @ExtraLetter = 0
   set @ExceptionOccurred = 0
@@ -262,7 +272,9 @@ begin
     end
         
   -- child Spiritual Appeal Response interaction creation pre-check
-  -- only care about ineligible children & cancelled sponsorships: nothing else matters...
+  -- Checking for ineligible children, cancelled sponsorships, 
+  --  and if there is an existing Interaction for this Child with same subcategory within past 12 months
+  --    (based on Expected Date)
   if @ExceptionOccurred = 0
   	begin
     	-- Child departed (ineligible)
@@ -271,6 +283,7 @@ begin
     		begin
     			set @ExceptionOccurred = 1;
 				set @isChildIneligible = 1;
+				set @isChildInteractionExisting = 0;
     			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is ineligible -  DO NOT SEND letter to field. ';
 				set @interactionComment = 'Ineligible - child is ineligible';
     		end
@@ -297,30 +310,54 @@ begin
 					begin
           				set @ExceptionOccurred = 1;
 						set @isCancelledSponsorship = 1;
+						set @isChildInteractionExisting = 0;
           				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is no longer sponsored - DO NOT send letter to field. ';
 						set @interactionComment = 'Cancelled - child is no longer sponsored.';
 					end
               end
         end
+		
+	  -- only check for existing child interaction if this is NOT a major donor:  
+	  --   major donor children will be checked below
+	  if @ExceptionOccurred = 0 and @isMajorDonor = 0
+	  	begin
+			set @childInteractionId = null;
+			set @childInteractionSponsorId = null;			
+			
+			select 	@childInteractionId = dbo.INTERACTION.ID,
+					@childInteractionSponsorId = iex.SPONSORID
+			from dbo.INTERACTION
+				left join dbo.USR_INTERACTIONEXTENSION iex ON iex.ID = dbo.INTERACTION.ID
+			where (CONSTITUENTID = @ChildID 
+				and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID
+				and cast(getdate() as date) >= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
+			
+			-- did we find an existing Child Interaction?
+			if @childInteractionId is not null
+				begin
+					-- don't create another Child interaction:
+	  				set @ExceptionOccurred = 1;
+					set @isChildInteractionExisting = 1;
+	  				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child Interaction already exists within last 12 months. ';
+					set @interactionComment = 'Child Interaction already exists within last 12 months.';					
+				end
+		end
 
   	end
 
 
   -- create Spiritual Appeal Response interaction on the child:
-  set @Date = CONVERT(DATE,GETDATE())
+  --set @Date = CONVERT(DATE,GETDATE())
   set @NewID = NEWID()
 
-  if @ExceptionOccurred = 0 or @appealResponseCreated = 1
+  -- new for 2015 scanner: Set Child Interaction to Pending only, don't create interactions if 
+  --   cancelled, ineligible, etc.
+  if ((@ExceptionOccurred = 0 or @appealResponseCreated = 1) and (@isCancelledSponsorship = 0 and @isChildIneligible = 0 and @isChildInteractionExisting = 0))
     begin
       if @isMajorDonor = 0
-      	begin
-          declare @StatusCodeValue tinyint;
-          
-          if (@isCancelledSponsorship = 1 or @isChildIneligible = 1)
-            set @StatusCodeValue = @StatusCodeCancelled;
-          else
-            set @StatusCodeValue = @StatusCodeCompleted;
-
+      	begin          
+          --if (@isCancelledSponsorship = 0 and @isChildIneligible = 0)
+		  --	begin
       		INSERT INTO dbo.INTERACTION(
       			ID
       			,CONSTITUENTID
@@ -340,11 +377,11 @@ begin
       			@NewID
       			,@ChildID
       			,@InteractionTypeCode
-      			,@Date  --@expectedDate
+      			,@expectedDate
       			,@Date
-      			,@StatusCodeValue
+      			,@StatusCodePending  --  @StatusCodeValue
       			,@ChildEducationalAppealResponseSubcategoryID
-      			,'Spiritual Appeal Response'
+      			,'Retention Response Received'
 				,@interactionComment
       			,@ChangeAgentID
       			,@ChangeAgentID
@@ -353,134 +390,183 @@ begin
       			)
 
       		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
-      		ID, 
-      		COMPLETEDBYID, 	
-      		CHILDID,
-      		SPONSORID, 
-      		SCANSESSION, 
-      		CHILDPROJECTID, 
-			APPEALID,
-      		ADDEDBYID, 
-      		CHANGEDBYID, 
-      		DATEADDED, 
-      		DATECHANGED
+	      		ID, 
+	      		COMPLETEDBYID, 	
+	      		CHILDID,
+	      		SPONSORID, 
+	      		SCANSESSION, 
+	      		CHILDPROJECTID, 
+				APPEALID,
+	      		ADDEDBYID, 
+	      		CHANGEDBYID, 
+	      		DATEADDED, 
+	      		DATECHANGED
       		)
       		VALUES (
-      		@NewID, 
-      		@ChangeAgentID, 
-      		@ChildID,
-      		@SponsorID,
-      		@ScanSession, 
-      		@CurrentChildProjectID, 
-			@appealId,
-      		@ChangeAgentID, 
-      		@ChangeAgentID, 
-      		GETDATE(), 
-      		GETDATE()
+	      		@NewID, 
+	      		@ChangeAgentID, 
+	      		@ChildID,
+	      		@SponsorID,
+	      		@ScanSession, 
+	      		@CurrentChildProjectID, 
+				@appealId,
+	      		@ChangeAgentID, 
+	      		@ChangeAgentID, 
+	      		GETDATE(), 
+	      		GETDATE()
       		)
 
       		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interaction created.  '
+			--end
       	end
-    else
-      begin
-        -- this is a Major Donor, get all the children currently actively sponsored by this sponsor and
-        -- then create interactions for them all:
-        -- use this UFN:  USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR
-        insert @childIDList 
-    		select *
-    		from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
-        
-        -- get the number of sponsored children for use later in the scan results message:
-        select @sponsoredChildCount = count(*)
-        from @childIDList;
-        
-        -- loop through the child list to create the interaction & interaction extension records:
-        declare ChildrenCursor cursor local fast_forward for
-    		select
-    			SPONSORSHIPOPPORTUNITYCHILDID
-    		from
-    			@childIDList
-    	
-      	declare @SPONSORSHIPOPPORTUNITYCHILDID uniqueidentifier;
-      		
-      	open ChildrenCursor;
-      				
-      	fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
-            
-      	while (@@FETCH_STATUS = 0)
-      	begin					    
-          set @NewID = NEWID();
-          
-          -- get the child project id
-          set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @SPONSORSHIPOPPORTUNITYCHILDID)
-          
-          -- create the interactions
-      		INSERT INTO dbo.INTERACTION(
-      			ID
-      			,CONSTITUENTID
-      			,INTERACTIONTYPECODEID
-      			,EXPECTEDDATE
-      			,ACTUALDATE
-      			,STATUSCODE
-      			,INTERACTIONSUBCATEGORYID
-      			,OBJECTIVE
-            	,COMMENT
-      			,ADDEDBYID
-      			,CHANGEDBYID
-      			,DATEADDED
-      			,DATECHANGED
-      			)
-      		values ( 
-      			@NewID
-      			,@SPONSORSHIPOPPORTUNITYCHILDID
-      			,@InteractionTypeCode
-      			,@Date  --@expectedDate
-      			,@Date
-      			,@StatusCodeCompleted
-      			,@ChildEducationalAppealResponseSubcategoryID
-      			,'Spiritual Appeal Response'
-            	,@interactionComment
-      			,@ChangeAgentID
-      			,@ChangeAgentID
-      			,GETDATE()
-      			,GETDATE()
-            );
+	  else
+	      begin
+	        -- this is a Major Donor, get all the children currently actively sponsored by this sponsor and
+	        -- then create interactions for them all:
+	        -- use this UFN:  USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR
+	        insert @childIDList 
+			select *
+			from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
+	        
+	        -- get the number of sponsored children for use later in the scan results message:
+	        select @sponsoredChildCount = count(*)
+	        from @childIDList;
+	        
+	        -- loop through the child list to create the interaction & interaction extension records:
+	        declare ChildrenCursor cursor local fast_forward for
+			select SPONSORSHIPOPPORTUNITYCHILDID
+			from @childIDList
+	    	
+	      	declare @SPONSORSHIPOPPORTUNITYCHILDID uniqueidentifier;
+	      		
+	      	open ChildrenCursor;
+	      				
+	      	fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
+	            
+	      	while (@@FETCH_STATUS = 0)
+	      	begin					    
+	          	set @NewID = NEWID();
 
-      		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
-      		ID, 
-      		COMPLETEDBYID, 	
-      		CHILDID,
-      		SPONSORID, 
-      		SCANSESSION, 
-      		CHILDPROJECTID, 
-			APPEALID,
-      		ADDEDBYID, 
-      		CHANGEDBYID, 
-      		DATEADDED, 
-      		DATECHANGED
-      		)
-      		VALUES (
-      		@NewID, 
-      		@ChangeAgentID, 
-      		@SPONSORSHIPOPPORTUNITYCHILDID,
-      		@SponsorID,
-      		@ScanSession, 
-      		@CurrentChildProjectID, 
-			@appealId,
-      		@ChangeAgentID, 
-      		@ChangeAgentID, 
-      		GETDATE(), 
-      		GETDATE()
-      		)
-          
-          fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
-        end
-        
-        close ChildrenCursor;
-        
-    	set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interactions created.  ';
-            
-      end
+				-- get the child project id
+				set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @SPONSORSHIPOPPORTUNITYCHILDID)
+	          
+			  	-- check for an existing Child Interaction here:
+				set @childInteractionId = null;
+				set @childInteractionSponsorId = null;			
+				
+				select 	@childInteractionId = dbo.INTERACTION.ID,
+						@childInteractionSponsorId = iex.SPONSORID
+				from dbo.INTERACTION
+					left join dbo.USR_INTERACTIONEXTENSION iex ON iex.ID = dbo.INTERACTION.ID
+				where (CONSTITUENTID = @SPONSORSHIPOPPORTUNITYCHILDID 
+					and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID
+					and cast(getdate() as date) >= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
+				
+				-- did we find an existing Child Interaction?
+				if @childInteractionId is not null
+					begin
+						-- if the current major donor sponsor is the same as in the interaction, then don't create a new child interaction;
+						if @childInteractionSponsorId is not null and @childInteractionSponsorId = @sponsorId
+							begin
+								-- insert into scanner log for this exception:
+								insert into dbo.USR_LETTERSCANNERLOG(
+									LOGTYPECODE
+									,SCANSESSION
+									,[DESCRIPTION]
+									,SCANOUTCOME
+									,CHILDID
+									,SPONSORID
+									,CHILDPROJECTID
+									,LETTERSUBCATEGORYID
+									,ADDEDBYID
+									,CHANGEDBYID
+								)
+								values(
+									0  -- failure
+									,@ScanSession
+									,'Child Interaction already exists within last 12 months. '
+									,'Place letter in exception stack. '
+									,@SPONSORSHIPOPPORTUNITYCHILDID 
+									,@sponsorID
+									,@CurrentChildProjectID
+									,@ChildEducationalAppealResponseSubcategoryID
+									,@ChangeAgentID
+									,@ChangeAgentID
+								);
+
+							end
+					end
+			  	else
+					begin
+						-- create the interactions
+						INSERT INTO dbo.INTERACTION(
+							ID
+							,CONSTITUENTID
+							,INTERACTIONTYPECODEID
+							,EXPECTEDDATE
+							,ACTUALDATE
+							,STATUSCODE
+							,INTERACTIONSUBCATEGORYID
+							,OBJECTIVE
+							,COMMENT
+							,ADDEDBYID
+							,CHANGEDBYID
+							,DATEADDED
+							,DATECHANGED
+							)
+						values ( 
+							@NewID
+							,@SPONSORSHIPOPPORTUNITYCHILDID
+							,@InteractionTypeCode
+							,@expectedDate
+							,@Date
+							,@StatusCodePending 	--@StatusCodeCompleted
+							,@ChildEducationalAppealResponseSubcategoryID
+							,'Retention Response Received'
+							,@interactionComment
+							,@ChangeAgentID
+							,@ChangeAgentID
+							,GETDATE()
+							,GETDATE()
+						);
+
+						INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+							ID, 
+							COMPLETEDBYID, 	
+							CHILDID,
+							SPONSORID, 
+							SCANSESSION, 
+							CHILDPROJECTID, 
+							APPEALID,
+							ADDEDBYID, 
+							CHANGEDBYID, 
+							DATEADDED, 
+							DATECHANGED
+						)
+						VALUES (
+							@NewID, 
+							@ChangeAgentID, 
+							@SPONSORSHIPOPPORTUNITYCHILDID,
+							@SponsorID,
+							@ScanSession, 
+							@CurrentChildProjectID, 
+							@appealId,
+							@ChangeAgentID, 
+							@ChangeAgentID, 
+							GETDATE(), 
+							GETDATE()
+						)
+					
+					end
+
+				fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
+	        end
+	        
+	        close ChildrenCursor;
+	        
+	    	set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interactions created.  ';
+	            
+	      end
     end
 
 
