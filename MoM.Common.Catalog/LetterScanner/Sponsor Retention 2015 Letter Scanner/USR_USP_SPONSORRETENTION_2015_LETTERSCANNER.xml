@@ -24,6 +24,9 @@
 	19-May-2015		Memphis			Updated to correctly follow V2 requirements docs from Pamela:
 										- check for an existing Child Interaction before creating a new one
 										- fix the Expected Date to be last day of month that's 3 months ahead
+	
+	20-May-2015		Memphis			Fix bug with date logic to check for an existing Child Interaction, added 
+									declare @12MonthsAgo date = dateadd(yy, -1, getdate());
 	-->
 
 	<CreateProcedureSQL>
@@ -83,6 +86,7 @@ begin
   declare @expectedDate date = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);
   declare @childInteractionSponsorId uniqueidentifier = null;
   declare @childInteractionId uniqueidentifier = null;
+  declare @12MonthsAgo date = dateadd(yy, -1, getdate());		-- used in comparing against expecteddate when checking for existing child interaction
   
   --   the RESPONSECATEGORY will be whatever they want to use for each Response,
   --   the RESPONSEID will point to the Response of "Yes" or whatever it is for the given RESPONSECATEGORY
@@ -330,7 +334,7 @@ begin
 				left join dbo.USR_INTERACTIONEXTENSION iex ON iex.ID = dbo.INTERACTION.ID
 			where (CONSTITUENTID = @ChildID 
 				and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID
-				and cast(getdate() as date) >= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
+				and @12MonthsAgo <= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
 			
 			-- did we find an existing Child Interaction?
 			if @childInteractionId is not null
@@ -460,7 +464,7 @@ begin
 					left join dbo.USR_INTERACTIONEXTENSION iex ON iex.ID = dbo.INTERACTION.ID
 				where (CONSTITUENTID = @SPONSORSHIPOPPORTUNITYCHILDID 
 					and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID
-					and cast(getdate() as date) >= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
+					and @12MonthsAgo <= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
 				
 				-- did we find an existing Child Interaction?
 				if @childInteractionId is not null
