@@ -17,6 +17,7 @@ Public Class SponsorRetention2015LetterScannerAddDataFormUIModel
 	Private _ISTESTING As Boolean = False
 	Private _sponsorIdLength As Integer = 6
 	Private _childIdLength As Integer = 7
+	Private _appealCodeLength As Integer = 5 'the appeal code is: 10572
 
 
 	Private Sub SponsorRetention2015LetterScannerAddDataFormUIModel_Loaded(ByVal sender As Object, ByVal e As Blackbaud.AppFx.UIModeling.Core.LoadedEventArgs) Handles Me.Loaded
@@ -157,6 +158,9 @@ Public Class SponsorRetention2015LetterScannerAddDataFormUIModel
 				errorMessage = errorMessage + "Sponsor Lookup Id isn't a number."
 			End If
 
+			' New for 2015, the bar code value is:
+			'	10409110572115034555C228263
+			'	SponsorId, AppealCode, FinderNumber, ChildId [can be blank]
 			' Findernumber is between sponsor id and child id, which begins with "C":
 			' 100416585 is a sample findernumber, it's a BigInt in the DB
 			'
@@ -169,8 +173,8 @@ Public Class SponsorRetention2015LetterScannerAddDataFormUIModel
 				'If the ChildID is present then look for it this way:
 				'find the length of the start of the finder number:
 				childStartsAt = sBarCode.IndexOf("C")
-				finderLength = childStartsAt - _sponsorIdLength
-				resultString = sBarCode.Substring(_sponsorIdLength, finderLength)
+				finderLength = childStartsAt - (_sponsorIdLength + _appealCodeLength)
+				resultString = sBarCode.Substring((_sponsorIdLength + _appealCodeLength), finderLength)
 
 				'check the child lookup id since we should have one
 				'check if there's a child lookupid value at all:
@@ -188,7 +192,7 @@ Public Class SponsorRetention2015LetterScannerAddDataFormUIModel
 				End If
 			Else
 				'no child id means we must just start looking at the end of the sponsorid value:
-				resultString = sBarCode.Substring(_sponsorIdLength)
+				resultString = sBarCode.Substring((_sponsorIdLength + _appealCodeLength))
 			End If
 
 			If Not resultString.Equals(String.Empty) Then
@@ -243,7 +247,7 @@ Public Class SponsorRetention2015LetterScannerAddDataFormUIModel
 			If _appealName.HasValue Then
 				cmd.Parameters.AddWithValue("@AppealName", _appealName.Value.ToString())
 			Else
-				cmd.Parameters.AddWithValue("@AppealName", DBNull.Value)
+				cmd.Parameters.AddWithValue("@AppealName", "10572")	'DBNull.Value)
 			End If
 			cmd.Parameters.AddWithValue("@FinderNumber", _finderNumber)
 			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
