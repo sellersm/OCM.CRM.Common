@@ -16,6 +16,7 @@
 	Date            Modified By     Comments
 	05-Oct-2012		CMayeda			Initial Version
 	09-Oct-2012		CMayeda			Included interactinos with specific child id extension fields (e.g. UNAVAILABLECHILDID) to be cancelled.
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Could not find the financial sponsor.',16,1);
 	-->
 	
 	<CreateProcedureSQL>
@@ -48,10 +49,12 @@ begin
 	begin try
 	
 		if @sponsorshipID is null
-			RAISERROR 1000000 'Sponsorship ID cannot be null'
+			raiserror('Sponsorship ID cannot be null',16,1);
+			
 
 		if @sponsorshipOpportunityChildID is null
-			RAISERROR 1000000 'Sponsorship Opportunity Child ID cannot be null'
+			raiserror('Sponsorship Opportunity Child ID cannot be null',16,1);
+			
 			
 		-- Get ChangeAgent if none was passed into the sproc
 		if @changeAgentID is null  
@@ -60,21 +63,25 @@ begin
 		-- Get letter code table ids
 		select @childCountLetterVersion_OneChildLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('One Child Letter')
 		if @childCountLetterVersion_OneChildLetter is null 
-			RAISERROR 1000000 'Could not add child to interaction, because the id for the "One Child Letter" could not be found.'
+			raiserror('Could not add child to interaction, because the id for the "One Child Letter" could not be found.',16,1);
+			
 		
 		select @childCountLetterVersion_TwoChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Two Children Letter')
 		if @childCountLetterVersion_OneChildLetter is null 
-			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Two Children Letter" could not be found.'
+			raiserror('Could not add child to interaction, because the id for the "Two Children Letter" could not be found.',16,1);
+			
 		
 		select @childCountLetterVersion_MultipleChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Multiple Children Letter')
 		if @childCountLetterVersion_MultipleChildrenLetter is null 
-			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.'
+			raiserror('Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.',16,1);
+			
 			
 	
 		declare @financialSponsorID uniqueidentifier = null
 		set @financialSponsorID = dbo.USR_UFN_SPONSORSHIP_GETFINANCIALSPONSOR (@sponsorshipID)
 		if @financialSponsorID is null
-			RAISERROR 1000000 'Could not find the financial sponsor.'
+			raiserror('Could not find the financial sponsor.',16,1);
+			
 
 		declare @correspondentID uniqueidentifier = null
 		set @correspondentID = dbo.USR_UFN_SPONSORSHIP_GETCORRESPONDENT (@sponsorshipID)

@@ -16,6 +16,7 @@
 	13-Aug-2012		CMayeda			Initial Version
 	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix	
 	07-Oct-2012		CMayeda			Removed child letter from where clause, since it should display all interactions on a child's consitutent record.
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Interaction ID cannot be null',16,1);
 	-->
 
 	<!-- define the SP that returns the data for the datalist -->
@@ -40,11 +41,13 @@ as begin
 	begin try
 		select @interactionCategoryID_ChildFieldMemo = ID from dbo.INTERACTIONCATEGORY where lower (NAME) = lower (@interactionCategoryName_ChildFieldMemo)	
 		if @interactionCategoryID_ChildFieldMemo is null 
-			RAISERROR 1000000 @interactionCategoryChildFieldMemoIDError
+			raiserror(@interactionCategoryChildFieldMemoIDError,16,1);
+			
 	
 		select @interactionCategoryID_ChildLetter = ID from dbo.INTERACTIONCATEGORY where lower (NAME) = lower (@interactionCategoryName_ChildLetter)	
 		if @interactionCategoryID_ChildLetter is null 
-			RAISERROR 1000000 @interactionCategoryChildLetterIDError
+			raiserror(@interactionCategoryChildLetterIDError,16,1);
+			
 		
 	end try
 	begin catch

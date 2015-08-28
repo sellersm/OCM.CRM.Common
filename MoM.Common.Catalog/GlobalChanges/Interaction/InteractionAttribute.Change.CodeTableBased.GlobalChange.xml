@@ -16,6 +16,8 @@
     Date            Modified By     Comments
     6/7/2012        BElfstrom       Created
     9/2/2012        BElfstrom       Added WebUIComponent code
+	8/28/2015		Memphis			Updated call to Raiserror with new format:
+									raiserror('The new value field cannot be blank.',16,1);	
     
   Comments:
     This procedure deletes interaction atrtributes that are of data type code table.
@@ -108,7 +110,7 @@ as
   from ATTRIBUTECATEGORY where ID = @ATTRIBUTECATEGORYID
   
   if @ONLYALLOWONEPERRECORD is null
-  raiserror 50001 'An error occurred.  ONLYALLOWONEPERRECORD is not set.'
+	raiserror('An error occurred.  ONLYALLOWONEPERRECORD is not set.',16,1);	
 
    /* VALUE field - cannot be null */
     if not @VALUEATTRIBUTEPROCESS is null
@@ -117,10 +119,12 @@ as
         begin
         
         if @CODETABLEVALUETOREPLACE is null
-          raiserror 50001 'The value field cannot be blank.'
+			raiserror('The value field cannot be blank.',16,1);	
+          
         
         if @NEWCODETABLEVALUE is null
-          raiserror 50001 'The new value field cannot be blank.'
+			raiserror('The new value field cannot be blank.',16,1);	
+          
         
         set @SQL_SET = COALESCE(@SQL_SET,'') + @VALUECOLUMNNAME + ' = case when ' +  @VALUECOLUMNNAME  +' = ' + '''' + 
         convert(varchar(38),@CODETABLEVALUETOREPLACE) + '''' +

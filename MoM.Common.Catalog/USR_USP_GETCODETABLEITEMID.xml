@@ -23,6 +23,7 @@ History:
 Date            Modified By     Comments
 21-Apr-2012     CMayeda         Initial Version
 23-Apr-2012     Cmayeda         Changed SUSPECTOK parm to DESCRIPTIONMODIFIEDVALID
+28-Aug-2015		Memphis			Updated raiserror call: raiserror('Field office for Transfer Location is not configured.',16,1);
 -->
 	
 	<CreateProcedureSQL>
@@ -37,10 +38,11 @@ begin
 	begin try
 		-- Validate Parms
 		if @VBCONSTANT is null 
-			raiserror 1000000 'VBCONSTANT cannot be null';
+			raiserror('VBCONSTANT cannot be null',16,1);
+			
 
 		if @DESCRIPTIONMODIFIEDVALID is null 
-			raiserror 1000000 'SUSPECTOK cannot be null';								
+			raiserror('SUSPECTOK cannot be null',16,1);			
 		
 		declare @statusCode tinyint = null;		-- The STATUS enum value stored for the row specified in VBCONSTANT. Used to determine if the row is valid.
 		declare @status nvarchar(100) = null;	-- The STATUS translation stored for the row specified in VBCONSTANT.  Used in exceptions thrown.
@@ -66,14 +68,16 @@ begin
 		if @CODETABLEITEMID is null 		
 		begin
 			set @errormsg = 'VBCONSTANT - "' + @VBCONSTANT + '" was not found in USR_CODETABLEMANAGER'
-			raiserror 1000000 @errormsg;
+			raiserror(@errormsg,16,1);
+			
 		end
 	
 		-- If @VBCONSTANT is found but the status is not a valid status based on @DESCRIPTIONMODIFIEDVALID
 		if @statusCode > @ValidStatus		
 		begin
 			set @errormsg = 'VBCONSTANT - "' + @VBCONSTANT + '" is not valid. Status Code = "' + @status + '"'
-			raiserror 1000000 @errormsg
+			raiserror(@errormsg,16,1);
+			
 		end
 		
 	end try

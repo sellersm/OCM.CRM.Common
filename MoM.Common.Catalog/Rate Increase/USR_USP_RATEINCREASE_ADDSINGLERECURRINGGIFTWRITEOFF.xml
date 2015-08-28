@@ -13,7 +13,8 @@
 	History:
 	Date            Modified By     Comments
 	06-Apr-2013		CMayeda			Initial Version
-	-->
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Field office for Transfer Location is not configured.',16,1);
+-->
 
 	<CreateProcedureSQL>
 		<![CDATA[
@@ -50,7 +51,8 @@ begin
 	    
 		    select @REASONID = ID from dbo.WRITEOFFREASONCODE where DESCRIPTION = 'RI non-delinquent $5 reversal'
 		    if @REASONID is null 
-				RAISERROR 1000000 'Cannot find the RI non-delinquent $5 reversal Revenue Function code'
+				raiserror('Cannot find the RI non-delinquent $5 reversal Revenue Function code',16,1);
+				
 				
 		    select @recurringGiftFrequencyCode = FREQUENCYCODE from dbo.REVENUESCHEDULE where ID = @REVENUEID
 		    if @recurringGiftFrequencyCode = 3   -- Monthly

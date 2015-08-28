@@ -21,6 +21,7 @@
 	19-Jun-2013		Memphis			Added new output parms: SponsorName and SponsorSalutation, check for attribute that identifies an incorrect salutation
 	                                & sets flag to print blackout label.
 	27-Jun-2013		Memphis			Various fixes for Pamela...
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Field office for Transfer Location is not configured.',16,1);
 	-->	
 	
 	<CreateProcedureSQL>
@@ -144,7 +145,7 @@ begin
 
 	begin try
 		if @childLetterSubCategoryId is null
-			RAISERROR 1000000 'Unable to locate the interaction subcategory: Child Letter 1.'        
+			raiserror('Unable to locate the interaction subcategory: Child Letter 1.',16,1);			
 	end try
 
 	begin catch

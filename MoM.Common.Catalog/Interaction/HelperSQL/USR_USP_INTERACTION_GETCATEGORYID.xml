@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	27-Aug-2012		CMayeda			Initial Version
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('No ID was returned when creating the interaction.',16,1);	
 	-->
 	
 	<CreateProcedureSQL>
@@ -39,7 +40,8 @@ begin
 		 where	lower (NAME) = lower (@categoryName)
 
 		if 	@categoryID is null and @raiseErrorIfNotFound = 1
-			RAISERROR 1000000 @errorMsg
+			raiserror(@errorMsg,16,1);	
+			
 	end try
 	begin catch
 	    exec dbo.USP_RAISE_ERROR

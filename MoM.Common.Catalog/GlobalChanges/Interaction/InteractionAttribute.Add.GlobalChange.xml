@@ -16,6 +16,8 @@
     History:
     Date            Modified By     Comments
     9/2/2012        BElfstrom       Added WebUIComponent code
+	8/28/2015		Memphis			Updated Raiserror call with new format: 
+									raiserror('An error occured. Either DATATYPE or ONLYALLOWONEPERRECORD is null.',16,1);
   -->
 
   <CreateProcedureSQL>
@@ -80,7 +82,7 @@ as
   select @DATATYPE = DATATYPECODE, @ONLYALLOWONEPERRECORD = ONLYALLOWONEPERRECORD 
     from dbo.ATTRIBUTECATEGORY ac where ac.ID = @ATTRIBUTECATEGORYID 
   if @DATATYPE is null or @ONLYALLOWONEPERRECORD is null
-    raiserror 50001 'An error occured. Either DATATYPE or ONLYALLOWONEPERRECORD is null.'
+    raiserror('An error occured. Either DATATYPE or ONLYALLOWONEPERRECORD is null.',16,1);
 
   
   if @COMMENTTOADD <> ''  
@@ -105,7 +107,7 @@ as
         set @INSERT_INTO = 'VALUE, COMMENT, STARTDATE, ENDDATE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED'
         end
       else
-        raiserror 50001 'The number value is not valid.'
+		raiserror('The number value is not valid.',16,1);
             
   if @DATATYPE = @DATATYPE_TEXT
       begin
@@ -120,7 +122,7 @@ as
         set @INSERT_INTO = 'VALUE, COMMENT, STARTDATE, ENDDATE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED'
         end
       else
-        raiserror 50001 'The date value is not valid.'
+		raiserror('The date value is not valid.',16,1);
    
   if @DATATYPE = @DATATYPE_MONEY
      if isnumeric(@VALUETOADD) = @TRUE 
@@ -136,7 +138,7 @@ as
         DATEADDED, DATECHANGED'
         end
       else
-        raiserror 50001 'The value field is not numeric.'
+		raiserror('The value field is not numeric.',16,1);
           
     /* Convert yes/no or true/false to 1 or 0  */
     if @DATATYPE = @DATATYPE_BOOLEAN
@@ -147,7 +149,7 @@ as
         set @INSERT_INTO = 'BOOLEANCODE, COMMENT, STARTDATE, ENDDATE, ADDEDBYID, CHANGEDBYID, DATEADDED, DATECHANGED'
         end
       else
-        raiserror 50001 'A Yes/No field can only have values of yes, no, true or false.'
+		raiserror('A Yes/No field can only have values of yes, no, true or false.',16,1);        
         
     /*  Set up the ID fields  */
     if @ONLYALLOWONEPERRECORD = @TRUE
@@ -162,7 +164,7 @@ as
           set @INSERT_INTO =   'ID, INTERACTIONID, ' + @INSERT_INTO       
           end
         else
-          raiserror 50001 'An error occured.  @ONLYALLOWONEPERRECORD is null.'   
+		  raiserror('An error occured.  @ONLYALLOWONEPERRECORD is null.',16,1);	
   
   
     /*  Build the full string and execute */

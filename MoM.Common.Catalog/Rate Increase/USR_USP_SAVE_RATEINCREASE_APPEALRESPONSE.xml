@@ -49,7 +49,7 @@ begin
 	
 		if @SponsorID is null
 			begin
-				RAISERROR 1000000 'Unable to locate Sponsor. Cannot continue...'
+				raiserror('Unable to locate Sponsor. Cannot continue...',16,1);				
 				--set @ExceptionOccurred = 1
 				--set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Unable to locate Sponsor';
 			end

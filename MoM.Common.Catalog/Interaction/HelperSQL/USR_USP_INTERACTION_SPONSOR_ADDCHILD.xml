@@ -18,6 +18,7 @@
 	13-Aug-2012		CMayeda			Initial Version
 	03-Sep-2012		CMayeda			Modified to use USR_USP_INTERACTION_SPONSOR_ADDCHILDREN
 	22-Sep-2012		CMayeda			Added check for null @interactionID	
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('No ID was returned when creating the interaction',16,1);	
 	-->
 	
 	<CreateProcedureSQL>
@@ -35,7 +36,8 @@ begin
 		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
 	
 		if @interactionID is null
-			RAISERROR 1000000 'Interaction ID cannot be null'
+			raiserror('Interaction ID cannot be null',16,1);	
+			
 
 		declare @childIDList dbo.USR_UDT_CHILDIDLIST 
 		insert @childIDList 

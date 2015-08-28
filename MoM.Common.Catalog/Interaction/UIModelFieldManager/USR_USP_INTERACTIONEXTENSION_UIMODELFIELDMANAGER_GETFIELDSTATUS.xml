@@ -21,10 +21,12 @@ as
 begin
 	begin try
 		if @interactionSubcategoryID is null 
-			raiserror 1000000 '@interactionSubcategoryID cannot be null'
+			raiserror('@interactionSubcategoryID cannot be null',16,1);
+			
 
 		if @uiModelFieldDescription is null
-			raiserror 1000000 '@uiModelFieldDescription cannot be null'
+			raiserror('@uiModelFieldDescription cannot be null',16,1);
+			
 	end try
 	begin catch
 	    exec dbo.USP_RAISE_ERROR

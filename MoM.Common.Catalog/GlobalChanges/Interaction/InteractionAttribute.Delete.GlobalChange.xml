@@ -15,6 +15,7 @@
     Date            Modified By     Comments
     6/14/2012       BElfstrom       Created
     9/2/2012        BElfstrom       Added WebUIComponent code
+	8/28/2015		Memphis			Updated call to Raiserror to new format: raiserror('The date is not valid.',16,1);	
     
 -->
   <!-- describe the SP that performs the global change operation -->
@@ -114,7 +115,8 @@ as
   select @DATATYPE = DATATYPECODE, @ONLYALLOWONEPERRECORD = ONLYALLOWONEPERRECORD 
   from dbo.ATTRIBUTECATEGORY ac where ac.ID = @ATTRIBUTECATEGORYID 
   if @DATATYPE is null or @ONLYALLOWONEPERRECORD is null
-    raiserror 50001 'An error occured. Either DATATYPE or ONLYALLOWONEPERRECORD is null.'
+	raiserror('An error occured. Either DATATYPE or ONLYALLOWONEPERRECORD is null.',16,1);	
+    
 
 
   /* format the where string for first selection  */
@@ -125,7 +127,8 @@ as
   if @ATTRIBUTEFIELD1 = 'VALUE'
           begin
               if @COMPARISONOPERATOR1 = @IS_BLANK or @COMPARISONOPERATOR1 = @NOT_EQUAL_BLANK or @COMPARISONVALUE1 = ''
-                raiserror 50001 'The VALUE field cannot be blank.' 
+				raiserror('The VALUE field cannot be blank.',16,1);	
+                
             
               if @DATATYPE = @DATATYPE_NUMERIC or @DATATYPE = @DATATYPE_MONEY
                   if isnumeric(@COMPARISONVALUE1) = @TRUE   
@@ -144,10 +147,12 @@ as
                   if isdate(@COMPARISONVALUE1) = @TRUE
                     set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD1 + @OPERATOR_TEXT + '''' + @COMPARISONVALUE1 + ''''
                   else
-                    raiserror 50001 'The date is not valid.'  
+					raiserror('The date is not valid.',16,1);	
+                    
               
               if @DATATYPE > 5
-                  raiserror 50001 'An unexpected error occurred - data type not recognized.'
+				  raiserror('An unexpected error occurred - data type not recognized.',16,1);	
+                  
           end
            
   if @ATTRIBUTEFIELD1 = 'STARTDATE'
@@ -160,7 +165,8 @@ as
         if isdate(@COMPARISONVALUE1) = @TRUE     
           set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD1 + @OPERATOR_TEXT + '''' + COALESCE(@COMPARISONVALUE1,'') + ''''
         else
-          raiserror 50001 'The date is not valid.'
+			raiserror('The date is not valid.',16,1);	
+          
       end
 
   if @ATTRIBUTEFIELD1 = 'ENDDATE'
@@ -173,7 +179,8 @@ as
         if isdate(@COMPARISONVALUE1) = @TRUE 
           set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD1 + @OPERATOR_TEXT + '''' + COALESCE(@COMPARISONVALUE1,'') + ''''
         else
-          raiserror 50001 'The date is not valid.'
+			raiserror('The date is not valid.',16,1);	
+          
       end
  
   if @ATTRIBUTEFIELD1 = 'COMMENT'
@@ -201,7 +208,8 @@ as
   if @ATTRIBUTEFIELD2 = 'VALUE'
           begin
               if @COMPARISONOPERATOR2 = @IS_BLANK or @COMPARISONOPERATOR2 = @NOT_EQUAL_BLANK or @COMPARISONVALUE2 = ''
-                raiserror 50001 'The VALUE field cannot be blank.' 
+				raiserror('The VALUE field cannot be blank.',16,1);	
+                
             
               if @DATATYPE = @DATATYPE_NUMERIC or @DATATYPE = @DATATYPE_MONEY
                   if isnumeric(@COMPARISONVALUE2) = @TRUE   
@@ -220,10 +228,12 @@ as
                   if isdate(@COMPARISONVALUE2) = @TRUE
                     set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD2 + @OPERATOR_TEXT + '''' + @COMPARISONVALUE2 + ''''
                   else
-                    raiserror 50001 'The date is not valid.'  
+					raiserror('The date is not valid.',16,1);	
+                    
               
               if @DATATYPE > 5
-                  raiserror 50001 'An unexpected error occurred - data type not recognized.'
+				  raiserror('An unexpected error occurred - data type not recognized.',16,1);	
+                  
           end  
           
   if @ATTRIBUTEFIELD2 = 'STARTDATE'
@@ -236,7 +246,8 @@ as
         if isdate(@COMPARISONVALUE2) = @TRUE     
           set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD2 + @OPERATOR_TEXT + '''' + COALESCE(@COMPARISONVALUE2,'') + ''''
         else
-          raiserror 50001 'The date is not valid.'
+			raiserror('The date is not valid.',16,1);	
+          
       end
 
   if @ATTRIBUTEFIELD2 = 'ENDDATE'
@@ -249,7 +260,8 @@ as
         if isdate(@COMPARISONVALUE2) = @TRUE 
           set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD2 + @OPERATOR_TEXT + '''' + COALESCE(@COMPARISONVALUE2,'') + ''''
         else
-          raiserror 50001 'The date is not valid.'
+			raiserror('The date is not valid.',16,1);	
+          
       end
  
   if @ATTRIBUTEFIELD2 = 'COMMENT'
@@ -277,7 +289,8 @@ as
   if @ATTRIBUTEFIELD3 = 'VALUE'
           begin
               if @COMPARISONOPERATOR3 = @IS_BLANK or @COMPARISONOPERATOR3 = @NOT_EQUAL_BLANK or @COMPARISONVALUE3 = ''
-                raiserror 50001 'The VALUE field cannot be blank.' 
+				raiserror('The VALUE field cannot be blank.',16,1);	
+                
             
               if @DATATYPE = @DATATYPE_NUMERIC or @DATATYPE = @DATATYPE_MONEY
                   if isnumeric(@COMPARISONVALUE3) = @TRUE   
@@ -296,10 +309,12 @@ as
                   if isdate(@COMPARISONVALUE3) = @TRUE
                     set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD3 + @OPERATOR_TEXT + '''' + @COMPARISONVALUE3 + ''''
                   else
-                    raiserror 50001 'The date is not valid.'  
+					raiserror('The date is not valid.',16,1);	
+                    
              
               if @DATATYPE > 5
-                  raiserror 50001 'An unexpected error occurred - data type not recognized.'
+				  raiserror('An unexpected error occurred - data type not recognized.',16,1);	
+                  
           end  
           
   if @ATTRIBUTEFIELD3 = 'STARTDATE'
@@ -312,7 +327,8 @@ as
         if isdate(@COMPARISONVALUE3) = @TRUE     
           set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD3 + @OPERATOR_TEXT + '''' + COALESCE(@COMPARISONVALUE3,'') + ''''
         else
-          raiserror 50001 'The date is not valid.'
+			raiserror('The date is not valid.',16,1);	
+          
       end
 
   if @ATTRIBUTEFIELD3 = 'ENDDATE'
@@ -325,7 +341,8 @@ as
         if isdate(@COMPARISONVALUE3) = @TRUE 
           set @WHERE_STRING = COALESCE(@WHERE_STRING,'') + @ATTRIBUTEFIELD3 + @OPERATOR_TEXT + '''' + COALESCE(@COMPARISONVALUE3,'') + ''''
         else
-          raiserror 50001 'The date is not valid.'
+			raiserror('The date is not valid.',16,1);	
+          
       end
  
   if @ATTRIBUTEFIELD3 = 'COMMENT'
