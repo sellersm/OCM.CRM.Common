@@ -16,6 +16,7 @@
 	History:
 	Date            Modified By     Comments
 	03-Sep-2012		CMayeda			Initial Version
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror(@errorMsg,16,1);	
 	-->
 
 	<CreateProcedureSQL>
@@ -43,7 +44,7 @@ begin
 		   and	lower (resp.RESPONSE) = lower (@response)
 
 		if 	@responseID is null and @raiseErrorIfNotFound = 1
-			RAISERROR 1000000 @errorMsg
+			raiserror(@errorMsg,16,1);	
 
 	end try
 	begin catch

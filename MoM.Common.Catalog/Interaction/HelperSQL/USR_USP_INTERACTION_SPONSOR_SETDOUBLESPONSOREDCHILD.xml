@@ -16,6 +16,7 @@
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
 	22-Sep-2012		CMayeda			Added check for null @interactionID
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Interaction ID cannot be null',16,1);
 	-->
 
 	<CreateProcedureSQL>
@@ -33,7 +34,8 @@ begin
 			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
 		
 		if @interactionID is null
-			RAISERROR 1000000 'Interaction ID cannot be null'
+			raiserror('Interaction ID cannot be null',16,1);
+			
 	end try
 	begin catch
 	    exec dbo.USP_RAISE_ERROR

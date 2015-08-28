@@ -15,6 +15,8 @@
     Date            Modified By     Comments
     6/9/2012        BElfstrom       Created
     9/2/2012        BElfstrom       Added WebUIComponent code
+	8/28/2015		Memphis			Updated call to Raiserror to new format:
+									raiserror('Only text type value fields can be replaced if blank.',16,1);	
     
   Comments:
     The query used by this procedure returns a set of Interaction IDs.  The attribute
@@ -120,7 +122,8 @@ as
         from dbo.ATTRIBUTECATEGORY ac where ac.ID = @ATTRIBUTECATEGORYID
         
         if @DATATYPE is null or @ONLYALLOWONEPERRECORD is null
-          raiserror 50001 'An error occured Either DATATYPE or ONLYALLOWONEPERRECORD is null.'
+			raiserror('An error occured Either DATATYPE or ONLYALLOWONEPERRECORD is null.',16,1);	
+          
    
         
         /* Convert yes/no or true/false to 1 or 0  */
@@ -174,9 +177,11 @@ as
                   if @DATATYPE = @DATATYPE_BOOLEAN
                   begin
                   if @NEWVALUEATTRIBUTEENTRY <> '1' and @NEWVALUEATTRIBUTEENTRY <> '0' 
-                    raiserror 50001 'You must enter a new value.'
+					raiserror('You must enter a new value.',16,1);	
+                    
                   if @VALUEATTRIBUTETOREPLACE <> ''
-                    raiserror 50001 'Value to replace must be blank with this global change.'
+					raiserror('Value to replace must be blank with this global change.',16,1);	
+                    
                   set @SQL_SET = COALESCE(@SQL_SET,'') + 'BOOLEANCODE = ' +  @NEWVALUEATTRIBUTEENTRY + ', '
                   set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'BOOLEANCODE = BOOLEANCODE or '
                   end                
@@ -189,7 +194,8 @@ as
               set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'VALUE = VALUE or '
               end
             else
-              raiserror 50001 'Only text type value fields can be set to blank.'
+				raiserror('Only text type value fields can be set to blank.',16,1);	
+              
   
   
        if @VALUEATTRIBUTEPROCESS = @REPLACE_IF_BLANK    
@@ -200,7 +206,8 @@ as
               set @UPDATE_COUNT_STRING = COALESCE(@UPDATE_COUNT_STRING,'') + 'VALUE = ' + '''' + '''' + ' or '
               end
             else
-              raiserror 50001 'Only text type value fields can be replaced if blank.'
+				raiserror('Only text type value fields can be replaced if blank.',16,1);	
+              
     end
   
   

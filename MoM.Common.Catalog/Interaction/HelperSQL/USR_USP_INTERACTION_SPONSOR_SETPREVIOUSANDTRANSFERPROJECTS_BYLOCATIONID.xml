@@ -19,6 +19,7 @@
 	Date            Modified By     Comments
 	23-Aug-2012		CMayeda			Initial Version
 	22-Sep-2012		CMayeda			Added check for null @interactionID
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Interaction ID cannot be null',16,1);
 	-->
 
 	<CreateProcedureSQL>
@@ -44,21 +45,24 @@ begin
 			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
 			
 		if @interactionID is null
-			RAISERROR 1000000 'Interaction ID cannot be null'
+			raiserror('Interaction ID cannot be null',16,1);
+			
 
 		select @previousChildProjectID = FIELDOFFICEID
 		  from dbo.SPONSORSHIPLOCATION
 		 where ID = @previousLocationID
 		 
 		if @previousChildProjectID is null
-			RAISERROR 1000000 'Field office for Previous Location is not configured.'
+			raiserror('Field office for Previous Location is not configured.',16,1);
+			
 			
 		select @transferChildProjectID = FIELDOFFICEID
 		  from dbo.SPONSORSHIPLOCATION
 		 where ID = @transferLocationID
 		 
 		if @transferChildProjectID is null
-			RAISERROR 1000000 'Field office for Transfer Location is not configured.'
+			raiserror('Field office for Transfer Location is not configured.',16,1);
+			
 
 		update	dbo.USR_INTERACTIONEXTENSION
 		   set	PREVIOUSCHILDPROJECTID = @previousChildProjectID,

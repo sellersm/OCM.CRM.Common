@@ -18,6 +18,7 @@
 	History:
 	Date            Modified By     Comments
 	11-Aug-2012		CMayeda			Initial Version
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror(@errorMsg,16,1);	
 	-->
 	
 	<CreateProcedureSQL>
@@ -75,27 +76,30 @@ begin
 		
 		select @contactMethodID = ID from dbo.INTERACTIONTYPECODE where DESCRIPTION = lower (@contactMethodDesc)
 		if @contactMethodID is null 
-			RAISERROR 1000000 @contactMethodError
+			raiserror(@contactMethodError,16,1);	
+			
 		
 		if @letterTypeDesc <> ''
 		begin
 			select @letterTypeCodeID = ID from dbo.USR_INTERACTIONEXTENSIONLETTERTYPECODE where DESCRIPTION = lower (@letterTypeDesc)
 			if @letterTypeCodeID is null 
-				RAISERROR 1000000 @letterTypeError
+				raiserror(@letterTypeError,16,1);	
+				
 		end
 		
 		if @fulfillmentStatusDesc <> ''
 		begin
 			select @fulfillmentStatusCodeID = ID from dbo.USR_INTERACTIONEXTENSIONFULFILLMENTSTATUSCODE where DESCRIPTION = lower (@fulfillmentStatusDesc)
 			if @fulfillmentStatusCodeID is null 
-				RAISERROR 1000000 @fulfillmentError
+				raiserror(@fulfillmentError,16,1);	
+				
 		end
 			
 		-- Use Blackbaud's add sproc - the null parm is @actualdate.  This is requried if the statuscode is set to Completed
 		exec USP_DATAFORMTEMPLATE_ADD_INTERACTION @id output, @changeAgentID, @constituentID,  @expectedDate, @actualDate,  @owner, @contactMethodID, @summary, @statusCode, @comment
 
 		if @id is null
-			RAISERROR 1000000 'No ID was returned when creating the interaction'
+			raiserror('No ID was returned when creating the interaction',16,1);				
 		else
 		begin
 			-- Blackbaud's basic add sproc does not include the subcategoryid, so we need to do that manually

@@ -17,6 +17,7 @@
 	Date            Modified By     Comments
 	03-Sep-2012		CMayeda			Initial Version
 	22-Sep-2012		CMayeda			Added check for null @interactionID
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Interaction ID cannot be null',16,1);	
 	-->
 
 	<CreateProcedureSQL>
@@ -45,15 +46,17 @@ begin
 		-- Get letter code table ids
 		select @childCountLetterVersion_OneChildLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('One Child Letter')
 		if @childCountLetterVersion_OneChildLetter is null 
-			RAISERROR 1000000 'Could not add child to interaction, because the id for the "One Child Letter" could not be found.'
+			raiserror('Could not add child to interaction, because the id for the "One Child Letter" could not be found.',16,1);				
 		
 		select @childCountLetterVersion_TwoChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Two Children Letter')
 		if @childCountLetterVersion_OneChildLetter is null 
-			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Two Children Letter" could not be found.'
+			raiserror('Could not add child to interaction, because the id for the "Two Children Letter" could not be found.',16,1);
+			
 		
 		select @childCountLetterVersion_MultipleChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Multiple Children Letter')
 		if @childCountLetterVersion_MultipleChildrenLetter is null 
-			RAISERROR 1000000 'Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.'
+			raiserror('Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.',16,1);
+			
 			
 
 		-- Get ChangeAgent if none was passed into the sproc
@@ -61,7 +64,8 @@ begin
 		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
 	
 		if @interactionID is null
-			RAISERROR 1000000 'Interaction ID cannot be null'
+			raiserror('Interaction ID cannot be null',16,1);
+			
 
 		-- Add the child
 		insert	dbo.USR_INTERACTIONEXTENSIONCHILDREN
@@ -84,7 +88,8 @@ begin
 													end 
 			 where	ID = @interactionID	
 		else
-			RAISERROR 1000000 'Could not set Child Count Letter Version - USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT returned a value less than zero'			
+			raiserror('Could not set Child Count Letter Version - USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT returned a value less than zero',16,1);
+			
 	end try
 	begin catch
 	    exec dbo.USP_RAISE_ERROR

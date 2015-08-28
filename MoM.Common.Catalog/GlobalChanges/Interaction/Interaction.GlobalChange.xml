@@ -15,6 +15,7 @@
     Date            Modified By     Comments
     5/9/2012        BElfstrom       Created
     9/2/2012        BElfstrom       Added WebUIComponent code
+	8/28/2015		Memphis			Updated call to Raiserror using new format: raiserror('ACCOUNTLOCKED',16,1)
     
 -->
 
@@ -84,11 +85,11 @@ create procedure dbo.USR_USP_CONSTITUENTINTERACTIONGLOBALCHANGE
  
  	/* Check for missing Sub Catagory.  The Interaction table only stores Sub catagories.  */
 	if @INTERACTIONSUBCATEGORYID Is Null and  @INTERACTIONCATEGORYID is not null
-    RAISERROR 1000000 'A Category was entered but no Sub Category was entered.  You must enter a Sub Category if a Category is entered.'  
+		raiserror('A Category was entered but no Sub Category was entered.  You must enter a Sub Category if a Category is entered.',16,1)
 
  	/* Check for missing Sub Catagory.  The Interaction table only stores Sub catagories.  */
 	if @NEWINTERACTIONSUBCATEGORYID Is Null and  @NEWINTERACTIONCATEGORYID is not null
-    RAISERROR 1000000 'A Category was entered but no Sub Category was entered.  You must enter a Sub Category if a Category is entered.'  
+		raiserror('A Category was entered but no Sub Category was entered.  You must enter a Sub Category if a Category is entered.',16,1)
 
  
 	begin try

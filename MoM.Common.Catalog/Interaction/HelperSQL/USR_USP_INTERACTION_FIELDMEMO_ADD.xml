@@ -19,6 +19,7 @@
 	History:
 	Date            Modified By     Comments
 	11-Aug-2012		CMayeda			Initial Version
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror('No ID was returned when creating the interaction.',16,1);	
 	-->
 
 	<CreateProcedureSQL>
@@ -88,39 +89,40 @@ begin
 		exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, @categoryName_FieldMemo, @subcategoryName, @raiseErrorIfNotFound_True
 		
 		select @contactMethodID = ID from dbo.INTERACTIONTYPECODE where DESCRIPTION = lower (@contactMethodDesc)
-		if @contactMethodID is null 
-			RAISERROR 1000000 @contactMethodError
+		if @contactMethodID is null 			
+			raiserror(@contactMethodError,16,1);	
+			
 
 		if @fieldmemoSentDesc <> ''
 		begin
 			select @fieldMemoSentCodeID = ID from dbo.USR_INTERACTIONEXTENSIONFIELDMEMOSENTCODE where DESCRIPTION = lower (@fieldMemoSentDesc)
 			if @fieldMemoSentCodeID is null 
-				RAISERROR 1000000 @fieldMemoSentError
+				raiserror(@fieldMemoSentError,16,1);					
 		end
 		
 		if @holdReasonDesc <> ''
 		begin
 			select @holdReasonCodeID = ID from dbo.USR_INTERACTIONEXTENSIONHOLDREASONCODE where DESCRIPTION = lower (@holdReasonDesc)
 			if @holdReasonCodeID is null 
-				RAISERROR 1000000 @holdReasonCodeError
+				raiserror(@holdReasonCodeError,16,1);					
 		end
 					
 		if @unusableDesc <> ''
 		begin
 			select @unusableCodeID = ID from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where DESCRIPTION = lower (@unusableDesc)
 			if @unusableCodeID is null 
-				RAISERROR 1000000 @unusableCodeError
+				raiserror(@unusableCodeError,16,1);					
 		end
 		
 		select @constituentID = CONSTITUENTID from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = @sponsorshipOpportunityChildID
 		if @constituentID is null 
-			RAISERROR 1000000 'No interaction was created - couldn''t find the Constituent Record for the child.'
+			raiserror('No interaction was created - couldn''t find the Constituent Record for the child.',16,1);				
 
 		-- Use Blackbaud's add sproc - the null parm is @actualdate.  This is requried if the statuscode is set to Completed
 		exec USP_DATAFORMTEMPLATE_ADD_INTERACTION @id output, @changeAgentID, @constituentID,  @expectedDate, null,  @owner, @contactMethodID, @summary, @statusCode_Pending, @comment
 
 		if @id is null
-			RAISERROR 1000000 'No ID was returned when creating the interaction.'
+			raiserror('No ID was returned when creating the interaction.',16,1);				
 		else
 		begin
 			-- Blackbaud's basic add sproc does not include the subcategoryid, so we need to do that manually

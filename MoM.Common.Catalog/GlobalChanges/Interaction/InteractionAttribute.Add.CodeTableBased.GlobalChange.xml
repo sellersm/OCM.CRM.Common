@@ -14,6 +14,8 @@
   History:
     Date            Modified By     Comments
     9/2/2012        BElfstrom       Added WebUIComponent code
+	8/28/2015		Memphis			Added new call to Raiserror using proper format:
+									raiserror('An error occurred.  @VALUECOLUMNNAME is not set.',16,1)
     
 -->
   <CreateProcedureSQL>
@@ -69,11 +71,11 @@ as
     from ATTRIBUTECATEGORY where ID = @ATTRIBUTECATEGORYID
   
   if @ONLYALLOWONEPERRECORD is null
-    raiserror 50001 'An error occurred.  @ONLYALLOWONEPERRECORD is not set.'
+	raiserror('An error occurred.  @ONLYALLOWONEPERRECORD is not set.',16,1)
+    
 
   if @VALUECOLUMNNAME is null
-    raiserror 50001 'An error occurred.  @VALUECOLUMNNAME is not set.'
-
+	raiserror('An error occurred.  @VALUECOLUMNNAME is not set.',16,1)
   
   if @COMMENTTOADD <> ''  
     set @SELECT_STRING = COALESCE(@SELECT_STRING,'') + '''' + @COMMENTTOADD + '''' + ', ' 
@@ -107,7 +109,7 @@ as
         set @INSERT_INTO =  'ID, INTERACTIONID, ' + @INSERT_INTO       
         end
       else
-        raiserror 50001 'An error occured: @ONLYALLOWONEPERRECORD = null' 
+		raiserror('An error occured: @ONLYALLOWONEPERRECORD = null',16,1);
       
       
   /*  Build the full string and execute */

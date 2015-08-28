@@ -17,6 +17,7 @@
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
 	08-Oct-2013		Memphis			Updated the errorMsg concatenation as the Category and/or Subcategory can come in empty/null.
+	28-Aug-2015		Memphis			Updated raiserror call: raiserror(@errorMsg,16,1);	
 	-->
 	
 	<CreateProcedureSQL>
@@ -44,7 +45,7 @@ begin
 		and	lower (cat.NAME) = lower (@categoryName);
 
 		if @subcategoryID is null and @raiseErrorIfNotFound = 1
-			RAISERROR 1000000 @errorMsg;
+			raiserror(@errorMsg,16,1);	
 	end try
 	
 	begin catch
