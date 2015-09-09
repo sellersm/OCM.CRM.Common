@@ -144,6 +144,8 @@
       <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\FulfillmentStatusInteractionGlobalChangeUIModel.CodeGen.vb" />
+    <Compile Include="Global Changes\FulfillmentStatusInteractionGlobalChangeUIModel.vb" />
     <Compile Include="Interaction\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
       <DependentUpon>InteractionExtensionAddFormUIModel.vb</DependentUpon>
     </Compile>
@@ -249,6 +251,7 @@
     <Content Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.xml">
       <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
     </Content>
+    <Content Include="Global Changes\FulfillmentStatusInteractionGlobalChangeUIModel.xml" />
     <Content Include="htmlforms\BarCodeAddDataForm.html" />
     <Content Include="ChildLetterScanner\BarCodeAddDataFormUIModel.xml" />
     <Content Include="htmlforms\ChildExtensionDepartureFormReceivedDateGlobalChange.html" />
@@ -262,6 +265,7 @@
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\ChildExtensionFulfillmentStatusGlobalChange.html" />
+    <Content Include="htmlforms\FulfillmentStatusInteractionGlobalChange.html" />
     <Content Include="htmlforms\RateChangeResponseScannerForm.html" />
     <Content Include="htmlforms\RunOurSqlCommandsEditDataForm.html" />
     <Content Include="htmlforms\SponsorAppealLetterScannerAddDataForm.html" />
