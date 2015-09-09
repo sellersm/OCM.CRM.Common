@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>Interaction.FulfillmentStatus.GlobalChange.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>FulfillmentStatusInteractionGlobalChangeUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>FulfillmentStatusInteractionGlobalChange.html</HtmlFile>
+    <HtmlFolder>htmlforms\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

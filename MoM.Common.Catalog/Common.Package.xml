@@ -69,6 +69,7 @@
 										  InteractionExtension.ChildCorrespondenceInteractionList.DataList.xml
 										  TK-01415							
 	18-Nov-2014		CMayeda			Added Website.Batch.Donations.Query.xml	
+	08-Sep-2015		Memphis			Added Interaction.FulfillmentStatus.GlobalChange.xml
 	-->
 
 
@@ -246,6 +247,7 @@
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.UpdateChildInteraction.ExpectedDate.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.ChildExtension.FulfillmentStatus.GlobalChange.xml" />
 		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.AddObjectiveToChildInteractions.GlobalChange.xml" />
+		<common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.FulfillmentStatus.GlobalChange.xml" />
 
 
 		<!-- Pages -->
