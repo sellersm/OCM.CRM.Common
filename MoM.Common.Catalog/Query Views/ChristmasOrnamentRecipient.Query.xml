@@ -3,7 +3,7 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="D180114E-16BB-4387-9BC1-FF0AA685433F"
 	Name="Christmas Ornament Recipient Query"
-	Description="Sponsors who received an ornaments in 2013 - No Gifting Sponsors"
+	Description="Sponsors who received an ornaments in 2014 - No Gifting Sponsors"
 	Author="Cary Mayeda"
 	IsRoot="true"
 	PrimaryKeyField="CONSTITUENTID"
@@ -16,7 +16,7 @@
 		<ViewSQL>
 			<![CDATA[
 			
-with Received2013Ornament
+with Received2014Ornament
 as
 (
 select distinct 
@@ -26,7 +26,7 @@ from
 	join dbo.CONSTITUENTAPPEAL ca on ca.CONSTITUENTID = c.ID
 	join dbo.APPEAL a on ca.APPEALID = a.ID
 where 
-	a.NAME = '10554 - Christmas Ornaments'
+	a.NAME = '10565 - Christmas Ornaments 2014'
 )
 select 
 	s.CONSTITUENTID,
@@ -44,9 +44,9 @@ from
 	
 where 
 	s.STATUSCODE = 1
-and	s.STARTDATE > '11/20/13'
-and not exists (select s2.ID from dbo.SPONSORSHIP s2 where s2.SPONSORSHIPOPPORTUNITYID = s.SPONSORSHIPOPPORTUNITYID and s2.CONSTITUENTID = s.CONSTITUENTID and s2.STARTDATE <= '11/20/13')
-and	exists (select ro.ID from Received2013Ornament ro where ro.ID = s.CONSTITUENTID)
+and	s.STARTDATE > '11/06/14'
+and not exists (select s2.ID from dbo.SPONSORSHIP s2 where s2.SPONSORSHIPOPPORTUNITYID = s.SPONSORSHIPOPPORTUNITYID and s2.CONSTITUENTID = s.CONSTITUENTID and s2.STARTDATE <= '11/06/14')
+and	exists (select ro.ID from Received2014Ornament ro where ro.ID = s.CONSTITUENTID)
 
 			]]>
 		</ViewSQL>

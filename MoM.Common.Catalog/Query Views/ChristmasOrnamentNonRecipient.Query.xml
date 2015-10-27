@@ -3,7 +3,7 @@
 	xmlns:common="bb_appfx_commontypes" 
 	ID="bc7c1f61-d959-4a3c-a4a4-0592a04aa5c8"
 	Name="Christmas Ornament Non Recipient Query"
-	Description="Sponsors who didn't receive any ornaments in 2013 - No Gifting Sponsors"
+	Description="Sponsors who didn't receive any ornaments in 2014 - No Gifting Sponsors"
 	Author="Cary Mayeda"
 	IsRoot="true"
 	PrimaryKeyField="CONSTITUENTID"
@@ -16,7 +16,7 @@
 		<ViewSQL>
 			<![CDATA[
 			
-with Received2013Ornament
+with Received2014Ornament
 as
 (
 select distinct 
@@ -26,7 +26,7 @@ from
 	join dbo.CONSTITUENTAPPEAL ca on ca.CONSTITUENTID = c.ID
 	join dbo.APPEAL a on ca.APPEALID = a.ID
 where 
-	a.NAME = '10554 - Christmas Ornaments'
+	a.NAME = '10565 - Christmas Ornaments 2014'
 )
 select 
 	s.CONSTITUENTID,
@@ -43,7 +43,7 @@ from
 	join dbo.CONSTITUENT project on project.ID = slocation.FIELDOFFICEID
 where 
 	s.STATUSCODE = 1
-and	s.CONSTITUENTID not in (select ID from Received2013Ornament)
+and	s.CONSTITUENTID not in (select ID from Received2014Ornament)
 		
 			]]>
 		</ViewSQL>
