@@ -1,0 +1,111 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="46515979-5f2c-408b-977b-896012a73c38"
+	Name="Multiview Columns Format Query"
+	Description="GL Post Custom Output Format Query for Multiview"
+	Author="Memphis Sellers"
+	IsRoot="true"
+	PrimaryKeyField="GLTRANSACTIONID"
+	RecordType="GLTRANSACTIONID"
+	common:SecurityUIFolder="Revenue\Business Process\Post to GL"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_MULTIVIEWCOLUMNS_POSTTOGLPROCESSCUSTOM">
+		<ViewSQL>
+			<![CDATA[
+select 
+-- *** these columns are for the Multiview formatting ***:
+		case	
+			when substring (GLTRANSACTION.ACCOUNT,1,4) = 'CRED' then 
+				case 
+					when substring (GLTRANSACTION.ACCOUNT,6,3) = 'CCF' then 'CCF'
+					when substring (GLTRANSACTION.ACCOUNT,6,5) = 'SF000' then 'SF'					
+					when isnumeric (substring (GLTRANSACTION.ACCOUNT,7,4)) = 1 then substring (GLTRANSACTION.ACCOUNT,6,1) + '-' + substring (GLTRANSACTION.ACCOUNT,7,4)
+					when isnumeric (substring (GLTRANSACTION.ACCOUNT,8,3)) = 1 then 
+						case 
+							-- Change IN-0xx to IN-4xx or IN-5xx for 416, 428, 430, 432, 527, 531, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549
+							when substring (GLTRANSACTION.ACCOUNT,6,5) in ('IN016', 'IN028', 'IN030', 'IN032') then 'IN-4' + substring (GLTRANSACTION.ACCOUNT,9,2)
+							when substring (GLTRANSACTION.ACCOUNT,6,5) in ('IN027', 'IN031', 'IN034', 'IN035', 'IN036', 'IN037', 'IN038', 'IN039', 'IN040', 'IN041', 'IN042', 'IN043', 'IN044', 'IN045', 'IN046', 'IN047', 'IN048', 'IN049') then 
+								'IN-5' + substring (GLTRANSACTION.ACCOUNT,9,2)
+							else substring (GLTRANSACTION.ACCOUNT,6,2) + '-' + substring (GLTRANSACTION.ACCOUNT,8,3)
+						end
+					else 'ERROR'
+				end 
+			when substring (GLTRANSACTION.ACCOUNT,1,4) = 'BANK' then 'BANK'
+			else 'ERROR'  -- Not CRED or BANK
+		end as ACCOUNT,
+		/*  -- doesn't appear that the multiview output file contains this column!?!?
+		case	
+			when substring (GLTRANSACTION.ACCOUNT,1,4) = 'BANK' then 
+				case 
+					when substring (GLTRANSACTION.ACCOUNT,6,3) = 'CCF' then 'CCF'
+					when substring (GLTRANSACTION.ACCOUNT,6,5) = 'SF000' then 'SF'					
+					when isnumeric (substring (GLTRANSACTION.ACCOUNT,7,4)) = 1 then substring (GLTRANSACTION.ACCOUNT,6,1) + '-' + substring (GLTRANSACTION.ACCOUNT,7,4)
+					when isnumeric (substring (GLTRANSACTION.ACCOUNT,8,3)) = 1 then 
+						case 
+							-- Change IN-0xx to IN-4xx or IN-5xx for 416, 428, 430, 432, 527, 531, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549
+							when substring (GLTRANSACTION.ACCOUNT,6,5) in ('IN016', 'IN028', 'IN-030', 'IN032') then 'IN-4' + substring (GLTRANSACTION.ACCOUNT,9,2)
+							when substring (GLTRANSACTION.ACCOUNT,6,5) in ('IN027', 'IN031', 'IN-034', 'IN035', 'IN036', 'IN037', 'IN038', 'IN039', 'IN040', 'IN041', 'IN042', 'IN043', 'IN044', 'IN045', 'IN046', 'IN047', 'IN048', 'IN049') then 
+								'IN-5' + substring (GLTRANSACTION.ACCOUNT,9,2)
+							else substring (GLTRANSACTION.ACCOUNT,6,2) + '-' + substring (GLTRANSACTION.ACCOUNT,8,3)
+						end
+					else 'ERROR'
+				end 
+			else ''
+		end as BANKACCOUNT,			
+		*/
+		--GLTRANSACTION.ACCOUNT,
+		--dateadd(YY,1,GLTRANSACTION.POSTDATE),
+		--GLTRANSACTION.POSTDATE,
+		--GLTRANSACTION.TRANTYPE,
+		--GLTRANSACTION.DEBITCREDIT,
+		--GLTRANSACTION.AMOUNT,
+		GLTRANSACTION.POSTDATE as POSTDATE,
+		'R' as TRANTYPE,
+		case GLTRANSACTION.TRANSACTIONTYPECODE when 0 then 'D' else 'C' end as DEBITCREDIT,
+        GLTRANSACTION.AMOUNT,
+		'' as BLANKCOLUMN,
+		case
+			when (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end) = ''  then 'NB2015-' + right ('0' + cast(month (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2) + right ('0' + cast(day (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2)
+			--else GLTRANSACTION.BATCHNUMBER 
+			else (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end)
+		end as MV_BATCHNUMBER,
+
+--  *** END OF MULTIVIEW COLUMNS ****
+      GLTRANSACTION.ID as GLTRANSACTIONID,
+      GLTRANSACTION.ACCOUNT as ACCOUNTSTRING,
+      GLTRANSACTION.TRANSACTIONAMOUNT,
+      GLTRANSACTION.ORGANIZATIONAMOUNT,
+      case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end as BATCHNUMBER
+
+from 
+      dbo.GLTRANSACTION
+      left join REVENUEGLDISTRIBUTION on GLTRANSACTION.ID = REVENUEGLDISTRIBUTION.GLTRANSACTIONID
+      left join dbo.REVENUEGLDISTRIBUTION reversed on reversed.GLTRANSACTIONID = GLTRANSACTION.REVERSEDGLTRANSACTIONID and reversed.OUTDATED = 1
+	  left join REVENUE reverseRevenue on reverseRevenue.ID = reversed.REVENUEID
+      left join REVENUE on REVENUEGLDISTRIBUTION.REVENUEID = REVENUE.ID  		
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>			
+			<OutputField Name="ACCOUNT" Caption="Account" DataType="String" />
+			<OutputField Name="POSTDATE" Caption="Post date" DataType="Date" />
+			<OutputField Name="BLANKCOLUMN" Caption="Blank Column" DataType="String" />
+			<OutputField Name="MV_BATCHNUMBER" Caption="MV Batch Number" DataType="String" />
+			<OutputField Caption="System record ID" Category="System Fields" Name="GLTRANSACTIONID" />
+			<OutputField Name="ACCOUNTSTRING" Caption="Account" DataType="String" />
+			<OutputField Name="BATCHNUMBER" Caption="Batch number" DataType="String" />
+		</OutputFields>
+	</Output>
+	<BusinessProcessOutput BusinessProcessID="48ef5b33-14cc-41cd-96bf-29f490b0a60f" Caption="Multiview GL Post Format">
+		<JoinField>GLTRANSACTIONID</JoinField>
+	</BusinessProcessOutput>
+
+
+</QueryViewSpec>
+
