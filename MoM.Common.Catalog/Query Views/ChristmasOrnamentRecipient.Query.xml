@@ -26,7 +26,9 @@ from
 	join dbo.CONSTITUENTAPPEAL ca on ca.CONSTITUENTID = c.ID
 	join dbo.APPEAL a on ca.APPEALID = a.ID
 where 
-	a.NAME = '10565 - Christmas Ornaments 2014'
+	--a.NAME = '10565 - Christmas Ornaments 2014'
+	(a.NAME = '10565 - Christmas Ornaments 2014'
+	or a.NAME = '10554 - Christmas Ornaments')	
 )
 select 
 	s.CONSTITUENTID,
