@@ -11,6 +11,17 @@
 	common:SecurityUIFolder="Revenue\Business Process\Post to GL"
 	>
 
+	<!-- 
+	Remarks:    This is used as a custom output format for the GL Post process. 
+				Formatted correctly for direct import into Multiview that Chris J. uses.
+
+	History:
+	Date            Modified By     Comments
+	10-Nov-2015		Memphis			Initial Version
+	09-Feb-2016		Memphis			Changed the NB2015 to 2016 for current year.
+	
+	-->	
+	
 	<!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_MULTIVIEWCOLUMNS_POSTTOGLPROCESSCUSTOM">
 		<ViewSQL>
@@ -68,7 +79,7 @@ select
         GLTRANSACTION.AMOUNT,
 		'' as BLANKCOLUMN,
 		case
-			when (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end) = ''  then 'NB2015-' + right ('0' + cast(month (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2) + right ('0' + cast(day (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2)
+			when (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end) = ''  then 'NB2016-' + right ('0' + cast(month (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2) + right ('0' + cast(day (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2)
 			--else GLTRANSACTION.BATCHNUMBER 
 			else (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end)
 		end as MV_BATCHNUMBER,
