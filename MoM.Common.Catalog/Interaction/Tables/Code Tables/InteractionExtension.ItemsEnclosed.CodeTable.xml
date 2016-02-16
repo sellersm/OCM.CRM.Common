@@ -2,10 +2,10 @@
 	xmlns="bb_appfx_codetable" 
 	xmlns:common="bb_appfx_commontypes"
 	ID="0c97133b-b6ea-43d2-af1f-918113df9aba" 
-	Name="ItemsEnclosed"
+	Name="Items Enclosed Code Table"
 	Description="Description of items sent by sponsor for a child"
 	Author="BETHESDA\belfstrom"
 	DBTablename="USR_ITEMSENCLOSEDCODE"
-	Category="Interaction Extention"
+	Category="Interaction Extension"
 	SortMethod="Alpha"
 />
