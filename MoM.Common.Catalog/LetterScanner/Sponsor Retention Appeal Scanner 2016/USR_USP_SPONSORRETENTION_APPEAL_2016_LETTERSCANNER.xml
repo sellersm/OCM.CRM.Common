@@ -1,0 +1,643 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="6da6a584-a338-4b6f-9a8b-bc81ebefc75f"
+	Name="USR_USP_SPONSORRETENTION_APPEAL_2016_LETTERSCANNER"
+	Description="USR_USP_SPONSORRETENTION_APPEAL_2016_LETTERSCANNER"
+	Author="Memphis Sellers"
+	SPName="USR_USP_SPONSORRETENTION_APPEAL_2016_LETTERSCANNER"
+	GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+	Remarks:    
+
+	History:
+	Date            Modified By     Comments
+	13-Apr-2016		Memphis			Initial version of new Sponsor Appeal 2016 Retention letter scanner.
+								   - SponsorID, Appeal#, Findernumber, ChildID (optional, will be missing if it's a Major Donor!)
+								   - Major donor won't have a ChildID so create an Interaction on every currently actively sponsored child
+								   - Major donor should be in a specific segment...
+								   - It's possible that the Finder Number can be "empty", will have a -1 value in it,
+									 if it does, then use the Appeal ID value
+								   - 2016 appeal is "10586 - Sponsor Retention 2016"
+									 
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_SPONSORRETENTION_APPEAL_2016_LETTERSCANNER
+@SponsorLookupID nvarchar(6),		
+@AppealName nvarchar(10),
+@FinderNumber bigint,
+@ChildLookupID nvarchar(7) = null,		-- This can be blank!
+@ChangeAgentID uniqueidentifier,
+@ScanSession nvarchar(68),
+@ScannerMessage nvarchar(1000) OUTPUT,
+@ScanOutcome nvarchar(1000) OUTPUT,
+@ExceptionOccurred bit OUTPUT
+
+as
+begin
+
+  declare @CancellationReason as nvarchar(100)
+  declare @ChildEducationalAppealResponseSubcategoryID as uniqueidentifier
+  declare @ChildID as uniqueidentifier
+  declare @OriginalInteractionID as uniqueidentifier
+  declare @OriginalLetterSequenceID as int
+  declare @OriginalLetterSubcategoryID as uniqueidentifier
+  declare @CurrentChildProjectID as uniqueidentifier		-- holds the current project id of the child, used to compare if child changed projects
+  declare @ConstituentID uniqueidentifier
+  declare @CurrentDate as datetime
+  declare @Date as datetime
+  declare @DateSponsorshipCancelled as datetime
+  declare @ErrMsg nvarchar(4000)
+  declare @ErrSeverity int
+  declare @ExtraLetter as bit
+  declare @InteractionTypeCode as uniqueidentifier	
+  declare @LogTypeCode as tinyint
+  declare @NewID as uniqueidentifier
+  declare @NumberOfDaysSponsored smallint
+  declare @SponsorID as uniqueidentifier
+  declare @SponsorLetterSequenceID as int
+  declare @SponsorLetterSubcategoryID as uniqueidentifier
+  --declare @StatusCodeCompleted as tinyint
+  --declare @StatusCodeCancelled as tinyint
+  declare @StatusCodePending as tinyint = 1;
+  declare @TempTable TABLE(SponsorLetterSequenceID int)
+  declare @isMajorDonor bit = 0;   -- flag that identifies if this is a major donor appeal letter, if so then won't have child id and need to find all its sponsored kids
+  declare @appealId uniqueidentifier;
+  declare @appealResponseCreated bit = 0;   --flag to indicate if appeal response was created or not
+  --declare @11_20ChildrenMktsegmentId uniqueidentifier;
+  declare @Over20ChildrenMktsegmentId uniqueidentifier;
+  declare @childIDList dbo.USR_UDT_CHILDIDLIST;
+  declare @constituentAppealId uniqueidentifier;
+  declare @sponsoredChildCount int = 0;
+  declare @interactionComment nvarchar(100) = 'from Sponsor Retention 2016 Appeal scanner';
+  declare @isCancelledSponsorship bit = 0;
+  declare @isChildIneligible bit = 0;
+  declare @isChildInteractionExisting bit = 0;
+  --Expected Date is last day of month, 3 months in advance
+  declare @expectedDate date = Cast(DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,GETDATE())+4,0)) as date);
+  declare @childInteractionSponsorId uniqueidentifier = null;
+  declare @childInteractionId uniqueidentifier = null;
+  declare @12MonthsAgo date = dateadd(yy, -1, getdate());		-- used in comparing against expecteddate when checking for existing child interaction
+  
+  --   the RESPONSECATEGORY will be whatever they want to use for each Response,
+  --   the RESPONSEID will point to the Response of "Yes" or whatever it is for the given RESPONSECATEGORY
+  declare @RESPONSECATEGORYID uniqueidentifier;
+  declare @RESPONSEID uniqueidentifier;
+
+  select @RESPONSECATEGORYID = ID 
+  from dbo.RESPONSECATEGORY
+  where lower([NAME]) = lower('Appeal Response Received');  
+
+  select @RESPONSEID = ID
+  from dbo.RESPONSE
+  where dbo.RESPONSE.RESPONSECATEGORYID = @RESPONSECATEGORYID
+  and lower(dbo.RESPONSE.RESPONSE) = lower('Yes')   
+  and dbo.RESPONSE.ISINACTIVE = 0
+
+  if @ChildLookupID is null or @ChildLookupID = ''
+    set @isMajorDonor = 1;
+
+  -- Get interaction type code of 'Mail'
+  set @InteractionTypeCode = (select ID from dbo.INTERACTIONTYPECODE where LOWER(DESCRIPTION) = 'mail')
+
+  -- Set constants
+--  set @StatusCodeCompleted = 2;
+--  set @StatusCodeCancelled = 4;
+
+  set @ExtraLetter = 0
+  set @ExceptionOccurred = 0
+
+  if @ChangeAgentID is null
+  	exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @ChangeAgentID output;
+
+  -- lookup the major donor mkt segment - only Segment 3 (21+) is major donor for this campaign:
+--  select @11_20ChildrenMktsegmentId = ID
+--  from dbo.MKTSEGMENT
+--  where NAME like '%Correspondents of 11-20 children%'
+
+  select @Over20ChildrenMktsegmentId  = ID
+  from dbo.MKTSEGMENT
+  where NAME like '%Correspondents of 21+ children%'
+
+  -- validate Sponsor ID
+  if @ExceptionOccurred = 0
+  	begin
+  		set @SponsorID = (select ID from dbo.CONSTITUENT where LOOKUPID = @SponsorLookupID)
+  		if @SponsorID is null
+  			begin
+  				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Sponsor ID not found. '
+  				set @ExceptionOccurred = 1
+  			end
+  	end
+  	
+  -- validate Child ID
+  if @ExceptionOccurred = 0
+  	begin
+      -- if we have a major donor then there will be no child lookup id value, so if not a major donor, verify the child Id value:
+      if (@ChildLookupID is not null and @ChildLookupID <> '')
+        begin
+      		set @ChildID = (select ID from dbo.SPONSORSHIPOPPORTUNITY where LOOKUPID = @ChildLookupID)
+      		If @ChildID is null
+      			begin
+      				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child ID not found. '
+      				set @ExceptionOccurred = 1
+      			end
+        end
+  	end
+
+
+  --get the child's project id so we can populate it in the interactionextension:
+  if @ExceptionOccurred = 0
+  	begin
+  		set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID)
+  	end
+
+
+  -- Holistic Appeal Response type
+  if @ExceptionOccurred = 0
+  	begin
+  		set @ChildEducationalAppealResponseSubcategoryID = (select ID from dbo.INTERACTIONSUBCATEGORY where LOWER(NAME) = lower('Holistic Appeal Response'))
+  		if @ChildEducationalAppealResponseSubcategoryID is null
+  			begin
+  				set @ExceptionOccurred = 1
+  				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Spiritual Appeal Response subcategory not found. '
+  			end
+  	end
+
+  -- begin tran here since we are about to update and create records
+  begin try
+  begin tran
+
+  -- Create Appeal Response for Sponsor, if one doesn't already exist for this Appeal.
+  if @ExceptionOccurred = 0
+  	begin
+  		-- Try & locate the Appeal given the Finder # if the finder number value isn't -1
+      if @FinderNumber <> -1 
+        begin
+          select @constituentAppealId = ID,
+                 @appealId = dbo.CONSTITUENTAPPEAL.APPEALID
+          from dbo.CONSTITUENTAPPEAL
+          where dbo.CONSTITUENTAPPEAL.FINDERNUMBER = @FinderNumber; 
+        end
+      else
+        begin
+          -- locate the appeal using the appeal id value
+          declare @appealCount integer;
+
+          select @appealCount = count(*)
+          from dbo.APPEAL
+          where [NAME] like '%' + @AppealName + '%';
+          
+          if @appealCount <> 1
+            begin
+				-- we can't find the correct appeal so unable to continue:
+      			set @ExceptionOccurred = 1
+      			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Unable to locate the Appeal Name. '
+            end
+          else
+            begin
+              -- only have one, so get the appeal ID for it:
+              select @constituentAppealId = ID
+              from dbo.CONSTITUENTAPPEAL
+              where dbo.CONSTITUENTAPPEAL.APPEALID = (select ID
+                                                      from dbo.APPEAL
+                                                      where [NAME] like '%' + @AppealName + '%')
+              and CONSTITUENTID = @SponsorID;
+            end
+            
+        end
+      
+
+      if @constituentAppealId is not null
+        begin
+          -- check for the response & if not found, create a new one:
+          -- use this UFN to check if there's already a response for this Sponsor's Appeal:
+          if not exists (select 1 from dbo.UFN_CONSTITUENTAPPEAL_GETRESPONSES(@constituentAppealId) where RESPONSECATEGORY = @RESPONSECATEGORYID and RESPONSEID = @RESPONSEID)
+            begin
+              -- insert the Response now for this Sponsor (Constituent):
+              insert into [CONSTITUENTAPPEALRESPONSE] 
+              	([CONSTITUENTAPPEALID], 
+                [DATE],
+                --[ID],
+                [RESPONSEID],				
+                ADDEDBYID, 
+                CHANGEDBYID)
+              values (@constituentAppealId, 
+                getdate(),
+                --[ID],
+                @RESPONSEID, 
+                @CHANGEAGENTID, 
+                @CHANGEAGENTID)
+
+              -- set the flag to indicate that the appeal response was created
+              set @appealResponseCreated = 1;
+            end
+            
+            -- check if this sponsor is a major donor, based on the Mkt Segements:
+            if exists (select 1
+                      from dbo.CONSTITUENTAPPEAL
+                      join dbo.MKTSEGMENTATIONSEGMENT ON dbo.MKTSEGMENTATIONSEGMENT.ID = dbo.CONSTITUENTAPPEAL.MKTSEGMENTATIONSEGMENTID
+                      join dbo.MKTSEGMENTATION ON dbo.MKTSEGMENTATION.ID = dbo.MKTSEGMENTATIONSEGMENT.SEGMENTATIONID
+                      where (dbo.CONSTITUENTAPPEAL.ID = @constituentAppealId
+                      --and (SEGMENTID = @11_20ChildrenMktsegmentId or SEGMENTID = @Over20ChildrenMktsegmentId))
+					  and SEGMENTID = @Over20ChildrenMktsegmentId)
+					  )
+              set @isMajorDonor = 1;
+            else
+              set @isMajorDonor = 0;
+              
+            -- double check that the Child ID exists if this is not a major donor:
+            if (@isMajorDonor = 0 and (@ChildLookupID is null or @ChildLookupID='')) or (@isMajorDonor = 1 and @ChildLookupID <> '')              
+			  begin
+                -- cannot continue
+        		set @ExceptionOccurred = 1
+        		set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child Lookup ID is blank and Sponsor is not a Major Donor. '
+                -- set the flag to indicate that the appeal response was created so we'll know to create the child interaction even though the exception bit may be 1
+                set @appealResponseCreated = 0;
+              end
+
+        end      
+      else
+        begin
+  				set @ExceptionOccurred = 1
+  				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Unable to locate the Appeal for this Finder Number. '
+          -- set the flag to indicate that the appeal response was created so we'll know to create the child interaction even though the exception bit may be 1
+          set @appealResponseCreated = 0;
+        end
+    end
+        
+  -- child Spiritual Appeal Response interaction creation pre-check
+  -- Checking for ineligible children, cancelled sponsorships, 
+  --  and if there is an existing Interaction for this Child with same subcategory within past 12 months
+  --    (based on Expected Date)
+  if @ExceptionOccurred = 0
+  	begin
+    	-- Child departed (ineligible)
+    	--	when 0 then 'Pending', when 1 then 'Eligible',	when 2 then 'Ineligible'	
+    	if exists (select 1 from dbo.SPONSORSHIPOPPORTUNITY where ID = @ChildID and ELIGIBILITYCODE = 2)
+    		begin
+    			set @ExceptionOccurred = 1;
+				set @isChildIneligible = 1;
+				set @isChildInteractionExisting = 0;
+    			set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is ineligible -  DO NOT SEND letter to field. ';
+				set @interactionComment = 'Ineligible - child is ineligible';
+    		end
+        
+      -- check for a cancelled sponsorship for this child:
+      -- don't check for a cancelled sponsorship if the child's already ineligible
+      if @ExceptionOccurred = 0
+        begin
+          if exists (
+            select 1 
+            from dbo.SPONSORSHIP a
+            where a.ENDDATE = (select max(ENDDATE) from dbo.SPONSORSHIP b where a.ID = b.ID and STATUSCODE = 2 and SPONSORSHIPOPPORTUNITYID = @childId and CONSTITUENTID =@sponsorId)
+            and a.STATUSCODE = 2
+            and a.SPONSORSHIPOPPORTUNITYID = @childId
+            and a.CONSTITUENTID =@sponsorId)
+              begin
+				-- if there is a cancelled sponsorship, then check for any active sponsorship for
+				-- the child/sponsor combination:
+				if not exists (select 1 
+					from dbo.SPONSORSHIP 
+					where (STATUSCODE = 1
+					and SPONSORSHIPOPPORTUNITYID = @childId
+					and CONSTITUENTID =@sponsorId))
+					begin
+          				set @ExceptionOccurred = 1;
+						set @isCancelledSponsorship = 1;
+						set @isChildInteractionExisting = 0;
+          				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child is no longer sponsored - DO NOT send letter to field. ';
+						set @interactionComment = 'Cancelled - child is no longer sponsored.';
+					end
+              end
+        end
+		
+	  -- only check for existing child interaction if this is NOT a major donor:  
+	  --   major donor children will be checked below
+	  if @ExceptionOccurred = 0 and @isMajorDonor = 0
+	  	begin
+			set @childInteractionId = null;
+			set @childInteractionSponsorId = null;			
+			
+			select 	@childInteractionId = dbo.INTERACTION.ID,
+					@childInteractionSponsorId = iex.SPONSORID
+			from dbo.INTERACTION
+				left join dbo.USR_INTERACTIONEXTENSION iex ON iex.ID = dbo.INTERACTION.ID
+			where (CONSTITUENTID = @ChildID 
+				and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID
+				and @12MonthsAgo <= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
+			
+			-- did we find an existing Child Interaction?
+			if @childInteractionId is not null
+				begin
+					-- don't create another Child interaction:
+	  				set @ExceptionOccurred = 1;
+					set @isChildInteractionExisting = 1;
+	  				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child Interaction already exists within last 12 months. ';
+					set @interactionComment = 'Child Interaction already exists within last 12 months.';					
+				end
+		end
+
+  	end
+
+
+  -- create Spiritual Appeal Response interaction on the child:
+  --set @Date = CONVERT(DATE,GETDATE())
+  set @NewID = NEWID()
+
+  -- new for 2015 scanner: Set Child Interaction to Pending only, don't create interactions if 
+  --   cancelled, ineligible, etc.
+  if ((@ExceptionOccurred = 0 or @appealResponseCreated = 1) and (@isCancelledSponsorship = 0 and @isChildIneligible = 0 and @isChildInteractionExisting = 0))
+    begin
+      if @isMajorDonor = 0
+      	begin          
+          --if (@isCancelledSponsorship = 0 and @isChildIneligible = 0)
+		  --	begin
+      		INSERT INTO dbo.INTERACTION(
+      			ID
+      			,CONSTITUENTID
+      			,INTERACTIONTYPECODEID
+      			,EXPECTEDDATE
+      			,ACTUALDATE
+      			,STATUSCODE
+      			,INTERACTIONSUBCATEGORYID
+      			,OBJECTIVE
+				,COMMENT
+      			,ADDEDBYID
+      			,CHANGEDBYID
+      			,DATEADDED
+      			,DATECHANGED
+      			)
+      		VALUES(
+      			@NewID
+      			,@ChildID
+      			,@InteractionTypeCode
+      			,@expectedDate
+      			,@Date
+      			,@StatusCodePending  --  @StatusCodeValue
+      			,@ChildEducationalAppealResponseSubcategoryID
+      			,'Retention Response Received'
+				,@interactionComment
+      			,@ChangeAgentID
+      			,@ChangeAgentID
+      			,GETDATE()
+      			,GETDATE()
+      			)
+
+      		INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+	      		ID, 
+	      		COMPLETEDBYID, 	
+	      		CHILDID,
+	      		SPONSORID, 
+	      		SCANSESSION, 
+	      		CHILDPROJECTID, 
+				APPEALID,
+	      		ADDEDBYID, 
+	      		CHANGEDBYID, 
+	      		DATEADDED, 
+	      		DATECHANGED
+      		)
+      		VALUES (
+	      		@NewID, 
+	      		@ChangeAgentID, 
+	      		@ChildID,
+	      		@SponsorID,
+	      		@ScanSession, 
+	      		@CurrentChildProjectID, 
+				@appealId,
+	      		@ChangeAgentID, 
+	      		@ChangeAgentID, 
+	      		GETDATE(), 
+	      		GETDATE()
+      		)
+
+      		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interaction created.  '
+			--end
+      	end
+	  else
+	      begin
+	        -- this is a Major Donor, get all the children currently actively sponsored by this sponsor and
+	        -- then create interactions for them all:
+	        -- use this UFN:  USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR
+	        insert @childIDList 
+			select *
+			from dbo.USR_UFN_SPONSORSHIP_GETACTIVELYSPONSOREDCHILDREN_FORSPONSOR(@sponsorId)
+	        
+	        -- get the number of sponsored children for use later in the scan results message:
+	        select @sponsoredChildCount = count(*)
+	        from @childIDList;
+	        
+	        -- loop through the child list to create the interaction & interaction extension records:
+	        declare ChildrenCursor cursor local fast_forward for
+			select SPONSORSHIPOPPORTUNITYCHILDID
+			from @childIDList
+	    	
+	      	declare @SPONSORSHIPOPPORTUNITYCHILDID uniqueidentifier;
+	      		
+	      	open ChildrenCursor;
+	      				
+	      	fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
+	            
+	      	while (@@FETCH_STATUS = 0)
+	      	begin					    
+	          	set @NewID = NEWID();
+
+				-- get the child project id
+				set @CurrentChildProjectID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = @SPONSORSHIPOPPORTUNITYCHILDID)
+	          
+			  	-- check for an existing Child Interaction here:
+				set @childInteractionId = null;
+				set @childInteractionSponsorId = null;			
+				
+				select 	@childInteractionId = dbo.INTERACTION.ID,
+						@childInteractionSponsorId = iex.SPONSORID
+				from dbo.INTERACTION
+					left join dbo.USR_INTERACTIONEXTENSION iex ON iex.ID = dbo.INTERACTION.ID
+				where (CONSTITUENTID = @SPONSORSHIPOPPORTUNITYCHILDID 
+					and INTERACTIONSUBCATEGORYID = @ChildEducationalAppealResponseSubcategoryID
+					and @12MonthsAgo <= EXPECTEDDATE and EXPECTEDDATE <= @expectedDate);
+				
+				-- did we find an existing Child Interaction?
+				if @childInteractionId is not null
+					begin
+						-- if the current major donor sponsor is the same as in the interaction, then don't create a new child interaction;
+						if @childInteractionSponsorId is not null and @childInteractionSponsorId = @sponsorId
+							begin
+								-- insert into scanner log for this exception:
+								insert into dbo.USR_LETTERSCANNERLOG(
+									LOGTYPECODE
+									,SCANSESSION
+									,[DESCRIPTION]
+									,SCANOUTCOME
+									,CHILDID
+									,SPONSORID
+									,CHILDPROJECTID
+									,LETTERSUBCATEGORYID
+									,ADDEDBYID
+									,CHANGEDBYID
+								)
+								values(
+									0  -- failure
+									,@ScanSession
+									,'Child Interaction already exists within last 12 months. '
+									,'Place letter in exception stack. '
+									,@SPONSORSHIPOPPORTUNITYCHILDID 
+									,@sponsorID
+									,@CurrentChildProjectID
+									,@ChildEducationalAppealResponseSubcategoryID
+									,@ChangeAgentID
+									,@ChangeAgentID
+								);
+
+							end
+					end
+			  	else
+					begin
+						-- create the interactions
+						INSERT INTO dbo.INTERACTION(
+							ID
+							,CONSTITUENTID
+							,INTERACTIONTYPECODEID
+							,EXPECTEDDATE
+							,ACTUALDATE
+							,STATUSCODE
+							,INTERACTIONSUBCATEGORYID
+							,OBJECTIVE
+							,COMMENT
+							,ADDEDBYID
+							,CHANGEDBYID
+							,DATEADDED
+							,DATECHANGED
+							)
+						values ( 
+							@NewID
+							,@SPONSORSHIPOPPORTUNITYCHILDID
+							,@InteractionTypeCode
+							,@expectedDate
+							,@Date
+							,@StatusCodePending 	--@StatusCodeCompleted
+							,@ChildEducationalAppealResponseSubcategoryID
+							,'Retention Response Received'
+							,@interactionComment
+							,@ChangeAgentID
+							,@ChangeAgentID
+							,GETDATE()
+							,GETDATE()
+						);
+
+						INSERT INTO dbo.USR_INTERACTIONEXTENSION(
+							ID, 
+							COMPLETEDBYID, 	
+							CHILDID,
+							SPONSORID, 
+							SCANSESSION, 
+							CHILDPROJECTID, 
+							APPEALID,
+							ADDEDBYID, 
+							CHANGEDBYID, 
+							DATEADDED, 
+							DATECHANGED
+						)
+						VALUES (
+							@NewID, 
+							@ChangeAgentID, 
+							@SPONSORSHIPOPPORTUNITYCHILDID,
+							@SponsorID,
+							@ScanSession, 
+							@CurrentChildProjectID, 
+							@appealId,
+							@ChangeAgentID, 
+							@ChangeAgentID, 
+							GETDATE(), 
+							GETDATE()
+						)
+					
+					end
+
+				fetch next from ChildrenCursor into @SPONSORSHIPOPPORTUNITYCHILDID;
+	        end
+	        
+	        close ChildrenCursor;
+	        
+	    	set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Child interactions created.  ';
+	            
+	      end
+    end
+
+
+  -- SCAN LOG
+  -- Success
+  set @SponsorLetterSequenceID = coalesce(@SponsorLetterSequenceID,0)
+  --set @Scannermessage = RTRIM(@ScannerMessage)
+  set @OriginalLetterSequenceID = coalesce(@OriginalLetterSequenceID, 0)
+
+
+  set @NumberOfDaysSponsored = 0
+  set @CancellationReason = ''	
+
+  if @ExceptionOccurred = 0
+  	begin
+  		set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Scan successful. '
+      
+      if @isMajorDonor = 1
+        begin
+          set @ScannerMessage = coalesce(@ScannerMessage, '') + 'Major Donor sponsor: copy letters for ' + Cast(@sponsoredChildCount as nvarchar(10)) + ' sponsored children '
+        end
+        
+  		set @LogTypeCode = 1 -- Success
+  		set @ScanOutcome = 'Place letter on successful scan stack. '
+    end
+  else
+    begin
+  		set @LogTypeCode = 0 -- failure
+  		set @ScanOutcome = 'Place letter in exception stack. '
+    end
+  		
+  insert into dbo.USR_LETTERSCANNERLOG(
+    LOGTYPECODE
+    ,SCANSESSION
+    ,[DESCRIPTION]
+    ,SCANOUTCOME
+    ,CHILDID
+    ,SPONSORID
+    ,CHILDPROJECTID
+    ,LETTERSUBCATEGORYID
+    ,ADDEDBYID
+    ,CHANGEDBYID
+    )
+  values(
+    @LogTypeCode
+    ,@ScanSession
+    ,@ScannerMessage
+    ,@Scanoutcome
+    ,@ChildID
+    ,@SponsorID
+    ,@CurrentChildProjectID
+    ,@ChildEducationalAppealResponseSubcategoryID
+    ,@ChangeAgentID
+    ,@ChangeAgentID
+  )
+  	
+  commit
+  end try	
+
+  begin catch
+  	-- error
+  	ROLLBACK
+  	-- Raise an error with the details of the exception
+  	SELECT @ErrMsg = ERROR_MESSAGE(),
+  	 @ErrSeverity = ERROR_SEVERITY()
+
+  	RAISERROR(@ErrMsg, @ErrSeverity, 1)
+  end catch
+
+
+end
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

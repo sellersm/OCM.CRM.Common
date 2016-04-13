@@ -697,6 +697,14 @@
   <ItemGroup>
     <EmbeddedResource Include="Post to GL\MultiviewColumnsFormat.PostToGLOuputFormat.Query.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2016\SponsorRetentionAppeal2016LetterScanner.Add.xml" />
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2016\SponsorRetentionAppeal2016LetterScanner.Task.xml" />
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2016\USR_USP_SPONSORRETENTION_APPEAL_2016_LETTERSCANNER.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2016\SponsorRetentionAppeal2016Scanner.Package.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

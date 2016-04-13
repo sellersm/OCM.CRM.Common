@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>SponsorRetentionAppeal2016LetterScanner.Add.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>SponsorRetentionAppeal2016LetterScannerAddDataFormUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>SponsorRetentionAppeal2016LetterScannerAddDataForm.html</HtmlFile>
+    <HtmlFolder>htmlforms\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

@@ -1,0 +1,72 @@
+<PackageSpec 
+    xmlns="bb_appfx_package"
+    xmlns:common="bb_appfx_commontypes"
+    ID="77e5ea61-ead7-46c7-97cc-00a65861446f"
+    Name="Sponsor Retention Appeal 2016 Scanner Package"
+    Description="Sponsor Retention Appeal 2016 Letter Scanner"
+    Author="Memphis Sellers"
+    >
+
+	<!-- 
+	Remarks:    package for the Sponsor Retention Appeal 2016 Letter Scanner
+
+	History:
+	Date            Modified By     Comments
+	13-Apr-2016		Memphis			Added all the items for Sponsor Retention Appeal 2016 Letter Scanner:  
+									
+	-->
+
+	<!-- Note:  the order of the items listed here is important.  For example, you won't be able to load a data form that references 
+	a table that hasn't been loaded, etc.  In general, the following order is recommended:
+	
+		(functions and procedures first)
+		SQLFunctionSpec
+		SQLStoredProcedureSpec
+		TranslationFunctionSpec
+
+		(tables next)
+		CodeTableSpec
+		TableSpec
+
+		(features next)
+		SimpleDataListSpec		
+		SearchListSpec
+		RecordOperationSpec
+		DataListSpec
+		
+		(forms next)
+		AddDataFormTemplateSpec
+		EditDataFormTemplateSpec
+		ViewDataFormTemplateSpec		
+
+		(more feature types)
+		BatchTypeSpec
+		BusinessProcessSpec
+		FlashDashSpec
+		IDMapperSpec
+		KpiSpec
+		MergeConfiguration
+		MergeTaskSpec
+		QueryViewSpec
+		ReportSpec
+		SmartFieldSpec
+		SmartQuerySpec
+
+		(functional areas, pages, and tasks last)
+		PageDefinitionSpec
+		FunctionalAreaSpec
+		TaskSpec	
+	-->
+	
+	<common:DependencyList>
+		<!-- Sprocs -->
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORRETENTION_APPEAL_2016_LETTERSCANNER.xml" />
+
+		<!-- forms-->
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorRetentionAppeal2016LetterScanner.Add.xml" />
+
+		<!-- Pages, Tasks-->
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorRetentionAppeal2016LetterScanner.Task.xml" />
+    </common:DependencyList>
+
+</PackageSpec>

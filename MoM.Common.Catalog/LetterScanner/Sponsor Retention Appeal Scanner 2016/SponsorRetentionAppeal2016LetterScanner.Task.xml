@@ -1,0 +1,17 @@
+﻿<TaskSpec
+	xmlns="bb_appfx_task"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="a6e3c656-0754-442d-890c-afaa4a674c8a"
+	Name="Scan Sponsor Retention Appeal 2016"
+	Description="Scanner for sponsor retention appeal 2016."
+	Author="Memphis Sellers"
+	FunctionalAreaID="00050ce8-8abb-4a86-b9af-70a035ce0582"
+	Sequence="0"
+	>
+
+	<!-- indicate what this task should do (navigate to a page, show a form, etc. 
+		Launches the Sponsor Retention 2016 Letter Scanner Add Data Form
+	-->
+	<common:ShowAddDataForm DataFormID="2dcd98d0-4659-41e1-ba6d-c02911aee5ad" />
+
+</TaskSpec>
