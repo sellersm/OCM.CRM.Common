@@ -238,14 +238,14 @@ Public Class SponsorRetentionAppeal2016LetterScannerAddDataFormUIModel
 		Using conn As SqlClient.SqlConnection = Me.GetRequestContext().OpenAppDBConnection()
 			Dim cmd As SqlClient.SqlCommand = New SqlClient.SqlCommand()
 			cmd.Connection = conn
-			cmd.CommandText = "dbo.USR_USP_SPONSORRETENTION_2015_LETTERSCANNER"
+			cmd.CommandText = "dbo.USR_USP_SPONSORRETENTION_APPEAL_2016_LETTERSCANNER"
 			cmd.CommandType = CommandType.StoredProcedure
 
 			cmd.Parameters.AddWithValue("@SponsorLookupID", _sponsorId)
 			If _appealName.HasValue Then
 				cmd.Parameters.AddWithValue("@AppealName", _appealName.Value.ToString())
 			Else
-				cmd.Parameters.AddWithValue("@AppealName", "10572")	'DBNull.Value)
+				cmd.Parameters.AddWithValue("@AppealName", "10586")	'DBNull.Value)
 			End If
 			cmd.Parameters.AddWithValue("@FinderNumber", _finderNumber)
 			cmd.Parameters.AddWithValue("@ChangeAgentID", DBNull.Value)
