@@ -164,7 +164,7 @@ begin
   		if @ChildEducationalAppealResponseSubcategoryID is null
   			begin
   				set @ExceptionOccurred = 1
-  				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Spiritual Appeal Response subcategory not found. '
+  				set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Holistic Appeal Response subcategory not found. '
   			end
   	end
 
