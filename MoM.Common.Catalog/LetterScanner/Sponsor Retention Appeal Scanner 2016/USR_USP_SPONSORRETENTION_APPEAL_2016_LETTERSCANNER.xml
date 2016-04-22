@@ -21,6 +21,7 @@
 								   - It's possible that the Finder Number can be "empty", will have a -1 value in it,
 									 if it does, then use the Appeal ID value
 								   - 2016 appeal is "10586 - Sponsor Retention 2016"
+	21-Apr-2016		Memphis			- Fix bug: check that given sponsor is current sponsor for given child.
 									 
 	-->
 
@@ -270,7 +271,7 @@ begin
         end
     end
         
-  -- child Spiritual Appeal Response interaction creation pre-check
+  -- child Spiritual Appeal Response interaction creation pre-check 
   -- Checking for ineligible children, cancelled sponsorships, 
   --  and if there is an existing Interaction for this Child with same subcategory within past 12 months
   --    (based on Expected Date)
@@ -315,6 +316,24 @@ begin
 					end
               end
         end
+		
+	  -- 4-21-16: Memphis-check that the given sponsor is the current sponsor of the given Child:
+	  --          but only if not a major donor:
+	  if @ExceptionOccurred = 0 and @isMajorDonor = 0	  	
+		begin
+			if not exists (select 1 
+				from dbo.SPONSORSHIP 
+				where (STATUSCODE = 1
+				and SPONSORSHIPOPPORTUNITYID = @childId
+				and CONSTITUENTID =@sponsorId))
+				begin
+					set @ExceptionOccurred = 1;
+					set @isCancelledSponsorship = 0;
+					set @isChildInteractionExisting = 0;
+					set @ScannerMessage = coalesce(@ScannerMessage, '') + ' Child not sponsored by this Sponsor-DO NOT send letter to field. ';
+					set @interactionComment = 'Child and Sponsor do not match.';
+				end
+		end		
 		
 	  -- only check for existing child interaction if this is NOT a major donor:  
 	  --   major donor children will be checked below
