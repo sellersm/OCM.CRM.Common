@@ -87,7 +87,8 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
     Private WithEvents _holdreasoncodeid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _unusablecodeid As Global.Blackbaud.AppFx.UIModeling.Core.StringField
     Private WithEvents _sequenceid As Global.Blackbaud.AppFx.UIModeling.Core.IntegerField
-    Private WithEvents _sponsorid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+	Private WithEvents _sponsorid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+	Private WithEvents _partnerid As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
     Private WithEvents _itemsenclosedcodeid As Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
     Private WithEvents _originallettersubcategoryid As Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
     Private WithEvents _completedaftercancellationcode As Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of COMPLETEDAFTERCANCELLATIONCODES))
@@ -130,8 +131,9 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         _holdreasoncodeid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _unusablecodeid = New Global.Blackbaud.AppFx.UIModeling.Core.StringField
         _sequenceid = New Global.Blackbaud.AppFx.UIModeling.Core.IntegerField
-        _sponsorid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
-        _itemsenclosedcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
+		_sponsorid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+		_partnerid = New Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+		_itemsenclosedcodeid = New Global.Blackbaud.AppFx.UIModeling.Core.CodeTableField
         _originallettersubcategoryid = New Global.Blackbaud.AppFx.UIModeling.Core.SimpleDataListField(Of Guid)
         _completedaftercancellationcode = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of COMPLETEDAFTERCANCELLATIONCODES))
         _printblackoutlabel = New Global.Blackbaud.AppFx.UIModeling.Core.ValueListField(Of Nullable(Of PRINTBLACKOUTLABELS))
@@ -338,7 +340,17 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         _sponsorid.DBReadOnly = True
         _sponsorid.SearchListID = New Guid("23c5c603-d7d8-4106-aecc-65392b563887")
         Me.Fields.Add(_sponsorid)
-        '
+
+		'
+		'_partnerid
+		'
+		_partnerid.Name = "PARTNERID"
+		_partnerid.Caption = "Partner"
+		_partnerid.DBReadOnly = True
+		_partnerid.SearchListId = New Guid("23c5c603-d7d8-4106-aecc-65392b563887")
+		Me.Fields.Add(_partnerid)
+
+		'
         '_itemsenclosedcodeid
         '
         _itemsenclosedcodeid.Name = "ITEMSENCLOSEDCODEID"
@@ -714,7 +726,18 @@ Partial Public Class [InteractionExtensionViewFormUIModel]
         Get
             Return _sponsorid
         End Get
-    End Property
+	End Property
+
+	''' <summary>
+	''' Partner
+	''' </summary>
+	<System.ComponentModel.Description("Partner")> _
+	<System.CodeDom.Compiler.GeneratedCodeAttribute("BBUIModelLibrary", "2.93.2034.0")> _
+	Public ReadOnly Property [PARTNERID]() As Global.Blackbaud.AppFx.UIModeling.Core.SearchListField(Of Guid)
+		Get
+			Return _partnerid
+		End Get
+	End Property
     
     ''' <summary>
     ''' Items enclosed

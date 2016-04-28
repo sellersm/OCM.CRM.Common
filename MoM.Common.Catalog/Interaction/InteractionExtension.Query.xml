@@ -28,6 +28,7 @@
 	16-Apr-2013		Memphis			Added ITEMSENCLOSED.  Fogbugz Case 1059.
 	14-May-2013		Memphis			Added PRINTBLACKOUTLABEL.
 	23-Dec-2013		CMayeda			Added captions for SPONSORID, CHILDASSIGNED. They were used in the relationships with other views, but were not hidden, so I added captions.
+	27-Apr-2016		Memphis			Added PartnerID
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -105,6 +106,7 @@
 			childproj.NAME as CHILDPROJECTNAME,
 			
 			int_ext.SPONSORID,
+			int_ext.PARTNERID,
 			so_child.ID as CHILDASSIGNED,
 			(select [DESCRIPTION] from dbo.USR_ITEMSENCLOSEDCODE where ID = int_ext.ITEMSENCLOSEDCODEID) as ITEMSENCLOSED,
 			int_ext.PRINTBLACKOUTLABEL
@@ -125,6 +127,7 @@
 		<OutputFields>
 			<OutputField Name="ID" Caption="Interaction record" Category="System Fields" DataType="Guid" IsHidden="true" />
 			<OutputField Name="SPONSORID" Caption="Sponsor ID" Category="System Fields" DataType="Guid" />
+			<OutputField Name="PARTNERID" Caption="Partner ID" Category="System Fields" DataType="Guid" />
 			<OutputField Name="CHILDASSIGNED" Caption="Child Assigned ID" Category="System Fields" DataType="Guid" />
 
 			<OutputField Name="SEQUENCEID" Caption="Sequence ID" DataType="Integer" />
@@ -305,6 +308,7 @@
 		<AddRelatedView Field ="TRANSFERCHILDPROJECTID" RelatedView="USR_V_QUERY_CHILDPROJECTEXTENSION" RelatedField="ID" PathAlias="Transfer Child Project"/>
 		<AddRelatedView Field="SPONSORID" RelatedView="V_QUERY_SPONSOR" RelatedField="ID" PathAlias="Sponsor"/>
         <AddRelatedView Field="CHILDASSIGNED" RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" RelatedField="ID" PathAlias="Assigned to Child" />
+		<AddRelatedView Field="PARTNERID" RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" PathAlias="Partner"/>
 	</RelationshipOperations>
 
 </QueryViewSpec>

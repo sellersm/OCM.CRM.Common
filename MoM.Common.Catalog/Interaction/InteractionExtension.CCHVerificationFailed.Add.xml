@@ -25,7 +25,8 @@
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version - copied from InteractionExtension.Add.xml
 	16-Aug-2012		CMayeda			Fix non-standard sproc name (didn't have USR_ prefix
-	20-Sep-2012		CMayeda			Added Reservation Request fields - Fogbugz Case 835						
+	20-Sep-2012		CMayeda			Added Reservation Request fields - Fogbugz Case 835	
+	27-Apr-2016		Memphis			Added PartnerID
 
 	-->
 
@@ -59,6 +60,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_INTERACTIONEXTENSION_CCHVERIFI
     @HOLDREASONCODEID uniqueidentifier = null,
     @UNUSABLECODEID uniqueidentifier = null,
 	@SPONSORID uniqueidentifier = null,
+	@PARTNERID uniqueidentifier = null,
 	@ITEMSENCLOSEDCODEID uniqueidentifier = null,
 	@ORIGINALLETTERSUBCATEGORYID uniqueidentifier = null,
 	@RESERVATIONREQREPCODE nvarchar(100) = null,
@@ -110,6 +112,7 @@ as begin
 			HOLDREASONCODEID, 
 			UNUSABLECODEID, 
 			SPONSORID,
+			PARTNERID,
 			ITEMSENCLOSEDCODEID,
 			ORIGINALLETTERSUBCATEGORYID,
 			RESERVATIONREQREPCODE, 
@@ -148,6 +151,7 @@ as begin
 			@HOLDREASONCODEID, 
 			@UNUSABLECODEID, 
 			@SPONSORID,
+			@PARTNERID,
 			@ITEMSENCLOSEDCODEID,			
 			@ORIGINALLETTERSUBCATEGORYID,
 			@RESERVATIONREQREPCODE, 
@@ -281,6 +285,11 @@ end
 			<c:FormField FieldID="SPONSORID" Caption="Sponsor" DataType="Guid">
 				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
 			</c:FormField>
+
+			<c:FormField FieldID="PARTNERID" Caption="Partner" DataType="Guid">
+				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
+			</c:FormField>
+
 			<c:FormField FieldID="ITEMSENCLOSEDCODEID" Caption="Items enclosed" DataType="Guid">
 				<c:CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE"/>
 			</c:FormField>

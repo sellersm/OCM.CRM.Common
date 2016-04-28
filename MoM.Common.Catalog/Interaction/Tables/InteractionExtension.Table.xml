@@ -28,6 +28,7 @@
 	31-Oct-2012		CMayeda			Added indexes, another trigger fix
 	09-Nov-2012		Memphis			Added the fields for Letter Scanner feature
 	14-May-2013		Memphis			Added the new PRINTBLACKOUTLABEL field for letter scanner.
+	27-Apr-2016		Memphis			Added PARTNERID field
 	-->
 
 
@@ -71,6 +72,7 @@
 		<ForeignKeyField Name="SPONSORID" Description="Sponsor ID at time of interaction creation" OnDelete="RaiseError" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
 		<CodeTableField Name="ITEMSENCLOSEDCODEID" Description="Items Enclosed" CodeTable="USR_ITEMSENCLOSEDCODE"/>
 		<ForeignKeyField Name="ORIGINALLETTERSUBCATEGORYID" Description="Original Letter Subcategory ID" OnDelete="RaiseError" ForeignTable="INTERACTIONSUBCATEGORY" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
+		<ForeignKeyField Name="PARTNERID" Description="Partner ID at time of interaction creation" OnDelete="RaiseError" ForeignTable="CONSTITUENT" ForeignDataType="uniqueidentifier" ForeignFieldName="ID" Cardinality="ManyToOne"/>
 
 		<!-- Reservation Request Interaction Extension Fields -->
 		<TextField Name="RESERVATIONREQREPCODE" Description="Rep Code for the reservation request" Length="100"/>
@@ -133,6 +135,11 @@
 		<Index IsUnique="false">
 			<IndexFields>
 				<IndexField Name="SPONSORID"/>
+			</IndexFields>
+		</Index>
+		<Index IsUnique="false">
+			<IndexFields>
+				<IndexField Name="PARTNERID"/>
 			</IndexFields>
 		</Index>
 		<Index IsUnique="false">
