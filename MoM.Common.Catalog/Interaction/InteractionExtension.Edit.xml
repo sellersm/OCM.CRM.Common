@@ -27,6 +27,7 @@
 	13-Jun-2013		CMayeda			Added PRINTBLACKOUTLABEL, COMPLETEDAFTERCANCELLATIONCODE
 	10-Oct-2013		Memphis			Added ORIGINALLETTERSEQUENCEID
 	25-Feb-2015		CMayeda			Fixed "Additional Info" tab not being displayed when there is no Interaction Extension row.
+	27-Apr-2016		Memphis			Added PARTNERID for the new Partner branded Welcome Kits.
 	-->
 	<SPDataForm>
 		<LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
@@ -58,6 +59,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION
     @HOLDREASONCODEID uniqueidentifier = null output,
     @UNUSABLECODEID uniqueidentifier = null output,
 	@SPONSORID uniqueidentifier = null output,
+	@PARTNERID uniqueidentifier = null output,
 	@ITEMSENCLOSEDCODEID uniqueidentifier = null output,
 	@ORIGINALLETTERSUBCATEGORYID uniqueidentifier = null output,
 	@RESERVATIONREQREPCODE nvarchar(100) = null output,
@@ -144,6 +146,7 @@ as
         @HOLDREASONCODEID = HOLDREASONCODEID, 
         @UNUSABLECODEID = UNUSABLECODEID,
 		@SPONSORID = SPONSORID,
+		@PARTNERID = PARTNERID,
 		@ITEMSENCLOSEDCODEID = ITEMSENCLOSEDCODEID,
 		@ORIGINALLETTERSUBCATEGORYID = ORIGINALLETTERSUBCATEGORYID,
 		@RESERVATIONREQREPCODE = RESERVATIONREQREPCODE,
@@ -194,6 +197,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_EDIT_INTERACTIONEXTENSION
     @HOLDREASONCODEID uniqueidentifier,
     @UNUSABLECODEID uniqueidentifier,
 	@SPONSORID uniqueidentifier,
+	@PARTNERID uniqueidentifier,
 	@ITEMSENCLOSEDCODEID uniqueidentifier,
 	@ORIGINALLETTERSUBCATEGORYID uniqueidentifier,
 	@RESERVATIONREQREPCODE nvarchar(100),
@@ -241,6 +245,7 @@ as begin
             HOLDREASONCODEID = @HOLDREASONCODEID,
             UNUSABLECODEID = @UNUSABLECODEID,
 			SPONSORID = @SPONSORID,
+			PARTNERID = @PARTNERID,
 			ITEMSENCLOSEDCODEID = @ITEMSENCLOSEDCODEID,
 			ORIGINALLETTERSUBCATEGORYID = @ORIGINALLETTERSUBCATEGORYID,
 			RESERVATIONREQREPCODE = @RESERVATIONREQREPCODE,
@@ -370,6 +375,11 @@ end
 			<c:FormField FieldID="SPONSORID" Caption="Sponsor" DataType="Guid">
 				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
 			</c:FormField>
+
+			<c:FormField FieldID="PARTNERID" Caption="Partner" DataType="Guid">
+				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
+			</c:FormField>
+
 			<c:FormField FieldID="ITEMSENCLOSEDCODEID" Caption="Items enclosed" DataType="Guid">
 				<c:CodeTable CodeTableName="USR_ITEMSENCLOSEDCODE"/>
 			</c:FormField>

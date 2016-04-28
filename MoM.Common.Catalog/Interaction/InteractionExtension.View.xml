@@ -29,6 +29,7 @@
 	26-Sep-2012		CMayeda			Added DEPARTUREREASONOTHERDESCRIPTION, SPONSOREDPROJECTID, ITEMSENCLOSEDCODEID, ORIGINALLETTERSUBCATEGORYID - FogBugz Case 817, 819
 	13-Jun-2013		CMayeda			Added PRINTBLACKOUTLABEL, COMPLETEDAFTERCANCELLATIONCODE
 	10-Oct-2013		Memphis			Added ORIGINALLETTERSEQUENCEID
+	27-Apr-2016		Memphis			Added PartnerID
 	-->
 
 	<SPDataForm SPName="USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION">
@@ -61,6 +62,7 @@ create procedure dbo.USR_USP_DATAFORMTEMPLATE_VIEW_INTERACTION_EXTENSION
     @UNUSABLECODEID nvarchar(100) = null output,
 	@SEQUENCEID int = null output,
 	@SPONSORID uniqueidentifier = null output,
+	@PARTNERID uniqueidentifier = null output,
 	@ITEMSENCLOSEDCODEID uniqueidentifier = null output,
 	@ORIGINALLETTERSUBCATEGORYID uniqueidentifier = null output,
 	@RESERVATIONREQREPCODE nvarchar(100) = null output,
@@ -111,6 +113,7 @@ as
 			@UNUSABLECODEID = (select DESCRIPTION from dbo.USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE where ID = UNUSABLECODEID),
 			@SEQUENCEID = INTERACTION.SEQUENCEID,
 			@SPONSORID = SPONSORID,
+			@PARTNERID = PARTNERID,
 			@ITEMSENCLOSEDCODEID = ITEMSENCLOSEDCODEID,
 			@ORIGINALLETTERSUBCATEGORYID = ORIGINALLETTERSUBCATEGORYID,
 
@@ -193,6 +196,9 @@ as
 
 			<c:FormField FieldID="SEQUENCEID" Caption="Interaction sequence" DataType="Integer" DoNotApplyFormat="true" />
 			<c:FormField FieldID="SPONSORID" Caption="Sponsor" DataType="Guid">
+				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
+			</c:FormField>
+			<c:FormField FieldID="PARTNERID" Caption="Partner" DataType="Guid">
 				<c:SearchList SearchListID="23c5c603-d7d8-4106-aecc-65392b563887"/>
 			</c:FormField>
 			<c:FormField FieldID="ITEMSENCLOSEDCODEID" Caption="Items enclosed" DataType="Guid">
