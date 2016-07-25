@@ -65,23 +65,30 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Blackbaud.AppFx, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="Blackbaud.AppFx.Server, Version=1.0.128.756, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Blackbaud.AppFx, Version=4.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.Server.dll</HintPath>
+      <HintPath>..\..\..\References\Third Party\4.0.5\Blackbaud.AppFx.dll</HintPath>
     </Reference>
-    <Reference Include="Blackbaud.AppFx.UIModeling.Core, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="Blackbaud.AppFx.WebAPI, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Blackbaud.AppFx.Server, Version=4.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\SDK\DLLReferences\Blackbaud.AppFx.WebAPI.dll</HintPath>
+      <HintPath>..\..\..\References\Third Party\4.0.5\Blackbaud.AppFx.Server.dll</HintPath>
     </Reference>
-    <Reference Include="Blackbaud.AppFx.XmlTypes, Version=1.0.128.756, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Blackbaud.AppFx.UIModeling.Core, Version=4.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-      <HintPath>..\..\..\References\Third Party\Blackbaud.AppFx.XmlTypes.dll</HintPath>
+      <HintPath>..\..\..\References\Third Party\4.0.5\Blackbaud.AppFx.UIModeling.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Blackbaud.AppFx.XmlTypes.XmlSerializers, Version=2.93.2034.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Blackbaud.AppFx.WebAPI, Version=4.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\References\Third Party\4.0.5\Blackbaud.AppFx.WebAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx.XmlTypes, Version=4.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\References\Third Party\4.0.5\Blackbaud.AppFx.XmlTypes.dll</HintPath>
+    </Reference>
+    <Reference Include="Blackbaud.AppFx.XmlTypes.XmlSerializers, Version=4.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\References\Third Party\4.0.5\Blackbaud.AppFx.XmlTypes.XmlSerializers.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
