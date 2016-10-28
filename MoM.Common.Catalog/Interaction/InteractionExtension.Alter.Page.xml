@@ -18,6 +18,7 @@
 	05-Sep-2012		CMayeda			Added Additional Info (Interaction Extension View Form) to the Constituent Interaction Page (single interaction)
 	19-Sep-2012		CMayeda			Recreated Goto action group on the Sponsorship Interactions tab on the Constituent Interactions Page, because it wasn't showing in Web shell. Fogbugz Case - 832
 	23-May-2014		CMayeda			Added tabs Child Correspondence Interactions, Revenue Interactions - TK-01415
+	15-Aug-2016		Memphis			Updating for new 4.0 page definition
 	-->
 	
 	<!-- define how the page header should appear -->
@@ -26,37 +27,32 @@
 	<AlterExistingPages>
 		<AlterPages>
 			<!-- Constituent Interaction Page - Single Interaction -->
-			<AlterPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa">
+			<AlterPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f">
 				<AlterTabs>
-					<AlterTab TabID="f924cf1b-3c85-49fb-9097-c9b869336db2">
-						<AlterSections>
+					<!--<AlterTab TabID="dd8b93cd-e77c-4ef5-a05d-b410c40df547">-->
+						<!--<AlterSections>
 							<AddSection Sequence="2">
 								<Section ID="db3264c1-27da-4b42-9ac3-73647c1ff62c" Caption="Additional Info">
 									<DataForm ID="c742aec6-52ac-4eab-afb3-41d74ed15193" />
 								</Section>
 							</AddSection>
-						</AlterSections>
-						
-					</AlterTab>
-				</AlterTabs>
-			</AlterPage>
-			
-			<!-- Constituent Interactions Page - list of interactions -->
-			<AlterPage PageID="ede4cf10-a84d-4434-87ef-ae143c78eaaf">								
-				<AlterTabs>					
-					<AddTab Sequence ="2">
-						<Tab Caption="Sponsorship Interactions" ID="5845ac81-ad78-403b-8a0a-02ca56ecaedb">
-							<Sections>
-								<Section ID="72278A59-4E13-4624-BEB2-1E5B7FDE9CD6" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
-									<DataList ID="a39f10f7-e1fe-4642-bdbd-75ed78713664">
-										<RenderStyle>
-											<StandardView>
-												<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
-											</StandardView>
-										</RenderStyle>
-									</DataList>
-									<Actions>
-										<!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+						</AlterSections>-->
+						<AddTab Sequence ="2">
+							<Tab Caption="Sponsorship Interactions" ID="5845ac81-ad78-403b-8a0a-02ca56ecaedb" >
+								<Tabs>
+									<Tab 
+								</Tabs>
+								<Sections>
+									<Section ID="72278A59-4E13-4624-BEB2-1E5B7FDE9CD6" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
+										<DataList ID="a39f10f7-e1fe-4642-bdbd-75ed78713664">
+											<RenderStyle>
+												<StandardView>
+													<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
+												</StandardView>
+											</RenderStyle>
+										</DataList>
+										<Actions>
+											<!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
 											<ActionGroup>
 												<Actions>
 													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
@@ -79,7 +75,354 @@
 											</ActionGroup>
 										</Action>
 										-->
-										<!-- Not sure why the oob above didn't work in Webshell-->
+											<!-- Not sure why the oob above didn't work in Webshell-->
+											<Action ID="2e0fd330-cfac-4a6a-8e60-5cb9407c88bf" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="True">
+												<ActionGroup>
+													<Actions>
+														<Action ID="f5c0ff55-7ec2-44bc-96d9-d2f0a6d0d3f3" Caption="Interaction">
+															<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+															</ShowPage>
+														</Action>
+														<Action ID="386151be-3420-424d-b1b8-b02f33b4252f" Caption="Owner">
+															<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>OWNERID</SectionField>
+																</ActionContext>
+															</ShowPage>
+														</Action>
+													</Actions>
+												</ActionGroup>
+											</Action>
+
+											<Action ID="CB044C21-7937-4233-8AB4-495E3E7D4121" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+												<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
+													<ActionContext>
+														<PageContextID />
+													</ActionContext>
+													<PostActionEvent>
+														<RefreshPage/>
+													</PostActionEvent>
+												</ShowAddDataForm>
+												<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+											</Action>
+											<Action ID="59FD424A-AA3A-4223-B051-B48F9C8C1742" Caption="Edit" ImageKey="RES:Edit" CaptionResourceKey="$$edit">
+												<ActionGroup>
+													<Actions>
+														<Action ID="47E80D73-B90E-4A89-AC4D-2F3F8A97D8CF" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
+															<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+																<PostActionEvent>
+																	<RefreshPage/>
+																</PostActionEvent>
+															</ShowDataForm>
+															<HelpKey>CRMEditConstInteractions.html</HelpKey>
+														</Action>
+														<Action ID="FF7335AA-84F5-4166-984A-71CF253ABFDB" Caption="Responses" ImageKey="RES:Edit" CaptionResourceKey="$$responses">
+															<ShowDataForm DataFormID="ddb74740-0698-46cd-bb8e-77605fcdf7de" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+																<PostActionEvent>
+																	<RefreshPage/>
+																</PostActionEvent>
+															</ShowDataForm>
+															<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+														</Action>
+													</Actions>
+												</ActionGroup>
+											</Action>
+											<Action ID="FF7967AE-09A7-4F53-85DB-DE61423EF03C" Caption="Delete" ImageKey="RES:Delete" CaptionResourceKey="$$delete">
+												<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+													<ActionContext>
+														<SectionField>ID</SectionField>
+													</ActionContext>
+													<PostActionEvent>
+														<RefreshPage/>
+													</PostActionEvent>
+												</ExecuteRecordOperation>
+												<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+											</Action>
+										</Actions>
+										<HelpKey>CRMInteractions.html</HelpKey>
+									</Section>
+								</Sections>
+							</Tab>
+						</AddTab>
+						<AddTab Sequence ="3">
+							<Tab Caption="Child Correspondence Interactions" ID="FF812FD0-2A14-4D49-B522-7C243A7E127C">
+								<Sections>
+									<Section ID="799AFB81-70CA-46F7-8E93-275EC333E3C1" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
+										<DataList ID="7c2c7824-51a6-4bc5-abad-6877f51ceeb6">
+											<RenderStyle>
+												<StandardView>
+													<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
+												</StandardView>
+											</RenderStyle>
+										</DataList>
+										<Actions>
+											<!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+											<ActionGroup>
+												<Actions>
+													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+														<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+													</Action>
+													<Action ID="C07FB730-E2C2-4D10-A332-EA37DD80D42D" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="OWNER" CaptionResourceKey="$$owner">
+														<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>OWNERID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+										-->
+											<!-- Not sure why the oob above didn't work in Webshell-->
+											<Action ID="A58907B6-5E41-422D-ABC4-059E38B85D37" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="True">
+												<ActionGroup>
+													<Actions>
+														<Action ID="8FBDE863-CC7D-4BCE-A93D-B442A13EA54F" Caption="Interaction">
+															<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+															</ShowPage>
+														</Action>
+														<Action ID="2C03C576-D7FF-41F1-AD72-AF4422D0D04F" Caption="Owner">
+															<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>OWNERID</SectionField>
+																</ActionContext>
+															</ShowPage>
+														</Action>
+													</Actions>
+												</ActionGroup>
+											</Action>
+
+											<Action ID="EFCD73DB-AA13-4858-A0FC-5B38A7A8B59D" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+												<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
+													<ActionContext>
+														<PageContextID />
+													</ActionContext>
+													<PostActionEvent>
+														<RefreshPage/>
+													</PostActionEvent>
+												</ShowAddDataForm>
+												<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+											</Action>
+											<Action ID="15D14C06-8EF4-42BF-8F78-E62FA6EC53C1" Caption="Edit" ImageKey="RES:Edit" CaptionResourceKey="$$edit">
+												<ActionGroup>
+													<Actions>
+														<Action ID="7ED0986C-B251-4C40-A39D-1236B0EDAC67" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
+															<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+																<PostActionEvent>
+																	<RefreshPage/>
+																</PostActionEvent>
+															</ShowDataForm>
+															<HelpKey>CRMEditConstInteractions.html</HelpKey>
+														</Action>
+														<Action ID="58E7064F-2787-474D-B5C0-73999D89DB3C" Caption="Responses" ImageKey="RES:Edit" CaptionResourceKey="$$responses">
+															<ShowDataForm DataFormID="ddb74740-0698-46cd-bb8e-77605fcdf7de" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+																<PostActionEvent>
+																	<RefreshPage/>
+																</PostActionEvent>
+															</ShowDataForm>
+															<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+														</Action>
+													</Actions>
+												</ActionGroup>
+											</Action>
+											<Action ID="2068F986-1B8F-4A25-99FC-905C537A3B5A" Caption="Delete" ImageKey="RES:Delete" CaptionResourceKey="$$delete">
+												<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+													<ActionContext>
+														<SectionField>ID</SectionField>
+													</ActionContext>
+													<PostActionEvent>
+														<RefreshPage/>
+													</PostActionEvent>
+												</ExecuteRecordOperation>
+												<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+											</Action>
+										</Actions>
+										<HelpKey>CRMInteractions.html</HelpKey>
+									</Section>
+								</Sections>
+							</Tab>
+						</AddTab>
+						<AddTab Sequence ="4">
+							<Tab Caption="Revenue Interactions" ID="7C84FC4A-409E-4DB1-9350-C8E17E481283">
+								<Sections>
+									<Section ID="C9B5A340-F910-404E-96C7-95B778BE1871" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
+										<DataList ID="a4922805-0bd6-4e62-a0e2-7a433a629ed7">
+											<RenderStyle>
+												<StandardView>
+													<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
+												</StandardView>
+											</RenderStyle>
+										</DataList>
+										<Actions>
+											<!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+											<ActionGroup>
+												<Actions>
+													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+														<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+													</Action>
+													<Action ID="C07FB730-E2C2-4D10-A332-EA37DD80D42D" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="OWNER" CaptionResourceKey="$$owner">
+														<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>OWNERID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+										-->
+											<!-- Not sure why the oob above didn't work in Webshell-->
+											<Action ID="4EA57A83-1321-48E0-BE29-48F1818BEEF6" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="True">
+												<ActionGroup>
+													<Actions>
+														<Action ID="EDF68DFB-C64D-4742-9B09-8576B4095BF7" Caption="Interaction">
+															<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+															</ShowPage>
+														</Action>
+														<Action ID="8D57A720-C84F-4C64-90EE-1CB2C63B0944" Caption="Owner">
+															<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>OWNERID</SectionField>
+																</ActionContext>
+															</ShowPage>
+														</Action>
+													</Actions>
+												</ActionGroup>
+											</Action>
+
+											<Action ID="16192006-822C-4B90-8D9D-E9FCE313CB4F" Caption="Add" ImageKey="RES:NewItem" CaptionResourceKey="$$add">
+												<ShowAddDataForm DataFormID="723ad883-f995-4c40-afed-6a7914b536e3" xmlns="bb_appfx_commontypes">
+													<ActionContext>
+														<PageContextID />
+													</ActionContext>
+													<PostActionEvent>
+														<RefreshPage/>
+													</PostActionEvent>
+												</ShowAddDataForm>
+												<HelpKey>CRMAddInteractionsScreen.html</HelpKey>
+											</Action>
+											<Action ID="CF9DC548-5F80-489F-BAE0-BEE88C228188" Caption="Edit" ImageKey="RES:Edit" CaptionResourceKey="$$edit">
+												<ActionGroup>
+													<Actions>
+														<Action ID="DE90063A-7393-4C67-819D-316C84B5F30C" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
+															<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+																<PostActionEvent>
+																	<RefreshPage/>
+																</PostActionEvent>
+															</ShowDataForm>
+															<HelpKey>CRMEditConstInteractions.html</HelpKey>
+														</Action>
+														<Action ID="58303D6E-2EA0-4BAE-885B-CEF3D67000DC" Caption="Responses" ImageKey="RES:Edit" CaptionResourceKey="$$responses">
+															<ShowDataForm DataFormID="ddb74740-0698-46cd-bb8e-77605fcdf7de" xmlns="bb_appfx_commontypes">
+																<ActionContext>
+																	<SectionField>ID</SectionField>
+																</ActionContext>
+																<PostActionEvent>
+																	<RefreshPage/>
+																</PostActionEvent>
+															</ShowDataForm>
+															<HelpKey>CRMEditConstInteractionResponses.html</HelpKey>
+														</Action>
+													</Actions>
+												</ActionGroup>
+											</Action>
+											<Action ID="136B2F75-7328-4CE5-8225-604D651BD53D" Caption="Delete" ImageKey="RES:Delete" CaptionResourceKey="$$delete">
+												<ExecuteRecordOperation RecordOperationID="8073dd32-792e-44dc-86aa-118b000b7fc7" xmlns="bb_appfx_commontypes">
+													<ActionContext>
+														<SectionField>ID</SectionField>
+													</ActionContext>
+													<PostActionEvent>
+														<RefreshPage/>
+													</PostActionEvent>
+												</ExecuteRecordOperation>
+												<HelpKey>CRMDeleteConstInteraction.html</HelpKey>
+											</Action>
+										</Actions>
+										<HelpKey>CRMInteractions.html</HelpKey>
+									</Section>
+								</Sections>
+							</Tab>
+						</AddTab>
+					<!--</AlterTab>-->
+				</AlterTabs>
+			</AlterPage>
+			
+			
+			<!-- Constituent Interactions Page - list of interactions --><!--
+			<AlterPage PageID="ede4cf10-a84d-4434-87ef-ae143c78eaaf">								
+				<AlterTabs>					
+					<AddTab Sequence ="2">
+						<Tab Caption="Sponsorship Interactions" ID="5845ac81-ad78-403b-8a0a-02ca56ecaedb">
+							<Sections>
+								<Section ID="72278A59-4E13-4624-BEB2-1E5B7FDE9CD6" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
+									<DataList ID="a39f10f7-e1fe-4642-bdbd-75ed78713664">
+										<RenderStyle>
+											<StandardView>
+												<DetailViewForm ViewDataFormID="b525985b-be02-4f02-a9b8-c110411cf936" />
+											</StandardView>
+										</RenderStyle>
+									</DataList>
+									<Actions>
+										--><!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+											<ActionGroup>
+												<Actions>
+													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
+														<ShowPage PageID="c7fb41d2-840f-4c19-a4fc-3f8ce7ece1aa" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>ID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMGoToConstInteraction.html</HelpKey>
+													</Action>
+													<Action ID="C07FB730-E2C2-4D10-A332-EA37DD80D42D" Caption="Owner" ImageKey="RES:goto_round" LinkFieldID="OWNER" CaptionResourceKey="$$owner">
+														<ShowPage PageID="88159265-2b7e-4c7b-82a2-119d01ecd40f" TabID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes">
+															<ActionContext>
+																<SectionField>OWNERID</SectionField>
+															</ActionContext>
+														</ShowPage>
+														<HelpKey>CRMConstDataEntryHomePg.html</HelpKey>
+													</Action>
+												</Actions>
+											</ActionGroup>
+										</Action>
+										--><!--
+										--><!-- Not sure why the oob above didn't work in Webshell--><!--
 										<Action ID="2e0fd330-cfac-4a6a-8e60-5cb9407c88bf" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="True">
 											<ActionGroup>
 												<Actions>
@@ -169,7 +512,7 @@
 										</RenderStyle>
 									</DataList>
 									<Actions>
-										<!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+										--><!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
 											<ActionGroup>
 												<Actions>
 													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
@@ -191,8 +534,8 @@
 												</Actions>
 											</ActionGroup>
 										</Action>
-										-->
-										<!-- Not sure why the oob above didn't work in Webshell-->
+										--><!--
+										--><!-- Not sure why the oob above didn't work in Webshell--><!--
 										<Action ID="A58907B6-5E41-422D-ABC4-059E38B85D37" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="True">
 											<ActionGroup>
 												<Actions>
@@ -282,7 +625,7 @@
 										</RenderStyle>
 									</DataList>
 									<Actions>
-										<!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
+										--><!--<Action ID="64083F5D-B03D-473A-9E8A-A5DDCCEEF1C5" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="true" CaptionResourceKey="$$go_to">
 											<ActionGroup>
 												<Actions>
 													<Action ID="32AC8357-89EA-448E-BEEF-7FC7D5A6B2CB" Caption="Interaction" ImageKey="RES:goto_round" DefaultAction="true" LinkFieldID="OBJECTIVE" CaptionResourceKey="$$interaction">
@@ -304,8 +647,8 @@
 												</Actions>
 											</ActionGroup>
 										</Action>
-										-->
-										<!-- Not sure why the oob above didn't work in Webshell-->
+										--><!--
+										--><!-- Not sure why the oob above didn't work in Webshell--><!--
 										<Action ID="4EA57A83-1321-48E0-BE29-48F1818BEEF6" Caption="Go to" ImageKey="RES:goto_round" AppendSeparator="True">
 											<ActionGroup>
 												<Actions>
@@ -384,8 +727,9 @@
 						</Tab>
 					</AddTab>
 				</AlterTabs>
-			</AlterPage>
+			</AlterPage>-->
 
+			
 			<!-- Sponsorships Page -->
 			<AlterPage PageID="428f040a-eb45-4171-8c52-a030b9992d65">
 				<AlterTabs>
