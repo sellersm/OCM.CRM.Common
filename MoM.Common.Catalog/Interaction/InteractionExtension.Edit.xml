@@ -4,7 +4,7 @@
     Name="Interaction Extension Edit Form"
     Description="Used for editing the given Interaction Extension"
     Author="Cary Mayeda"
-    RecordType="Constituent Interaction"
+    RecordType="Interaction"
     DataFormInstanceID="4843ed1c-5488-4fca-ad99-5d9e72ad2908"
     c:SecurityUIFolder="Interaction Extension"
     OwnerIDMapperID="00000000-0000-0000-0000-000000000000"
@@ -28,6 +28,7 @@
 	10-Oct-2013		Memphis			Added ORIGINALLETTERSEQUENCEID
 	25-Feb-2015		CMayeda			Fixed "Additional Info" tab not being displayed when there is no Interaction Extension row.
 	27-Apr-2016		Memphis			Added PARTNERID for the new Partner branded Welcome Kits.
+	04-Oct-2016		Memphis			Changed recordtype and the dataform that we're extending as it changed for CRM 4.0
 	-->
 	<SPDataForm>
 		<LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_EDITLOAD_INTERACTIONEXTENSION">
@@ -457,6 +458,7 @@ end
 		</c:WebUIComponent>
 	</c:FormMetaData>
 
-	<c:DataFormExtension DataFormInstanceID="ab3b9569-4c7c-4646-a793-347856753b60" RenderStyle="Tab" TabCaption="Additional Info" />
+	<!--<c:DataFormExtension DataFormInstanceID="ab3b9569-4c7c-4646-a793-347856753b60" RenderStyle="Tab" TabCaption="Additional Info" />-->
+	<c:DataFormExtension DataFormInstanceID="A91623E5-E341-43BA-9736-BA7DDCF0B355" RenderStyle="Tab" TabCaption="Additional Info" />
 
 </EditDataFormTemplateSpec>

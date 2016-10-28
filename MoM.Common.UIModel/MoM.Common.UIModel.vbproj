@@ -314,6 +314,7 @@
     </Content>
     <None Include="..\MoM.Common.Catalog\Interaction\InteractionExtension.Edit.xml">
       <Link>LinkedSpecs\InteractionExtension.Edit.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <Content Include="Interaction\InteractionExtension.EditForm.html" />
     <Content Include="Interaction\InteractionExtensionEditFormUIModel.xml">

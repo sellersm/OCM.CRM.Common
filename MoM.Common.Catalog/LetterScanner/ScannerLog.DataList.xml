@@ -11,10 +11,15 @@
 	<SPDataList SPName="USR_USP_DATALIST_LETTER_SCANNER_LOG">
 		<common:CreateProcedureSQL>
 			<![CDATA[
-create procedure dbo.USR_USP_DATALIST_LETTER_SCANNER_LOG
+create procedure dbo.USR_USP_DATALIST_LETTER_SCANNER_LOG (
+    @LOGDATE date = null
+)
 as
 	set nocount on;
-
+  
+  if @LOGDATE is null
+    set @LOGDATE = cast(getdate() as date);
+  
 	select
 		isc.NAME as LETTERFULLNAME,
 		lsl.SCANOUTCOME,
@@ -31,12 +36,13 @@ as
 		lsl.DATESPONSORSHIPCANCELLED,
 		lsl.NUMBEROFDAYSSPONSORED
 	from dbo.USR_LETTERSCANNERLOG lsl
-	left join dbo.SPONSORSHIPOPPORTUNITYCHILD sc on lsl.childid = sc.ID
-	left join dbo.SPONSORSHIPOPPORTUNITY so on so.ID = sc.ID
-	left join dbo.CONSTITUENT c on c.ID = lsl.sponsorid
-	left join dbo.CHANGEAGENT au on lsl.addedbyid = au.ID
-	left join dbo.SPONSORSHIPLOCATION sl on sl.ID = so.SPONSORSHIPLOCATIONID
-	left join dbo.INTERACTIONSUBCATEGORY isc on lsl.LETTERSUBCATEGORYID = isc.ID
+	  left join dbo.SPONSORSHIPOPPORTUNITYCHILD sc on lsl.childid = sc.ID
+	  left join dbo.SPONSORSHIPOPPORTUNITY so on so.ID = sc.ID
+	  left join dbo.CONSTITUENT c on c.ID = lsl.sponsorid
+	  left join dbo.CHANGEAGENT au on lsl.addedbyid = au.ID
+	  left join dbo.SPONSORSHIPLOCATION sl on sl.ID = so.SPONSORSHIPLOCATIONID
+	  left join dbo.INTERACTIONSUBCATEGORY isc on lsl.LETTERSUBCATEGORYID = isc.ID
+  where cast(lsl.DATEADDED as date) = @LOGDATE
 	order by lsl.DATEADDED desc
 	--where CONTEXTID = @CONTEXTID
 			]]>
@@ -46,14 +52,14 @@ as
 	<!-- describe the context ID parameter for the SP (if applicable)-->
 	<!--<Context ContextRecordType="CONSTITUENT" RecordIDParameter="CONTEXTID"/>-->
 
-	<!-- describe any parameters (other than the context ID) defined on the SP
+	<!-- describe any parameters (other than the context ID) defined on the SP -->
 	<Parameters>
 		<common:FormMetaData>
 			<common:FormFields>
-				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+				<common:FormField FieldID="LOGDATE" Caption="Scanner Date" DataType="Date"/>
 			</common:FormFields>
 		</common:FormMetaData>
-	</Parameters>-->
+	</Parameters>
 
 	<!-- define the output fields in the list -->
 	<Output>
