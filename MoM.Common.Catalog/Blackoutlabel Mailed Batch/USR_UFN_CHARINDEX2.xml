@@ -1,0 +1,53 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="6cef77b1-7098-4b2e-8b20-2a8cd4bf69c6"
+	Name="USR_UFN_CHARINDEX2"
+	Description="Gets the 2nd or nth position of given string."
+	Author="Mark Sellers"
+	DBFunctionName="USR_UFN_CHARINDEX2"
+	GrantServiceRolePermission="true"
+	>
+
+	<!--
+		Example:
+		SELECT dbo.USR_UFN_CHARINDEX2('a', 'abbabba', 3)
+		returns the location of the third occurrence of 'a'
+		which is 7
+	-->
+
+	<CreateFunctionSQL>
+		<![CDATA[
+CREATE FUNCTION dbo.USR_UFN_CHARINDEX2
+(
+	@TargetStr varchar(8000), 
+	@SearchedStr varchar(8000), 
+	@Occurrence int
+)
+RETURNS int
+with execute as caller
+as begin
+	declare @pos int, @counter int, @ret int
+
+	set @pos = CHARINDEX(@TargetStr, @SearchedStr)
+	set @counter = 1
+
+	if @Occurrence = 1 
+		set @ret = @pos
+	else
+		begin
+			while (@counter < @Occurrence)
+				begin
+					select @ret = CHARINDEX(@TargetStr, @SearchedStr, @pos + 1)
+					set @counter = @counter + 1
+					set @pos = @ret
+				end
+		end
+
+	RETURN(@ret)
+end
+
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

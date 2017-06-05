@@ -29,6 +29,10 @@
 	14-May-2013		Memphis			Added PRINTBLACKOUTLABEL.
 	23-Dec-2013		CMayeda			Added captions for SPONSORID, CHILDASSIGNED. They were used in the relationships with other views, but were not hidden, so I added captions.
 	27-Apr-2016		Memphis			Added PartnerID
+	07-Feb-2017		MSellers		Changed method of getting the Sponsored project LookupID and NAME values. They come from SponsorshipOpportunity/Location tables, not Constituent.
+	03-Apr-2017		MSellers		Fixing bug I introduced with last change!  These 4 columns do come from Constituent table, instead of SponsorshipOpportunity/Location table:
+									"Previous Child Project ID”, “Previous Child Project Name”, “Transfer Child Project ID" and “Transfer Child Project Name"
+									For some reason, this UFN isn't working right:  USR_UFN_CHILDPROJECT_GETLOOKUPID so I replaced with straight SQL to do the same thing.
 	-->
 	
 	<!-- define the view used to return data for the query -->
@@ -62,17 +66,26 @@
 			dbo.USR_UFN_CHILD_GETCHILDLOOKUPID (int_ext.DOUBLESPONSOREDCHILDID, 1) as DOUBLESPONSOREDCHILDLOOKUPID,
 			(select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = int_ext.DOUBLESPONSOREDCHILDID) as DOUBLESPONSOREDCHILDNAME,
 			
-			int_ext.PREVIOUSCHILDPROJECTID, 
-			dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (int_ext.PREVIOUSCHILDPROJECTID) as PREVIOUSCHILDPROJECTLOOKUPID,
-			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(int_ext.PREVIOUSCHILDPROJECTID)) as PREVIOUSCHILDPROJECTNAME,
-
-			int_ext.TRANSFERCHILDPROJECTID, 
-			dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (int_ext.TRANSFERCHILDPROJECTID) as TRANSFERCHILDPROJECTLOOKUPID,
-			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(int_ext.TRANSFERCHILDPROJECTID)) as TRANSFERCHILDPROJECTNAME,
+			int_ext.PREVIOUSCHILDPROJECTID,			
+			-- use SQL instead of UFN:
+			--dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (int_ext.PREVIOUSCHILDPROJECTID) as PREVIOUSCHILDPROJECTLOOKUPID,						
+			(select	LOOKUPID from dbo.CONSTITUENT where	ID = int_ext.PREVIOUSCHILDPROJECTID) as PREVIOUSCHILDPROJECTLOOKUPID,
+			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(int_ext.PREVIOUSCHILDPROJECTID)) as PREVIOUSCHILDPROJECTNAME,			
+			
+			int_ext.TRANSFERCHILDPROJECTID, 			
+			-- use SQL instead of UFN:
+			--dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (int_ext.TRANSFERCHILDPROJECTID) as TRANSFERCHILDPROJECTLOOKUPID,			
+			(select	LOOKUPID from dbo.CONSTITUENT where	ID = int_ext.TRANSFERCHILDPROJECTID) as TRANSFERCHILDPROJECTLOOKUPID,
+			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(int_ext.TRANSFERCHILDPROJECTID)) as TRANSFERCHILDPROJECTNAME,			
 
 			int_ext.SPONSOREDPROJECTID,
-			dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (SPONSOREDPROJECTID) as SPONSOREDPROJECTLOOKUPID,
-			(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(int_ext.SPONSOREDPROJECTID)) as SPONSOREDPROJECTNAME,
+			
+			-- replaced this with a SQL statement: 
+			(select LOOKUPID from dbo.SPONSORSHIPOPPORTUNITY where ID = SPONSOREDPROJECTID) as SPONSOREDPROJECTLOOKUPID,
+			--dbo.USR_UFN_CHILDPROJECT_GETLOOKUPID (SPONSOREDPROJECTID) as SPONSOREDPROJECTLOOKUPID,
+			
+			--(select NAME from dbo.UFN_CONSTITUENT_DISPLAYNAME(int_ext.SPONSOREDPROJECTID)) as SPONSOREDPROJECTNAME,
+			(select [NAME] from dbo.SPONSORSHIPLOCATION where ID = (select SPONSORSHIPLOCATIONID from dbo.SPONSORSHIPOPPORTUNITY where ID = int_ext.SPONSOREDPROJECTID)) as SPONSOREDPROJECTNAME,
 			
 			int_ext.PREVIOUSBIRTHDATE, 
 			int_ext.PREVIOUSNAME, 
@@ -117,7 +130,7 @@
  left join	dbo.CONSTITUENT childproj on childproj.ID = int_ext.CHILDPROJECTID
  left join	dbo.INTERACTIONSUBCATEGORY intsubcat on intsubcat.ID = ORIGINALLETTERSUBCATEGORYID
  left join  dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on INTERACTION.CONSTITUENTID = so_child.CONSTITUENTID  
- 				
+  				
 			]]>
 		</ViewSQL> 
 	</ViewImplementation>

@@ -5,7 +5,9 @@
 	Name="USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS"
 	Description="The cancels or completes pending child interactions"
 	Author="Cary Mayeda"
-	SPName="USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS" >
+	SPName="USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS" 
+	GrantServiceRolePermission="true"
+	>
 
 	<!-- 
 	Remarks:    This is used from the sponsorship cancellation form and the departure form to cancel all pending letter interactions for the sponsor for the specific child.
@@ -17,6 +19,8 @@
 	05-Oct-2012		CMayeda			Initial Version
 	09-Oct-2012		CMayeda			Included interactinos with specific child id extension fields (e.g. UNAVAILABLECHILDID) to be cancelled.
 	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Could not find the financial sponsor.',16,1);
+	14-Feb-2017		MSellers		Changes for the new OnBoarding process...
+	16-Feb-2017		MSellers		Added new parameters to identify if either Sponsor has any more active sponsorships or not
 	-->
 	
 	<CreateProcedureSQL>
@@ -27,6 +31,8 @@ create procedure dbo.USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS 
 	@cancelComment nvarchar(max) = '',							-- The string that is appended to the field when the interaction is cancelled
 	@removeChildComment nvarchar(max) = '',						-- The string that is appended to the field when the interaction has multiple children, is left pending, but the child has been removed
 																-- this should assume that the name and a space is prefixed to this parameter
+	@finSponsorHasMoreChildSponsorships bit = 1,				-- used to identify if the Financial Sponsor has any more Active Sponsorships: part of 2017 onboarding logic
+	@corrSponsorHasMoreChildSponsorships bit = 1,				-- used to identify if the Corresponding Sponsor has any more Active Sponsorships: part of 2017 onboarding logic
 	@changeAgentID uniqueidentifier = null						-- Used to specify change agent for CHANGEDBYID and ADDEDBYID fields.  USP_CHANGEAGENT_GETORCREATECHANGEAGENT is called if it's null
 )
 
@@ -46,15 +52,13 @@ begin
 	declare @childCountLetterVersion_TwoChildrenLetter uniqueidentifier = null
 	declare @childCountLetterVersion_MultipleChildrenLetter uniqueidentifier = null
 
+	-- this does all the validating of various ID values:
 	begin try
-	
 		if @sponsorshipID is null
-			raiserror('Sponsorship ID cannot be null',16,1);
-			
+			raiserror('Sponsorship ID cannot be null',16,1);		
 
 		if @sponsorshipOpportunityChildID is null
 			raiserror('Sponsorship Opportunity Child ID cannot be null',16,1);
-			
 			
 		-- Get ChangeAgent if none was passed into the sproc
 		if @changeAgentID is null  
@@ -70,31 +74,32 @@ begin
 		if @childCountLetterVersion_OneChildLetter is null 
 			raiserror('Could not add child to interaction, because the id for the "Two Children Letter" could not be found.',16,1);
 			
-		
 		select @childCountLetterVersion_MultipleChildrenLetter = ID from dbo.USR_INTERACTIONEXTENSIONLETTERCHILDVERSIONCODE where DESCRIPTION = lower ('Multiple Children Letter')
 		if @childCountLetterVersion_MultipleChildrenLetter is null 
 			raiserror('Could not add child to interaction, because the id for the "Multiple Children Letter" could not be found.',16,1);
 			
-			
-	
 		declare @financialSponsorID uniqueidentifier = null
 		set @financialSponsorID = dbo.USR_UFN_SPONSORSHIP_GETFINANCIALSPONSOR (@sponsorshipID)
 		if @financialSponsorID is null
 			raiserror('Could not find the financial sponsor.',16,1);
 			
-
 		declare @correspondentID uniqueidentifier = null
 		set @correspondentID = dbo.USR_UFN_SPONSORSHIP_GETCORRESPONDENT (@sponsorshipID)
 	end try
+
 	begin catch
 	    exec dbo.USP_RAISE_ERROR
 		return 1	
 	end catch
+	-- END OF VALIDATING ----------------------
 
+
+	-- if we get here, we've got all that we need so do the process...	
+	
+	-- put the Child's name into the comment of the interaction:
 	declare @childName nvarchar(250) = ''
 	set @childName = (select NAME from dbo.SPONSORSHIPOPPORTUNITYCHILD where ID = @sponsorshipOpportunityChildID)
 	set @removeChildComment = ltrim(rtrim (@childName + ' ' + @removeChildComment))
-
 
 	-- Determine how many children are in the pending interactions the child is a part of for the financial sponsor and correspondent
 	-- This is used to determine if we cancel the interaction or just remove the child from the Children list
@@ -171,7 +176,55 @@ begin
 	  join	@interactionChildCount iccount on int_ext.ID = iccount.interactionID
 	 where	exists (select ID from @interactionsChildRemoved icr where icr.ID = int_ext.ID)
 
-  
+
+	-- Memphis 1-23-17 new for onboarding, need to cancel the pending OnBoarding Interactions that do NOT have a Child associated:
+	-- All that have Category of Prospect Welcome or Sponsor Welcome
+	-- only perform this step IF the Sponsor has NO MORE ACTIVE Sponsorships:
+	if @finSponsorHasMoreChildSponsorships = 0 
+		begin
+			update	dbo.INTERACTION 
+			   set	STATUSCODE = @statusCode_Cancelled,
+					COMMENT = case 
+								when COMMENT is null then @cancelComment
+								when COMMENT = '' then @cancelComment
+								else COMMENT + char(13) + @cancelComment
+							end,
+					CHANGEDBYID = @changeAgentID,
+					DATECHANGED = getdate()		
+			 where	CONSTITUENTID = @financialSponsorID --in (@financialSponsorID, @correspondentID)
+			   and	STATUSCODE = @statusCode_Pending
+			   and	exists (select subcat.ID from dbo.INTERACTIONSUBCATEGORY subcat 
+			 				  inner join dbo.INTERACTIONCATEGORY cat on subcat.INTERACTIONCATEGORYID = cat.ID 
+							  where (lower(cat.NAME) = lower ('Sponsor Welcome')
+								or lower(cat.NAME) = lower ('Prospect Welcome')
+								or lower(cat.NAME) = lower('Sponsorship Delinquency')
+								)
+								and INTERACTION.INTERACTIONSUBCATEGORYID = subcat.ID )
+		end
+		
+	-- now cancel for correspondent since they have no more Active sponsorships:
+	if @corrSponsorHasMoreChildSponsorships = 0
+		begin
+			update	dbo.INTERACTION 
+			   set	STATUSCODE = @statusCode_Cancelled,
+					COMMENT = case 
+								when COMMENT is null then @cancelComment
+								when COMMENT = '' then @cancelComment
+								else COMMENT + char(13) + @cancelComment
+							end,
+					CHANGEDBYID = @changeAgentID,
+					DATECHANGED = getdate()		
+			 where	CONSTITUENTID = @correspondentID -- in (@financialSponsorID, @correspondentID)
+			   and	STATUSCODE = @statusCode_Pending
+			   and	exists (select subcat.ID from dbo.INTERACTIONSUBCATEGORY subcat 
+			 				  inner join dbo.INTERACTIONCATEGORY cat on subcat.INTERACTIONCATEGORYID = cat.ID 
+							  where (lower(cat.NAME) = lower ('Sponsor Welcome')
+								or lower(cat.NAME) = lower ('Prospect Welcome')
+								or lower(cat.NAME) = lower('Sponsorship Delinquency')
+								)
+								and INTERACTION.INTERACTIONSUBCATEGORYID = subcat.ID )
+		end
+
 end
 
 		]]>

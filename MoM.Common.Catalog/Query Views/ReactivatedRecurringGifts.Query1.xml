@@ -1,0 +1,75 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="0b3420b7-1d91-4a81-83c7-901a43f5d5dd"
+	Name="ReactivatedRecurringGifts Query"
+	Description="Find recurring gifts that were once inactive then activated again"
+	Author="Jeff Mawhirter"
+	IsRoot="true"
+	PrimaryKeyField="REVENUEID"
+	RecordType="Revenue"
+	common:SecurityUIFolder="Revenue"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_REACTIVATEDRECURRINGGIFTS">
+		<ViewSQL>
+			<![CDATA[
+with CTE_ActiveRGSponsorshipInactive (RevenueID, LookupID)
+AS (
+	select	R.ID as REVENUEID, 
+			R.CALCULATEDUSERDEFINEDID as LookupID 
+	from FINANCIALTRANSACTION R
+		join REVENUESCHEDULE RS on R.ID=RS.ID
+		join REVENUESPLIT rsp on r.id = rsp.revenueid
+		join SPONSORSHIP s on s.revenuesplitid = rsp.id
+	where s.statuscode = 2 and s.ismostrecentforcommitment = 1 and rs.statuscode = 0
+), CTE_ActiveRGNonSponsorship (RevenueID, LookupID)
+AS (
+	select	r.id as RevenueID, 
+			r.calculateduserdefinedid as LookupID 
+	from FINANCIALTRANSACTION r
+		join REVENUESCHEDULE rs on r.id=rs.id and rs.statuscode = 0
+		join REVENUESPLIT rsp on r.id = rsp.revenueid and rs.statuscode = 0
+	where not exists
+		(select * from SPONSORSHIP s where s.revenuesplitid = rsp.id)
+)
+select	RevenueID, 
+		LookupID, 
+		rsa.auditdate, 
+		dbo.UFN_CHANGEAGENT_GETUSERNAME(rsa.auditchangeagentid)as name,
+		1 as IsSponsorship
+from CTE_ActiveRGSponsorshipInactive cte
+	join REVENUESCHEDULEAUDIT rsb on cte.revenueid = rsb.auditrecordid and rsb.audittypecode = 0 and rsb.statuscode <> 0
+	join REVENUESCHEDULEAUDIT rsa on rsa.auditkey=rsb.auditkey and rsa.audittypecode = 1 and rsa.statuscode = 0
+
+union all 
+select	RevenueID, 
+		LookupID, 
+		rsa.auditdate, 
+		dbo.UFN_CHANGEAGENT_GETUSERNAME(rsa.auditchangeagentid) as name,
+		0 as IsSponsorship
+from CTE_ActiveRGNonSponsorship cte
+	join REVENUESCHEDULEAUDIT rsb on cte.revenueid = rsb.auditrecordid and rsb.audittypecode = 0 and rsb.statuscode <> 0
+	join REVENUESCHEDULEAUDIT rsa on rsa.auditkey=rsb.auditkey and rsa.audittypecode = 1 and rsa.statuscode = 0
+			
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
+			<OutputField Name="LOOKUPID" Caption="Revenue Lookupid" DataType="String" />
+			<OutputField Name="AUDITDATE" Caption="Date of Reactivation" DataType="Date" />
+			<OutputField Name="NAME" Caption="Who reactivated it" DataType="String" />
+			<OutputField Name="ISSPONSORSHIP" Caption="Whether the RG is attached to a sponsorship" DataType="Boolean" />
+		</OutputFields>
+	</Output>
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_REVENUE" RelatedField="ID" Field="REVENUEID" PathAlias="Recurring Gift"/>
+	</RelationshipOperations>
+
+</QueryViewSpec>
+

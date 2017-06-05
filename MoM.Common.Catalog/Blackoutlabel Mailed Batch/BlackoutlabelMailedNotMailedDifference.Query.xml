@@ -1,0 +1,62 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="c93de504-d2e4-4213-9ccb-ca3c02256e72"
+	Name="Blackoutlabel Mailed Not Mailed Difference Query"
+	Description="Displays the delta between mailed-not mailed blackout interactions."
+	Author="Mark Sellers"
+	IsRoot="true"
+	PrimaryKeyField="INTERACTIONID"
+	RecordType="Interaction"
+	common:SecurityUIFolder="Interaction"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_BLACKOUTLABEL_MAILED_NOTMAILED_DIFFERENCE">
+		<ViewSQL>
+			<![CDATA[
+	with cteBlackoutInteractionsForScanDate (scanSession, interactionID, constituentId, sequenceID, interactionScanDate, interactionExpectedDate)
+	as (
+		select	ie.scansession,
+				i.ID,
+				i.CONSTITUENTID,
+				i.SEQUENCEID,
+				dbo.USR_UFN_GET_SCANDATE_FROM_SCANSESSION (ie.scansession) as InteractionScanDate,
+				convert(date,i.EXPECTEDDATE) as InteractionExpectedDate
+		from dbo.USR_INTERACTIONEXTENSION ie
+		join dbo.INTERACTION i on i.ID = ie.ID
+		where ie.PRINTBLACKOUTLABEL = 1
+		and dbo.USR_UFN_GET_SCANDATE_FROM_SCANSESSION (ie.scansession) in (select ScanDate from dbo.USR_BLACKOUT_INTERACTIONS_MAILED)
+	)
+
+	select	bi.interactionID,
+			bi.sequenceID,
+			bi.interactionScanDate,			
+			bi.scanSession,
+			c.LOOKUPID,
+			bi.interactionExpectedDate,
+			bi.constituentId
+	from cteBlackoutInteractionsForScanDate bi
+	left join dbo.USR_BLACKOUT_INTERACTIONS_MAILED b on b.SequenceId = bi.SEQUENCEID and b.ScanDate = bi.InteractionScanDate and b.SponsorConstituentId = bi.CONSTITUENTID -- 17943 rows
+	join dbo.CONSTITUENT c on c.ID = bi.CONSTITUENTID
+	where b.SequenceId is null
+			
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="INTERACTIONID" />
+			<OutputField Name="SEQUENCEID" Caption="Sequence ID" DataType="Integer" />
+			<OutputField Name="INTERACTIONSCANDATE" Caption="interaction Scan Date" DataType="Date" />
+			<OutputField Name="SCANSESSION" Caption="Scan Session" DataType="String" />
+			<OutputField Name="LOOKUPID" Caption="Interaction Constituent" DataType="String" />
+			<OutputField Name="INTERACTIONEXPECTEDDATE" Caption="Interaction Expected Date" DataType="Date" />
+			<OutputField Name="CONSTITUENTID" Caption="Constituent Id" DataType="Guid" IsHidden="true"/>
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+

@@ -1,0 +1,30 @@
+﻿<SQLFunctionSpec
+	xmlns="bb_appfx_sqlfunction"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="db2b9333-e9cd-4067-b49f-e04cf00810ba"
+	Name="USR_UFN_GET_SCANDATE_FROM_SCANSESSION"
+	Description="Gets scandate value from Scansession string."
+	Author="Mark Sellers"
+	DBFunctionName="USR_UFN_GET_SCANDATE_FROM_SCANSESSION"
+	GrantServiceRolePermission="true"	
+	>
+
+	<CreateFunctionSQL>
+		<![CDATA[
+CREATE FUNCTION dbo.USR_UFN_GET_SCANDATE_FROM_SCANSESSION
+(
+	@scansession varchar(8000)
+)
+RETURNS date
+with execute as caller
+as begin
+	declare @returnScanDate date;
+	set @returnScanDate = convert(date,left(SUBSTRING(@scansession,PATINDEX('%21195P%',@scansession)+6,50), dbo.USR_UFN_CHARINDEX2 ('/', SUBSTRING(@scansession,PATINDEX('%21195P%',@scansession)+6,50), 2)+4))
+	RETURN(@returnScanDate)
+end
+
+
+		]]>
+	</CreateFunctionSQL>
+
+</SQLFunctionSpec>

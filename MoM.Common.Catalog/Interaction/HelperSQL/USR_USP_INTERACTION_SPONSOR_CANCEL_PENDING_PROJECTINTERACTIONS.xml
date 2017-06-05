@@ -1,0 +1,124 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="8e1ef758-564e-4f02-8d1d-951ca7e8ec05"
+	Name="USR_USP_INTERACTION_SPONSOR_CANCEL_PENDING_PROJECTINTERACTIONS"
+	Description="Handles cancelling of Project Interactions for Project sponsorship cancellation."
+	Author="Mark Sellers"
+	SPName="USR_USP_INTERACTION_SPONSOR_CANCEL_PENDING_PROJECTINTERACTIONS"
+	GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+	Remarks:    This is used from the sponsorship cancellation form and the departure form to cancel all pending letter interactions for the sponsor for the specific Project.
+				Handles all interactions in the Category of Project Sponsorship:
+				If there are no more Active Sponsorships, then cancels all, otherwise just removes the one for this Project.
+
+	History:
+	Date            Modified By     Comments
+	16-Feb-2017		MSellers		Initial Version. Essentially a copy of USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS
+	22-Feb-2017		MSellers		Changed per this rule:
+									Cancel ALL pending interactions with Category of Project Sponsorship 
+									EXCEPT if the Subcategory is ‘Project Sponsorship Cancellation Letter”.
+	-->
+
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_CANCEL_PENDING_PROJECTINTERACTIONS (
+	@sponsorshipID uniqueidentifier = null,						-- Sponsorship whose interactions will be cancelled 
+	@sponsorshipOpportunityID uniqueidentifier = null,			-- Project whose interactions will be cancelled / completed
+	@cancelComment nvarchar(max) = '',							-- The string that is appended to the field when the interaction is cancelled
+	@finSponsorHasMoreProjectSponsorships bit = 1,				-- used to identify if the Financial Sponsor has any more Active Sponsorships: part of 2017 onboarding logic
+	@changeAgentID uniqueidentifier = null						-- Used to specify change agent for CHANGEDBYID and ADDEDBYID fields.  USP_CHANGEAGENT_GETORCREATECHANGEAGENT is called if it's null
+)
+
+as
+begin
+	set nocount on
+
+	-- Constants
+	declare @statusCode_Planned tinyint = 0
+	declare @statusCode_Pending tinyint = 1
+	declare @statusCode_Completed tinyint = 2
+	declare @statusCode_Unsuccessful tinyint = 3
+	declare @statusCode_Cancelled tinyint = 4
+	declare @statusCode_Declined tinyint = 5
+
+	-- this does all the validating of various ID values:
+	begin try
+		if @sponsorshipID is null
+			raiserror('Sponsorship ID cannot be null',16,1);		
+
+		if @sponsorshipOpportunityID is null
+			raiserror('Sponsorship Opportunity Project ID cannot be null',16,1);
+			
+		-- Get ChangeAgent if none was passed into the sproc
+		if @changeAgentID is null  
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+
+		declare @financialSponsorID uniqueidentifier = null
+		set @financialSponsorID = dbo.USR_UFN_SPONSORSHIP_GETFINANCIALSPONSOR (@sponsorshipID)
+		if @financialSponsorID is null
+			raiserror('Could not find the financial sponsor.',16,1);
+			
+	end try
+
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+	-- END OF VALIDATING ----------------------
+
+
+	-- if we get here, we've got all that we need so do the process...			
+	-- Cancel Sponsor interactions where this is the only Project in the Children's grid or in one of the specific child fields
+	update	dbo.INTERACTION 
+	   set	STATUSCODE = @statusCode_Cancelled,
+			COMMENT = case 
+						when COMMENT is null then @cancelComment
+						when COMMENT = '' then @cancelComment
+						else COMMENT + char(13) + @cancelComment
+					end,
+			CHANGEDBYID = @changeAgentID,
+			DATECHANGED = getdate()		
+	  from dbo.INTERACTION 
+	  join dbo.USR_INTERACTIONEXTENSION int_ext on INTERACTION.ID = int_ext.ID
+	 where	CONSTITUENTID = @financialSponsorID			-- in (@financialSponsorID, @correspondentID)
+	   and	STATUSCODE = @statusCode_Pending
+	   and int_ext.SPONSOREDPROJECTID = @sponsorshipOpportunityID
+
+	-- Memphis 1-23-17 new for onboarding, Cancel ALL pending interactions with Category of Project Sponsorship 
+	-- EXCEPT if the Subcategory is ‘Project Sponsorship Cancellation Letter”.
+	-- only perform this step IF the Sponsor has NO MORE ACTIVE Sponsorships:
+	if @finSponsorHasMoreProjectSponsorships = 0 
+		begin
+			-- get the subcategory value for 'Project Sponsorship Cancellation Letter':
+			declare @subcategoryID uniqueidentifier;
+			
+			exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @subcategoryID output, 'Project Sponsorship', 'Project Sponsorship Cancellation Letter', 1;
+			
+			update	dbo.INTERACTION 
+			   set	STATUSCODE = @statusCode_Cancelled,
+					COMMENT = case 
+								when COMMENT is null then @cancelComment
+								when COMMENT = '' then @cancelComment
+								else COMMENT + char(13) + @cancelComment
+							end,
+					CHANGEDBYID = @changeAgentID,
+					DATECHANGED = getdate()		
+			 where	CONSTITUENTID = @financialSponsorID --in (@financialSponsorID, @correspondentID)
+			   and	STATUSCODE = @statusCode_Pending
+			   and	(exists (select subcat.ID from dbo.INTERACTIONSUBCATEGORY subcat 
+			 				  inner join dbo.INTERACTIONCATEGORY cat on subcat.INTERACTIONCATEGORYID = cat.ID 
+							where lower(cat.NAME) = lower ('Project Sponsorship')																
+								and INTERACTION.INTERACTIONSUBCATEGORYID = subcat.ID )
+			   and INTERACTIONSUBCATEGORYID <> @subcategoryID)
+		end
+
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

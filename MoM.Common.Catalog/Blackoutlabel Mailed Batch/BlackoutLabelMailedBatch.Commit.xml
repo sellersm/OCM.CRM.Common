@@ -1,0 +1,170 @@
+﻿<AddDataFormTemplateSpec 
+	xmlns="bb_appfx_adddataformtemplate"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="d25f6dac-1bbb-4d88-bfc0-80feb9f47c93" 
+	Name="Blackout Label Mailed Batch Commit spec"
+	Description="Commits the blackout label mailed batch" 
+	Author="Mark Sellers"
+	DataFormInstanceID="6cedcb99-1a15-4762-9b47-b4969ddd1bd6" 
+	RecordType="BLACKOUTLABELBATCH"
+	common:SecurityUIFolder="Interaction"
+	>
+
+	<!--  This is the Commit procedure that inserts the batch rows, added from the Import CSV sheet, into our custom table:
+			USR_BLACKOUT_INTERACTIONS_MAILED		
+	-->
+
+	<SPDataForm>
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_BLACKOUTLABELBATCH_COMMIT">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_BLACKOUTLABELBATCH_COMMIT
+(
+    @ID uniqueidentifier = null output,
+	@VALIDATEONLY bit = 0,
+	@BATCHID uniqueidentifier,
+    @CHANGEAGENTID uniqueidentifier = null,
+	@SEQUENCE int = null,
+	@SEQUENCEID int = null,
+	@SCANSESSION nvarchar(250) = null,
+	@SPONSORLOOKUPID nvarchar(10) = null,
+	@ADDRESSEE nvarchar(1500) = null,
+	@SALUTATION nvarchar(500) = null,
+	@CONTACTADDRESSEE nvarchar(1500) = null,
+	@ADDRESS nvarchar(2000) = null,
+	@ADDRESS2 nvarchar(2000) = null,
+	@CITY nvarchar(2000) = null,
+	@STATE nvarchar(500) = null,
+	@ZIP nvarchar(200) = null,
+	@COUNTRY nvarchar(250) = null,
+	@CHILDLOOKUPID nvarchar(50) = null,
+	@PROJECTLOOKUPID nvarchar(50) = null
+)
+as
+
+set nocount on;
+
+if @ID is null
+    set @ID = newid()
+
+if @CHANGEAGENTID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+declare @CURRENTDATE datetime
+set @CURRENTDATE = getdate()
+
+begin try
+	-- handle inserting the data
+	INSERT INTO dbo.USR_BLACKOUT_INTERACTIONS_MAILED
+           ([ID]
+           ,[SEQUENCEID]
+           ,[SCANSESSION]
+           ,[SPONSORLOOKUPID]
+           ,[ADDRESSEE]
+           ,[SPONSORCONSTITUENTID]
+           ,[SCANDATE]
+           ,[SALUTATION]
+           ,[CONTACTADDRESSEE]
+           ,[ADDRESS]
+           ,[ADDRESS2]
+           ,[CITY]
+           ,[STATE]
+           ,[ZIP]
+           ,[COUNTRY]
+           ,[CHILDLOOKUPID]
+           ,[PROJECTLOOKUPID]
+           ,[ADDEDBYID]
+           ,[CHANGEDBYID]
+           ,[DATEADDED]
+           ,[DATECHANGED])
+     VALUES
+           (@ID
+           ,@SEQUENCEID
+           ,@SCANSESSION
+           ,@SPONSORLOOKUPID -- (case when len(@SPONSORLOOKUPID <6) then right('000000'+ rtrim(@SPONSORLOOKUPID), 6) else @SPONSORLOOKUPID end)
+           ,@ADDRESSEE
+           ,null  -- @SPONSORCONSTITUENTID
+           ,dbo.USR_UFN_GET_SCANDATE_FROM_SCANSESSION (@SCANSESSION)
+           ,@SALUTATION
+           ,@CONTACTADDRESSEE
+           ,@ADDRESS
+           ,@ADDRESS2
+           ,@CITY
+           ,@STATE
+           ,@ZIP
+           ,@COUNTRY
+           ,@CHILDLOOKUPID
+           ,@PROJECTLOOKUPID
+           ,@CHANGEAGENTID
+           ,@CHANGEAGENTID
+           ,@CURRENTDATE
+           ,@CURRENTDATE
+		   )    
+
+	if @ID is not null
+		begin		
+			-- pad SponsorLookupId column value:  00000x  must start with appropriate number of zeroes
+			update dbo.USR_BLACKOUT_INTERACTIONS_MAILED
+			set SponsorLookupId = right('000000'+ rtrim(SponsorLookupId), 6)
+			where len(SponsorLookupId) < 6
+			and ID = @ID;
+
+			-- populate the constituent id column of our custom table:
+			update dbo.USR_BLACKOUT_INTERACTIONS_MAILED
+			set SponsorConstituentID = (select ID from dbo.CONSTITUENT where LOOKUPID = SponsorLookupId)
+			--where SponsorConstituentID is null
+			where ID = @ID;
+
+			-- Update the ScanDate column value:
+			update dbo.USR_BLACKOUT_INTERACTIONS_MAILED
+			set ScanDate = dbo.USR_UFN_GET_SCANDATE_FROM_SCANSESSION (scansession)
+			where ID = @ID;
+		end
+
+
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+return 0				
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+	<Context ContextRecordType="BATCH" RecordIDParameter="BATCHID"/>
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="true">
+		<common:FormFields>
+			<common:FormField FieldID="VALIDATEONLY" DataType="Boolean" Caption="Validate only" />
+			<common:FormField FieldID="SEQUENCE" Required="true" Hidden="true" Caption="Sequence" />
+			<common:FormField FieldID="SEQUENCEID" Caption="SEQUENCEID" DataType="Integer"  />
+			<common:FormField FieldID="SCANSESSION" Caption="SCANSESSION" DataType="String" MaxLength="250" />
+			<common:FormField FieldID="SPONSORLOOKUPID" Caption="SPONSORLOOKUPID" DataType="String" MaxLength="10" />
+			<common:FormField FieldID="ADDRESSEE" Caption="ADDRESSEE" DataType="String" MaxLength="1500" />
+			<common:FormField FieldID="SALUTATION" Caption="SALUTATION" DataType="String" MaxLength="500" />
+			<common:FormField FieldID="CONTACTADDRESSEE" Caption="CONTACTADDRESSEE" DataType="String" MaxLength="1500" />
+			<common:FormField FieldID="ADDRESS" Caption="ADDRESS" DataType="String" MaxLength="2000" />
+			<common:FormField FieldID="ADDRESS2" Caption="ADDRESS2" DataType="String" MaxLength="2000" />
+			<common:FormField FieldID="CITY" Caption="CITY" DataType="String" MaxLength="2000" />
+			<common:FormField FieldID="STATE" Caption="STATE" DataType="String" MaxLength="500" />
+			<common:FormField FieldID="ZIP" Caption="ZIP" DataType="String" MaxLength="200" />
+			<common:FormField FieldID="COUNTRY" Caption="COUNTRY" DataType="String" MaxLength="250" />
+			<common:FormField FieldID="CHILDLOOKUPID" Caption="CHILDLOOKUPID" DataType="String" MaxLength="50" />
+			<common:FormField FieldID="PROJECTLOOKUPID" Caption="PROJECTLOOKUPID" DataType="String" MaxLength="50" />
+		</common:FormFields>
+
+		<!-- indicate the client-side component for the user interface -->
+		<common:FormUIComponent FormUIComponentType="CustomComponent">
+			<common:CustomComponentID AssemblyName="REPLACE_WITH_ASSEMBLYNAME" ClassName="REPLACE_WITH_FULLCLASSNAME" />
+		</common:FormUIComponent>
+	</common:FormMetaData>
+
+</AddDataFormTemplateSpec>

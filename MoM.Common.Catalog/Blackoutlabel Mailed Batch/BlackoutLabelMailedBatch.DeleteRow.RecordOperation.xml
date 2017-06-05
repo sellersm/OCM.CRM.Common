@@ -1,0 +1,41 @@
+﻿<RecordOperationSpec 
+	xmlns="bb_appfx_recordoperation"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="a5c24310-a587-4ba5-b10f-bc747fb745bd" 
+	Name="Delete Blackout Label Mailed Batch Row" 
+	Description="Deletes row from blackout label mailed batch."
+	Author="Mark Sellers"
+	OperationType="Delete"
+	RecordType="BLACKOUTLABELBATCH"
+	common:SecurityUIFolder="Interaction"	
+	>
+
+	<SPRecord>
+		<SPOperationImplementation SPName="USR_USP_BLACKOUTLABELMAILED_BATCH_DELETEROW">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_BLACKOUTLABELMAILED_BATCH_DELETEROW
+(
+	@ID uniqueidentifier,
+	@CHANGEAGENTID uniqueidentifier
+)
+as begin
+	--check deletion rules, if any
+
+	-- use the system generated delete routine to allow proper recording of the deleting agent
+	exec dbo.USP_USR_BLACKOUT_INTERACTIONS_MAILED_BATCH_DELETEBYID_WITHCHANGEAGENTID @ID, @CHANGEAGENTID
+
+	return 0;
+	
+end
+				]]>
+			</common:CreateProcedureSQL>
+		</SPOperationImplementation>
+	</SPRecord>
+
+	<!-- optionally, offer a prompt before executing the record operation -->
+	<Prompt>
+		<StandardPrompt Text="Are you sure you want to delete this Batch row?" />
+	</Prompt>
+
+</RecordOperationSpec>
