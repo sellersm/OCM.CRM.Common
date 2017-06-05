@@ -208,6 +208,9 @@
       <DependentUpon>SponsorRetentionAppeal2016LetterScannerAddDataFormUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="Sponsor Retention Appeal 2016 Scanner\SponsorRetentionAppeal2016LetterScannerAddDataFormUIModel.vb" />
+    <Compile Include="Sponsor Retention Appeal Scanner 2017\SponsorRetentionAppeal2017LetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
+    <Compile Include="Sponsor Retention Appeal Scanner 2017\SponsorRetentionAppeal2017LetterScannerAddDataFormUIModel.CodeGen.vb" />
+    <Compile Include="Sponsor Retention Appeal Scanner 2017\SponsorRetentionAppeal2017LetterScannerAddDataFormUIModel.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.vb" />
@@ -285,6 +288,7 @@
     <Content Include="htmlforms\SponsorBarCodeAddDataForm.html" />
     <Content Include="htmlforms\SponsorRetention2015LetterScannerAddDataForm.html" />
     <Content Include="htmlforms\SponsorRetentionAppeal2016LetterScannerAddDataForm.html" />
+    <Content Include="htmlforms\SponsorRetentionAppeal2017LetterScannerAddDataForm.html" />
     <Content Include="htmlforms\UpdateChildInteractionsGlobalChange.html" />
     <Content Include="Interaction\UpdateChildInteractionsGlobalChangeUIModel.xml">
       <DependentUpon>UpdateChildInteractionsGlobalChangeUIModel.vb</DependentUpon>
@@ -300,6 +304,7 @@
     <Content Include="Sponsor Retention Appeal 2016 Scanner\SponsorRetentionAppeal2016LetterScannerAddDataFormUIModel.xml">
       <DependentUpon>SponsorRetentionAppeal2016LetterScannerAddDataFormUIModel.vb</DependentUpon>
     </Content>
+    <Content Include="Sponsor Retention Appeal Scanner 2017\SponsorRetentionAppeal2017LetterScannerAddDataFormUIModel.xml" />
     <Content Include="SponsorLetterScanner\SponsorBarCodeAddDataFormUIModel.xml" />
     <None Include="..\MoM.Common.Catalog\Interaction\Interaction Extension.View.xml">
       <Link>LinkedSpecs\Interaction Extension.View.xml</Link>

@@ -1,0 +1,88 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="2f54f82f-ba8a-4ab0-a74f-2c600b924f68"
+	Name="Blackout Label Mailed Batch Table"
+	Description="Batch table to hold mailed blackout label scans."
+	Author="Mark Sellers"
+	Tablename="USR_BLACKOUT_INTERACTIONS_MAILED_BATCH"		   	
+	>
+
+<!-- These are the columns in the spreadsheet used for the Import into the Batch:
+SequenceID	
+ScanSession	
+SponsorLookupID	
+Addressee	
+Salutation	
+ContactAddressee	
+Address	
+Address2	
+City	
+State	
+ZIP	
+Country	
+PrintBlackoutLabel											** NOT USED
+Steps/InteractionsChildrenSponOpp_ChildLookupID
+Steps/InteractionsChildrenSponOpp_ChildName					** NOT USED
+Steps/InteractionsChildrenSponOppChild_ChildAge				** NOT USED
+Steps/InteractionsChildrenSponOppChildProj_ProjectLookupID	
+Steps/InteractionsChildrenSponOppChildProj_ProjectName		** NOT USED
+
+
+         [SequenceID]                                        INT NULL,
+         [ScanSession]                                       NVARCHAR (250) NULL,
+         [SponsorLookupID]                                   NVARCHAR(10) NULL,
+         [PrintBlackoutLabel]                                NVARCHAR (50) NULL,
+         [Steps/InteractionsChildrenSponOpp_ChildLookupID]   NVARCHAR (50) NULL,
+		 [SponsorConstituentID]								 UNIQUEIDENTIFIER NULL,  ** NOT USED HERE
+		 [ScanDate]											 DATE NULL,				 ** NOT USED HERE
+		Addressee	
+		Salutation	
+		ContactAddressee	
+		Address	
+		Address2	
+		City	
+		State	
+		ZIP	
+		Country	
+		ProjectLookupID
+-->
+
+	<!-- define fields on the table -->
+	<Fields>
+		<ForeignKeyField Name="BATCHID" ForeignTable="BATCH" Description="The primary ID from the batch table." OnDelete="CascadeDelete" Required="true"/>
+		<SequenceField Name="SEQUENCE" Description="The incremental sequence number to identify each record in a batch."/>
+		<NumberField Name="SEQUENCEID" Type="int" />
+		<TextField Name="SCANSESSION" Length="250" />
+		<TextField Name="SPONSORLOOKUPID" Length="10" />
+		<TextField Name="ADDRESSEE" Length="1500" />
+		<!--<GuidField Name="SPONSORCONSTITUENTID" />-->
+		<!--<DateField Name="SCANDATE" IncludeTime="false" />-->
+		<TextField Name="SALUTATION" Length="500"/>
+		<TextField Name="CONTACTADDRESSEE" Length="1500"/>
+		<TextField Name="ADDRESS" Length="2000"/>
+		<TextField Name="ADDRESS2" Length="2000"/>
+		<TextField Name="CITY" Length="2000"/>
+		<TextField Name="STATE" Length="500"/>
+		<TextField Name="ZIP" Length="200"/>
+		<TextField Name="COUNTRY" Length="250"/>
+		<TextField Name="CHILDLOOKUPID" Length="50" />
+		<TextField Name="PROJECTLOOKUPID" Length="50"/>
+	</Fields>
+
+	<!-- define any additional check constraints on the table -->
+	<!--<CheckConstraints>
+
+	</CheckConstraints>-->
+
+	<!-- define any indexes on the table -->
+	<!--<Indexes>
+
+	</Indexes>-->
+		
+	<!-- define any triggers on the table -->
+	<!--<Triggers>
+
+	</Triggers>-->
+
+</TableSpec>

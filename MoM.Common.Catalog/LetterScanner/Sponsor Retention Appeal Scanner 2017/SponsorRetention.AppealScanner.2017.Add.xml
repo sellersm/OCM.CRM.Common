@@ -1,0 +1,97 @@
+﻿<AddDataFormTemplateSpec 
+	xmlns="bb_appfx_adddataformtemplate"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="59600bb2-ee1f-4956-b8e5-8f0d7f6ec220" 
+	Name="Sponsor Retention 2017 Appeal Scanner Form"
+	Description="Form used for Sponsor Retention 2017 Appeal Scanner" 
+	Author="Memphis Sellers"
+	DataFormInstanceID="fcd94761-fbab-4204-85f6-8d58cf2dfb1b" 
+	RecordType="Letterscanner"
+	common:SecurityUIFolder="Letterscanner"
+	FormHeader="Scan 2017 Sponsor Retention Appeal"
+	>
+
+	<SPDataForm>
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_SPONSORRETENTIONAPPEAL_2017SCANNER">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_SPONSORRETENTIONAPPEAL_2017SCANNER
+(
+    @ID uniqueidentifier = null output,
+    @CHANGEAGENTID uniqueidentifier = null,
+	@BARCODE nvarchar(20) = '',
+	@BARCODEELEMENTS xml = null, 
+    @SUBMIT bit = 0,
+	@SPONSORLOOKUPID nvarchar(6) = '',
+	@APPEALID nvarchar(10) = '',
+	@CHILDLOOKUPID nvarchar(7) = ''
+)
+as
+
+set nocount on;
+
+if @ID is null
+    set @ID = newid()
+
+if @CHANGEAGENTID is null  
+    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+declare @CURRENTDATE datetime
+set @CURRENTDATE = getdate()
+
+begin try
+	-- handle inserting the data
+	declare @foobar table (ID uniqueidentifier)
+   
+	insert into @foobar
+    select newid()
+end try
+
+begin catch
+    exec dbo.USP_RAISE_ERROR
+    return 1
+end catch
+
+return 0;				
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+	<!--<Context ContextRecordType="REPLACE_WITH_RECORDTYPE" RecordIDParameter="CONTEXTID" />-->
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="false">
+		<common:FormFields>
+			<common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+
+			<common:FormField FieldID="BARCODEELEMENTS" Caption="Scan Results" DataType="XML">
+				<common:Collection EnablePaging="true">
+					<common:Fields>
+						<common:FormField FieldID="BARCODE" Caption="Bar code" DataType="String" MaxLength="20" />
+						<common:FormField FieldID="SCANSTATUS" Caption="Scan status" DataType="String" MaxLength="1000" />
+						<common:FormField FieldID="FIELD1" Caption="Field 1" DataType="String" MaxLength="100" />
+						<common:FormField FieldID="FIELD2" Caption="Field 2" DataType="String" MaxLength="100" />
+						<common:FormField FieldID="FIELD3" Caption="Field 3" DataType="String" MaxLength="100" />
+					</common:Fields>
+				</common:Collection>
+			</common:FormField>
+			<common:FormField FieldID="SUBMIT" Caption="Save results" DataType="Boolean" />
+			<common:FormField FieldID="SPONSORLOOKUPID" Caption="Sponsor Lookup ID" DataType="String" />
+			<common:FormField FieldID="APPEALID" Caption="Appeal ID" DataType="String" />
+			<common:FormField FieldID="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
+		</common:FormFields>
+
+		<common:WebUIComponent>
+			<common:UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.SponsorRetentionAppeal2017LetterScannerAddDataFormUIModel" />
+			<common:WebUI>
+				<common:ExternalResource Url="browser/htmlforms/custom/SponsorRetentionAppeal2017LetterScannerAddDataForm.html" />
+			</common:WebUI>
+		</common:WebUIComponent>
+
+	</common:FormMetaData>
+
+</AddDataFormTemplateSpec>

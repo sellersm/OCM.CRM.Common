@@ -1,0 +1,59 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="a6ef7218-2a3a-46bd-84a9-1c1cd4eb6675"
+	Name="USR_USP_INTERACTION_SPONSOR_ADD_DEPARTED_TRANSFER_CHILD"
+	Description="Adds departed/transfer child to Sponsor interaction."
+	Author="Mark Sellers"
+	SPName="USR_USP_INTERACTION_SPONSOR_ADD_DEPARTED_TRANSFER_CHILD"
+	GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+	Remarks:    This adds the child(ren) to the list of children associated with the interaction passed in @interactionID
+				Right now only called from Sponsorship Cancellation, and if the @departedChildID parameter has a value,
+				then @sponsorshipOpportunityChildID is the TransferChild.
+				*This assumes that the row in USR_INTERACTIONEXTENSION exists. It does not create one...*
+
+	History:
+	Date            Modified By     Comments
+	10-Feb-2017		MSellers		Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_INTERACTION_SPONSOR_ADD_DEPARTED_TRANSFER_CHILD (
+	@interactionID uniqueidentifier = null,					-- Interaction ID to add the child to.
+	@sponsorshipOpportunityChildID uniqueidentifier = null,	-- Child ID of the child to add, will be TransferChild if @departedChildID has a value
+	@departedChildID uniqueidentifier = null,				-- Departed Child ID to add, default to NULL for all other callers of this sproc
+	@changeAgentID uniqueidentifier = null					-- Used to track who added the interaction, retrieved with USP_CHANGEAGENT_GETORCREATECHANGEAGENT if null
+)
+as
+begin
+	begin try
+		-- Get ChangeAgent if none was passed into the sproc
+  		if @changeAgentID is null  
+		    exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @changeAgentID output
+	
+		if @interactionID is null
+			raiserror('Interaction ID cannot be null',16,1);	
+
+		update	dbo.USR_INTERACTIONEXTENSION
+		set	TRANSFERCHILDID = @sponsorshipOpportunityChildID,
+			DEPARTEDCHILDID = @departedChildID
+		where	ID = @interactionID;
+			
+	end try
+
+	begin catch
+	    exec dbo.USP_RAISE_ERROR;
+		return 1;
+	end catch
+
+   return 0;
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

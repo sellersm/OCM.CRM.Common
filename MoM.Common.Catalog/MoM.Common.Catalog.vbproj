@@ -716,6 +716,40 @@
   <ItemGroup>
     <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2016\SponsorRetentionAppeal2016Scanner.Package.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2017\SponsorRetention.AppealScanner.2017.Add.xml" />
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2017\SponsorRetention.AppealScanner.2017.Package.xml" />
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2017\SponsorRetention.AppealScanner.2017.Task.xml" />
+    <EmbeddedResource Include="LetterScanner\Sponsor Retention Appeal Scanner 2017\USR_USP_SPONSORRETENTION_APPEAL_2017_LETTERSCANNER.xml" />
+    <EmbeddedResource Include="Query Views\ReactivatedRecurringGifts.Query1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_ADD_DEPARTED_TRANSFER_CHILD.xml" />
+    <EmbeddedResource Include="Interaction\HelperSQL\USR_USP_INTERACTION_SPONSOR_CANCEL_PENDING_PROJECTINTERACTIONS.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\AddChildBioUpdateInteraction.Add.xml" />
+    <EmbeddedResource Include="Interaction\InteractionExtension.ProjectSponsorshipInteractions.DataList.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutLabelMailed.Batch.Table.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutLabelMailed.Batch.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutLabelMailedBatch.Add.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutLabelMailedBatch.Commit.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutLabelMailedBatch.DeleteRow.RecordOperation.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutLabelMailedBatch.Edit.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutLabelMailedBatch.Package.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\BlackoutlabelMailedNotMailedDifference.Query.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\ScannedBlackoutInteractionsMailed.Table.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\USR_UFN_CHARINDEX2.xml" />
+    <EmbeddedResource Include="Blackoutlabel Mailed Batch\USR_UFN_GET_SCANDATE_FROM_SCANSESSION.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\InteractionSpecs.Package.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Interaction\HelperSQL\Interaction.HelperSQL.Package.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

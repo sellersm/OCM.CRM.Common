@@ -1,0 +1,109 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="d00a578c-a88f-483d-a3d4-09cc3ec44c23" 
+	Name="Project Sponsorship Interactions Data List"
+	Description="Lists the Project Sponsorship Interactions." 
+	Author="Mark Sellers"
+	common:SecurityUIFolder="Interaction Extension">
+
+	<!-- 
+	Remarks:    displays all interactions related to Project Sponsorships.
+
+	History:
+	Date            Modified By     Comments
+	07-Feb-2017		MSellers		Initial Version
+	-->
+
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_INTERACTIONEXTENSION_PROJECTSPONSORSHIPS_LIST">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+create procedure dbo.USR_USP_DATALIST_INTERACTIONEXTENSION_PROJECTSPONSORSHIPS_LIST(@SPONSORSHIPID uniqueidentifier)
+as
+	set nocount on;
+
+	declare @constituentID uniqueidentifier = null
+	declare @sponosrshipOpportunityID uniqueidentifier = null
+		
+	select @constituentID = CONSTITUENTID from dbo.SPONSORSHIP where ID = @SPONSORSHIPID
+	select @sponosrshipOpportunityID = SPONSORSHIPOPPORTUNITYID from dbo.SPONSORSHIP where ID = @SPONSORSHIPID
+	
+	select	i.ID,
+			--ie.TRANSFERCHILDPROJECTID,
+			--ie.PREVIOUSCHILDPROJECTID,
+			--ie.SPONSOREDPROJECTID,			
+			i.EXPECTEDDATE,
+			(select DESCRIPTION from dbo.INTERACTIONTYPECODE  where ID = i.INTERACTIONTYPECODEID) as CONTACTMETHOD,
+			cat.NAME as INTERACTIONSUBCATEGORY,			
+			subcat.NAME as INTERACTIONSUBCATEGORY,	
+			i.[STATUS],
+			i.FUNDRAISERID as OWNERID,
+			fr_const.Name as OWNERNAME,
+			'b525985b-be02-4f02-a9b8-c110411cf936' as VIEWFORMID	
+	from dbo.INTERACTION i
+		join dbo.USR_INTERACTIONEXTENSION ie on ie.ID = i.ID
+		left join	dbo.CONSTITUENT fr_const on
+					fr_const.ID = i.FUNDRAISERID
+		left join	dbo.INTERACTIONSUBCATEGORY subcat on
+					subcat.ID = i.INTERACTIONSUBCATEGORYID
+		left join	dbo.INTERACTIONCATEGORY cat on 
+					subcat.INTERACTIONCATEGORYID = cat.ID	
+	where i.CONSTITUENTID = @constituentID
+	and i.ISINTERACTION = 1
+	and (ie.TRANSFERCHILDPROJECTID = @sponosrshipOpportunityID 
+		or ie.PREVIOUSCHILDPROJECTID = @sponosrshipOpportunityID
+		or ie.SPONSOREDPROJECTID = @sponosrshipOpportunityID)
+	
+			]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable)-->
+	<Context ContextRecordType="SPONSORSHIP" RecordIDParameter="SPONSORSHIPID"/>
+
+	<!-- describe any parameters (other than the context ID) defined on the SP
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>-->
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<OutputField FieldID="ID" Caption="ID" DataType="Guid" IsHidden="true" />
+			<OutputField FieldID="EXPECTEDDATE" Caption="Expected date" DataType="Date" />
+			<OutputField FieldID="CONTACTMETHOD" Caption="Contact Method" DataType="String" />
+			<OutputField FieldID="INTERACTIONCATEGORY" Caption="Category" DataType="String" />
+			<OutputField FieldID="INTERACTIONSUBCATEGORY" Caption="Sub Category" DataType="String" />
+			<OutputField FieldID="STATUS" Caption="Status" DataType="String" />
+			<OutputField FieldID="OWNERID" Caption="Owner System record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="OWNERNAME" Caption="Owner" DataType="String" />
+
+			<!--
+			<OutputField FieldID="LETTERTYPE" Caption="Letter Type" DataType="String" />
+			<OutputField FieldID="CHILDCOUNTLETTERVERSION" Caption="Child Version" DataType="String" />
+			<OutputField FieldID="EFTBROCHURE" Caption="EFT Brochure" DataType="String" IsHidden="true"/>
+			<OutputField FieldID="CHILDCOUNT" Caption="Child Count" DataType="Integer" />
+			<OutputField FieldID="SPONSORSHIPOPPORTUNITYCHILDID1" Caption="Child system record ID 1" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="CHILDLOOKUPID1" Caption="Child ID 1" DataType="String" />
+			<OutputField FieldID="CHILDNAME1" Caption="Child Name 1" DataType="String" />
+			<OutputField FieldID="SPONSORSHIPOPPORTUNITYCHILDID2" Caption="Child System system record 2" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="CHILDLOOKUPID2" Caption="Child ID 2" DataType="String" />
+			<OutputField FieldID="CHILDNAME2" Caption="Child Name 2" DataType="String" />
+			<OutputField FieldID="TRANSFERCHILDID" Caption="Transfer child system record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="TRANSFERCHILDLOOKUPID" Caption="Transfer child ID" DataType="String" />
+			<OutputField FieldID="DEPARTEDCHILDID" Caption="Departed child system record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="DEPARTEDCHILDLOOKUPID" Caption="Departed child ID" DataType="String" />
+			<OutputField FieldID="UNAVAILABLECHILDID" Caption="Unavailable system record ID" DataType="Guid" IsHidden="true"/>
+			<OutputField FieldID="UNAVAILABLECHILDLOOKUPID" Caption="Unavailable child ID" DataType="String" />
+			-->
+			<OutputField FieldID="VIEWFORMID" Caption="View Form ID" DataType="Guid" IsHidden="true"/>
+		</OutputFields>
+	</Output>
+
+</DataListSpec>

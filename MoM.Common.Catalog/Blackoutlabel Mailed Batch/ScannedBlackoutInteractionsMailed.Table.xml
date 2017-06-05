@@ -1,0 +1,57 @@
+﻿<TableSpec 
+	xmlns="bb_appfx_table"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="71909950-0b23-4c47-911c-86a70432ff03"
+	Name="Scanned Blackout Interactions Mailed"
+	Description="Blackout interactions mailed from EndPoint."
+	Author="Mark Sellers"
+	Tablename="USR_BLACKOUT_INTERACTIONS_MAILED"		   
+	>
+
+<!--  This table holds the Blackout Interactions from Annual Scanner that have been mailed.
+		Gets populated from our custom Import Batch
+		Spreadsheet comes from EndPoint and Pamela runs the Import Batch process to get the data into CRM.
+
+	 The SQL in the Batch Commit spec populates some of these columns...
+-->
+
+	<!-- define fields on the table -->
+	<Fields>
+		<NumberField Name="SEQUENCEID" Type="int" />
+		<TextField Name="SCANSESSION" Length="250" />
+		<TextField Name="SPONSORLOOKUPID" Length="10" />
+		<TextField Name="ADDRESSEE" Length="1500" />
+		<GuidField Name="SPONSORCONSTITUENTID" />
+		<DateField Name="SCANDATE" IncludeTime="false" />
+		<TextField Name="SALUTATION" Length="500"/>
+		<TextField Name="CONTACTADDRESSEE" Length="1500"/>
+		<TextField Name="ADDRESS" Length="2000"/>
+		<TextField Name="ADDRESS2" Length="2000"/>
+		<TextField Name="CITY" Length="2000"/>
+		<TextField Name="STATE" Length="500"/>
+		<TextField Name="ZIP" Length="200"/>
+		<TextField Name="COUNTRY" Length="250"/>
+		<TextField Name="CHILDLOOKUPID" Length="50" />
+		<TextField Name="PROJECTLOOKUPID" Length="50"/>
+	</Fields>
+
+	<!-- define any additional check constraints on the table -->
+	<!--<CheckConstraints>
+
+	</CheckConstraints>-->
+
+	<!-- define any indexes on the table -->
+	<Indexes>
+		<Index IsUnique="true" >
+			<IndexFields>
+				<IndexField Name="SEQUENCEID" />
+			</IndexFields>
+		</Index>
+	</Indexes>
+		
+	<!-- define any triggers on the table -->
+	<!--<Triggers>
+
+	</Triggers>-->
+
+</TableSpec>

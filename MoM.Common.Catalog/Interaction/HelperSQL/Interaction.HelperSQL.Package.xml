@@ -1,0 +1,91 @@
+<PackageSpec 
+    xmlns="bb_appfx_package"
+    xmlns:c="bb_appfx_commontypes"
+    ID="9c020f7c-33ac-470b-b1dc-dec98e6aba23"
+    Name="Interaction Package"
+    Description="Loads helper SQL specs for Interaction customizations."
+    Author="Mark Sellers"
+    >
+
+	<!-- Note:  the order of the items listed here is important.  For example, you won't be able to load a data form that references 
+	a table that hasn't been loaded, etc.  In general, the following order is recommended:
+	
+		(functions and procedures first)
+		SQLFunctionSpec
+		SQLStoredProcedureSpec
+		TranslationFunctionSpec
+
+		(tables next)
+		CodeTableSpec
+		TableSpec
+		SQLViewSpec
+
+		(features next)
+		SimpleDataListSpec		
+		SearchListSpec
+		RecordOperationSpec
+		DataListSpec
+		
+		(forms next)
+		AddDataFormTemplateSpec
+		EditDataFormTemplateSpec
+		ViewDataFormTemplateSpec		
+
+		(more feature types)
+		BatchTypeSpec
+		BusinessProcessSpec
+		CalendarSpec
+		FlashDashSpec
+		GlobalChangeSpec
+		IDMapperSpec
+		KpiSpec
+		MapEntitySpec
+		MergeConfiguration
+		MergeTaskSpec
+		QueryViewSpec
+		ReportSpec
+		RelationshipMapSpec
+		SmartFieldSpec
+		SmartQuerySpec
+		WorkflowInboxSpec
+		WorkflowSpec
+		
+		(functional areas, pages, and tasks last)
+		PageDefinitionSpec
+		FunctionalAreaSpec
+		TaskSpec	
+	-->
+	
+	<c:DependencyList>
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_UFN_INTERACTION_GETCATEGORYGROUP.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_UFN_INTERACTION_GETSUBCATEGORYGROUP.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNT.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_UFN_INTERACTIONEXTENSION_GETCHILDCOUNTTEXT.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_UFN_INTERACTIONEXTENSION_GETCHILDREN.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_ADDRESPONSE.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_CHILD_CANCELCOMPLETEALLPENDING.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_CHILD_CANCELPENDINGLETTERS.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_CHILDLETTER_ADD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_CHILDLETTER_ADD_PENDING.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_FIELDMEMO_ADD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_GETCATEGORYID.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_GETRESPONSEID.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_GETSUBCATEGORYID.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_ADD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_ADD_COMPLETED.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_ADD_DEPARTED_TRANSFER_CHILD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_ADD_PENDING.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_ADDCHILD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_ADDCHILDREN.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_CANCEL_PENDING_PROJECTINTERACTIONS.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_CANCELPENDINGCHILDINTERACTIONS.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_SETDEPARTEDCHILD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_SETDOUBLESPONSOREDCHILD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_SETPREVIOUSANDTRANSFERPROJECTS_BYLOCATIONID.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_SETSPONSOREDPROJECTID.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_SETTRANSFERCHILD.xml" />
+        <c:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.Interaction.HelperSQL.USR_USP_INTERACTION_SPONSOR_SETUNAVAILABLECHILD.xml" />
+    </c:DependencyList>
+
+</PackageSpec>

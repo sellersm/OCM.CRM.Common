@@ -1,0 +1,73 @@
+<PackageSpec 
+    xmlns="bb_appfx_package"
+    xmlns:common="bb_appfx_commontypes"
+    ID="9ea02f4a-363c-4731-b6f5-e6ae651da039"
+    Name="2017 Sponsor Retention Appeal Scanner Package"
+    Description="2017 Sponsor Retention Appeal Scanner specs"
+    Author="Memphis Sellers"
+    >
+
+	<!-- 
+	Remarks:    package for the Sponsor Retention Appeal 2017 Letter Scanner
+
+	History:
+	Date            Modified By     Comments
+	06-Feb-2017		Memphis			Added all the items for Sponsor Retention Appeal 2017 Letter Scanner:  
+									
+	-->
+
+
+	<!-- Note:  the order of the items listed here is important.  For example, you won't be able to load a data form that references 
+	a table that hasn't been loaded, etc.  In general, the following order is recommended:
+	
+		(functions and procedures first)
+		SQLFunctionSpec
+		SQLStoredProcedureSpec
+		TranslationFunctionSpec
+
+		(tables next)
+		CodeTableSpec
+		TableSpec
+
+		(features next)
+		SimpleDataListSpec		
+		SearchListSpec
+		RecordOperationSpec
+		DataListSpec
+		
+		(forms next)
+		AddDataFormTemplateSpec
+		EditDataFormTemplateSpec
+		ViewDataFormTemplateSpec		
+
+		(more feature types)
+		BatchTypeSpec
+		BusinessProcessSpec
+		FlashDashSpec
+		IDMapperSpec
+		KpiSpec
+		MergeConfiguration
+		MergeTaskSpec
+		QueryViewSpec
+		ReportSpec
+		SmartFieldSpec
+		SmartQuerySpec
+
+		(functional areas, pages, and tasks last)
+		PageDefinitionSpec
+		FunctionalAreaSpec
+		TaskSpec	
+	-->
+	
+	<common:DependencyList>
+		<!-- Sprocs -->
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.USR_USP_SPONSORRETENTION_APPEAL_2017_LETTERSCANNER.xml" />
+
+		<!-- forms-->
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorRetention.AppealScanner.2017.Add.xml" />
+
+		<!-- Pages, Tasks-->
+        <common:Dependency CatalogAssembly="MoM.Common.Catalog.dll" CatalogItem="MoM.Common.Catalog.SponsorRetention.AppealScanner.2017.Task.xml" />
+    </common:DependencyList>
+
+</PackageSpec>

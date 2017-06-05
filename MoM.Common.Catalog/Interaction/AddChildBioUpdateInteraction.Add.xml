@@ -1,0 +1,324 @@
+﻿<AddDataFormTemplateSpec 
+	xmlns="bb_appfx_adddataformtemplate"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="03520239-47b6-4be7-bbbd-4d7ed8db0a08" 
+	Name="Add Child Bio Update Interaction Add Data Form"
+	Description="Creates a new child bio update interaction." 
+	Author="Mark Sellers"
+	DataFormInstanceID="2a37e2ff-7b11-4433-85c8-09fa5f0a5c27" 
+	RecordType="Interaction"
+	common:SecurityUIFolder="Sponsorship"
+	>
+
+	<!-- 
+	Remarks:    Add Form to allow user to create a new Child Bio Update Interaction on the Sponsor of the given Sponsorship.
+				This is used on the Sponsorship Page.  
+						
+	History:
+	Date            Modified By     Comments
+	17-Apr-2017		MSellers		Initial Version
+	25-Apr-2017		MSellers		Updated per Pamela: eliminate Active (Transfer...) Sponsorships!
+	-->
+
+
+	<SPDataForm>
+		<!-- describe the preload SP (if applicable), which should be used to fetch field default values from the database.  If no
+		preload is needed, then this section can be removed -->
+		<LoadImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_CHILDBIOUPDATEINTERACTION_PRELOAD">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_CHILDBIOUPDATEINTERACTION_PRELOAD
+(
+	@SPONSORSHIPID uniqueidentifier,
+	@SPONSORNAME nvarchar(200) = null output,
+	@SPONSOREDCHILDID uniqueidentifier = null output,
+	@SPONSORSHIPCONSTITUENTID uniqueidentifier = null output
+)
+as
+	set nocount on;
+	
+	-- check that the Status of this Sponsorship contains 'Active', otherwise can't use this Form!
+	declare @SHOWHISTORY bit = 0;
+	declare @sponsorshipStatus nvarchar(250) = null;
+
+	/*  replaced this with the CTE below:
+	-- populate the fields that have default values that should be fetched from the database
+	select	@SPONSORNAME = c.NAME,
+			@SPONSORSHIPCONSTITUENTID = SPONSORSHIP.CONSTITUENTID,
+			@SPONSOREDCHILDID = SPONSORSHIPOPPORTUNITYID,
+			@sponsorshipStatus = [STATUS]
+	from dbo.SPONSORSHIP
+	inner join dbo.CONSTITUENT c on c.ID = SPONSORSHIP.CONSTITUENTID
+	where SPONSORSHIP.ID = @SPONSORSHIPID;
+	*/
+
+	-- This is basically the SQL from the Sponsorship data list to get the current status of the Sponsorship:
+	;with cteActiveSponsorshipStatuses (SponsorshipID, SponsorID, OpportunityID, SponsorshipStatus)
+	as (
+		-- Commitments
+		select
+		SPONSORSHIPCOMMITMENT.ID,
+		SPONSORSHIPCOMMITMENT.CONSTITUENTID,
+		LASTSPONSORSHIP.SPONSORSHIPOPPORTUNITYID,
+		case when LASTTRANSACTION.ACTIONCODE in(2,3) or (LASTTRANSACTION.ACTIONCODE = 5 and LASTSPONSORSHIP.ENDDATE is not null) then 'Inactive'
+			 when LASTTRANSACTION.ACTIONCODE = 6 then 'Active (Transfer pending)'
+		else 'Active' end STATUS
+	
+		from dbo.SPONSORSHIPCOMMITMENT
+		inner join dbo.SPONSORSHIPTRANSACTION LASTTRANSACTION on LASTTRANSACTION.SPONSORSHIPCOMMITMENTID = SPONSORSHIPCOMMITMENT.ID and LASTTRANSACTION.TRANSACTIONSEQUENCE = (select max(TRANSACTIONSEQUENCE) from dbo.SPONSORSHIPTRANSACTION MAXSEQUENCE where MAXSEQUENCE.SPONSORSHIPCOMMITMENTID = SPONSORSHIPCOMMITMENT.ID and MAXSEQUENCE.ACTIONCODE <> 9)
+		left outer join dbo.SPONSORSHIP LASTSPONSORSHIP on LASTSPONSORSHIP.SPONSORSHIPCOMMITMENTID = SPONSORSHIPCOMMITMENT.ID and ((LASTTRANSACTION.ACTIONCODE = 5 and LASTSPONSORSHIP.ID in(LASTTRANSACTION.TARGETSPONSORSHIPID,LASTTRANSACTION.CONTEXTSPONSORSHIPID)) or (LASTTRANSACTION.ACTIONCODE <> 5 and LASTSPONSORSHIP.ID = isnull(LASTTRANSACTION.TARGETSPONSORSHIPID,LASTTRANSACTION.CONTEXTSPONSORSHIPID)))
+		left outer join dbo.REVENUESPLIT on REVENUESPLIT.ID = LASTSPONSORSHIP.REVENUESPLITID
+		left outer join dbo.REVENUE on REVENUE.ID = REVENUESPLIT.REVENUEID
+		outer apply dbo.UFN_CONSTITUENT_DISPLAYNAME(dbo.UFN_SPONSORSHIP_GIFTFINANCIALSPONSORID(LASTSPONSORSHIP.ID)) PAIDFORBY_NF
+		where @SHOWHISTORY = 1
+		union all
+
+		-- Sponsorships
+		select
+		SPONSORSHIP.ID ID,
+		SPONSORSHIP.CONSTITUENTID,
+		SPONSORSHIP.SPONSORSHIPOPPORTUNITYID,
+		-- status:
+		case SPONSORSHIP.STATUSCODE 
+			when 1 then
+				case LASTTRANSACTION.ACTIONCODE 
+					when 6 then 'Active (Transfer pending)'
+					when 5 then 'Active (Reassigned from ' + REASSIGNEDCONSTITUENTNAME_NF.NAME + ')'
+			else 'Active' 
+		end
+		else SPONSORSHIP.STATUS end as SponSTATUS
+
+		from dbo.SPONSORSHIP
+		inner join dbo.SPONSORSHIPCOMMITMENT on SPONSORSHIPCOMMITMENT.ID = SPONSORSHIP.SPONSORSHIPCOMMITMENTID
+		inner join dbo.SPONSORSHIPOPPORTUNITY on SPONSORSHIPOPPORTUNITY.ID = SPONSORSHIP.SPONSORSHIPOPPORTUNITYID
+		inner join dbo.SPONSORSHIPPROGRAM on SPONSORSHIPPROGRAM.ID = SPONSORSHIP.SPONSORSHIPPROGRAMID
+		inner join dbo.SPONSORSHIPTRANSACTION CREATETRANSACTION on CREATETRANSACTION.SPONSORSHIPCOMMITMENTID = SPONSORSHIP.SPONSORSHIPCOMMITMENTID and CREATETRANSACTION.TRANSACTIONSEQUENCE = (select min(TRANSACTIONSEQUENCE) from dbo.SPONSORSHIPTRANSACTION MINSEQUENCE where MINSEQUENCE.SPONSORSHIPCOMMITMENTID = SPONSORSHIP.SPONSORSHIPCOMMITMENTID and MINSEQUENCE.TARGETSPONSORSHIPID = SPONSORSHIP.ID)
+		inner join dbo.SPONSORSHIPTRANSACTION LASTTRANSACTION on LASTTRANSACTION.SPONSORSHIPCOMMITMENTID = SPONSORSHIP.SPONSORSHIPCOMMITMENTID and LASTTRANSACTION.TRANSACTIONSEQUENCE = (select max(TRANSACTIONSEQUENCE) from dbo.SPONSORSHIPTRANSACTION MAXSEQUENCE where MAXSEQUENCE.SPONSORSHIPCOMMITMENTID = SPONSORSHIP.SPONSORSHIPCOMMITMENTID and SPONSORSHIP.ID in(MAXSEQUENCE.CONTEXTSPONSORSHIPID,MAXSEQUENCE.TARGETSPONSORSHIPID,MAXSEQUENCE.DECLINEDSPONSORSHIPID) and MAXSEQUENCE.ACTIONCODE <> 9)
+		left outer join dbo.SPONSORSHIP REASSIGNED on REASSIGNED.ID = case SPONSORSHIP.STATUSCODE when 1 then LASTTRANSACTION.CONTEXTSPONSORSHIPID when 2 then LASTTRANSACTION.TARGETSPONSORSHIPID end and LASTTRANSACTION.ACTIONCODE = 5
+		left outer join dbo.SPONSORSHIPREASON on SPONSORSHIPREASON.ID = LASTTRANSACTION.SPONSORSHIPREASONID
+		left outer join dbo.REVENUESPLIT on REVENUESPLIT.ID = SPONSORSHIP.REVENUESPLITID
+		left outer join dbo.REVENUE on REVENUE.ID = REVENUESPLIT.REVENUEID
+		outer apply dbo.UFN_CONSTITUENT_DISPLAYNAME(REASSIGNED.CONSTITUENTID) REASSIGNEDCONSTITUENTNAME_NF
+		outer apply dbo.UFN_CONSTITUENT_DISPLAYNAME(dbo.UFN_SPONSORSHIP_GIFTFINANCIALSPONSORID(SPONSORSHIP.ID)) PAIDFORBY_NF	
+		where (@SHOWHISTORY = 1 or SPONSORSHIP.STATUSCODE = 1)
+	)
+
+	select @SPONSORNAME = c.NAME,
+			@SPONSORSHIPCONSTITUENTID = SponsorID,
+			@SPONSOREDCHILDID = OpportunityID,
+			@sponsorshipStatus = SponsorshipStatus
+	from cteActiveSponsorshipStatuses
+	inner join dbo.CONSTITUENT c on c.ID = SponsorID
+	where SponsorshipID = @SPONSORSHIPID;
+
+	begin try
+		-- it's possible we didn't find any records at all, since we're only looking for Active Sponsorships:
+		if @SPONSOREDCHILDID is null
+			raiserror ('Sponsorship not Active, unable to create Interaction!', 16, 1);
+		else
+			begin
+				if (@sponsorshipStatus not like 'Active%') or (@sponsorshipStatus like 'Active (t%')
+					begin
+						raiserror ('Sponsorship not Active, unable to create Interaction!', 16, 1);
+					end
+			end
+		
+		return 0;
+	end try
+
+	begin catch
+		exec dbo.USP_RAISE_ERROR
+		return 1;
+	end catch	
+
+				]]>
+			</common:CreateProcedureSQL>
+		</LoadImplementation>
+
+		<!-- describe the save SP -->
+		<SaveImplementation SPName="USR_USP_DATAFORMTEMPLATE_ADD_CHILDBIOUPDATEINTERACTION">
+			<common:CreateProcedureSQL>
+				<![CDATA[
+create procedure dbo.USR_USP_DATAFORMTEMPLATE_ADD_CHILDBIOUPDATEINTERACTION
+(
+    @ID uniqueidentifier = null output,
+	@SPONSORSHIPID uniqueidentifier,
+    @CHANGEAGENTID uniqueidentifier = null,
+	@SPONSOREDCHILDID uniqueidentifier = null,
+	@SPONSORSHIPCONSTITUENTID uniqueidentifier = null
+)
+as
+
+	set nocount on;
+
+	if @ID is null
+		set @ID = newid()
+
+	if @CHANGEAGENTID is null
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+
+	-- use these to determine the Sponsor that will get the Interaction:
+	--declare @sponsorshipConstituentId uniqueidentifier = null;
+	--declare @sponsoredChildId uniqueidentifier = null;
+	declare @financialSponsorId uniqueidentifier = null;
+	declare @correspondingSponsorId uniqueidentifier = null;
+	declare @sponsorId uniqueidentifier = null;
+	
+	-- get the constituentid of the sponsorship:
+	--select	@sponsorshipConstituentId = SPONSORSHIP.CONSTITUENTID,
+	--		@sponsoredChildId = SPONSORSHIPOPPORTUNITYID
+	--from dbo.SPONSORSHIP
+	--where ID = @sponsorshipID;
+
+	-- this will return NULL if a Sole Sponsor Sponsorship:
+	select @correspondingSponsorId = dbo.USR_UFN_SPONSORSHIP_GETCORRESPONDENT (@SPONSORSHIPID);
+	select @financialSponsorId = dbo.USR_UFN_SPONSORSHIP_GETFINANCIALSPONSOR (@SPONSORSHIPID);
+	
+	-- If the correspondingsponsor is not null, and equals the Sponsorship.COnstituentID value, 
+	--		then this is the Corresponding Sponsor and there must be a Gift financial sponsor!
+	if ((@correspondingSponsorId is not null) and (@correspondingSponsorId = @sponsorshipConstituentId))
+		begin
+			-- the financial sponsor will be getting this Interaction:
+			set @sponsorId = @financialSponsorId;
+		end
+
+	-- If the correspondingsponsor is null, and the SponsorshipSponsor equals the PayingSponsor value, 
+	--		then this is the Sole Sponsor and there must NOT be a Gift financial sponsor!
+	if (@correspondingSponsorId is null) and ((@financialSponsorId is not null) and (@financialSponsorId = @sponsorshipConstituentId))
+		begin
+			-- this is the Sole Sponsor and there isn't a Gift financial sponsor!
+			set @sponsorId = @financialSponsorId;
+		end
+
+	begin try
+		
+	-- this shouldn't happen, but check for it anyway - we didn't determine who the sponsor is:
+	if @sponsorId is null
+		raiserror ('Did not create interaction: unable to determine Sponsor.', 16, 1);
+		
+	declare @solicitCodeList table (CODEDESCRIPTION nvarchar(100))
+	declare @okToCreateInteraction bit = 1;
+	declare @errorMessage nvarchar(200) = null;
+	
+	-- rebuild the solicit code stuff for the new sponsor
+	insert @solicitCodeList
+	select * from dbo.USR_UFN_GET_CONSTITUENT_SOLICITCODES_LIST(@sponsorId)
+
+	-- check for existence of various solicit codes which eliminates Sponsor from getting the Interaction:
+	if exists(select 1 from @solicitCodeList where lower(CODEDESCRIPTION) in ('do not email','no child updates', 'blackout all communication','no system letters','do not contact'))
+		begin
+			set @okToCreateInteraction = 0;
+		end
+
+	if @okToCreateInteraction = 1
+		begin
+			-- check for valid email:
+			if dbo.USR_UFN_CONSTITUENT_HASVALID_PRIMARY_EMAIL(@sponsorId) = 1
+				begin
+					set @okToCreateInteraction = 1;
+				end
+			else
+				set @okToCreateInteraction = 0;
+		end
+
+	if @okToCreateInteraction = 0
+		begin
+			-- raise the error message to user, cannot continue:
+			raiserror ('Did not create interaction due to sponsor invalid email or solicit code.', 16, 1);
+		end
+	else	
+		begin
+			-- do all the work here
+			-- first check for an existing Interaction of this type, no matter the date:
+			declare @interactionId uniqueidentifier = null;
+			declare @statusCode_Pending tinyint = 1;
+			declare @interactionSubCategoryId uniqueidentifier = null;
+			declare @sponsorInteractionId uniqueidentifier = null;
+			declare @interactionSummary nvarchar(100) = 'Updated child bio';
+			declare @categoryName nvarchar(100) = 'Child Change Notifications';
+			declare @subcategoryName nvarchar(100) = 'Child Bio Update Letter';
+			declare @expectedDate date = cast(getdate() as date);
+			declare @contactMethodDesc_Email nvarchar (100) = 'Email';						
+		
+			exec dbo.USR_USP_INTERACTION_GETSUBCATEGORYID @interactionSubCategoryId output, 'child change notifications', 'child bio update letter', 1;
+			
+			select @interactionId = INTERACTION.ID
+			from dbo.INTERACTION
+			where (dbo.INTERACTION.INTERACTIONSUBCATEGORYID = @interactionSubCategoryId
+			and dbo.INTERACTION.CONSTITUENTID = @sponsorId
+			and STATUSCODE = @statusCode_Pending);
+			
+			if @interactionId is null
+				begin
+					-- create a new interaction
+					exec dbo.USR_USP_INTERACTION_SPONSOR_ADD_PENDING 
+						@id = @sponsorInteractionId output,
+						@constituentID = @sponsorId,
+						@summary = @interactionSummary,
+						@categoryName = @categoryName,
+						@subcategoryName = @subcategoryName,
+						@expectedDate = @expectedDate,
+						@owner = null,  --@CHANGEAGENTID,
+						@contactMethodDesc = @contactMethodDesc_Email,
+						@comment = '',                                                        
+						@letterTypeDesc = '',
+						@fulfillmentStatusDesc = '',
+						@eftBrochureCode = 0,
+						@resendCode = 0,
+						@changeAgentID = @CHANGEAGENTID
+
+					-- add the child from this sponsorship to the interaction just created:
+					if @sponsorInteractionId  is not null
+						begin
+							exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
+								@interactionId = @sponsorInteractionId,
+								@sponsorshipOpportunityChildID = @sponsoredChildId,
+								@changeAgentID = @CHANGEAGENTID
+						end
+				end
+			else
+				begin
+					-- add this Child to the existing Interaction:
+					exec dbo.USR_USP_INTERACTION_SPONSOR_ADDCHILD
+						@interactionId = @interactionId,
+						@sponsorshipOpportunityChildID = @sponsoredChildId,
+						@changeAgentID = @CHANGEAGENTID
+					
+				end
+
+		end
+	end try
+	
+	begin catch
+		exec dbo.USP_RAISE_ERROR
+		return 1;
+	end catch	
+
+
+return 0				
+				]]>
+			</common:CreateProcedureSQL>
+		</SaveImplementation>
+	</SPDataForm>
+
+	<!-- describe the context ID for this form (if applicable), which corresponds to a parameter in the SP. -->
+	<Context ContextRecordType="SPONSORSHIP" RecordIDParameter="SPONSORSHIPID"/>
+
+	<!-- describe fields on the form, which correspond to parameters on the SP.  Note that system parameters 
+	like the context @ID, @CONTEXTID, and @CURRENTAPPUSERID need not be listed. -->
+	<common:FormMetaData FixedDialog="true">
+		<common:FormFields>
+			<common:FormField FieldID="SPONSORNAME" Caption="Sponsor" DataType="String" MaxLength="200" ReadOnly="true" />
+			<common:FormField FieldID="SPONSOREDCHILDID" Caption="Child Id" DataType="Guid" Hidden="true" />
+			<common:FormField FieldID="SPONSORSHIPCONSTITUENTID" Caption="Sponsor Id" DataType="Guid" Hidden="true" />
+
+		</common:FormFields>
+
+		<!-- indicate the client-side component for the user interface 
+		<common:FormUIComponent FormUIComponentType="CustomComponent">
+			<common:CustomComponentID AssemblyName="REPLACE_WITH_ASSEMBLYNAME" ClassName="REPLACE_WITH_FULLCLASSNAME" />
+		</common:FormUIComponent>
+		-->
+	</common:FormMetaData>
+
+</AddDataFormTemplateSpec>
