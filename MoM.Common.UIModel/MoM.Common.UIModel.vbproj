@@ -125,6 +125,8 @@
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormBARCODEELEMENTSUIModel.CodeGen.vb" />
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.CodeGen.vb" />
     <Compile Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.vb" />
+    <Compile Include="Global Changes\ArtistPartnerIDGlobalChangeUIModel.CodeGen.vb" />
+    <Compile Include="Global Changes\ArtistPartnerIDGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.CodeGen.vb">
       <DependentUpon>ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb</DependentUpon>
     </Compile>
@@ -252,6 +254,7 @@
     </Content>
     <Content Include="CRM ChildLetterScanner\CRMChildLetterScannerAddDataFormUIModel.xml" />
     <Content Include="CRM SponsorLetterScanner\CRMSponsorLetterScannerAddDataFormUIModel.xml" />
+    <Content Include="Global Changes\ArtistPartnerIDGlobalChangeUIModel.xml" />
     <Content Include="Global Changes\ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.xml">
       <DependentUpon>ChildExtensionDepartureFormReceivedDateGlobalChangeUIModel.vb</DependentUpon>
     </Content>
@@ -268,6 +271,7 @@
       <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
     </Content>
     <Content Include="Global Changes\FulfillmentStatusInteractionGlobalChangeUIModel.xml" />
+    <Content Include="htmlforms\ArtistPartnerIDGlobalChange.html" />
     <Content Include="htmlforms\BarCodeAddDataForm.html" />
     <Content Include="ChildLetterScanner\BarCodeAddDataFormUIModel.xml" />
     <Content Include="htmlforms\ChildExtensionDepartureFormReceivedDateGlobalChange.html" />
