@@ -19,6 +19,7 @@
 	19-Sep-2012		CMayeda			Recreated Goto action group on the Sponsorship Interactions tab on the Constituent Interactions Page, because it wasn't showing in Web shell. Fogbugz Case - 832
 	23-May-2014		CMayeda			Added tabs Child Correspondence Interactions, Revenue Interactions - TK-01415
 	15-Aug-2016		Memphis			Updating for new 4.0 page definition
+  30-Aug-2017   MSellers    Edit Interaction action task needs to point to the new Interaction Edit Form 5 used in CRM 4.0
 	-->
 	
 	<!-- define how the page header should appear -->
@@ -39,9 +40,9 @@
 						</AlterSections>-->
 						<AddTab Sequence ="2">
 							<Tab Caption="Sponsorship Interactions" ID="5845ac81-ad78-403b-8a0a-02ca56ecaedb" >
-								<Tabs>
+								<!--<Tabs>
 									<Tab 
-								</Tabs>
+								</Tabs>-->
 								<Sections>
 									<Section ID="72278A59-4E13-4624-BEB2-1E5B7FDE9CD6" Caption="Interactions" Visible="=Not CBool(Page.Fields!ISGROUP)" CaptionResourceKey="$$interactions">
 										<DataList ID="a39f10f7-e1fe-4642-bdbd-75ed78713664">
@@ -112,7 +113,7 @@
 												<ActionGroup>
 													<Actions>
 														<Action ID="47E80D73-B90E-4A89-AC4D-2F3F8A97D8CF" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
-															<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+															<ShowDataForm DataFormID="a91623e5-e341-43ba-9736-ba7ddcf0b355" xmlns="bb_appfx_commontypes">
 																<ActionContext>
 																	<SectionField>ID</SectionField>
 																</ActionContext>
@@ -225,7 +226,7 @@
 												<ActionGroup>
 													<Actions>
 														<Action ID="7ED0986C-B251-4C40-A39D-1236B0EDAC67" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
-															<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+															<ShowDataForm DataFormID="a91623e5-e341-43ba-9736-ba7ddcf0b355" xmlns="bb_appfx_commontypes">
 																<ActionContext>
 																	<SectionField>ID</SectionField>
 																</ActionContext>
@@ -338,7 +339,7 @@
 												<ActionGroup>
 													<Actions>
 														<Action ID="DE90063A-7393-4C67-819D-316C84B5F30C" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
-															<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+															<ShowDataForm DataFormID="a91623e5-e341-43ba-9736-ba7ddcf0b355" xmlns="bb_appfx_commontypes">
 																<ActionContext>
 																	<SectionField>ID</SectionField>
 																</ActionContext>
@@ -785,7 +786,7 @@
 											<ActionGroup>
 												<Actions>
 													<Action ID="5D695065-BD64-4B73-A94A-7FF1D837BA43" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
-														<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+														<ShowDataForm DataFormID="a91623e5-e341-43ba-9736-ba7ddcf0b355" xmlns="bb_appfx_commontypes">
 															<ActionContext>
 																<SectionField>ID</SectionField>
 															</ActionContext>

@@ -19,6 +19,7 @@
 	15-May-2013		Memphis			Fixed to match the workflow doc better: create child interaction no matter what
 	29-Aug-2013		Memphis			Further refactoring as per defect: D-01054
 	10-Oct-2013		Memphis			Fixing 3 defects:  D-01097, D-01098, D-01099
+  31-Aug-2017   MSellers    Changed 'Cancelled' to 'Canceled' to match CRM 4.0 interaction status.
 	-->
 	
 	<CreateProcedureSQL>
@@ -120,12 +121,12 @@ begin
     begin
     	if @InteractionStatus is not null
     		begin
-    			if LOWER(@InteractionStatus) = 'cancelled'
+    			if LOWER(@InteractionStatus) = 'canceled'
     				set @completedAfterCancellationCode = 1;
     			
     			set @newInteractionStatus = case LOWER(@InteractionStatus) 
     				when 'pending' then 'Completed'
-    				when 'cancelled' then 'Completed'
+    				when 'canceled' then 'Completed'
     				when 'completed' then 'EXCEPTION'
     				else 'EXCEPTION'
     				end
@@ -479,7 +480,7 @@ begin
 			and sp.CONSTITUENTID = @SponsorID   -- must include the constituentid of the sponsor from the bar code!
 
 			if @DateSponsorshipCancelled is not null		
-				Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship is currently cancelled.  '
+				Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship is currently canceled.  '
 		
 			set @Scannermessage = RTRIM(@ScannerMessage)
 			set @LogTypeCode = 0 -- Exception

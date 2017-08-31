@@ -17,6 +17,7 @@
 	10-Mar-2014		Memphis			add the Interaction Comment:  insert the char(13) + char(10) values for a CR/LF in between current Comment and newly added Comment
 	13-Mar-2014		Memphis			added the Completion Date if the Interaction is already completed.
 	04-Feb-2015		Memphis			added code to look for current year instead of hard-coded year
+  31-Aug-2017   MSellers    Changed 'Cancelled' text to 'Canceled' for 4.0 because Blackbaud changed it for interaction status values.
 	-->	
 
 	<CreateProcedureSQL>
@@ -282,13 +283,13 @@ begin try
 									  where ID = @InteractionID
 								End
                         
-							if @InteractionStatus = 'Cancelled'
+							if @InteractionStatus = 'Canceled'
 								Begin
-									--print 'Cancelled status, so perform the Update to Interaction and Interaction Extension!';
+									--print 'Canceled status, so perform the Update to Interaction and Interaction Extension!';
 									if @debugging = 1
 										begin
 											insert into dbo.USR_DEBUGGING_PHOTO_INTERACTIONS (ChildID, debuggingStatement, InteractionID)
-											values (@ChildLookupID, 'Cancelled status, so perform the Update to Interaction and Interaction Extension: ', @InteractionID);
+											values (@ChildLookupID, 'Canceled status, so perform the Update to Interaction and Interaction Extension: ', @InteractionID);
 										end				
 							
 									update dbo.INTERACTION 

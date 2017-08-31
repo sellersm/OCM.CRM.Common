@@ -15,7 +15,7 @@
 	Date            Modified By     Comments
 	13-Aug-2012		CMayeda			Initial Version
 	10-Oct-2012		CMayeda			Updated the name to be consistent with Blackbaud's Consituent Interactions page (plural intead of singular)
-
+  30-Aug-2017   MSellers    Updated the Edit Interaction to point to the new Interaction Edit Form 5 that is used in CRM 4.0
 	-->
 
 	<ResourceFile AssemblyName="Blackbaud.AppFx.Constituent.Catalog.dll" ClassName="Blackbaud.AppFx.Constituent.Catalog.Interactions.Page" />
@@ -78,7 +78,7 @@
 							<ActionGroup>
 								<Actions>
 									<Action ID="DEE965C1-DB6D-4E06-BC05-60828B14E383" Caption="Interaction" ImageKey="RES:Edit" CaptionResourceKey="$$interaction">
-										<ShowDataForm DataFormID="ab3b9569-4c7c-4646-a793-347856753b60" xmlns="bb_appfx_commontypes">
+										<ShowDataForm DataFormID="a91623e5-e341-43ba-9736-ba7ddcf0b355" xmlns="bb_appfx_commontypes">
 											<ActionContext>
 												<SectionField>ID</SectionField>
 											</ActionContext>
