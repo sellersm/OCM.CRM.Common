@@ -21,6 +21,7 @@
 									- 000000 is a valid sponsorid value, but don't check if it's a Found Sponsor.
 									- wasn't setting the original letter subcageory id and original sequence id
 									- wasn't checking the bar code project id correctly
+  31-Aug-2017   MSellers    Changed Interaction status of 'Cancelled' to 'Canceled' to match CRM 4.0
 	-->
 
   <CreateProcedureSQL>
@@ -147,12 +148,12 @@ begin
 					if @ExceptionOccurred = 0
 						begin
 							-- set the completion status of the Annual Letter interaction:
-							if LOWER(@InteractionStatus) = 'cancelled'
+							if LOWER(@InteractionStatus) = 'canceled'
 								set @completedAfterCancellationCode = 1;
 						
 							set @newInteractionStatus = case LOWER(@InteractionStatus) 
 									when 'pending' then 'Completed'
-									when 'cancelled' then 'Completed'
+									when 'canceled' then 'Completed'
 									when 'completed' then 'EXCEPTION'
 									else 'EXCEPTION'
 								end
@@ -566,7 +567,7 @@ begin
 			and sp.CONSTITUENTID = @interactionSponsorId   -- must include the constituentid of the sponsor from the bar code!
 
 			if @DateSponsorshipCancelled is not null		
-				Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship is currently cancelled.  '
+				Set @ScannerMessage = coalesce(@ScannerMessage, '') + 'The sponsorship is currently canceled.  '
 		
 			set @Scannermessage = RTRIM(@ScannerMessage)
 			set @LogTypeCode = 0 -- Exception

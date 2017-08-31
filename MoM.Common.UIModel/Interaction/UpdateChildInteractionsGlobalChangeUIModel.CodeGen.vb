@@ -35,7 +35,7 @@ Partial Public Class [UpdateChildInteractionsGlobalChangeUIModel]
     Public Enum REPLACESTATUSCODEWITHVALUES As Integer
         [Pending] = 1
         [Completed] = 2
-        [Cancelled] = 4
+        [Canceled] = 4
     End Enum
 
 #End Region
@@ -114,7 +114,7 @@ Partial Public Class [UpdateChildInteractionsGlobalChangeUIModel]
         _replacestatuscodewithvalue.Required = True
         _replacestatuscodewithvalue.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of REPLACESTATUSCODEWITHVALUES) With {.Value = REPLACESTATUSCODEWITHVALUES.[Pending], .Translation = "Pending"})
         _replacestatuscodewithvalue.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of REPLACESTATUSCODEWITHVALUES) With {.Value = REPLACESTATUSCODEWITHVALUES.[Completed], .Translation = "Completed"})
-        _replacestatuscodewithvalue.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of REPLACESTATUSCODEWITHVALUES) With {.Value = REPLACESTATUSCODEWITHVALUES.[Cancelled], .Translation = "Cancelled"})
+        _replacestatuscodewithvalue.DataSource.Add(New Global.Blackbaud.AppFx.UIModeling.Core.ValueListItem(Of REPLACESTATUSCODEWITHVALUES) With {.Value = REPLACESTATUSCODEWITHVALUES.[Canceled], .Translation = "Canceled"})
         Me.Fields.Add(_replacestatuscodewithvalue)
 
 		OnCreated()

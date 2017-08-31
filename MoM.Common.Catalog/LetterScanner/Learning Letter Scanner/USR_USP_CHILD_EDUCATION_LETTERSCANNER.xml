@@ -22,6 +22,7 @@
 	                                & sets flag to print blackout label.
 	27-Jun-2013		Memphis			Various fixes for Pamela...
 	28-Aug-2015		Memphis			Updated raiserror call: raiserror('Field office for Transfer Location is not configured.',16,1);
+  31-Aug-2017   MSellers    Changed 'Cancelled' to 'Canceled' for CRM 4.0
 	-->	
 	
 	<CreateProcedureSQL>
@@ -259,12 +260,12 @@ begin
 					if @ExceptionOccurred = 0
 						begin
 							-- set the completion status of the child letter interaction:
-							if LOWER(@InteractionStatus) = 'cancelled'
+							if LOWER(@InteractionStatus) = 'canceled'
 								set @completedAfterCancellationCode = 1;
 						
 							set @newInteractionStatus = case LOWER(@InteractionStatus) 
 									when 'pending' then 'Completed'
-									when 'cancelled' then 'Completed'
+									when 'canceled' then 'Completed'
 									when 'completed' then 'EXCEPTION'
 									else 'EXCEPTION'
 								end
