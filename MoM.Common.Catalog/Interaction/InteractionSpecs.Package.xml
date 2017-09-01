@@ -2,7 +2,7 @@
     xmlns="bb_appfx_package"
     xmlns:c="bb_appfx_commontypes"
     ID="d2ee9017-4264-4670-9234-155dc176cbf7"
-    Name="Interaction Specs Package"
+    Name="Common-Interaction Specs Package"
     Description="Loads specs for Interactions customizations."
     Author="Mark Sellers"
     >
