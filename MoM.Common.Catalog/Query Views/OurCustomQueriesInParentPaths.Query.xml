@@ -1,0 +1,62 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="a273cf52-9e43-4d12-a00f-f0c669b68a15"
+	Name="Our Custom Queries In ParentPaths Query"
+	Description="Finds where our custom queries are used."
+	Author="Mark Sellers"
+	IsRoot="true"
+	RecordType="Ad-hoc Query"
+	common:SecurityUIFolder="Query"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_CUSTOMIZATIONS_IN_PARENTPATHS">
+		<ViewSQL>
+			<![CDATA[
+-- this is to get the ParentView queries:
+WITH XMLNAMESPACES (  
+       'bb_appfx_queryview' AS x)
+, cteQueryDefXml as (
+       SELECT 
+		 ID,
+         DISPLAYNAME,          
+         OBJECTNAME, 
+         [DESCRIPTION],
+		 QUERYVIEWSPEC.value('(/x:QueryViewSpec/@RecordType)[1]','nvarchar(max)') as RecordType,
+         p.value('./@ParentView', 'nvarchar(max)') as ParentView,
+         p.value('./@PathAlias', 'nvarchar(max)') as ParentPathAlias
+         --r.value('./@RelatedView', 'nvarchar(max)') as RelatedView,
+         --r.value('./@PathAlias', 'nvarchar(max)') as RelatedPathAlias
+       FROM dbo.QUERYVIEWCATALOG --dbo.adhocquery        
+       cross apply QUERYVIEWSPEC.nodes('/x:QueryViewSpec/x:RelationshipOperations/x:AddToParentView') as x(p)
+       --cross apply QUERYVIEWSPEC.nodes('/x:QueryViewSpec/x:RelationshipOperations/x:AddRelatedView') as s(r)
+       where OBJECTNAME like '%USR%'
+)
+select distinct 
+		(case when a.NAME is null then DISPLAYNAME else a.NAME end) as QueryName,
+		OBJECTNAME,
+		RecordType,
+		ParentPathAlias,
+		ParentView
+from cteQueryDefXml
+left join dbo.ADHOCQUERY a on a.QUERYVIEWCATALOGID = cteQueryDefXml.ID
+left join dbo.QUERYCATEGORYCODE c on c.ID = a.QUERYCATEGORYCODEID;				
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<!--<OutputField Caption="System record ID" Category="System Fields" Name="ID" />-->
+			<OutputField Name="QUERYNAME" Caption="Query Name" DataType="String" />
+			<OutputField Name="OBJECTNAME" Caption="Query View Name" DataType="String" />
+			<OutputField Name="RECORDTYPE" Caption="Record Type" DataType="String" />
+			<OutputField Name="PARENTPATHALIAS" Caption="Parent Path" DataType="String" />
+			<OutputField Name="PARENTVIEW" Caption="Parent View Name" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+

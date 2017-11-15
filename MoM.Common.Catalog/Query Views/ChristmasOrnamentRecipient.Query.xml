@@ -1,6 +1,6 @@
 ﻿<QueryViewSpec
 	xmlns="bb_appfx_queryview"
-	xmlns:common="bb_appfx_commontypes" 
+	xmlns:common="bb_appfx_commontypes"
 	ID="D180114E-16BB-4387-9BC1-FF0AA685433F"
 	Name="Christmas Ornament Recipient Query"
 	Description="Sponsors who received an ornaments in 2014 - No Gifting Sponsors"
@@ -11,10 +11,22 @@
 	common:SecurityUIFolder="Constituent"
 	>
 
-	<!-- define the view used to return data for the query -->
-	<ViewImplementation ViewName="USR_V_QUERY_CHRISTMASORNAMENTS_RECIPIENT">
-		<ViewSQL>
-			<![CDATA[
+  <!-- 
+	Remarks:    Used for data pulls for annual Christmas ornament mailings.
+				Updated each year with the correct appeal name(s) for current year's data pull.
+
+	History:
+	Date            Modified By     Comments
+	24-Oct-2016		Memphis			Updated for 2016, per Pamela.
+	09-Nov-2017		MSellers		Added 2016 appeal, per Pamela, for 2017 usage.
+									
+	-->
+
+
+  <!-- define the view used to return data for the query -->
+  <ViewImplementation ViewName="USR_V_QUERY_CHRISTMASORNAMENTS_RECIPIENT">
+    <ViewSQL>
+      <![CDATA[
 			
 with Received2014Ornament
 as
@@ -28,7 +40,10 @@ from
 where 
 	--a.NAME = '10565 - Christmas Ornaments 2014'
 	(a.NAME = '10565 - Christmas Ornaments 2014'
-	or a.NAME = '10554 - Christmas Ornaments')	
+	or a.NAME = '10554 - Christmas Ornaments'
+	or a.NAME = '10583 - Christmas Ornaments 2015'
+	or a.NAME = '10596 - Christmas Ornaments 2016'
+	)
 )
 select 
 	s.CONSTITUENTID,
@@ -46,30 +61,34 @@ from
 	
 where 
 	s.STATUSCODE = 1
-and	s.STARTDATE > '11/06/14'
-and not exists (select s2.ID from dbo.SPONSORSHIP s2 where s2.SPONSORSHIPOPPORTUNITYID = s.SPONSORSHIPOPPORTUNITYID and s2.CONSTITUENTID = s.CONSTITUENTID and s2.STARTDATE <= '11/06/14')
+--and	s.STARTDATE > '11/06/14'
+--and	s.STARTDATE > '11/11/15'
+and	s.STARTDATE > '11/01/16'
+--and not exists (select s2.ID from dbo.SPONSORSHIP s2 where s2.SPONSORSHIPOPPORTUNITYID = s.SPONSORSHIPOPPORTUNITYID and s2.CONSTITUENTID = s.CONSTITUENTID and s2.STARTDATE <= '11/06/14')
+--and not exists (select s2.ID from dbo.SPONSORSHIP s2 where s2.SPONSORSHIPOPPORTUNITYID = s.SPONSORSHIPOPPORTUNITYID and s2.CONSTITUENTID = s.CONSTITUENTID and s2.STARTDATE <= '11/11/15')
+and not exists (select s2.ID from dbo.SPONSORSHIP s2 where s2.SPONSORSHIPOPPORTUNITYID = s.SPONSORSHIPOPPORTUNITYID and s2.CONSTITUENTID = s.CONSTITUENTID and s2.STARTDATE <= '11/01/16')
 and	exists (select ro.ID from Received2014Ornament ro where ro.ID = s.CONSTITUENTID)
 
 			]]>
-		</ViewSQL>
-	</ViewImplementation>
+    </ViewSQL>
+  </ViewImplementation>
 
-	<!-- describe each field in the view output -->
-	<Output>
-		<OutputFields>
-			<OutputField Caption="Sponsor System record ID" Category="System Fields" Name="CONSTITUENTID" />
-			<OutputField Name="CHILDID" Caption="Child System record ID" Category="System Fields" DataType="Guid" />
-			<OutputField Name="PROJECTLOOKUPID" Caption="Project Lookup ID" DataType="String" />
-			<OutputField Name="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
-			<OutputField Name="CHILDFIRSTNAME" Caption="Child First Name" DataType="String" />
-			<OutputField Name="CHILDNAME" Caption="Child Full Name" DataType="String" />
-		</OutputFields>
-	</Output>
+  <!-- describe each field in the view output -->
+  <Output>
+    <OutputFields>
+      <OutputField Caption="Sponsor System record ID" Category="System Fields" Name="CONSTITUENTID" />
+      <OutputField Name="CHILDID" Caption="Child System record ID" Category="System Fields" DataType="Guid" />
+      <OutputField Name="PROJECTLOOKUPID" Caption="Project Lookup ID" DataType="String" />
+      <OutputField Name="CHILDLOOKUPID" Caption="Child Lookup ID" DataType="String" />
+      <OutputField Name="CHILDFIRSTNAME" Caption="Child First Name" DataType="String" />
+      <OutputField Name="CHILDNAME" Caption="Child Full Name" DataType="String" />
+    </OutputFields>
+  </Output>
 
-	<RelationshipOperations>
-		<AddRelatedView RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" Field="CHILDID" RelatedField="ID" Cardinality="OneToOne" PathAlias="Sponsored Child" />
-		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" Field="CONSTITUENTID" RelatedField="ID" Cardinality="OneToOne"  PathAlias="Sponsor"/>
-	</RelationshipOperations>
+  <RelationshipOperations>
+    <AddRelatedView RelatedView="V_QUERY_SPONSORSHIPOPPORTUNITY" Field="CHILDID" RelatedField="ID" Cardinality="OneToOne" PathAlias="Sponsored Child" />
+    <AddRelatedView RelatedView="V_QUERY_CONSTITUENT" Field="CONSTITUENTID" RelatedField="ID" Cardinality="OneToOne"  PathAlias="Sponsor"/>
+  </RelationshipOperations>
 
 </QueryViewSpec>
 
