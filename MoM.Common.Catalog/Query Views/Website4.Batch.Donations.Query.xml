@@ -1,0 +1,114 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="E21816F9-CB3E-4B6D-B4A5-AE77D31A2748"
+	Name="Website4 Donation Batches"
+	Description="Information on Website Donation batches"
+	Author="Jeff Mawhirter"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="CONSTITUENT"
+	common:SecurityUIFolder="Website"
+	>
+	<!-- 
+	Remarks:   Used to assist with processing BBIS account signups.
+
+	History:
+	Date            Modified By     Comments
+	02-Jan-2018		JMawhirter		Initial version for post-4.0 	
+	-->
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_WEBSITE4_DONATION_BATCHES">
+		<ViewSQL>
+			<![CDATA[
+
+select
+      coalesce(c.id, brc.existingconstituentid) as ID,
+      br.ID as BATCHROWID,
+      b.ID BATCHID,
+      b.BATCHNUMBER,
+      br.SEQUENCE,
+      c.LOOKUPID as MATCHEDCONSTITUENTLOOKUPID,
+      c.NAME  as MATCHEDCONSTITUENTNAME,
+      brc.FIRSTNAME,
+      brc.keyname as LASTNAME,
+      brc.addressblock as DONORADDRESS,
+      brc.city as DONORCITY,
+      STATE.abbreviation as DONORSTATE,
+      brc.postcode as DONORPOSTCODE,
+      country.description as DONORCOUNTRY,
+      br.date as GIFTDATE,
+      br.amount as GIFTAMOUNT,
+      r.DESCRIPTION as DESIGNATION, 
+      br.paymentmethod as PAYMENTMETHOD,
+      br.CARDHOLDERNAME as NAMEONCARD,
+      CREDITTYPECODE.description as CARDTYPE,
+      br.EXPIRESON as EXPDATE,
+      br.installmentfrequency as RGFREQUENCY,
+      br.INSTALLMENTSCHEDULESEEDDATE as RGDAY, -- actually want the numeric day of the month
+      bbnc.firstpaymentprocessed as RGPROCESSEDFIRSTPAYMENT,
+      br.reference as GIFTCOMMENT,
+      bbnc.pagename as ORIGINPAGE,
+      br.mgmatchingconstituentid as DONORIDAUTOMATCH   
+
+from BATCHREVENUE br
+      inner join BATCH b on br.batchid = b.id
+      -- using the batch workflow 'BBIS Donation Transaction' to know which batches are revenue from the website
+      inner join BATCHTEMPLATE bt on bt.id = b.batchtemplateid and batchworkflowid = '75261255-7FA1-48DA-95D8-E4F49250C1AA'
+      left join CREDITCARD on CREDITCARD.id = br.creditcardid
+      left join CREDITTYPECODE on CREDITTYPECODE.id = CREDITCARD.CREDITTYPECODEID
+      -- left join appeal on appeal.id = br.appealid -- doesn't have desired application info
+      left join BATCHREVENUECONSTITUENT brc on brc.id = br.constituentid
+      left join STATE on STATE.id = brc.stateid
+      left join COUNTRY on country.id = brc.countryid
+      left join CONSTITUENT c on c.id = br.constituentid
+      left join BATCHREVENUEBBNCINFO bbnc on bbnc.batchrevenueid = br.id
+      left join BATCHREVENUEAPPLICATION bra on bra.batchrevenueid = br.id 
+      left join REVENUE r on r.id = bra.revenueid    
+
+]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="ID" Caption="Matched Constituent System recordID" Category="System Fields" />
+			<OutputField Name="BATCHROWID" Caption="Batch Row System record ID" Category="System Fields" />
+			<OutputField Name="BATCHID" Caption="Batch System record ID" Category="System Fields" />
+			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+			<OutputField Name="SEQUENCE" Caption="Sequence" DataType="Integer" />
+			<OutputField Name="MATCHEDCONSTITUENTLOOKUPID" Caption="Matched Constituent Lookup ID" DataType="String" />
+			<OutputField Name="MATCHEDCONSTITUENTNAME" Caption="Matched Constituent Name" DataType="String" />
+			<OutputField Name="FIRSTNAME" Caption="Donor First Name" DataType="String" />
+			<OutputField Name="LASTNAME" Caption="Donor Last Name" DataType="String" />
+			<OutputField Name="DONORADDRESS" Caption="Donor Address" DataType="String" />
+			<OutputField Name="DONORCITY" Caption="Donor City" DataType="String" />
+			<OutputField Name="DONORSTATE" Caption="Donor State" DataType="String" />
+			<OutputField Name="DONORPOSTCODE" Caption="Donor Post Code" DataType="String" />
+			<OutputField Name="DONORCOUNTRY" Caption="Donor Country" DataType="String" />
+			<OutputField Name="GIFTDATE" Caption="Gift Date" DataType="Date" />
+			<OutputField Name="GIFTAMOUNT" Caption="Gift Amount" DataType="Money" />
+			<OutputField Name="DESIGNATION" Caption="Designation" DataType="String" />
+			<OutputField Name="PAYMENTMETHOD" Caption="Payment Method" DataType="String" />
+			<OutputField Name="NAMEONCARD" Caption="Name on Card" DataType="String" />
+			<OutputField Name="CARDTYPE" Caption="Card Type" DataType="String" />
+			<OutputField Name="EXPDATE" Caption="Expiration Date" DataType="String" />
+			<OutputField Name="RGFREQUENCY" Caption="Recurring Gift Frequency" DataType="String" />
+			<OutputField Name="RGDAY" Caption="Recurring Gift Day" DataType="TinyInt" />
+			<OutputField Name="RGPROCESSEDFIRSTPAYMENT" Caption="Recurring Gift 1st Payment Processed" DataType="String" />
+			<OutputField Name="GIFTCOMMENT" Caption="Comment" DataType="String" />
+			<OutputField Name="ORIGINPAGE" Caption="Website page of origin" DataType="String" />
+			<OutputField Name="DONORIDAUTOMATCH" Caption="Donor ID Auto Match" DataType="String" />
+		</OutputFields>
+	</Output>
+
+										
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="ID" PathAlias="Matched Constituent"/>
+		<AddRelatedView RelatedView="V_QUERY_BATCH" RelatedField="ID" Field="BATCHID" PathAlias="Batch"/>
+	</RelationshipOperations>
+</QueryViewSpec>
+

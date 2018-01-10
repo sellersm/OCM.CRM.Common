@@ -1,0 +1,95 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="72B91E8E-2CAF-4017-A744-22EB853B1829"
+	Name="Website4 Signups"
+	Description="Information on Website Signup batches"
+	Author="Jeff Mawhirter"
+	IsRoot="true"
+	PrimaryKeyField="LINKEDID"
+	RecordType="CONSTITUENT"
+	common:SecurityUIFolder="Website"
+	>
+	<!-- 
+	Remarks:   Used to assist with processing BBIS account signups.
+	Preserving original (BBIS 2.93 integration) column names to allow drop in replacement 
+
+	History:
+	Date            Modified By     Comments
+	02-Jan-2018		JMawhirter			Initial Version
+	-->
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_WEBSITE4_SIGNUPS">
+		<ViewSQL>
+			<![CDATA[
+select	
+    b.BATCHNUMBER, 
+    bbis.SEQUENCE, 
+	C.ID as LINKEDID,
+    c.LOOKUPID as LINKEDLOOKUPID, 
+    c.NAME LINKEDNAME,
+    bbis.FIRSTNAME + bbis.KEYNAME as BBNCCONSTITNAME,
+    (select count(*) from dbo.SPONSORSHIP where CONSTITUENTID = c.ID and STATUSCODE = 1) as SPONSORSHIPCOUNT,
+    spouse.LOOKUPID as SPOUSELOOKUPID,
+    spouse.NAME as SPOUSENAME,
+    (select count(*) from dbo.SPONSORSHIP where CONSTITUENTID = spouse.ID and STATUSCODE = 1) as SPOUSESPONSORSHIPCOUNT,	   
+    EMAILADDRESSTYPECODE.Description as EMAILTYPE,
+    BBISEmailAddresses.EmailAddress as EMAILADDRESS,
+    case 
+     when BBISEmailAddresses.EmailAddress is null then 'blank'
+     when upper (primaryemail.emailaddress) = upper(BBISEmailAddresses.EmailAddress)  then 'MATCHES PRIMARY'
+     when exists (select 1 from emailaddress where CONSTITUENTID = c.ID and upper (emailaddress) = upper(BBISEmailAddresses.EmailAddress))  then 'MATCHES non primary'
+	 else 'no match'
+    end as EMAILMATCH,
+    primaryemail.EMAILADDRESS as PRIMARYEMAILADDRESS,
+    case 
+     when upper (nonprimaryemail.emailaddress) = upper(BBISEmailAddresses.EmailAddress)  then 'matches this other'
+     else ''
+    end as EMAILOTHERMATCH,
+    nonprimaryemail.EMAILADDRESS as OTHEREMAILADDRESS,
+	bbis.DateAdded as SIGNUPTRANSACTIONDATE   	     
+from 
+    dbo.BATCHCONSTITUENTUPDATE bbis
+    inner join dbo.BATCH b on bbis.BATCHID = b.ID
+    left join dbo.CONSTITUENT c on bbis.primaryrecordid = c.ID
+    left join dbo.BATCHCONSTITUENTUPDATEEMAILADDRESSES as BBISEmailAddresses on BBISEmailAddresses.BatchConstituentUpdateID = bbis.ID and BBISEmailAddresses.roworigincode = 1
+    left join dbo.EMAILADDRESSTYPECODE on EMAILADDRESSTYPECODE.id = BBISEmailAddresses.EMAILADDRESSTYPECODEID
+    left join dbo.EMAILADDRESS primaryemail on c.ID = primaryemail.CONSTITUENTID and primaryemail.ISPRIMARY = 1
+    --left join dbo.EMAILADDRESS nonprimaryemail on c.ID = nonprimaryemail.CONSTITUENTID and nonprimaryemail.ISPRIMARY = 0
+    outer apply ( select top 1 * from dbo.EMAILADDRESS nonprimaryemail where c.ID = nonprimaryemail.CONSTITUENTID and nonprimaryemail.ISPRIMARY = 0) nonprimaryemail
+    left join dbo.RELATIONSHIP spouserel on spouserel.RELATIONSHIPCONSTITUENTID = c.ID and spouserel.ISSPOUSE = 1
+    left join dbo.CONSTITUENT spouse on spouse.ID = spouserel.RECIPROCALCONSTITUENTID
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="LINKEDID" Caption="System record ID" Category="System Fields" />
+			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+			<OutputField Name="SEQUENCE" Caption="Sequence" DataType="Integer" />
+			<OutputField Name="LINKEDLOOKUPID" Caption="Linked Constituent Lookup ID" DataType="String" />
+			<OutputField Name="LINKEDNAME" Caption="Linked Constituent Name" DataType="String" />
+			<OutputField Name="BBNCCONSTITNAME" Caption="BBIS Name" DataType="String" />
+			<OutputField Name="SPONSORSHIPCOUNT" Caption="Sponsorship Count" DataType="Integer" />
+			<OutputField Name="SPOUSELOOKUPID" Caption="Spouse Lookup ID" DataType="String" />
+			<OutputField Name="SPOUSENAME" Caption="Spouse Name" DataType="String" />
+			<OutputField Name="SPOUSESPONSORSHIPCOUNT" Caption="Spouse Sponsorship Count" DataType="String" />
+			<OutputField Name="EMAILTYPE" Caption="Email Type in Signup" DataType="String" />
+			<OutputField Name="EMAILADDRESS" Caption="Email Address in Signup" DataType="String" />
+			<OutputField Name="EMAILMATCH" Caption="Email Match" DataType="String" />
+			<OutputField Name="PRIMARYEMAILADDRESS" Caption="Primary Email Address" DataType="String" />
+			<OutputField Name="EMAILOTHERMATCH" Caption="Other Email Match" DataType="String" />
+			<OutputField Name="OTHEREMAILADDRESS" Caption="Other Email Address" DataType="String" />
+			<OutputField Name="SIGNUPTRANSACTIONDATE" Caption="Signup Transaction Date" DataType="Date" />
+			<!--<OutputField Name="PREFERREDADDRESSXML" Caption="Preferred Address XML" DataType="String" />-->
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="LINKEDID" PathAlias="Linked Constituent"/>
+	</RelationshipOperations>
+</QueryViewSpec>
+

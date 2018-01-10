@@ -1,0 +1,59 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="95379E15-B562-4D74-8E67-6C60AFEFD67C"
+	Name="Website4 Donations"
+	Description="Information on Website Donation batches"
+	Author="Jeff Mawhirter"
+	IsRoot="true"
+	PrimaryKeyField="LINKEDID"
+	RecordType="CONSTITUENT"
+	common:SecurityUIFolder="Website"
+	>
+	<!-- 
+	Remarks:   Used to assist with processing BBIS account signups.
+
+	History:
+	Date            Modified By     Comments
+	02-Jan-2018		JMawhirter			Initial Version
+	-->
+
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_WEBSITE4_DONATIONS">
+		<ViewSQL>
+			<![CDATA[
+
+select 
+    b.BATCHNUMBER,
+    bbis.SEQUENCE,
+    bbis.CONSTITUENTID as LINKEDID,
+    c.LOOKUPID as LINKEDLOOKUPID,
+    c.NAME LINKEDNAME
+from
+    dbo.batchrevenue bbis
+    inner join dbo.BATCH b on bbis.BATCHID = b.ID
+    -- use the batch workflow BBIS Donation Transaction to know which batches are revenue from the website
+    left join BatchTemplate bt on bt.id = b.batchtemplateid and batchworkflowid = '75261255-7FA1-48DA-95D8-E4F49250C1AA'
+    left join dbo.CONSTITUENT c on bbis.CONSTITUENTID = c.ID
+		
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Name="LINKEDID" Caption="System record ID" Category="System Fields" />
+			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+			<OutputField Name="SEQUENCE" Caption="Sequence" DataType="Integer" />
+			<OutputField Name="LINKEDLOOKUPID" Caption="Linked Constituent Lookup ID" DataType="String" />
+			<OutputField Name="LINKEDNAME" Caption="Linked Constituent Name" DataType="String" />			
+		</OutputFields>
+	</Output>
+
+	<RelationshipOperations>
+		<AddRelatedView RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" Field="LINKEDID" PathAlias="Linked Constituent"/>
+	</RelationshipOperations>
+</QueryViewSpec>
+
