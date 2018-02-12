@@ -1,0 +1,45 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="96568b22-028c-4103-88e5-11c8387d8b4b"
+	Name="USR_USP_UPDATE_RG_STARTDATE_FIX"
+	Description="Updates the RG Startdate value."
+	Author="Mark Sellers"
+	SPName="USR_USP_UPDATE_RG_STARTDATE_FIX"
+	>
+
+	<!-- 
+	Remarks:	Sets the RevenueSchedule.StartDate column to the earliest recurringgiftinstallment date value.
+				Uses the 'temp' table which is used to drive the update 				
+				(another sproc:  USR_USP_POPULATE_RGDATE_UPDATE_TEMP_TABLE).
+
+	History:
+	Date            Modified By     Comments
+	22-Jan-2018		MSellers		Initial Version
+	-->
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_UPDATE_RG_STARTDATE_FIX
+as
+begin
+
+	begin try
+		update rs
+		set STARTDATE = u.FIRSTINSTALLMENTDATE -- '2012-11-30' 
+		from dbo.REVENUESCHEDULE rs
+		join FINANCIALTRANSACTION ft on ft.ID = rs.ID 
+		join dbo.USR_REVENUESCHEDULE_BEFORE_STARTDATE_UPDATE u on u.RGID = ft.CALCULATEDUSERDEFINEDID;
+	end try
+
+	begin catch
+	    exec dbo.USP_RAISE_ERROR
+		return 1	
+	end catch
+
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
