@@ -1,0 +1,47 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="8a658ac0-78ae-4c9a-af74-33434bd9fbfd"
+	Name="USR_USP_POPULATE_RGDATE_UPDATE_TEMP_TABLE"
+	Description="Populates the temp table used to populate RG Date column."
+	Author="Mark Sellers"
+	SPName="USR_USP_POPULATE_RGDATE_UPDATE_TEMP_TABLE"
+	GrantServiceRolePermission="1"
+	>
+
+	<!-- 
+	Remarks:	Populates our temp table with RevenueSchedule records that will be updated.
+				Need to set the RevenueSchedule.StartDate column to the earliest recurringgiftinstallment date value.
+				This sproc will put the correct rows into the 'temp' table which is used to drive the update 
+				(another sproc:  USR_USP_UPDATE_RG_STARTDATE_FIX).
+
+	History:
+	Date            Modified By     Comments
+	22-Jan-2018		MSellers		Initial Version
+	-->
+
+
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_POPULATE_RGDATE_UPDATE_TEMP_TABLE
+as
+begin
+	select  c.LOOKUPID as SPONSORID, 
+			ft.CALCULATEDUSERDEFINEDID as RGID, 
+			min(rgi.[DATE]) as FIRSTINSTALLMENTDATE, 
+			cast(rs.STARTDATE as DATE) as REVENUESCHEDULE_STARTDATE,
+			cast(rs.NEXTTRANSACTIONDATE as DATE) as NTD
+	into dbo.USR_REVENUESCHEDULE_BEFORE_STARTDATE_UPDATE
+	from dbo.CONSTITUENT c
+	join dbo.FINANCIALTRANSACTION ft on ft.CONSTITUENTID = c.ID and ft.TYPECODE = 2
+	join dbo.REVENUESCHEDULE rs on rs.ID = ft.ID --and rs.[STATUS] = 'Active' -- is there any reason to further restict this to sponsorships? 
+	join dbo.RECURRINGGIFTINSTALLMENT rgi on rgi.REVENUEID = ft.ID 
+	group by c.LOOKUPID, ft.CALCULATEDUSERDEFINEDID, rs.STARTDATE, rs.NEXTTRANSACTIONDATE
+	having min(rgi.date) < cast(rs.startdate as date) --and min(rgi.date) = rs.NEXTTRANSACTIONDATE
+	order by c.LOOKUPID -- ft.calculateduserdefinedid
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

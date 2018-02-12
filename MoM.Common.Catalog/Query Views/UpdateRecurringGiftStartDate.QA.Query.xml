@@ -1,0 +1,63 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="9f709710-0a32-47e5-a7ff-7d033ee4ba0d"
+	Name="Update Recurring Gift StartDate QA Query"
+	Description="View records that will have their RG StartDate updated."
+	Author="Mark Sellers"
+	IsRoot="true"		
+	PrimaryKeyField="ID"
+	RecordType="REVENUE"
+	common:SecurityUIFolder="REVENUE"	
+	>
+
+	<!-- 
+	Remarks:	Used to view the custom temp table created during our SQL script to update the RG Date column value.
+
+	History:
+	Date            Modified By     Comments
+	22-Jan-2018		MSellers		Initial Version
+	-->
+
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_RG_STARTDATE_UPDATE_QA">
+		<ViewSQL>
+			<![CDATA[
+select	
+	rs.ID
+	,u.SPONSORID
+	,u.RGID
+	,u.FIRSTINSTALLMENTDATE
+	,u.REVENUESCHEDULE_STARTDATE
+	,u.NTD
+	,dbo.UFN_REVENUE_STARTDATEVALID(rs.ID, u.FIRSTINSTALLMENTDATE) as STARTDATEVALID
+	--,cast(rs.STARTDATE as DATE) as rs_STARTDATE
+	,cast(ft.DATE as DATE) as FINANCIALTRANSACTIONDATE
+	--,ft.ID
+	--,ft.CALCULATEDUSERDEFINEDID
+--		u.*
+from dbo.REVENUESCHEDULE rs
+join FINANCIALTRANSACTION ft on ft.ID = rs.ID 
+join dbo.USR_REVENUESCHEDULE_BEFORE_STARTDATE_UPDATE u on u.RGID = ft.CALCULATEDUSERDEFINEDID;
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="SPONSORID" Caption="Sponsor ID" DataType="String" />
+			<OutputField Name="RGID" Caption="Recurring Gift ID" DataType="String" />
+			<OutputField Name="FIRSTINSTALLMENTDATE" Caption="First Installment Date" DataType="Date" />
+			<OutputField Name="REVENUESCHEDULE_STARTDATE" Caption="Revenue Schedule StartDate" DataType="Date" />
+			<OutputField Name="NTD" Caption="NTD" DataType="Date" />
+			<OutputField Name="STARTDATEVALID" Caption="Pass DB Rule?" DataType="Boolean" />
+			<OutputField Name="FINANCIALTRANSACTIONDATE" Caption="Financial Transaction Date" DataType="Date" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+

@@ -20,6 +20,7 @@
 	10-Nov-2015		Memphis			Initial Version
 	09-Feb-2016		Memphis			Changed the NB2015 to 2016 for current year.
   15-Feb-2017   MSellers    Changed NB2016 to 2017 for current year.
+  10-Feb-2018   MSellers    Changed NB2017 to 2018 for current year.
 	
 	-->	
 	
@@ -80,7 +81,7 @@ select
         GLTRANSACTION.AMOUNT,
 		'' as BLANKCOLUMN,
 		case
-			when (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end) = ''  then 'NB2017-' + right ('0' + cast(month (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2) + right ('0' + cast(day (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2)
+			when (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end) = ''  then 'NB2018-' + right ('0' + cast(month (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2) + right ('0' + cast(day (GLTRANSACTION.POSTDATE) as nvarchar(2)), 2)
 			--else GLTRANSACTION.BATCHNUMBER 
 			else (case when REVENUEGLDISTRIBUTION.OUTDATED = 0 then REVENUE.BATCHNUMBER else reverseRevenue.BATCHNUMBER end)
 		end as MV_BATCHNUMBER,

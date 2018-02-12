@@ -768,6 +768,13 @@
     <EmbeddedResource Include="Query Views\Website4.Donations.Query.xml" />
     <EmbeddedResource Include="Query Views\Website4.Signups.Query.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Utilities\USR_USP_POPULATE_RGDATE_UPDATE_TEMP_TABLE.xml" />
+    <EmbeddedResource Include="Utilities\USR_USP_UPDATE_RG_STARTDATE_FIX.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Query Views\UpdateRecurringGiftStartDate.QA.Query.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

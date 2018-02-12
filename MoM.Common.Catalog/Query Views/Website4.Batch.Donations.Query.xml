@@ -24,6 +24,7 @@
 			<![CDATA[
 
 select
+    distinct
       coalesce(c.id, brc.existingconstituentid) as ID,
       br.ID as BATCHROWID,
       b.ID BATCHID,
@@ -40,7 +41,11 @@ select
       country.description as DONORCOUNTRY,
       br.date as GIFTDATE,
       br.amount as GIFTAMOUNT,
-      r.DESCRIPTION as DESIGNATION, 
+      d.VANITYNAME as DESIGNATION, 
+      dl.VANITYNAME as DL_DESIGNATION,
+      dl.name as DESIGNATIONLEVELNAME,
+      dl.description as DLDESCRIPTION,
+      dl.userid as DLUSERID,
       br.paymentmethod as PAYMENTMETHOD,
       br.CARDHOLDERNAME as NAMEONCARD,
       CREDITTYPECODE.description as CARDTYPE,
@@ -50,7 +55,9 @@ select
       bbnc.firstpaymentprocessed as RGPROCESSEDFIRSTPAYMENT,
       br.reference as GIFTCOMMENT,
       bbnc.pagename as ORIGINPAGE,
-      br.mgmatchingconstituentid as DONORIDAUTOMATCH   
+      br.mgmatchingconstituentid as DONORIDAUTOMATCH,
+      bbiscid.value as ATTRIBUTECHILDID,
+      bbissid.value as ATTRIBUTESPONSORID
 
 from BATCHREVENUE br
       inner join BATCH b on br.batchid = b.id
@@ -58,14 +65,18 @@ from BATCHREVENUE br
       inner join BATCHTEMPLATE bt on bt.id = b.batchtemplateid and batchworkflowid = '75261255-7FA1-48DA-95D8-E4F49250C1AA'
       left join CREDITCARD on CREDITCARD.id = br.creditcardid
       left join CREDITTYPECODE on CREDITTYPECODE.id = CREDITCARD.CREDITTYPECODEID
-      -- left join appeal on appeal.id = br.appealid -- doesn't have desired application info
       left join BATCHREVENUECONSTITUENT brc on brc.id = br.constituentid
       left join STATE on STATE.id = brc.stateid
       left join COUNTRY on country.id = brc.countryid
       left join CONSTITUENT c on c.id = br.constituentid
       left join BATCHREVENUEBBNCINFO bbnc on bbnc.batchrevenueid = br.id
       left join BATCHREVENUEAPPLICATION bra on bra.batchrevenueid = br.id 
-      left join REVENUE r on r.id = bra.revenueid    
+      left join BATCHREVENUEADDITIONALAPPLICATIONS braa on braa.batchrevenueid = br.id
+      left join DESIGNATION d on d.id = braa.designationid 
+      left join designationlevel dl on dl.id = designationlevel1id
+      left join BATCHATTRIBUTEB80C76431E65432F8E19AD53F56EB9C9 bbissid on bbissid.id = br.id
+      left join BATCHATTRIBUTEFEDE10805C0045CE88518A4A54BC2975 bbiscid on bbiscid.id = br.id
+  
 
 ]]>
 		</ViewSQL>
@@ -91,7 +102,11 @@ from BATCHREVENUE br
 			<OutputField Name="GIFTDATE" Caption="Gift Date" DataType="Date" />
 			<OutputField Name="GIFTAMOUNT" Caption="Gift Amount" DataType="Money" />
 			<OutputField Name="DESIGNATION" Caption="Designation" DataType="String" />
-			<OutputField Name="PAYMENTMETHOD" Caption="Payment Method" DataType="String" />
+      <OutputField Name="DL_DESIGNATION" Caption="Designation Level 1 Designation" DataType="String" />
+      <OutputField Name="DESIGNATIONLEVELNAME" Caption="Designation Level Name Designation" DataType="String" />
+      <OutputField Name="DLDESCRIPTION" Caption="Designation Level" DataType="String" />
+      <OutputField Name="DLUSERID" Caption="Designation Level UserID" DataType="String" />      
+      <OutputField Name="PAYMENTMETHOD" Caption="Payment Method" DataType="String" />
 			<OutputField Name="NAMEONCARD" Caption="Name on Card" DataType="String" />
 			<OutputField Name="CARDTYPE" Caption="Card Type" DataType="String" />
 			<OutputField Name="EXPDATE" Caption="Expiration Date" DataType="String" />
@@ -101,6 +116,8 @@ from BATCHREVENUE br
 			<OutputField Name="GIFTCOMMENT" Caption="Comment" DataType="String" />
 			<OutputField Name="ORIGINPAGE" Caption="Website page of origin" DataType="String" />
 			<OutputField Name="DONORIDAUTOMATCH" Caption="Donor ID Auto Match" DataType="String" />
+      <OutputField Name="ATTRIBUTECHILDID" Caption="Attribute Child ID" DataType="String" />
+      <OutputField Name="ATTRIBUTESPONSORID" Caption="Attribute Sponsor ID" DataType="String" />
 		</OutputFields>
 	</Output>
 
