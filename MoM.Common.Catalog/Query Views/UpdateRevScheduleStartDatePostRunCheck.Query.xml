@@ -1,0 +1,59 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:c="bb_appfx_commontypes" 
+	ID="be24ee2b-0172-44cb-8987-64f7436a092f"
+	Name="Update Rev Schedule Start Date Post Run Check Query"
+	Description="Displays RevenueSchedule.StartDate records that were updated."
+	Author="Mark Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="REVENUE"
+	c:SecurityUIFolder="REVENUE"
+	>
+
+  <!-- 
+	Remarks:	Used to view the result of our SQL script to update the RG Date column value.
+
+	History:
+	Date          Modified By   Comments
+	15-Feb-2018		MSellers		  Initial Version
+	-->
+
+  <!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_REVENUESCHEDULE_STARTDATE_RECORDS_UPDATED">
+		<ViewSQL>
+			<![CDATA[
+  select	
+	  rs.ID
+	  ,u.SPONSORID
+	  ,u.RGID
+	  ,rs.[STATUS] 
+	  ,cast(rs.STARTDATE as DATE) as STARTDATE
+	  ,u.REVENUESCHEDULE_STARTDATE as PREVIOUS_STARTDATE
+	  ,u.NTD
+	  ,dbo.UFN_REVENUE_STARTDATEVALID(rs.ID, rs.STARTDATE) as STARTDATEVALID
+	  ,cast(ft.DATE as DATE) as FINANCIALTRANSACTIONDATE
+  from dbo.REVENUESCHEDULE rs
+  join FINANCIALTRANSACTION ft on ft.ID = rs.ID 
+  join dbo.USR_REVENUESCHEDULE_BEFORE_STARTDATE_UPDATE u on u.RGID = ft.CALCULATEDUSERDEFINEDID;
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+      <OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+      <OutputField Name="SPONSORID" Caption="Sponsor ID" DataType="String" />
+      <OutputField Name="RGID" Caption="Recurring Gift ID" DataType="String" />
+      <OutputField Name="STATUS" Caption="Status" DataType="String" />
+      <OutputField Name="STARTDATE" Caption="Start Date" DataType="Date" />
+      <OutputField Name="PREVIOUS_STARTDATE" Caption="Old StartDate" DataType="Date" />
+      <OutputField Name="NTD" Caption="NTD" DataType="Date" />
+      <OutputField Name="STARTDATEVALID" Caption="Pass DB Rule?" DataType="Boolean" />
+      <OutputField Name="FINANCIALTRANSACTIONDATE" Caption="Financial Transaction Date" DataType="Date" />
+    </OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
