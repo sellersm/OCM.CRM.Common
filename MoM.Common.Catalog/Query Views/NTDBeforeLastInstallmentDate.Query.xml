@@ -1,0 +1,73 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:c="bb_appfx_commontypes" 
+	ID="d38bc8c0-e2a3-4498-9cb6-e6b1e09680ed"
+	Name="NTD Before Last Installment Date Query"
+	Description="Displays RG rows where NTD is before last installment paid date"
+	Author="Mark Sellers"
+	IsRoot="true"
+	PrimaryKeyField="REVENUEID"
+	RecordType="REVENUE"
+	c:SecurityUIFolder="REVENUE"
+	>
+
+  <!-- 
+	Remarks:    Gets RG rows that have their NTD older (prior to) the Last Installment Paid Date.
+              Uses the BB built-in UFN to determine the NTD and Last Installment Paid Date (as 
+              seen on the RG Page summary view top section).
+
+	History:
+	Date            Modified By   Comments
+	27-Feb-2018		  MSellers			Initial version									
+	-->  
+  
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_NTD_BEFORE_LASTINSTALLMENTDATE">
+		<ViewSQL>
+			<![CDATA[
+select	
+    REVENUEID,
+    c.LOOKUPID,
+		RGID,
+		NTD,
+		LASTINSTALLMENTDATE,
+		REVENUEDATE,
+		STATUS
+from (select 
+	r.ID as REVENUEID,
+	(select DATE from dbo.UFN_RECURRINGGIFT_GETNEXTINSTALLMENTINFO(r.ID,null)) as NTD,
+	r.CONSTITUENTID,
+	cast(r.DATE as DATE) as REVENUEDATE,
+	r.LOOKUPID as RGID,
+	r.TRANSACTIONTYPECODE,
+	rs.STATUS,
+	(select top 1 RGI.DATE            
+	from dbo.RECURRINGGIFTINSTALLMENTPAYMENT RGP
+	inner join dbo.RECURRINGGIFTINSTALLMENT RGI on RGI.ID = RGP.RECURRINGGIFTINSTALLMENTID
+	where RGI.REVENUEID = r.ID
+	order by RGI.DATE desc) as LASTINSTALLMENTDATE
+from dbo.REVENUE r
+join revenueschedule rs on rs.ID = r.ID
+where (select DATE from dbo.UFN_RECURRINGGIFT_GETNEXTINSTALLMENTINFO(r.ID,null)) is not null
+) cte
+left join dbo.CONSTITUENT c on c.ID = CONSTITUENTID
+where NTD < LastInstallmentDate
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="REVENUEID" />
+			<OutputField Name="LOOKUPID" Caption="Sponsor Id" DataType="String" />
+			<OutputField Name="RGID" Caption="RG Id" DataType="String" />
+			<OutputField Name="NTD" Caption="NTD" DataType="Date" />
+      <OutputField Name="LASTINSTALLMENTDATE" Caption="Last Installment Paid Date" DataType="Date" />
+      <OutputField Name="REVENUEDATE" Caption="Revenue Date" DataType="Date" />
+      <OutputField Name="STATUS" Caption="Status" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
