@@ -1,0 +1,62 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:c="bb_appfx_commontypes" 
+	ID="02946277-0b85-4f99-ba75-1daee13a1bbe"
+	Name="Partial Adjustments To Installments Query"
+	Description="Display partial adjustments to installments"
+	Author="Mark Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="REVENUE"
+	c:SecurityUIFolder="REVENUE"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_PARTIAL_ADJUSTMENTS_TO_INSTALLMENTS">
+		<ViewSQL>
+			<![CDATA[
+select 
+  r.ID,
+	c.lookupid as SPONSORID, 
+	r.lookupid as RGID, 
+	rgi.date as RGIDATE, 
+	(select DATE from dbo.UFN_RECURRINGGIFT_GETNEXTINSTALLMENTINFO(r.ID,null)) as NTD,
+	(select top 1 RGI.DATE            
+	from dbo.RECURRINGGIFTINSTALLMENTPAYMENT RGP
+	inner join dbo.RECURRINGGIFTINSTALLMENT RGI on RGI.ID = RGP.RECURRINGGIFTINSTALLMENTID
+	where RGI.REVENUEID = r.ID
+	order by RGI.DATE desc) as LASTINSTALLMENTDATE,
+	rs.status as STATUS, 
+	--rgi.statuscode as INSTALLMENTSTATUS,
+	rgi.status as RGISTATUS,
+	rgiw.transactionamount as WRITEOFFAMOUNT,
+	rgi.transactionamount as TRANSACTIONAMOUNT
+from revenue r
+join recurringgiftinstallment rgi on rgi.revenueid = r.id
+join recurringgiftinstallmentwriteoff rgiw on rgiw.recurringgiftinstallmentid=rgi.id
+join revenueschedule rs on rs.id = r.id
+join constituent c on c.id = r.constituentid
+where rgiw.transactionamount <> rgi.transactionamount		
+
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="SPONSORID" Caption="Sponsor Id" DataType="String" />
+			<OutputField Name="RGID" Caption="Recurring Gift Id" DataType="String" />
+			<OutputField Name="RGIDATE" Caption="RG Date" DataType="Date" />
+      <OutputField Name="NTD" Caption="NTD" DataType="Date" />
+      <OutputField Name="LASTINSTALLMENTDATE" Caption="Last Installment Paid Date" DataType="Date" />
+      <OutputField Name="STATUS" Caption="RG Status" DataType="String" />
+      <OutputField Name="RGISTATUS" Caption="Installment Status" DataType="String" />
+      <OutputField Name="WRITEOFFAMOUNT" Caption="Write Off Amount" DataType="Money" />
+      <OutputField Name="TRANSACTIONAMOUNT" Caption="Transaction Amount" DataType="Money" />
+    </OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
