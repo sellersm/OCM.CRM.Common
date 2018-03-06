@@ -11,32 +11,73 @@
 	c:SecurityUIFolder="REVENUE"
 	>
 
-	<!-- define the view used to return data for the query -->
+  <!-- 
+	Remarks:    Duplicates what's displayed in the RG Activity datalist: rows that have partial writeoffs
+
+	History:
+	Date            Modified By   Comments
+	27-Feb-2018		  MSellers			Initial version									
+	-->
+
+  <!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_PARTIAL_ADJUSTMENTS_TO_INSTALLMENTS">
 		<ViewSQL>
 			<![CDATA[
-select 
-  r.ID,
-	c.lookupid as SPONSORID, 
-	r.lookupid as RGID, 
-	rgi.date as RGIDATE, 
-	(select DATE from dbo.UFN_RECURRINGGIFT_GETNEXTINSTALLMENTINFO(r.ID,null)) as NTD,
-	(select top 1 RGI.DATE            
-	from dbo.RECURRINGGIFTINSTALLMENTPAYMENT RGP
-	inner join dbo.RECURRINGGIFTINSTALLMENT RGI on RGI.ID = RGP.RECURRINGGIFTINSTALLMENTID
-	where RGI.REVENUEID = r.ID
-	order by RGI.DATE desc) as LASTINSTALLMENTDATE,
-	rs.status as STATUS, 
-	--rgi.statuscode as INSTALLMENTSTATUS,
-	rgi.status as RGISTATUS,
-	rgiw.transactionamount as WRITEOFFAMOUNT,
-	rgi.transactionamount as TRANSACTIONAMOUNT
-from revenue r
-join recurringgiftinstallment rgi on rgi.revenueid = r.id
-join recurringgiftinstallmentwriteoff rgiw on rgiw.recurringgiftinstallmentid=rgi.id
-join revenueschedule rs on rs.id = r.id
-join constituent c on c.id = r.constituentid
-where rgiw.transactionamount <> rgi.transactionamount		
+  select
+    r.ID,
+	  c.lookupid as SPONSORID, 
+	  r.lookupid as RGID, 
+	  --rwo.[TYPE],
+	  rwo.[DATE] as WRITEOFFDATE,
+	  --rgi.date as RGIDATE, 
+	  (select DATE from dbo.UFN_RECURRINGGIFT_GETNEXTINSTALLMENTINFO(r.ID,null)) as NTD,
+	  (select top 1 RGI.DATE            
+	  from dbo.RECURRINGGIFTINSTALLMENTPAYMENT RGP
+	  inner join dbo.RECURRINGGIFTINSTALLMENT RGI on RGI.ID = RGP.RECURRINGGIFTINSTALLMENTID
+	  where RGI.REVENUEID = r.ID
+	  order by RGI.DATE desc) as LASTINSTALLMENTDATE,
+	  rs.status as STATUS, 
+	  --rgi.statuscode as INSTALLMENTSTATUS,
+	  rgi.status as RGISTATUS,
+	  rgiw.transactionamount as WRITEOFFAMOUNT,
+	  rgi.transactionamount as TRANSACTIONAMOUNT,
+
+	  (select isnull(nullif(d.DETAILS,''),
+                  (select case when count(*)=0 then null
+                              when count(*)=1 then max(DETAILS)
+                              when count(*)=2 and min(TYPECODE) = 2 and max(TYPECODE) = 9 then 'Paid (amount changed)'
+                              when min(TYPECODE) = max(TYPECODE) then 'Multiple ' + case min(TYPECODE) when 2 then 'payments' else 'write-offs' end + ' applied'
+                              else
+                                  case cast(max(case TYPECODE when 2 then 1 else 0 end) as nvarchar(1)) +
+                                      cast(max(case TYPECODE when 3 then 1 else 0 end) as nvarchar(1)) +
+                                      cast(max(case TYPECODE when 9 then 1 else 0 end) as nvarchar(1))
+                                  when '110' then 'Partially paid and partially written off'
+                                  when '111' then 'Partially paid and partially written off (amount changed)'
+                                  when '101' then 'Multiple payments applied (amount changed)'
+                                  when '011' then 'Written off and amount changed'
+                                  end
+                          end
+                  from dbo.UFN_RECURRINGGIFTINSTALLMENTACTIVITY(RGI.ID)
+                  where TYPECODE in(2,3,9)))
+      from (select case
+                      when RGI.STATUSCODE = 3 then (select DETAILS from dbo.UFN_RECURRINGGIFTINSTALLMENTACTIVITY(RGI.ID) where TYPECODE = 4)
+                      when RGI.STATUSCODE = 1 then (select DETAILS from dbo.UFN_RECURRINGGIFTINSTALLMENTACTIVITY(RGI.ID) where TYPECODE = 1)
+                      end DETAILS) d
+      ) DETAILS,
+
+	  (case when rwo.REASONTYPECODE = 0 then
+          case when rwo.TYPECODE = 0 then WRITEOFFREASONCODE.DESCRIPTION 
+              when rwo.TYPECODE = 1 then RECURRINGGIFTSTATUSREASONCODE.DESCRIPTION end
+      else rwo.REASONTYPE end) as WRITEOFFDETAILS
+  from revenue r
+  join recurringgiftinstallment rgi on rgi.revenueid = r.id
+  join recurringgiftinstallmentwriteoff rgiw on rgiw.recurringgiftinstallmentid=rgi.id
+  join RECURRINGGIFTWRITEOFF rwo on rwo.ID = WRITEOFFID
+  join revenueschedule rs on rs.id = r.id
+  join constituent c on c.id = r.constituentid
+  left join dbo.WRITEOFFREASONCODE on WRITEOFFREASONCODE.ID = rwo.REASONCODEID
+  left join dbo.RECURRINGGIFTSTATUSREASONCODE on RECURRINGGIFTSTATUSREASONCODE.ID = rwo.SKIPREASONCODEID
+  where rgiw.transactionamount <> rgi.transactionamount		
 
 			]]>
 		</ViewSQL>
@@ -48,13 +89,15 @@ where rgiw.transactionamount <> rgi.transactionamount
 			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
 			<OutputField Name="SPONSORID" Caption="Sponsor Id" DataType="String" />
 			<OutputField Name="RGID" Caption="Recurring Gift Id" DataType="String" />
-			<OutputField Name="RGIDATE" Caption="RG Date" DataType="Date" />
+			<OutputField Name="WRITEOFFDATE" Caption="Writeoff Date" DataType="Date" />
       <OutputField Name="NTD" Caption="NTD" DataType="Date" />
       <OutputField Name="LASTINSTALLMENTDATE" Caption="Last Installment Paid Date" DataType="Date" />
       <OutputField Name="STATUS" Caption="RG Status" DataType="String" />
       <OutputField Name="RGISTATUS" Caption="Installment Status" DataType="String" />
       <OutputField Name="WRITEOFFAMOUNT" Caption="Write Off Amount" DataType="Money" />
       <OutputField Name="TRANSACTIONAMOUNT" Caption="Transaction Amount" DataType="Money" />
+      <OutputField Name="DETAILS" Caption="Activity Details" DataType="String" />
+      <OutputField Name="WRITEOFFDETAILS" Caption="Writeoff Details" DataType="String" />
     </OutputFields>
 	</Output>
 
