@@ -17,6 +17,7 @@
 	History:
 	Date            Modified By     Comments
 	02-Jan-2018		JMawhirter			Initial Version
+  04-Apr-2018		JMawhirter			Added BBIS username field 
 	-->
 
 	<!-- define the view used to return data for the query -->
@@ -26,7 +27,8 @@
 select	
     b.BATCHNUMBER, 
     bbis.SEQUENCE, 
-	C.ID as LINKEDID,
+    C.ID as LINKEDID,
+    ncu.USERNAME,
     c.LOOKUPID as LINKEDLOOKUPID, 
     c.NAME LINKEDNAME,
     bbis.FIRSTNAME + bbis.KEYNAME as BBNCCONSTITNAME,
@@ -52,6 +54,8 @@ select
 from 
     dbo.BATCHCONSTITUENTUPDATE bbis
     inner join dbo.BATCH b on bbis.BATCHID = b.ID
+    left join dbo.BATCHCONSTITUENTUPDATEBBNCINFO bcubbis on bcubbis.BATCHCONSTITUENTUPDATEID = bbis.id
+    left join dbo.NETCOMMUNITYCLIENTUSER ncu on ncu.bbncuserid = bcubbis.bbncuserid
     left join dbo.CONSTITUENT c on bbis.primaryrecordid = c.ID
     left join dbo.BATCHCONSTITUENTUPDATEEMAILADDRESSES as BBISEmailAddresses on BBISEmailAddresses.BatchConstituentUpdateID = bbis.ID and BBISEmailAddresses.roworigincode = 1
     left join dbo.EMAILADDRESSTYPECODE on EMAILADDRESSTYPECODE.id = BBISEmailAddresses.EMAILADDRESSTYPECODEID
@@ -68,7 +72,8 @@ from
 	<Output>
 		<OutputFields>
 			<OutputField Name="LINKEDID" Caption="System record ID" Category="System Fields" />
-			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+      <OutputField Name="USERNAME" Caption="BBIS user name" Category="System Fields" />
+      <OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
 			<OutputField Name="SEQUENCE" Caption="Sequence" DataType="Integer" />
 			<OutputField Name="LINKEDLOOKUPID" Caption="Linked Constituent Lookup ID" DataType="String" />
 			<OutputField Name="LINKEDNAME" Caption="Linked Constituent Name" DataType="String" />
