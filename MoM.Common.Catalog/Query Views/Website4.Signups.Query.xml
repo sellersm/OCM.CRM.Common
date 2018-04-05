@@ -72,7 +72,7 @@ from
 	<Output>
 		<OutputFields>
 			<OutputField Name="LINKEDID" Caption="System record ID" Category="System Fields" />
-      <OutputField Name="USERNAME" Caption="BBIS user name" Category="System Fields" />
+      <OutputField Name="USERNAME" Caption="BBIS User Name"  DataType="String" />
       <OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
 			<OutputField Name="SEQUENCE" Caption="Sequence" DataType="Integer" />
 			<OutputField Name="LINKEDLOOKUPID" Caption="Linked Constituent Lookup ID" DataType="String" />
