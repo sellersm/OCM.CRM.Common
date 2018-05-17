@@ -1,0 +1,68 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:c="bb_appfx_commontypes" 
+	ID="a5b8aa33-dec1-43a6-a56d-8e3399b90e56"
+	Name="Website4 Batch Bank Accounts Query"
+	Description="Queries website batch bank account records."
+	Author="Mark Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="Batch"
+	c:SecurityUIFolder="Batch"
+	>
+  
+  
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_WEBSITE4_BATCH_BANK_ACCOUNTS">
+		<ViewSQL>
+			<![CDATA[
+  --EXEC dbo.Usp_get_key_access;
+  --open symmetric key sym_BBInfinity decryption by asymmetric key asym_BBInfinity;
+  select 
+      ID,
+      ACCOUNTNUMBER, 
+      ROUTINGNUMBER, 
+      ACCOUNTNAME, 
+      FIRSTNAME, 
+      KEYNAME, 
+      BATCHNUMBER, 
+      LOOKUPID, 
+      DATE
+  from dbo.USR_UFN_GET_WEBSITE_BATCH_BANK_ACCOUNTS();
+  --select convert(nvarchar, decryptbykey(brca.ACCOUNTNUMBER)) as ACCOUNTNUMBER, 
+  --    fi.ROUTINGNUMBER, 
+  --    brca.ACCOUNTNAME, 
+  --    brc.FIRSTNAME, 
+  --    brc.KEYNAME, 
+  --    b.BATCHNUMBER, 
+  --    c.LOOKUPID, 
+  --    br.DATE
+  --    from BATCHREVENUECONSTITUENTACCOUNT brca
+  --    left join FINANCIALINSTITUTION fi on fi.id = brca.FINANCIALINSTITUTIONID
+  --    left join BATCH b on b.id = brca.BATCHID
+  --    left join BATCHREVENUE br on br.CONSTITUENTID = brca.CONSTITUENTID
+  --    left join BATCHREVENUECONSTITUENT brc on brca.CONSTITUENTID = brc.ID
+  --    left join CONSTITUENT c on c.id = brc.EXISTINGCONSTITUENTID
+  --CLOSE SYMMETRIC KEY sym_bbinfinity
+]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="ACCOUNTNUMBER" Caption="Field 1" DataType="String" />
+			<OutputField Name="ROUTINGNUMBER" Caption="Field 2" DataType="String" />
+			<OutputField Name="ACCOUNTNAME" Caption="Field 3" DataType="String" />
+      <OutputField Name="FIRSTNAME" Caption="Field 3" DataType="String" />
+      <OutputField Name="KEYNAME" Caption="Field 3" DataType="String" />
+      <OutputField Name="BATCHNUMBER" Caption="Field 3" DataType="String" />
+      <OutputField Name="LOOKUPID" Caption="Field 3" DataType="String" />
+      <OutputField Name="DATE" Caption="Field 3" DataType="Date" />
+    </OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
