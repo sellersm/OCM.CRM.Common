@@ -10,41 +10,39 @@
 	RecordType="Batch"
 	c:SecurityUIFolder="Batch"
 	>
-  
-  
+
+  <!-- 
+	Remarks:	Query requested by Jeff M: 
+            “I’m trying to find a workaround to case 14135427 (now bug 375244). 
+            When we link a recurring gift from BBIS to a constituent by searching or 
+            entering the id, the batch erases the account and routing number. ”
+
+	History:
+	Date          Modified By   Comments
+	29-May-2018		MSellers		  Initial Version
+	-->  
 
 	<!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_WEBSITE4_BATCH_BANK_ACCOUNTS">
 		<ViewSQL>
 			<![CDATA[
-  --EXEC dbo.Usp_get_key_access;
-  --open symmetric key sym_BBInfinity decryption by asymmetric key asym_BBInfinity;
   select 
-      ID,
-      ACCOUNTNUMBER, 
-      ROUTINGNUMBER, 
-      ACCOUNTNAME, 
-      FIRSTNAME, 
-      KEYNAME, 
-      BATCHNUMBER, 
-      LOOKUPID, 
-      DATE
-  from dbo.USR_UFN_GET_WEBSITE_BATCH_BANK_ACCOUNTS();
-  --select convert(nvarchar, decryptbykey(brca.ACCOUNTNUMBER)) as ACCOUNTNUMBER, 
-  --    fi.ROUTINGNUMBER, 
-  --    brca.ACCOUNTNAME, 
-  --    brc.FIRSTNAME, 
-  --    brc.KEYNAME, 
-  --    b.BATCHNUMBER, 
-  --    c.LOOKUPID, 
-  --    br.DATE
-  --    from BATCHREVENUECONSTITUENTACCOUNT brca
-  --    left join FINANCIALINSTITUTION fi on fi.id = brca.FINANCIALINSTITUTIONID
-  --    left join BATCH b on b.id = brca.BATCHID
-  --    left join BATCHREVENUE br on br.CONSTITUENTID = brca.CONSTITUENTID
-  --    left join BATCHREVENUECONSTITUENT brc on brca.CONSTITUENTID = brc.ID
-  --    left join CONSTITUENT c on c.id = brc.EXISTINGCONSTITUENTID
-  --CLOSE SYMMETRIC KEY sym_bbinfinity
+      brca.ID,
+      convert(nvarchar, decryptbykey(brca.ACCOUNTNUMBER)) as ACCOUNTNUMBER, 
+      fi.ROUTINGNUMBER,
+      brca.ACCOUNTNAME,
+      brc.FIRSTNAME,
+      brc.KEYNAME,
+      b.BATCHNUMBER,
+      c.LOOKUPID,
+      br.DATE
+  from BATCHREVENUECONSTITUENTACCOUNT brca
+      left join FINANCIALINSTITUTION fi on fi.ID = brca.FINANCIALINSTITUTIONID
+      left join BATCH b on b.ID = brca.BATCHID
+      left join BATCHREVENUE br on br.CONSTITUENTACCOUNTID = brca.ID      
+      left join BATCHREVENUECONSTITUENT brc on brca.CONSTITUENTID = brc.ID
+      left join CONSTITUENT c on c.ID = brc.EXISTINGCONSTITUENTID
+  
 ]]>
 		</ViewSQL>
 	</ViewImplementation>
@@ -52,15 +50,16 @@
 	<!-- describe each field in the view output -->
 	<Output>
 		<OutputFields>
-			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
-			<OutputField Name="ACCOUNTNUMBER" Caption="Field 1" DataType="String" />
-			<OutputField Name="ROUTINGNUMBER" Caption="Field 2" DataType="String" />
-			<OutputField Name="ACCOUNTNAME" Caption="Field 3" DataType="String" />
-      <OutputField Name="FIRSTNAME" Caption="Field 3" DataType="String" />
-      <OutputField Name="KEYNAME" Caption="Field 3" DataType="String" />
-      <OutputField Name="BATCHNUMBER" Caption="Field 3" DataType="String" />
-      <OutputField Name="LOOKUPID" Caption="Field 3" DataType="String" />
-      <OutputField Name="DATE" Caption="Field 3" DataType="Date" />
+      <OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+      <OutputField Name="ACCOUNTNUMBER" Caption="Account Number" IsEncryptedField="true" DataType="String" CaptionResourceKey="$$account_number" />
+			<OutputField Name="ROUTINGNUMBER" Caption="Routing Number" DataType="String" />
+			<OutputField Name="ACCOUNTNAME" Caption="Account Name" DataType="String" />
+      <OutputField Name="FIRSTNAME" Caption="First Name" DataType="String" />
+      <OutputField Name="KEYNAME" Caption="Name" DataType="String" />
+      <OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+      <OutputField Name="LOOKUPID" Caption="Lookup Id" DataType="String" />
+      <OutputField Name="DATE" Caption="Date" DataType="Date" />
+
     </OutputFields>
 	</Output>
 

@@ -785,13 +785,9 @@
     <EmbeddedResource Include="Query Views\PartialAdjustmentsToInstallments.Query.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Query Views\Website4.Batch.Bank.Accounts.Query.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="USR_UFN_GET_WEBSITE_BATCH_BANK_ACCOUNTS.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="USR_UFN_GET_DECRYPTED_COLUMNVALUE.xml" />
+    <EmbeddedResource Include="Query Views\Website4.Batch.Bank.Accounts.Query.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
