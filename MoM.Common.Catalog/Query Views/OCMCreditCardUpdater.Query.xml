@@ -1,0 +1,84 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:c="bb_appfx_commontypes" 
+	ID="bd19355c-2bf6-4502-9818-84197e4b8133"
+	Name="OCM Credit Card Updater Query"
+	Description="OCM custom query to display credit card updater records."
+	Author="Mark Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="REVENUE"
+	c:SecurityUIFolder="REVENUE"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_OCM_CREDITCARDUPDATER">
+		<ViewSQL>
+			<![CDATA[
+select
+      CCU.ID,
+      CCU.STATUS,
+      CCU.ACTION,
+      CCU.DATEPROCESSED,
+      CCU.OLDLASTFOUR,
+      CCU.NEWLASTFOUR,
+      CCU.OLDEXPIRY,
+      CCU.NEWEXPIRY,
+      FT.ID as REVENUEID,
+      FT.CONSTITUENTID
+from
+      dbo.CREDITCARDUPDATE CCU
+      inner join dbo.CREDITCARD CC on CC.ID = CCU.CREDITCARDID
+      left join dbo.REVENUESCHEDULE RS on RS.CREDITCARDID = CC.ID
+      left join dbo.FINANCIALTRANSACTION FT on FT.ID = RS.ID
+      left join dbo.CONSTITUENT C on C.ID = FT.CONSTITUENTID
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+  <Output>
+    <OutputFields>
+      <!--Fields-->
+      <OutputField Name="ID" Caption="System record Id" Category="System Fields" DataType="Guid" CaptionResourceKey="$$system_record_id" CategoryResourceKey="$$system_fields" />
+      <OutputField Name="CONSTITUENTID" Caption="Constituent Id" DataType="Guid" IsHidden="true" CaptionResourceKey="$$constituent_id" />
+      <OutputField Name="REVENUEID" Caption="Revenue Id" DataType="Guid" IsHidden="true" CaptionResourceKey="$$revenue_id" />
+      <OutputField Name="DATEPROCESSED" IsDefaultOutput="true" Caption="Date processed" DataType="Date" CaptionResourceKey="$$date_processed" />
+      <OutputField Name="STATUS" IsDefaultOutput="true" Caption="Status" DataType="String" CaptionResourceKey="$$status">
+        <LookupInfo>
+          <TranslationList>
+            <c:Options>
+              <c:TranslationListOption Value="Not updated" />
+              <c:TranslationListOption Value="Updated" />
+            </c:Options>
+          </TranslationList>
+        </LookupInfo>
+      </OutputField>
+      <OutputField Name="ACTION" Caption="Action" DataType="String" IsHidden="false" CaptionResourceKey="$$action">
+        <LookupInfo>
+          <TranslationList>
+            <c:Options>
+              <c:TranslationListOption Value="Need to contact" />
+              <c:TranslationListOption Value="No additional action" />
+            </c:Options>
+          </TranslationList>
+        </LookupInfo>
+      </OutputField>
+      <!--New credit card-->
+      <OutputField Name="NEWLASTFOUR" IsDefaultOutput="true" Caption="New last four digits" DataType="String" Category="New credit card" CaptionResourceKey="$$new_last_four_digits" CategoryResourceKey="$$new_credit_card" />
+      <OutputField Name="NEWEXPIRY" IsDefaultOutput="true" Caption="New expiration date" DataType="FuzzyDate" Category="New credit card" CaptionResourceKey="$$new_expiration_date" CategoryResourceKey="$$new_credit_card" />
+      <!--Previous credit card-->
+      <OutputField Name="OLDLASTFOUR" IsDefaultOutput="true" Caption="Previous last four digits" DataType="String" Category="Previous credit card" CaptionResourceKey="$$previous_last_four_digits" CategoryResourceKey="$$previous_credit_card" />
+      <OutputField Name="OLDEXPIRY" IsDefaultOutput="true" Caption="Previous expiration date" DataType="FuzzyDate" Category="Previous credit card" CaptionResourceKey="$$previous_expiration_date" CategoryResourceKey="$$previous_credit_card" />
+    </OutputFields>
+  </Output>
+  
+  <RelationshipOperations>
+    <AddToParentView ParentView="V_QUERY_REVENUE" ParentViewRelatedField="ID" Field="REVENUEID" PathAlias="OCM Credit Card Updates" />
+    <AddToParentView ParentView="V_QUERY_CONSTITUENT" ParentViewRelatedField="ID" Field="CONSTITUENTID" PathAlias="OCM Credit Card Updates" />
+    <AddRelatedView Field="REVENUEID" Cardinality="OneToOptionalOne" RelatedView="V_QUERY_REVENUE" RelatedField="ID" PathAlias="Revenue Commitment" DisplayAlias="Revenue Commitment" DisplayAliasResourceKey="$$revenue_commitment" />
+    <AddRelatedView Field="CONSTITUENTID" Cardinality="OneToOptionalOne" RelatedView="V_QUERY_CONSTITUENT" RelatedField="ID" PathAlias="Constituent" DisplayAlias="Constituent" DisplayAliasResourceKey="$$constituent" />
+  </RelationshipOperations>
+
+</QueryViewSpec>
+
