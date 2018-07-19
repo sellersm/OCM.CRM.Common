@@ -1,0 +1,66 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:c="bb_appfx_commontypes" 
+	ID="86c2b985-c552-4dc2-9ea8-0ef490fa3534"
+	Name="Payments Applied Query"
+	Description="Displays how batch payments are being applied."
+	Author="Mark Sellers"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="REVENUE"
+	c:SecurityUIFolder="REVENUE"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_REVENUEBATCH_PAYMENTS_APPLIED">
+		<ViewSQL>
+			<![CDATA[
+        -- SQL from Jeff for payment batches and applied funds:
+        --create index IX_JAM_BR_DATE on BATCHREVENUE (DATE)
+        select  br.ID,
+                br.DATE, 
+                BATCHNUMBER, 
+                c.LOOKUPID, 
+                br.AMOUNT, 
+                bra.APPLIED, 
+                ft.TRANSACTIONAMOUNT, 
+                rs.[STATUS], 
+                rs.FREQUENCY, 
+                rs.NEXTTRANSACTIONDATE, 
+                d.USERID, 
+                d.NAME
+        from BATCHREVENUE br
+        join BATCHREVENUEAPPLICATION bra on br.ID = bra.BATCHREVENUEID
+        join BATCH b on b.ID = br.BATCHID  
+        join CONSTITUENT c on c.ID = br.CONSTITUENTID
+        join FINANCIALTRANSACTION ft on ft.ID = bra.REVENUEID -- actually the recurring gift, not this payment
+        join FINANCIALTRANSACTIONLINEITEM ftli on ftli.financialtransactionid = ft.id
+        join dbo.REVENUESPLIT_EXT rse on ftli.ID = rse.ID
+        join DESIGNATION d on d.ID = rse.DESIGNATIONID
+        join REVENUESCHEDULE rs on rs.ID = ft.ID
+        where ft.TRANSACTIONAMOUNT <> bra.APPLIED
+        --order by br.date desc
+]]>
+		</ViewSQL>
+	</ViewImplementation>  
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+			<OutputField Caption="System record ID" Category="System Fields" Name="ID" />
+			<OutputField Name="DATE" Caption="Batch Date" DataType="Date" />
+			<OutputField Name="BATCHNUMBER" Caption="Batch Number" DataType="String" />
+			<OutputField Name="LOOKUPID" Caption="Constituent Id" DataType="String" />
+      <OutputField Name="AMOUNT" Caption="Amount" DataType="Money" />
+      <OutputField Name="APPLIED" Caption="Applied" DataType="Money" />
+      <OutputField Name="TRANSACTIONAMOUNT" Caption="Transaction Amount" DataType="Money" />
+      <OutputField Name="STATUS" Caption="Status" DataType="String" />
+      <OutputField Name="FREQUENCY" Caption="Frequency" DataType="String" />
+      <OutputField Name="NEXTTRANSACTIONDATE" Caption="NTD" DataType="Date" />
+      <OutputField Name="USERID" Caption="Designation Userid" DataType="String" />      
+      <OutputField Name="NAME" Caption="Designation Name" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</QueryViewSpec>
+
