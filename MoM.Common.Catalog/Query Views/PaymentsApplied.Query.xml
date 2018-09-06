@@ -11,6 +11,16 @@
 	c:SecurityUIFolder="REVENUE"
 	>
 
+	<!-- 
+	Remarks:    Query from Jeff to display the data from payment batches and how $ would be applied.
+
+	History:
+	Date            Modified By     Comments
+	06-Sep-2018		  MSellers			  Initial Version
+	-->
+  
+  
+    
 	<!-- define the view used to return data for the query -->
 	<ViewImplementation ViewName="USR_V_QUERY_REVENUEBATCH_PAYMENTS_APPLIED">
 		<ViewSQL>
@@ -28,7 +38,8 @@
                 rs.FREQUENCY, 
                 rs.NEXTTRANSACTIONDATE, 
                 d.USERID, 
-                d.NAME
+                d.NAME,
+                c.ID as CONSTITUENTID
         from BATCHREVENUE br
         join BATCHREVENUEAPPLICATION bra on br.ID = bra.BATCHREVENUEID
         join BATCH b on b.ID = br.BATCHID  
@@ -59,8 +70,13 @@
       <OutputField Name="NEXTTRANSACTIONDATE" Caption="NTD" DataType="Date" />
       <OutputField Name="USERID" Caption="Designation Userid" DataType="String" />      
       <OutputField Name="NAME" Caption="Designation Name" DataType="String" />
+    <OutputField Name="CONSTITUENTID" Caption="Sponsor ID" DataType="Guid" IsHidden="true" />
 		</OutputFields>
 	</Output>
+  
+  <RelationshipOperations>
+    <AddRelatedView RelatedView="V_QUERY_CONSTITUENT" Field="CONSTITUENTID" RelatedField="ID" Cardinality="OneToOne"  PathAlias="PayingConstituent"/>
+  </RelationshipOperations>
 
 </QueryViewSpec>
 
