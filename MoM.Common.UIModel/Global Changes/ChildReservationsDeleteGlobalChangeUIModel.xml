@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>ChildReservationsDelete.GlobalChange.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>ChildReservationsDeleteGlobalChangeUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>ChildReservationsDeleteGlobalChange.html</HtmlFile>
+    <HtmlFolder>htmlforms\</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>true</GenerateFromDatabase>
+</UIModelWizardMetadata>

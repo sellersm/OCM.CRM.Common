@@ -1,0 +1,188 @@
+﻿<GlobalChangeSpec 
+    xmlns="bb_appfx_globalchange"
+    xmlns:c="bb_appfx_commontypes"
+    ID="f4ea0905-397e-412f-8461-b88b5f503ed8"
+    Name="Child Interaction Unusable Item Global Change"
+    Description="Change the interaction unusable item field."
+    Author="Mark Sellers"
+    DisplayName="Change child interaction unusable item"
+    GlobalChangeFolder="Interaction"
+    SPName="USR_USP_GLOBALCHANGE_CHILD_INTERACTION_UNUSABLE_ITEM"
+    >
+
+  <!-- 
+	Remarks:    Global change to update/set the Unusable item in the child interaction.
+
+	History:
+	Date            Modified By     Comments
+	17-Sep-2018		  MSellers			  Initial Version
+	-->
+
+  <!-- describe the SP that performs the global change operation -->
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_GLOBALCHANGE_CHILD_INTERACTION_UNUSABLE_ITEM
+(
+	@IDSETREGISTERID uniqueidentifier = null,
+	@CHANGEAGENTID uniqueidentifier = null,
+	@ASOF as datetime = null,
+	@NUMBERADDED int = 0 output,
+	@NUMBEREDITED int = 0 output,
+	@NUMBERDELETED int = 0 output,
+	@OPERATION int,
+	@ADD_UNUSABLE_ITEMCODE_VALUE uniqueidentifier = null,
+	@OVERWRITEEXISTINGVALUE bit,
+	@REPLACE_UNUSABLE_ITEMCODE_VALUE uniqueidentifier,
+	@REPLACE_UNUSABLE_ITEMCODE_WITHVALUE uniqueidentifier,
+	@DELETE_UNUSABLE_ITEMCODE_VALUE uniqueidentifier,
+	@DELETEALL_UNUSABLE_ITEMCODE_VALUES bit
+)
+as			
+	set nocount off;
+	
+	declare @CURRENTDATE datetime
+	set @CURRENTDATE = getdate();
+	set @NUMBERADDED = 0;
+	set @NUMBEREDITED = 0;
+	set @NUMBERDELETED = 0; 
+	
+	if @CHANGEAGENTID is null
+		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+					
+		begin try
+		-- do the global change operation here, and set @NUMBERADDED, @NUMBEREDITED, and/or @NUMBERDELETED as appropriate
+		
+		-- perform the Add
+		if @OPERATION = 1
+			begin  
+				-- use the @ADD_UNUSABLE_ITEMCODE_VALUE as the new value
+				-- check the @OVERWRITEEXISTINGVALUE flag, if set then just do a big update with the @ADD_UNUSABLE_ITEMCODE_VALUE
+				if @OVERWRITEEXISTINGVALUE = 1
+					begin
+						update dbo.USR_INTERACTIONEXTENSION
+						set UNUSABLECODEID = @ADD_UNUSABLE_ITEMCODE_VALUE,
+						    DATECHANGED = @CURRENTDATE, 
+							  CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						select @NUMBERADDED = @@ROWCOUNT						
+					end
+				else
+					begin
+						-- only update where the current value is null
+						update dbo.USR_INTERACTIONEXTENSION
+						set UNUSABLECODEID = @ADD_UNUSABLE_ITEMCODE_VALUE,
+						    DATECHANGED = @CURRENTDATE, 
+							  CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						and UNUSABLECODEID is null						
+						select @NUMBERADDED = @@ROWCOUNT 
+					end
+			end
+		
+		-- perform the replace
+		if @OPERATION = 2
+			begin  
+				update dbo.USR_INTERACTIONEXTENSION
+				set UNUSABLECODEID = @REPLACE_UNUSABLE_ITEMCODE_WITHVALUE,
+					  DATECHANGED = @CURRENTDATE, 
+					  CHANGEDBYID = @CHANGEAGENTID				
+				where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+				and UNUSABLECODEID = @REPLACE_UNUSABLE_ITEMCODE_VALUE
+				set @NUMBEREDITED = @@ROWCOUNT;
+			end
+			
+			
+		-- perform the delete
+		if @OPERATION = 3
+			begin  
+				-- check the flag: if not set, only update the matching rows
+				if @DELETEALL_UNUSABLE_ITEMCODE_VALUES = 0
+					begin
+						update dbo.USR_INTERACTIONEXTENSION
+						set UNUSABLECODEID = NULL,
+						    DATECHANGED = @CURRENTDATE, 
+							  CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						and UNUSABLECODEID = @DELETE_UNUSABLE_ITEMCODE_VALUE
+						set @NUMBERDELETED = @@ROWCOUNT;
+					end
+				else
+					-- update all values to NULL
+					begin
+						update dbo.USR_INTERACTIONEXTENSION
+						set UNUSABLECODEID = NULL,
+						    DATECHANGED = @CURRENTDATE, 
+							  CHANGEDBYID = @CHANGEAGENTID
+						where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID))
+						set @NUMBERDELETED = @@ROWCOUNT;					
+					end
+			end
+	
+	end try
+	
+	
+	begin catch
+		exec dbo.USP_RAISE_ERROR;
+		return 1;
+	end catch
+		]]>
+	</CreateProcedureSQL>
+
+	<ParametersFormMetaData>
+
+		<!-- describe fields on the parameter form, which correspond to parameters on the SP.  Note that system parameters 
+		like the context @CHANGEAGENTID, @ASOF, @NUMBERADDED, @NUMBEREDITED, and @NUMBERDELETED need not be listed. -->
+    <FormMetaData xmlns="bb_appfx_commontypes">
+      <FormFields>
+        <FormField FieldID="IDSETREGISTERID" DataType="Guid" Required="true" Caption="Selection" CaptionResourceKey="$$selection">
+          <SearchList SearchListID="98d0070e-c4a7-495b-a438-2ac12da79068" EnableQuickFind="true">
+            <FormFieldOverrides>
+              <FormFieldOverride FieldID="RECORDTYPEID" Caption="Record type" ReadOnly="true" DefaultValueText="Fields!RECORDTYPEID" />
+            </FormFieldOverrides>
+          </SearchList>
+        </FormField>
+        <FormField FieldID="RECORDTYPEID" DataType="Guid" ReadOnly="true" Hidden="true" />
+        <FormField FieldID="OPERATION" Caption="Operation" DataType="TinyInt">
+          <ValueList>
+            <Items>
+              <Item>
+                <Value>1</Value>
+                <Label>Add</Label>
+              </Item>
+              <Item>
+                <Value>2</Value>
+                <Label>Replace</Label>
+              </Item>
+              <Item>
+                <Value>3</Value>
+                <Label>Delete</Label>
+              </Item>
+            </Items>
+          </ValueList>
+        </FormField>
+        <FormField FieldID="ADD_UNUSABLE_ITEMCODE_VALUE" DataType="Guid" Caption="Unusable Item code value to add">
+          <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+        </FormField>
+        <FormField FieldID="OVERWRITEEXISTINGVALUE" Caption="Overwrite existing value" DataType="Boolean" />
+        <FormField FieldID="REPLACE_UNUSABLE_ITEMCODE_VALUE" Caption="Replace Unusable Item code value of" DataType="Guid">
+          <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+        </FormField>
+        <FormField FieldID="REPLACE_UNUSABLE_ITEMCODE_WITHVALUE" Caption="With" DataType="Guid">
+          <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+        </FormField>
+        <FormField FieldID="DELETE_UNUSABLE_ITEMCODE_VALUE" Caption="Delete Unusable Item code value of" DataType="Guid">
+          <CodeTable CodeTableName="USR_INTERACTIONEXTENSIONUNUSABLEITEMCODE" />
+        </FormField>
+        <FormField FieldID="DELETEALL_UNUSABLE_ITEMCODE_VALUES" Caption="Delete all Unusable Item code values" DataType="Boolean" />
+      </FormFields>
+
+        <WebUIComponent>
+            <UIModel AssemblyName="MoM.Common.UIModel.dll" ClassName="MoM.Common.UIModel.ChildInteractionUnusableItemGlobalChangeUIModel" />
+            <WebUI>
+                <ExternalResource Url="browser/htmlforms/custom/ChildInteractionUnusableItemGlobalChange.html" />
+            </WebUI>
+        </WebUIComponent>
+		</FormMetaData>
+	</ParametersFormMetaData>
+	
+</GlobalChangeSpec>
