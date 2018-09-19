@@ -145,10 +145,18 @@
     <Compile Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildFieldMemoDateSentGlobalChangeUIModel.CodeGen.vb" />
     <Compile Include="Global Changes\ChildFieldMemoDateSentGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildInteractionUnusableItemGlobalChangeUIModel.CodeGen.vb">
+      <DependentUpon>ChildInteractionUnusableItemGlobalChangeUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Global Changes\ChildInteractionUnusableItemGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.CodeGen.vb">
       <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
     </Compile>
     <Compile Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.vb" />
+    <Compile Include="Global Changes\ChildReservationsDeleteGlobalChangeUIModel.CodeGen.vb">
+      <DependentUpon>ChildReservationsDeleteGlobalChangeUIModel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Global Changes\ChildReservationsDeleteGlobalChangeUIModel.vb" />
     <Compile Include="Global Changes\FulfillmentStatusInteractionGlobalChangeUIModel.CodeGen.vb" />
     <Compile Include="Global Changes\FulfillmentStatusInteractionGlobalChangeUIModel.vb" />
     <Compile Include="Interaction\InteractionExtensionAddFormCHILDRENUIModel.CodeGen.vb">
@@ -249,6 +257,12 @@
     <None Include="..\MoM.Common.Catalog\LetterScanner\Sponsor Retention Appeal Scanner 2016\SponsorRetentionAppeal2016LetterScanner.Add.xml">
       <Link>LinkedSpecs\SponsorRetentionAppeal2016LetterScanner.Add.xml</Link>
     </None>
+    <None Include="..\MoM.Common.Catalog\GlobalChanges\Child\ChildInteractionUnusableItem.GlobalChange.xml">
+      <Link>LinkedSpecs\ChildInteractionUnusableItem.GlobalChange.xml</Link>
+    </None>
+    <None Include="..\MoM.Common.Catalog\GlobalChanges\Child\ChildReservationsDelete.GlobalChange.xml">
+      <Link>LinkedSpecs\ChildReservationsDelete.GlobalChange.xml</Link>
+    </None>
     <Content Include="CRM AnnualLetterScanner\CRMAnnualLetterScannerAddDataFormUIModel.xml">
       <DependentUpon>CRMAnnualLetterScannerAddDataFormUIModel.vb</DependentUpon>
     </Content>
@@ -267,8 +281,14 @@
     <Content Include="Global Changes\ChildFieldMemoHoldReasonCodeGlobalChangeUIModel.xml" />
     <Content Include="Global Changes\ChildFieldMemoSentCodeGlobalChangeUIModel.xml" />
     <Content Include="Global Changes\ChildFieldMemoDateSentGlobalChangeUIModel.xml" />
+    <Content Include="Global Changes\ChildInteractionUnusableItemGlobalChangeUIModel.xml">
+      <DependentUpon>ChildInteractionUnusableItemGlobalChangeUIModel.vb</DependentUpon>
+    </Content>
     <Content Include="Global Changes\ChildPendingReasonsGlobalChangeUIModel.xml">
       <DependentUpon>ChildPendingReasonsGlobalChangeUIModel.vb</DependentUpon>
+    </Content>
+    <Content Include="Global Changes\ChildReservationsDeleteGlobalChangeUIModel.xml">
+      <DependentUpon>ChildReservationsDeleteGlobalChangeUIModel.vb</DependentUpon>
     </Content>
     <Content Include="Global Changes\FulfillmentStatusInteractionGlobalChangeUIModel.xml" />
     <Content Include="htmlforms\ArtistPartnerIDGlobalChange.html" />
@@ -279,8 +299,10 @@
     <Content Include="htmlforms\ChildFieldMemoDateSentGlobalChange.html" />
     <Content Include="htmlforms\ChildFieldMemoHoldReasonCodeGlobalChange.html" />
     <Content Include="htmlforms\ChildFieldMemoSentCodeGlobalChange.html" />
+    <Content Include="htmlforms\ChildInteractionUnusableItemGlobalChange.html" />
     <Content Include="htmlforms\ChildLearningLetterLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\ChildPendingReasonsGlobalChange.html" />
+    <Content Include="htmlforms\ChildReservationsDeleteGlobalChange.html" />
     <Content Include="htmlforms\CRMAnnualLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMSponsorLetterScannerAddDataForm.html" />
     <Content Include="htmlforms\CRMChildLetterScannerAddDataForm.html" />
