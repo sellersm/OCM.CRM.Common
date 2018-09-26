@@ -10,6 +10,17 @@
     SPName="USR_USP_GLOBALCHANGE_CHILDRESERVATIONSDELETE"
     >
 
+<!-- 
+	Remarks:    Global change to delete the given Reservation Key rows.
+
+	History:
+	Date            Modified By   Comments
+	16-Sep-2018		  MSellers			Initial Version
+  26-Sep-2018     MSellers      Updated per Pamela's new requirements:
+                                	if the Status value is “Open”, then the process will run the Unreserve task process.
+                                	If the Status value is “Closed”, then it will only delete the Reservation Key row and NOT run the Unreserve process.
+	-->  
+  
 	<!-- describe the SP that performs the global change operation -->
 	<CreateProcedureSQL>
 		<![CDATA[
@@ -31,7 +42,12 @@ as
 	set @NUMBERADDED = 0;
 	set @NUMBEREDITED = 0;
 	set @NUMBERDELETED = 0; 
-	
+  
+  -- 9-26-2018 MSellers added to decide to call Unreserve process or not:
+  declare @KEYSTATUS nvarchar(18);
+  declare @SPONSORSHIPOPPORTUNITYCHILDID uniqueidentifier;
+  declare @reservationKeyID uniqueidentifier;
+
 	if @CHANGEAGENTID is null
 		exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
 					
@@ -42,7 +58,8 @@ as
 		if @OPERATION = 3
 			begin  
         -- the following is the code from the delete stored procedure: USP_USR_CHILDRESERVATION_DELETEBYID_WITHCHANGEAGENTID
-		    declare @e int;
+		    declare @counter int = 0;
+        declare @totalCounter int = 0;
 	      declare @contextCache varbinary(128);
 
 	      /* cache current context information */
@@ -52,9 +69,45 @@ as
 	      if not @CHANGEAGENTID is null
 		      set CONTEXT_INFO @CHANGEAGENTID
 
-	      delete from dbo.USR_CHILDRESERVATION
-			  where ID in (select ID from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID));
-			  set @NUMBERDELETED = @@ROWCOUNT;
+        -- 9-26-2018 MSellers added the cursor loop and other code to allow the call to Unreserve if the Reservation Key Status is "Open":
+        -- loop through the ID setregister list to process the deletion of reservationkey rows:
+
+        declare reservationIdCursor cursor local fast_forward for
+        select ID
+        from dbo.UFN_IDSETREADER_GETRESULTS(@IDSETREGISTERID)
+	      		
+        open reservationIdCursor;
+	      				
+        fetch next from reservationIdCursor into @reservationKeyID;
+	            
+        while (@@FETCH_STATUS = 0)
+          begin					    
+	          select  @KEYSTATUS = [STATUS],
+			              @SPONSORSHIPOPPORTUNITYCHILDID = SPONSORSHIPOPPORTUNITYCHILDID
+            from dbo.USR_CHILDRESERVATION
+            where ID = @reservationKeyID;
+
+            -- if the Status was Open, perform the Unreserve process:
+            if lower(@KEYSTATUS) = 'open'
+              begin
+                exec dbo.USP_RECORDOPERATION_SPONSORSHIPOPPORTUNITY_UNRESERVE @SPONSORSHIPOPPORTUNITYCHILDID, @CHANGEAGENTID
+              end    
+
+	          -- perform the actual delete now:
+	          delete 
+	          from dbo.USR_CHILDRESERVATION
+            where ID = @reservationKeyID;
+            set @counter = @@ROWCOUNT;
+            set @totalCounter += @counter;
+
+	          fetch next from reservationIdCursor into @reservationKeyID;
+            set @KEYSTATUS = '';
+            set @SPONSORSHIPOPPORTUNITYCHILDID = null;
+          end
+	        
+        close reservationIdCursor;
+
+			  set @NUMBERDELETED = @totalCounter;
 
 	      /* reset CONTEXT_INFO to previous value */
 	      if not @contextCache is null
